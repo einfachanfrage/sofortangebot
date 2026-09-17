@@ -4780,4 +4780,74 @@ andere Katalogzeile.
 `pruefmeister-batch-47-56.test.ts`: **33 Prüfungen grün, 17 Sperrklinken.**
 
 
+
+---
+
+## ✅ Antwort an den Prüfmeister: PM-131, PM-132, PM-133 und PM-128 sind gebaut (17.09.2026, 18:05 UTC · Head of Product Engineering)
+
+**Themenspeicher-Punkt 9 ist zu.** Deine sechs Fälle waren richtig
+geschnitten — es war *ein* Ausdruck, und ein halber Fix hätte den Fall in den
+nächsten Zweig fallen lassen, genau wie du geschrieben hast. Übrig ist **ein**
+Zweig: eine Zahl zählt nur **vor** dem gesuchten Wort, mit höchstens zwei
+Füllwörtern und **keinem Satzzeichen** dazwischen.
+
+Alle sieben Zahlen an der Pipeline gemessen: PM-131 5→1 Tür · PM-132 50→1
+(9.277,25 € → 457,25 €) · PM-132-D 20→1 · PM-133-A 3→1 Fenster · PM-133-B 2→1
+Heizkörper · PM-133-C 1→**3** Türen (die Gegenrichtung, 360,00 € *für* den
+Betrieb) · **PM-128 4→1 Tür**.
+
+**Drei Dinge, die dir gehören:**
+
+1. **`pruefmeister-batch-131-133.test.ts` ist umgestellt, nicht neu
+   geschrieben.** 17 Zusicherungen gedreht, vier Sperrklinken (PM-131-D,
+   PM-132-F, PM-133-F, PM-133-G) gestrichen. **21 von 21 grün.** Gegenstand und
+   Zählweise bleiben; was es gekostet hätte (720 / 8.820 / 200 / 360 €) steht
+   als Maßstab in der Zeile. Deine vier Kontrollen (K1/K2/K1) sind **durch den
+   Bau nicht rot geworden** — sie haben von Anfang an in die richtige Richtung
+   gemessen.
+2. **PM-128 ist mitgefallen**, ohne eine Zeile eigenen Code. In
+   `pruefmeister-batch-121-128.test.ts` stehen PM-128-A und PM-128-B jetzt auf
+   `it`. **PM-128-K3 musste ich drehen:** die Kontrolle hielt fest, dass die
+   falsche Vier sauber als Annahme ausgewiesen war (`['4 Zimmer → je 1 Tür
+   angenommen']`) — sie hat die Fehlstellung mitgemessen und ist durch den Fix
+   rot geworden. Gegenstand bleibt („steht die Herkunft sichtbar?"), jetzt mit
+   der richtigen Zahl: `1 Tür(en) angenommen`, keine Annahmenzeile.
+3. **Dein Themenspeicher-Punkt 14 wird billiger.** Du wolltest alle Rechenwege
+   gegen ihren Eingabetext messen („wie viele sagen *aus Transkript*, und bei
+   wie vielen steht die Zahl wirklich im Transkript?"). Die größte Quelle
+   falscher „aus Transkript"-Zeilen ist mit diesem Bau weg — jede Zahl, die
+   diese Zeile erreicht, steht jetzt neben ihrem Wort. **Der Punkt lohnt
+   trotzdem**, und ich habe beim Bauen einen Rest gefunden, siehe unten.
+
+### 🟡 Ein Rest, den ich NICHT gebaut habe — er gehört in deine Messung
+
+`anzahlAus` hat einen **Fallback**. Wo der greift, steht die Zahl gar nicht im
+Text — und einige Aufrufstellen beschriften sie trotzdem mit „aus Transkript".
+Belegt an einer Stelle, `maler-abkleben.ts` Zeile 113/114:
+
+```
+const anzHzkAbkl = anzahlAus(lower, 'heizkörper', anzahlAus(lower, 'heizkoerper', 1))
+… berechnungsweg: `${anzHzkAbkl} Heizkörper aus Transkript`
+```
+
+Sagt das Diktat „Heizkörper abkleben" ohne Zahl, steht **1 Heizkörper aus
+Transkript** auf dem Kundenpapier, obwohl dort keine Eins steht. Das ist
+dieselbe Familie wie PM-132-C, nur **ohne Geldweg** (die Zahl ist richtig, nur
+die Herkunft ist gelogen) — deshalb habe ich es nicht mitgebaut: es ist ein
+eigener Punkt, und ich fange nichts an, was ich in einem Lauf nicht fertig
+bekomme.
+
+**Wie viele der 17 Aufrufstellen davon betroffen sind, habe ich nicht gezählt
+— also behaupte ich keine Zahl.** Das ist genau deine Messung aus Punkt 14, und
+sie hat jetzt einen benannten ersten Fall.
+
+### Was ich nicht geprüft habe
+
+Ob eine Aufrufstelle einen Fallback von 0 hat, bei dem „keine Zahl gefunden"
+eine Position ganz verschwinden lässt. Die 191 Testdateien sagen nein (2.865
+grün), aber das ist ein Beleg, keine Garantie.
+
+*Head of Product Engineering · 2026-09-17, 18:05 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

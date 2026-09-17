@@ -171,13 +171,72 @@ export function filtereArray(ergaenzt: BerechnetePosition[], filterFn: (p: Berec
   gefiltert.forEach(p => ergaenzt.push(p))
 }
 
-// Zahl vor/nach Schlüsselwort im Text suchen
+/**
+ * ── CoS-E-081 · PM-131 / PM-132 / PM-133 — eine Zahl gehört dem Wort, neben
+ *    dem sie steht ────────────────────────────────────────────────────────
+ *
+ * Bis zum 17.09.2026 hatte dieser Ausdruck drei Zweige, und alle drei waren
+ * in je eigener Richtung falsch. Der Prüfmeister hat sie am Flur gemessen:
+ *
+ *   Zweig 3  `(\d+)\s*stück`  — kannte das gesuchte Wort **gar nicht** und
+ *     griff immer dann, wenn die ersten beiden nichts fanden, also im
+ *     Normalfall. „Die Türen lackieren. Wir liefern 50 Stück Fliesen dazu."
+ *     ergab **50 Türen**: 457,25 € → 9.277,25 €, **8.820,00 €** aus einem
+ *     Nebensatz über Material (PM-132). Nicht auf Fliesen beschränkt —
+ *     „20 Stück Dübellöcher" tat dasselbe (PM-132-D).
+ *
+ *   Zweig 2  `SCHLÜSSEL\s*(\d+)`  — machte die **Ordnungszahl** am Bauteil
+ *     zur Menge. „Fenster 3 ist kaputt" ergab 3 Fenster (PM-133-A, 200,00 €),
+ *     „Heizkörper 2 im Flur" zwei Heizkörper (PM-133-B, 85,00 €). Derselbe
+ *     Zweig hängte über `zimmer\s*(\d+)` die Raumzahl an ein Satzzeichen:
+ *     „Wohnzimmer**,** fünf mal vier" → 1 Tür, dasselbe **ohne Komma** → 5
+ *     Türen, **720,00 €** an einem Zeichen, das niemand gesprochen hat, weil
+ *     es aus der Spracherkennung kommt (PM-131).
+ *
+ *   Zweig 1  verfehlte den gemeinten Fall, weil das optionale Wort zwischen
+ *     Zahl und Schlüssel **kein Leerzeichen** haben durfte: „3 türen" → 3,
+ *     „3 stück türen" → 3, aber „**3 alte türen**" → 0. Das Geld lief hier
+ *     gegen den Betrieb (PM-133-C, 360,00 €).
+ *
+ * **Warum ein halber Fix geschadet hätte:** die drei Zweige fingen einander
+ * auf. Repariert man einen, fällt der Fall in den nächsten — deshalb ein
+ * Auftrag und nicht drei, und deshalb bleibt hier **ein** Zweig übrig.
+ *
+ * **Die Regel jetzt:** eine Zahl ist nur dann eine Menge, wenn sie **vor**
+ * dem gesuchten Wort steht und zwischen beiden nichts als bis zu zwei
+ * Füllwörter liegt — kein Satzzeichen, kein Punkt, kein Komma. Damit gilt:
+ *
+ *   „3 türen" · „3 stück türen" · „3 alte türen" · „die 3 großen alten
+ *   türen"                                        → 3   (Menge)
+ *   „fenster 3 ist kaputt" · „heizkörper 2 im flur"  → Fallback (Ordnungszahl)
+ *   „wohnzimmer 5 mal 4" · „wohnzimmer, 5 mal 4"     → Fallback (Maß, mit
+ *                                                     Komma wie ohne)
+ *   „… türen lackieren. 50 stück fliesen dazu."      → Fallback (fremdes Wort)
+ *
+ * **Und damit stimmt der Rechenweg wieder.** Die Zeile druckt „N Tür(en) aus
+ * Transkript". Solange Zweig 3 die Zahl von irgendwoher nahm, behauptete sie
+ * eine Herkunft, die es nicht gab — das stärkere der beiden Herkunftswörter
+ * (neben „angenommen", PM-023/PM-128) und genau das, was einen Menschen vom
+ * Nachschauen abhält. Eine Zahl, die aus dem Fallback kommt, erreicht diese
+ * Zeile nicht mehr als Transkriptzahl.
+ *
+ * Die Grenze steht bewusst bei **zwei** Füllwörtern und nicht bei drei: je
+ * weiter der Ausdruck greift, desto eher zieht er wieder eine Zahl aus dem
+ * Nebensatz. Zwei deckt die gemessenen Fälle und nichts darüber hinaus.
+ *
+ * **Das angeklebte Wort bleibt erlaubt, und das ist keine Kleinigkeit.** Der
+ * alte Zweig 1 konnte `(?:[a-zäöüß]+)?` **ohne** Leerzeichen — daran hängt
+ * „die 4 **innen**türen lackieren", der Normalfall aus CoS-E-058/PM-045-A.
+ * Hätte man ihn beim Umbau gegen die Füllwörter eingetauscht, wäre aus vier
+ * Innentüren eine geworden: ein Fix, der genau dort still Geld verliert, wo
+ * der alte Fehler welches erfunden hat. Deshalb **beides** — bis zu zwei
+ * getrennte Füllwörter *und* ein direkt angeklebtes Wortstück. Gemessen in
+ * PM-133-C.
+ */
 export function anzahlAus(lower: string, schluessel: string, fallback = 1): number {
   const escaped = schluessel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const vorher = new RegExp(`(\\d+)\\s*(?:stück\\s*)?(?:[a-zäöüß]+)?${escaped}`, 'i')
-  const nachher = new RegExp(`${escaped}\\s*(\\d+)`, 'i')
-  const stueckAllgemein = new RegExp(`(\\d+)\\s*stück`, 'i')
-  const m = lower.match(vorher) ?? lower.match(nachher) ?? lower.match(stueckAllgemein)
+  const vorher = new RegExp(`(\\d+)\\s*(?:stück\\s+)?(?:[a-zäöüß]+\\s+){0,2}(?:[a-zäöüß]+)?${escaped}`, 'i')
+  const m = lower.match(vorher)
   return m ? parseInt(m[1]) : fallback
 }
 

@@ -735,25 +735,46 @@ describe('PM-128 · die Raumzahl aus dem Raumnamen', () => {
     expect(tuerenBei('Wohnzimmer', 'Im Wohnzimmer die Wände streichen. Die Türen lackieren.')!.menge).toBe(1)
   })
 
-  it('PM-128-K3 Kontrolle · die Annahme steht sichtbar im Rechenweg', () => {
+  it('PM-128-K3 Kontrolle · der Rechenweg bleibt gekennzeichnet — jetzt mit der richtigen Zahl', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (Engineering, CoS-E-081)
+    //
+    // Diese Kontrolle hielt fest, dass die falsche Vier sauber als Annahme
+    // ausgewiesen war: `annahmen = ['4 Zimmer → je 1 Tür angenommen']`. Sie
+    // hat also die Fehlstellung mitgemessen und ist durch den Bau rot
+    // geworden — der Satz aus PM-097-C gilt: *eine Kontrolle, die der Fix
+    // rot macht, ist keine Kontrolle.*
+    //
+    // Gegenstand bleibt: **steht die Herkunft sichtbar am Rechenweg?** Ja.
+    // Die Zahl kommt jetzt nicht mehr aus dem Raumnamen, sondern aus dem
+    // Fallback, und sagt das auch. Die Zimmer-Annahme entfällt mit ihr —
+    // es gibt keine vier Zimmer, über die etwas anzunehmen wäre.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const z = tuerenBei('Wohnzimmer', 'Wohnzimmer vier mal fünf, Höhe zwo fünfzig. Wände streichen. Die Türen lackieren.') as any
-    expect(z.berechnungsweg).toMatch(/angenommen/)
-    expect(z.annahmen).toEqual(['4 Zimmer → je 1 Tür angenommen'])
+    expect(z.menge).toBe(1)
+    expect(z.berechnungsweg).toBe('1 Tür(en) angenommen')
+    expect(z.berechnungsweg).not.toContain('aus Transkript')
+    expect(z.annahmen ?? []).toEqual([])
   })
 
-  it('PM-128-K4 Kontrolle · der Geldweg: 540,00 € zu viel', () => {
+  it('PM-128-K4 Kontrolle · der Geldweg, der zu war: 540,00 €', () => {
+    // Der Block bleibt als Maßstab stehen — er misst, was es gekostet hat.
+
     const block = katalog('Türen abschleifen') + katalog('Türen grundieren')
       + katalog('Türen lackieren (2× Anstrich)') + katalog('Türzarge lackieren')
     expect(block).toBe(180)
     expect((4 - 1) * block).toBe(540)
   })
 
-  it.fails('PM-128-A 🔴 SOLL: ein Raum ist ein Raum, auch wenn er „Wohnzimmer" heißt', () => {
+  // `.fails` gestrichen am 17.09.2026 (Engineering, CoS-E-081) — gebaut.
+  // Nicht eigens gebaut: PM-128 ist der Sonderfall der `anzahlAus`-Familie,
+  // den der Chief of Staff in CoS-E-081 benannt hat („hängt am Komma hinter
+  // dem Raumnamen"). Mit dem Zweig `SCHLÜSSEL\s*(\d+)` fällt er mit.
+  it('PM-128-A · SOLL: ein Raum ist ein Raum, auch wenn er „Wohnzimmer" heißt', () => {
     expect(tuerenBei('Wohnzimmer', 'Wohnzimmer vier mal fünf, Höhe zwo fünfzig. Wände streichen. Die Türen lackieren.')!.menge).toBe(1)
   })
 
-  it.fails('PM-128-B 🔴 SOLL: dasselbe beim Schlafzimmer — es ist die Mechanik, nicht das Wort', () => {
+  // `.fails` gestrichen am 17.09.2026 (Engineering, CoS-E-081) — gebaut.
+  it('PM-128-B · SOLL: dasselbe beim Schlafzimmer — es ist die Mechanik, nicht das Wort', () => {
     expect(tuerenBei('Schlafzimmer', 'Schlafzimmer drei mal vier, Höhe zwo fünfzig. Wände streichen. Die Türen lackieren.')!.menge).toBe(1)
   })
 })

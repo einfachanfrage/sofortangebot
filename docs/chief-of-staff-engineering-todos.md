@@ -10536,4 +10536,120 @@ dem Zuschlag ist PD-018 §3 beim Designer.
 
 *Chief of Staff · 2026-09-17, 18:15 UTC*
 
+
+---
+
+## ✅ CoS-E-081 ist gebaut — die `anzahlAus`-Familie ist zu, PM-128 fällt mit (17.09.2026, 18:05 UTC · Head of Product Engineering)
+
+**Der teuerste offene Punkt ist zu.** Ein Ausdruck, drei Zweige, sechs
+gemessene Fälle — und ein siebter, den niemand bestellt hatte.
+
+### 1. Was jetzt gilt
+
+Der Ausdruck in `src/lib/vollstaendigkeit/helpers.ts` hatte drei Zweige und
+alle drei waren in je eigener Richtung falsch. **Es ist einer übrig**, und die
+Regel dahinter ist ein Satz: *eine Zahl ist nur dann eine Menge, wenn sie **vor**
+dem gesuchten Wort steht und zwischen beiden nichts als bis zu zwei Füllwörter
+liegt — kein Satzzeichen.*
+
+| Fall | Satz | vorher | jetzt | Geld |
+|---|---|---|---|---|
+| **PM-131** | „Wohnzimmer fünf mal vier …" (ohne Komma) | 5 Türen | **1 Tür** | 720,00 € |
+| **PM-132** | „Die Türen lackieren. Wir liefern 50 Stück Fliesen dazu." | 50 Türen · 9.277,25 € | **1 Tür · 457,25 €** | **8.820,00 €** |
+| **PM-132-D** | „… 20 Stück Dübellöcher zumachen." | 20 Türen | **1 Tür** (und 20 Dübellöcher) | 3.420,00 € |
+| **PM-133-A** | „Die Fenster streichen. Fenster 3 ist kaputt." | 3 Fenster | **1 Fenster** | 200,00 € |
+| **PM-133-B** | „Die Heizkörper lackieren. Heizkörper 2 im Flur." | 2 Heizkörper | **1 Heizkörper** | 85,00 € |
+| **PM-133-C** | „3 alte Türen lackieren." | 1 Tür | **3 Türen** | 360,00 € *für* den Betrieb |
+| **PM-128** 🆕 | „Wohnzimmer vier mal fünf …" | 4 Türen | **1 Tür** | 540,00 € |
+
+**Alle sieben Zahlen sind an der Pipeline gemessen, nicht gerechnet.**
+
+### 2. PM-128 ist mitgefallen, und das war kein Zufall
+
+Der Chief of Staff hat in CoS-E-081 geschrieben: *„PM-128 ist ein Sonderfall
+davon, nicht die Ursache — es hängt am Komma hinter dem Raumnamen."* Genau so
+ist es ausgegangen. Mit dem Zweig `SCHLÜSSEL\s*(\d+)` fällt der Raumname-plus-
+Maß-Fall mit, ohne eine Zeile eigenen Code. **Die beiden Sperrklinken PM-128-A
+und PM-128-B stehen jetzt auf `it`.** Das ist der Beleg dafür, dass die
+Familie richtig geschnitten war: ein Auftrag statt drei — und er hat vier
+Punkte erledigt statt drei.
+
+### 3. Der zweite Teil des Auftrags — „aus Transkript" — ist an der Wurzel zu
+
+Der Rechenweg druckte `50 Tür(en) aus Transkript`, während im Transkript keine
+Türzahl stand. **Ich habe dafür keine zweite Beschriftung gebaut, und das war
+Absicht.** Sobald die Zahl nur noch neben dem gesuchten Wort gelesen wird,
+kommt keine fremde Zahl mehr bis zu dieser Zeile. Übrig bleibt der Fallback,
+und der beschriftet sich seit CoS-E-065 selbst richtig. Gemessen:
+
+```
+vorher:  50 Tür(en) aus Transkript     ← die Zahl stand nirgends
+jetzt:    1 Tür(en) angenommen         ← und sagt, dass sie angenommen ist
+```
+
+Die Gegenprobe steht als eigene Zusicherung daneben: steht die Zahl **wirklich**
+am Wort („3 alte Türen"), sagt die Zeile weiter „3 Tür(en) aus Transkript" — zu
+Recht. Ein Fix, der das Herkunftswort überall abschaltet, wäre kein Fix.
+
+### 4. 🟡 Der Fund beim Bauen: der naheliegende Umbau hätte still Geld verloren
+
+Der alte Zweig 1 erlaubte ein Zwischenwort **ohne** Leerzeichen
+(`(?:[a-zäöüß]+)?`). Genau daran hängt *„die 4 **innen**türen lackieren"* — der
+Normalfall aus CoS-E-058/PM-045-A. Hätte ich das optionale Wort gegen die
+getrennten Füllwörter **eingetauscht**, statt beides zu nehmen, wären aus vier
+Innentüren eine geworden: ein Fix, der genau dort still Geld verliert, wo der
+alte Fehler welches erfunden hat — und keiner der sechs Prüfmeister-Fälle
+hätte es gezeigt.
+
+**Gefunden habe ich es nicht durch Nachdenken, sondern weil ich den Ausdruck
+vor dem Einbau gegen eine eigene Liste von 31 Sätzen gefahren habe**, in der
+zusammengesetzte Wörter standen. Die erste Fassung war an genau dieser einen
+Zeile rot. Die Lehre aus CoS-E-082 gilt weiter, eine Etage tiefer: *messen,
+bevor man es für gebaut hält* — auch die eigene, noch nicht eingebaute Fassung.
+
+### 5. Wo es steht
+
+* **`src/lib/vollstaendigkeit/helpers.ts`** — `anzahlAus()`, ein Zweig statt
+  drei, mit dem vollen Befund als Kommentar darüber. **Keine der 17
+  Aufrufstellen ist angefasst** — die Regel gehört an eine Stelle, sonst sind
+  es 17 Wahrheiten.
+* **`pruefmeister-batch-131-133.test.ts`** — 17 Zusicherungen umgestellt,
+  vier Sperrklinken gestrichen. **21 von 21 grün.**
+* **`pruefmeister-batch-121-128.test.ts`** — PM-128-K3 repariert, PM-128-A/B
+  entsperrt. **42 grün.**
+
+Umgestellt ist nach der Form von CoS-E-082: *repariert, nicht umgeschrieben*.
+Gegenstand und Zählweise bleiben, nur die Richtung dreht sich, und was es
+gekostet hätte, bleibt als Maßstab in der Zeile stehen. Der Satz aus PM-097-C
+gilt: **eine Kontrolle, die der Fix rot macht, ist keine Kontrolle.**
+
+### 6. Prüfstand — voller Stand, in 16 Gruppen gefahren
+
+| Messung | Ergebnis |
+|---|---|
+| `npx tsc --noEmit`, ganzes Projekt | **0 Fehler** |
+| `npx eslint` auf die drei berührten Dateien | **0 Fehler** (3 Warnungen, alle schon in `HEAD`, nicht von mir) |
+| **Prüfstand über alle 191 Testdateien** | **2.865 grün · 103 Sperrklinken · 6 rot** (2.974 Prüfungen) |
+
+**Die 6 roten sind nicht meine** — sie stehen alle in
+`pruefmeister-batch-47-56.test.ts` und stammen aus fremder, uncommitteter
+Arbeit, die während meines Laufs entstanden ist. **Nachgewiesen, nicht
+behauptet:** ich habe meine `helpers.ts` kurz gegen die Fassung aus `HEAD`
+getauscht und dieselbe Datei erneut gefahren — **dieselben 6 rot**. Danach
+byte-gleich zurückgestellt (`cmp`). Näheres unten in meiner Meldung an den
+Chief of Staff.
+
+Gruppenlauf ist auf diesem Rechner weiter die einzige Form, in der ein voller
+Stand entsteht — diesmal **16 Gruppen à 9–13 Dateien**. Zwei Gruppen in einem
+Aufruf reißen die 180-Sekunden-Grenze der Konsole; eine geht zuverlässig.
+
+### 7. Für Sandy
+
+**Code geändert — der Testlauf steht aus.** Ich habe ihn hier gefahren, aber
+starten kannst nur du ihn bei dir. **Keine neue Datei angelegt, also kein
+`git add` nötig.**
+
+*Head of Product Engineering · 2026-09-17, 18:05 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

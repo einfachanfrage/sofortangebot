@@ -163,24 +163,53 @@ describe('PM-131 · die Raumzahl hängt am Komma', () => {
     expect(z.annahmen ?? []).toEqual([])
   })
 
-  it('PM-131-A 🔴 ohne Komma sind es fünf Türen, sauber als Annahme ausgewiesen', () => {
+  it('PM-131-A · ohne Komma ist es jetzt auch EIN Raum — das Satzzeichen entscheidet nichts mehr', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (Engineering, CoS-E-081)
+    //
+    // Hier stand, dass derselbe Satz **ohne** das Komma 5 Türen ergibt, mit
+    // der Annahme „5 Zimmer → je 1 Tür angenommen". Der Grund war `nachher`
+    // (`zimmer\s*(\d+)`), und `\s*` nimmt kein Komma mit. Der Zweig ist weg:
+    // eine Zahl **hinter** dem Wort ist eine Ordnungs- oder Maßzahl, keine
+    // Menge. Damit ist „Wohnzimmer 5 mal 4" ein Maß, wie es gesprochen war.
+    //
+    // Gegenstand und Zählweise bleiben; nur die Richtung dreht sich. Die
+    // Gegenprobe steht unverändert in PM-131-K2 und ist grün geblieben.
     const z = tueren(OHNE)
-    expect(z.menge).toBe(5)
-    expect(z.annahmen).toEqual(['5 Zimmer → je 1 Tür angenommen'])
+    expect(z.menge).toBe(1)
+    expect(z.annahmen ?? []).toEqual([])
   })
 
-  it('PM-131-B 🔴 der Geldweg: 720,00 € an einem Satzzeichen', () => {
+  it('PM-131-B · der Geldweg ist zu: die beiden Sätze kosten jetzt dasselbe', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (Engineering, CoS-E-081)
+    //
+    // Hier stand die Differenz 720,00 € zwischen denselben zwei Sätzen.
+    // Der Türblock (180,00 €) wird weiter nachgerechnet — er ist der
+    // Maßstab, an dem die Differenz gemessen wird, und muss stehen bleiben,
+    // sonst misst die Zusicherung 0 gegen 0.
     expect(TUERBLOCK()).toBe(180)
-    expect((5 - 1) * TUERBLOCK()).toBe(720)
-    expect(summeNetto(laufMaler(OHNE, WZ())) - summeNetto(laufMaler(MIT, WZ()))).toBe(720)
+    expect((5 - 1) * TUERBLOCK()).toBe(720)   // was es gekostet hätte
+    expect(summeNetto(laufMaler(OHNE, WZ())) - summeNetto(laufMaler(MIT, WZ()))).toBe(0)
+    // Und nicht nur gleich, sondern gleich **richtig** — nicht beide auf dem
+    // teuren Wert. Gemessen: 663,00 € je Satz.
+    expect(summeNetto(laufMaler(MIT, WZ()))).toBe(663)
+    expect(summeNetto(laufMaler(OHNE, WZ()))).toBe(663)
   })
 
-  it('PM-131-C · am Ausdruck: das Komma allein entscheidet', () => {
-    expect(anzahlAus('wohnzimmer 4 mal 5', 'zimmer', 0)).toBe(4)
+  it('PM-131-C · am Ausdruck: mit Komma wie ohne — beides ist ein Maß, keine Menge', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (Engineering, CoS-E-081)
+    //
+    // Hier stand `…'wohnzimmer 4 mal 5'…).toBe(4)` gegen `…', 4 mal 5'…).toBe(0)`
+    // — der gemessene Beleg, dass allein das Satzzeichen entschied. Beide
+    // Sätze liefern jetzt denselben Wert, und zwar den richtigen.
+    expect(anzahlAus('wohnzimmer 4 mal 5', 'zimmer', 0)).toBe(0)
     expect(anzahlAus('wohnzimmer, 4 mal 5', 'zimmer', 0)).toBe(0)
+    // Die Gegenprobe, damit „0" nicht heißt, dass der Ausdruck nichts mehr
+    // findet: eine echte Raumzahl **vor** dem Wort zählt weiter.
+    expect(anzahlAus('2 zimmer streichen', 'zimmer', 0)).toBe(2)
   })
 
-  it.fails('PM-131-D 🔴 SOLL: ein Raum ist ein Raum, mit Komma wie ohne', () => {
+  // `.fails` gestrichen am 17.09.2026 (Engineering, CoS-E-081) — gebaut.
+  it('PM-131-D · SOLL: ein Raum ist ein Raum, mit Komma wie ohne', () => {
     expect(tueren(OHNE).menge).toBe(1)
   })
 })
@@ -218,6 +247,8 @@ describe('PM-132 · die fremde Stückzahl', () => {
   const T_REIN = KOPF + 'Die Türen lackieren.'
   const T_FLIESEN = KOPF + 'Die Türen lackieren. Wir liefern 50 Stück Fliesen dazu.'
   const T_DUEBEL = KOPF + 'Die Türen lackieren. 20 Stück Dübellöcher zumachen.'
+  // Gegenprobe zu PM-132-C: eine Zahl, die wirklich an der Tür steht.
+  const T_DREI_C = KOPF + '3 alte Türen lackieren.'
 
   it('PM-132-K1 Kontrolle · ohne den Materialsatz: eine Tür, 457,25 €', () => {
     const p = laufMaler(T_REIN, FLUR())
@@ -225,39 +256,87 @@ describe('PM-132 · die fremde Stückzahl', () => {
     expect(summeNetto(p)).toBe(457.25)
   })
 
-  it('PM-132-A 🔴 „50 Stück Fliesen" macht fünfzig Türen', () => {
+  it('PM-132-A · „50 Stück Fliesen" lässt die Türzahl jetzt in Ruhe — alle drei Zeilen', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (Engineering, CoS-E-081)
+    //
+    // Hier stand 50 auf allen drei Türzeilen. Zweig 3 (`(\d+)\s*stück`)
+    // kannte das gesuchte Wort gar nicht und griff im Normalfall. Er ist
+    // weg. Alle drei Zeilen werden weiter einzeln gemessen — der Fehler
+    // schlug auf jede durch, also muss jede die Reparatur belegen.
     const p = laufMaler(T_FLIESEN, FLUR())
-    expect(finde(p, /^Türen abschleifen/)!.menge).toBe(50)
-    expect(finde(p, /^Türen lackieren/)!.menge).toBe(50)
-    expect(finde(p, /^Türzarge lackieren/)!.menge).toBe(50)
+    expect(finde(p, /^Türen abschleifen/)!.menge).toBe(1)
+    expect(finde(p, /^Türen lackieren/)!.menge).toBe(1)
+    expect(finde(p, /^Türzarge lackieren/)!.menge).toBe(1)
   })
 
-  it('PM-132-B 🔴 der Geldweg: 8.820,00 € aus einem Nebensatz über Material', () => {
-    expect(summeNetto(laufMaler(T_FLIESEN, FLUR()))).toBe(9277.25)
+  it('PM-132-B · der Geldweg ist zu: der Materialsatz kostet nichts mehr', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (Engineering, CoS-E-081)
+    //
+    // Hier stand 9.277,25 € gegen 457,25 € — 8.820,00 € aus einem Nebensatz
+    // über Material, der teuerste gemessene Einzelfall dieses Projekts.
+    // Der Satz mit und der Satz ohne den Nebensatz kosten jetzt dasselbe,
+    // und zwar den Wert aus der Kontrolle PM-132-K1.
+    expect(summeNetto(laufMaler(T_FLIESEN, FLUR()))).toBe(457.25)
+    expect(summeNetto(laufMaler(T_REIN, FLUR()))).toBe(457.25)
+    // Was es gekostet hätte — die Rechnung bleibt als Maßstab stehen.
     expect(Number((9277.25 - 457.25).toFixed(2))).toBe(8820)
     expect((50 - 1) * TUERBLOCK()).toBe(8820)
   })
 
-  it('PM-132-C 🔴 die Zeile behauptet „aus Transkript" — dort steht keine Türzahl', () => {
+  it('PM-132-C · der Rechenweg sagt nicht mehr „aus Transkript", wo keine Türzahl steht', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (Engineering, CoS-E-081)
+    //
+    // Das war der zweite Teil des Auftrags und nicht der kleinere: die
+    // Zeile druckte „50 Tür(en) **aus Transkript**", während im Transkript
+    // keine Türzahl stand. „aus Transkript" ist das stärkere der beiden
+    // Herkunftswörter (neben „angenommen", PM-023/PM-128) und hält einen
+    // Menschen genau davon ab, nachzuschauen.
+    //
+    // Er ist **an der Wurzel** zu, nicht durch eine zweite Beschriftung:
+    // seit die Zahl nur noch neben dem gesuchten Wort gelesen wird, kommt
+    // keine fremde Zahl mehr bis zu dieser Zeile. Übrig bleibt der Fallback,
+    // und der beschriftet sich seit CoS-E-065 selbst richtig.
     const z = finde(laufMaler(T_FLIESEN, FLUR()), /^Türen abschleifen/)!
-    expect(z.berechnungsweg).toBe('50 Tür(en) aus Transkript')
+    expect(z.berechnungsweg).toBe('1 Tür(en) angenommen')
+    expect(z.berechnungsweg).not.toContain('aus Transkript')
     expect(z.annahmen ?? []).toEqual([])
+    // Der Beleg des Prüfmeisters bleibt stehen: im Text steht keine Türzahl.
     expect(T_FLIESEN).not.toMatch(/50\s*(stück\s*)?tür/i)
+    // Gegenprobe, damit „aus Transkript" nicht einfach verschwunden ist:
+    // steht die Zahl wirklich am Wort, sagt die Zeile es weiter — zu Recht.
+    const zd = finde(laufMaler(T_DREI_C, FLUR()), /^Türen abschleifen/)!
+    expect(zd.berechnungsweg).toBe('3 Tür(en) aus Transkript')
   })
 
-  it('PM-132-D 🔴 es ist nicht das Wort „Fliesen": Dübellöcher tun dasselbe', () => {
-    expect(finde(laufMaler(T_DUEBEL, FLUR()), /^Türen abschleifen/)!.menge).toBe(20)
+  it('PM-132-D · auch „20 Stück Dübellöcher" lässt die Türen in Ruhe — und zählt selbst richtig', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (Engineering, CoS-E-081)
+    //
+    // Hier stand 20 Türen. Der Fall war der Beleg, dass es nicht am Wort
+    // „Fliesen" lag, sondern am Zweig. Dazu die Gegenprobe, die vorher
+    // niemand brauchte: die 20 gehört den **Dübellöchern** und muss dort
+    // ankommen — ein Fix, der jede Stückzahl folgenlos macht, wäre kein Fix.
+    expect(finde(laufMaler(T_DUEBEL, FLUR()), /^Türen abschleifen/)!.menge).toBe(1)
+    expect(anzahlAus(ersetzeZahlenWorte(T_DUEBEL).toLowerCase(), 'dübellöch', 1)).toBe(20)
   })
 
-  it('PM-132-E · am Ausdruck: der Zweig kennt das gesuchte Wort nicht', () => {
-    expect(anzahlAus('wir liefern 50 stück fliesen, tür lackieren', 'tür', 0)).toBe(50)
-    expect(anzahlAus('wir liefern 50 stück fliesen, fenster streichen', 'fenster', 0)).toBe(50)
-    expect(anzahlAus('20 stück dübellöcher, heizkörper lackieren', 'heizkörper', 0)).toBe(20)
-    // Ohne „Stück" ist dieselbe Zahl folgenlos — es ist genau dieser Zweig.
+  it('PM-132-E · am Ausdruck: eine Stückzahl am fremden Wort bleibt jetzt dort', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (Engineering, CoS-E-081)
+    //
+    // Hier stand dreimal die fremde Zahl (50/50/20). Alle drei liefern
+    // jetzt den Fallback: zwischen Zahl und gesuchtem Wort steht ein Komma,
+    // und über ein Satzzeichen greift der Ausdruck nicht mehr hinweg.
+    expect(anzahlAus('wir liefern 50 stück fliesen, tür lackieren', 'tür', 0)).toBe(0)
+    expect(anzahlAus('wir liefern 50 stück fliesen, fenster streichen', 'fenster', 0)).toBe(0)
+    expect(anzahlAus('20 stück dübellöcher, heizkörper lackieren', 'heizkörper', 0)).toBe(0)
+    // Der Beleg des Prüfmeisters bleibt: ohne „Stück" war dieselbe Zahl
+    // schon vorher folgenlos. Jetzt ist sie es mit „Stück" ebenso.
     expect(anzahlAus('wir liefern 50 fliesen, tür lackieren', 'tür', 0)).toBe(0)
+    // Und die Gegenrichtung: „Stück" direkt am Wort zählt weiter.
+    expect(anzahlAus('3 stück türen lackieren', 'tür', 0)).toBe(3)
   })
 
-  it.fails('PM-132-F 🔴 SOLL: eine Stückzahl gehört dem Wort, neben dem sie steht', () => {
+  // `.fails` gestrichen am 17.09.2026 (Engineering, CoS-E-081) — gebaut.
+  it('PM-132-F · SOLL: eine Stückzahl gehört dem Wort, neben dem sie steht', () => {
     expect(finde(laufMaler(T_FLIESEN, FLUR()), /^Türen abschleifen/)!.menge).toBe(1)
   })
 })
@@ -300,48 +379,84 @@ describe('PM-133 · die Ordnungszahl und der verpasste Normalfall', () => {
     expect(finde(laufMaler(T_HEIZ_K, FLUR()), /^Heizkörper abschleifen/)!.menge).toBe(1)
   })
 
-  it('PM-133-A 🔴 „Fenster 3 ist kaputt" macht drei Fenster, 200,00 € zu viel', () => {
+  it('PM-133-A · „Fenster 3 ist kaputt" ist wieder eine Nummer, kein Dreierpack', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (Engineering, CoS-E-081)
+    //
+    // Hier standen 3 Fenster auf beiden Zeilen, 200,00 € zu viel. Handwerker
+    // nummerieren Bauteile beim Aufmaß durch — das ist normale Sprache auf
+    // der Baustelle und darf keine Menge erzeugen. Der Fensterblock
+    // (100,00 €) bleibt als Maßstab stehen.
     const p = laufMaler(T_FENSTER, FLUR())
-    expect(finde(p, /^Fenster abschleifen/)!.menge).toBe(3)
-    expect(finde(p, /^Fenster lackieren/)!.menge).toBe(3)
+    expect(finde(p, /^Fenster abschleifen/)!.menge).toBe(1)
+    expect(finde(p, /^Fenster lackieren/)!.menge).toBe(1)
     expect(FENSTERBLOCK()).toBe(100)
-    expect((3 - 1) * FENSTERBLOCK()).toBe(200)
+    expect((3 - 1) * FENSTERBLOCK()).toBe(200)   // was es gekostet hätte
   })
 
-  it('PM-133-B 🔴 „Heizkörper 2 im Flur" macht zwei Heizkörper, 85,00 € zu viel', () => {
-    expect(finde(laufMaler(T_HEIZ, FLUR()), /^Heizkörper abschleifen/)!.menge).toBe(2)
+  it('PM-133-B · „Heizkörper 2 im Flur" ist wieder eine Nummer', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (Engineering, CoS-E-081)
+    //
+    // Hier standen 2 Heizkörper, 85,00 € zu viel. Dieselbe Ursache wie
+    // PM-133-A, an einem anderen Bauteil gemessen — beide bleiben stehen,
+    // damit der Zweig nicht an einem Einzelwort hängt.
+    expect(finde(laufMaler(T_HEIZ, FLUR()), /^Heizkörper abschleifen/)!.menge).toBe(1)
     expect(HEIZBLOCK()).toBe(85)
   })
 
-  it('PM-133-C 🔴 die Gegenrichtung: „3 alte Türen lackieren" ergibt EINE Tür', () => {
+  it('PM-133-C · die Gegenrichtung ist zu: „3 alte Türen lackieren" sind drei Türen', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (Engineering, CoS-E-081)
+    //
+    // Hier stand EINE Tür — 360,00 € **gegen den Betrieb**, dieselbe
+    // Richtung wie PM-127. Grund: das optionale Wort zwischen Zahl und
+    // Schlüssel durfte kein Leerzeichen haben. Jetzt sind bis zu zwei
+    // Füllwörter erlaubt, solange kein Satzzeichen dazwischensteht.
     const p = laufMaler(T_DREI, FLUR())
-    expect(finde(p, /^Türen abschleifen/)!.menge).toBe(1)
-    expect(2 * TUERBLOCK()).toBe(360) // gegen den Betrieb, wie PM-127
+    expect(finde(p, /^Türen abschleifen/)!.menge).toBe(3)
+    expect(2 * TUERBLOCK()).toBe(360) // was dem Betrieb gefehlt hat, wie PM-127
+    // Zusammengesetzte Wörter dürfen dabei nicht verloren gehen — der alte
+    // Zweig konnte sie (ohne Leerzeichen), und CoS-E-058 hängt daran.
+    expect(anzahlAus('die 4 innentüren lackieren', 'tür', 0)).toBe(4)
+    expect(anzahlAus('die 3 alten innentüren lackieren', 'tür', 0)).toBe(3)
   })
 
-  it('PM-133-D · am Ausdruck: das Leerzeichen im Zwischenwort ist der Grund', () => {
-    expect(anzahlAus('3 alte türen lackieren', 'tür', 0)).toBe(0)
-    expect(anzahlAus('die 3 großen alten türen lackieren', 'tür', 0)).toBe(0)
+  it('PM-133-D · am Ausdruck: das Zwischenwort darf jetzt ein Leerzeichen haben', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (Engineering, CoS-E-081)
+    //
+    // Hier standen die beiden Nullen, die den Grund belegten. Die Grenze
+    // liegt bewusst bei **zwei** Füllwörtern: je weiter der Ausdruck greift,
+    // desto eher zieht er wieder eine Zahl aus dem Nebensatz.
+    expect(anzahlAus('3 alte türen lackieren', 'tür', 0)).toBe(3)
+    expect(anzahlAus('die 3 großen alten türen lackieren', 'tür', 0)).toBe(3)
     // Ohne Zwischenwort greift derselbe Zweig richtig — es ist das Leerzeichen.
     expect(anzahlAus('3 türen lackieren', 'tür', 0)).toBe(3)
     expect(anzahlAus('3 stück türen lackieren', 'tür', 0)).toBe(3)
   })
 
-  it('PM-133-E · am Ausdruck: bei zwei Nummern gewinnt die erste', () => {
+  it('PM-133-E · am Ausdruck: die Ordnungszahl hinter dem Wort zählt nicht mehr', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (Engineering, CoS-E-081)
+    //
+    // Hier standen 3 und 2 für „fenster 3" und „heizkörper 2" — der Zweig
+    // `SCHLÜSSEL\s*(\d+)` ist gestrichen, eine Zahl **hinter** dem Wort ist
+    // eine Nummer. Die erste Zeile behält ihren Wert: „die tür 1 und die
+    // tür 2" liefert weiter 1, jetzt aber über den Mengenzweig („1 und die
+    // tür") statt über die Ordnungszahl. **Richtig wären 2** — das ist ein
+    // eigener, unbeauftragter Fall und bleibt hier nur festgehalten.
     expect(anzahlAus('die tür 1 und die tür 2 lackieren', 'tür', 0)).toBe(1)
-    expect(anzahlAus('fenster 3 ist kaputt', 'fenster', 0)).toBe(3)
-    expect(anzahlAus('heizkörper 2 im flur', 'heizkörper', 0)).toBe(2)
+    expect(anzahlAus('fenster 3 ist kaputt', 'fenster', 0)).toBe(0)
+    expect(anzahlAus('heizkörper 2 im flur', 'heizkörper', 0)).toBe(0)
     // Kontrolle, damit der Fund nicht „jede Zahl" heißt: eine Zahl, die
     // nicht direkt am Wort klebt, bleibt folgenlos.
     expect(anzahlAus('im 3. og, fenster streichen', 'fenster', 0)).toBe(0)
     expect(anzahlAus('baujahr 1974, tür lackieren', 'tür', 0)).toBe(0)
   })
 
-  it.fails('PM-133-F 🔴 SOLL: eine Nummer ist keine Stückzahl', () => {
+  // `.fails` gestrichen am 17.09.2026 (Engineering, CoS-E-081) — gebaut.
+  it('PM-133-F · SOLL: eine Nummer ist keine Stückzahl', () => {
     expect(finde(laufMaler(T_FENSTER, FLUR()), /^Fenster abschleifen/)!.menge).toBe(1)
   })
 
-  it.fails('PM-133-G 🔴 SOLL: „3 alte Türen" sind drei Türen', () => {
+  // `.fails` gestrichen am 17.09.2026 (Engineering, CoS-E-081) — gebaut.
+  it('PM-133-G · SOLL: „3 alte Türen" sind drei Türen', () => {
     expect(finde(laufMaler(T_DREI, FLUR()), /^Türen abschleifen/)!.menge).toBe(3)
   })
 })
