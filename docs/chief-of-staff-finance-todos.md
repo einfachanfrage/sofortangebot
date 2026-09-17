@@ -1783,5 +1783,85 @@ Einzelunternehmens-Phase, und die UG-Phase war schon so gerechnet.
 
 ---
 
+## ✅ Punkt 4.7, zweiter Durchgang — die dritte Luecke ist zu, und sie kostet nichts (17.09.2026, 06:20 UTC · Head of Finance)
+
+**Neuer Vorschlag fuer die Bewertung: 65 von 100** (vorher 40). Was sich
+geaendert hat, ist keine Meinung, sondern ein Fund und eine gebaute Sache.
+
+### 1. Der Fund: fuer Kleinunternehmer gibt es eine ausdrueckliche Erleichterung
+
+Ich hatte gestern geschrieben, die revisionssichere 8-Jahres-Ablage komme „mit
+der Buchhaltungsloesung mit" — und den Punkt damit an Sandys offene
+Steuerberater-Entscheidung gehaengt. **Das war zu vorsichtig.** In den FAQ des
+Bundesfinanzministeriums zur E-Rechnung steht die
+**Nichtbeanstandungsregelung**: Speicherung und Archivierung von E-Rechnungen
+**ausserhalb eines GoBD-konformen Datenverarbeitungssystems** stellen **bei
+Kleinunternehmern regelmaessig keinen Verstoss** gegen die
+Aufbewahrungspflicht dar (bestaetigt auch von Ebner Stolz zu § 14b UStG /
+§ 34a UStDV und dem BMF-Schreiben vom 15.10.2024).
+
+**Im Klartext: Sandy braucht kein gekauftes Archivsystem.** Erhalten bleiben
+muessen nur drei Dinge — der strukturierte Teil im Originalzustand, die
+Unveraenderbarkeit, die maschinelle Auswertbarkeit. Das laesst sich mit einem
+Ordner und einer Pruefsummen-Liste erfuellen.
+
+**Was die Erleichterung NICHT abdeckt:** die **Verfahrensdokumentation**. Die
+gilt fuer jeden, der Belege elektronisch empfaengt, unabhaengig von
+Betriebsgroesse und Umsatz (§ 146 Abs. 1 AO i. V. m. GoBD Rz. 151 f.). § 19
+UStG befreit davon nicht. Die fehlte hier vollstaendig — und sie war der
+einzige Teil von 4.7, der **weder an Sandy noch an Platform haengt.**
+
+### 2. Gebaut, nicht vorgeschlagen
+
+| Was | Wo |
+|---|---|
+| **Verfahrensdokumentation nach GoBD**, vier Teile, auf Sandys tatsaechlichen Betrieb geschrieben | `docs/finance-001-verfahrensdokumentation-rechnungseingang.md` |
+| **Ablage** mit Jahresordner und Storno-Ordner, ausserhalb der Versionsverwaltung (`.gitignore` ergaenzt) | `belege/eingangsrechnungen/` |
+| **Eingangsbuch** (Spalten stehen, leer) | `belege/eingangsrechnungen/eingangsbuch.csv` |
+| **Pruefsummen-Liste** als Unveraenderbarkeitsnachweis, versioniert, ohne Betraege | `docs/finance-001-hashliste.md` |
+| **Pruefliste vor der Zahlung**, 11 Punkte nach § 14/§ 14a UStG | Teil 2 der Verfahrensdokumentation |
+
+Zwei Dinge daraus, die mir beim Schreiben aufgefallen sind und die kein
+Formalkram sind:
+
+* **Reverse Charge betrifft Sandy heute schon.** Bei OpenAI, Vercel, Supabase
+  und Resend geht die Steuerschuld auf sie ueber — **die § 19-Regelung befreit
+  davon nicht.** Ob daraus eine Anmeldepflicht folgt, gehoert auf den
+  Steuerberater-Termin. Ich habe es in die Pruefliste geschrieben, damit die
+  Rechnungen wenigstens mit dem richtigen Blick angesehen werden. **Kein
+  neuer Kostenposten**, aber auch nichts, was man uebersieht und dann erklaert.
+* **Die Ablage hat keine zweite Kopie.** Acht Jahre auf einer Festplatte sind
+  eine Wette. Was an Sicherung vorhanden ist, weiss nur Sandy — als **F-007**
+  in `entscheidungen-fuer-sandy.md` eingetragen, eine Frage, ein Satz Antwort.
+
+### 3. Warum 65 und nicht mehr
+
+| Anforderung | Stand |
+|---|---|
+| Zustellfaehiges Postfach | ✅ |
+| Verfahrensdokumentation | ✅ **neu** |
+| Unveraenderbare Ablage im Originalformat, 8 Jahre | ✅ **neu** (Nichtbeanstandung + Pruefsummen) |
+| Eigene Rechnungseingangsadresse | ⏳ Platform, angefragt 16.09. |
+| Strukturierte Datei lesbar machen (Viewer) | ⏳ Sandy, F-004 |
+| Live-Zustelltest mit echtem `.xml`-Anhang | ⏳ Platform, Testdateien liegen bereit |
+| Zweite Kopie der Ablage | ⏳ Sandy, F-007 |
+
+**Auf 100 kommt der Punkt erst, wenn eine echte Rechnung den ganzen Weg
+gegangen ist** — angekommen, gelesen, geprueft, abgelegt. Alles, was davon in
+meiner Reichweite lag, ist jetzt gemacht; die drei Reste haengen an einem
+Postfach, einem Programm und einer Festplatte, nicht an Arbeit von mir.
+
+**Auswirkung auf den Plan: keine.** Kein neuer Posten in
+`kostenuebersicht-finance.xlsx`, 0 €, Break-even unveraendert. Das ist die
+zweite Empfehlung in Folge, die nichts kostet, und das ist so gewollt.
+
+**Quellen:** [BMF, FAQ zur Einfuehrung der obligatorischen E-Rechnung](https://www.bundesfinanzministerium.de/Content/DE/FAQ/e-rechnung.html) ·
+[Ebner Stolz, „E-Rechnungen: Aufbewahrungserleichterungen fuer Kleinunternehmer"](https://www.ebnerstolz.de/de/unser-angebot/leistungen/steuerberatung/umsatzsteuer/e-rechnungen-aufbewahrungserleichterungen-fuer-kleinunternehmer-86668.html) ·
+[Verfahrensdokumentation nach GoBD — Pflichtinhalte und Geltung fuer Selbststaendige](https://kostenlose-erechnung.de/ratgeber/verfahrensdokumentation-gobd-vorlage-muster/)
+
+*Head of Finance · 17.09.2026*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

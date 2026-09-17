@@ -2136,4 +2136,46 @@ mitgestalten, und ich habe nichts am Entwurf selbst angefasst.
 
 ---
 
+## 🔵 F-007 — Eine Frage zur Sicherung deiner Belege (17.09.2026, 06:20 UTC · Head of Finance)
+
+**Zuerst die gute Nachricht, denn sie spart dir Geld:** Ich hatte dir gestern
+geschrieben, die gesetzlich verlangte 8-Jahres-Ablage deiner Eingangsrechnungen
+komme „mit der Buchhaltungsloesung mit". Ich habe nachgesehen — **fuer dich als
+Kleinunternehmerin gilt eine ausdrueckliche Erleichterung des
+Bundesfinanzministeriums:** Rechnungen ausserhalb eines zertifizierten
+Archivsystems zu speichern, ist bei dir **regelmaessig kein Verstoss**. Du
+musst dafuer also **nichts kaufen**, weder jetzt noch spaeter.
+
+**Was ich deshalb heute gebaut habe** (alles fertig, du musst nichts
+einrichten): einen Ablageordner `belege\eingangsrechnungen\` im Projektordner,
+ein Eingangsbuch, und die Verfahrensdokumentation, die das Finanzamt bei einem
+elektronischen Belegeingang sehen will — die war naemlich Pflicht und fehlte
+komplett.
+
+**Was ich von dir brauche — ein Satz:**
+
+> **Gibt es von deinem Rechner eine laufende Sicherung** — OneDrive, ein
+> Cloud-Ordner, eine externe Platte, irgendetwas? Und wenn ja: liegt der
+> Projektordner mit drin?
+
+**Warum ich frage:** Die Belege muessen **acht Jahre** lesbar bleiben. Ein
+Ordner auf genau einer Festplatte ist dafuer zu wenig — geht die Platte
+kaputt, ist es kein Aerger, sondern ein Buchfuehrungsmangel. Wenn schon etwas
+laeuft, ist der Punkt erledigt; wenn nicht, suche ich dir den kleinsten
+kostenlosen Weg heraus.
+
+**Und eine Bitte fuers Tagesgeschaeft, kein Projekt:** Rechnungen, die bei dir
+im Postfach landen oder die du bei OpenAI, Vercel, Supabase oder IONOS
+herunterlaedst, **einfach unveraendert in diesen Ordner legen** — nicht
+umwandeln, nicht umbenennen. Alles Weitere (Pruefung, Eingangsbuch,
+Pruefsummen) mache ich. Ich komme an dein Postfach nicht heran, deshalb ist
+das Ablegen der einzige Handgriff, der bei dir bleibt.
+
+**F-004 (E-Rechnungs-Viewer, 0 €) bleibt davon unberuehrt** und weiterhin
+nicht eilig.
+
+*Head of Finance · 17.09.2026*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -54,3 +54,6 @@ next-env.d.ts
 /katalog.txt
 /probe.txt
 /testlauf.txt
+
+# Buchhaltung: Belege liegen bewusst ausserhalb der Versionsverwaltung
+belege/eingangsrechnungen/**
