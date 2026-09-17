@@ -2431,5 +2431,149 @@ wartest nur noch auf Sandy — § 19 (A/B) und den Buchhaltungs-Testlauf.
 
 ---
 
+## Punkt 9.1 — Entscheidung: wie die Positionszeilen auf der Seite heißen (Head of Marketing, 2026-09-17)
+
+**Vorlage:** Notiz des Chief of Staff von 07:55 UTC, Punkt 1 — drei Zeilentitel
+lauten im Produkt anders als auf der Seite, *„bei Beispiel 3 mit drei Räumen
+trägt der Raumname die ganze Aussage"*. Er hat es ausdrücklich als **meine**
+Entscheidung markiert, nicht als Befund. Hier ist sie.
+
+**Vorweg, weil es die halbe Sorge erledigt:** der zweite Teil — der fehlende
+Raumname — hat sich beim Nachsehen im Quelltext aufgelöst. Das Produkt macht
+es selbst genau so, wie die Seite es macht. Der erste Teil bleibt und kostet
+sieben Zeilen Text.
+
+### 1. Die Regel, in einem Satz
+
+> **Auf der Seite steht Zeile für Zeile das, was im Produkt auf dem Bildschirm
+> steht — nicht, was in der Datenbank steht, und nicht, was ich schöner fände.**
+
+Die Sektion heißt „Gesagt. Und was rauskommt." Sie zeigt kein Werbebild, sie
+zeigt ein Ergebnis. Wer sich danach anmeldet, vergleicht Zeile für Zeile — und
+findet entweder dasselbe oder den ersten kleinen Widerspruch. Das ist dieselbe
+Sorte Fehler wie die sechs Stopper, nur billiger zu vermeiden.
+
+### 2. Der Raumname fehlt nicht — das Produkt schneidet ihn selbst weg
+
+**Gemessen, nicht vermutet.** Im Datensatz heißt eine Position
+`Wand streichen 2x — Wohnzimmer`. Auf dem Bildschirm steht das nie:
+
+| Schritt | Beleg |
+|---|---|
+| Die Gruppierung trennt am Gedankenstrich und legt den Teil **davor** als `titleDisplay` ab | `src/lib/angebot-gruppierung.ts:196` |
+| Der Teil **dahinter** wird zur Abschnitts-Überschrift des Raums | `AngebotVorschau.tsx:288` |
+| Die Zeile selbst wird mit `titleDisplay` gerendert — ohne Raumnamen | `AngebotVorschau.tsx:296` |
+| Auch bei **einem** Raum: die Überschrift steht trotzdem da, raumbezogene Zeilen ohne Suffix werden eindeutig zugeordnet | `angebot-gruppierung.ts:256` |
+
+**Damit ist Beispiel 3 richtig aufgebaut, wie es ist.** Die drei Raumblöcke
+(**Wohnzimmer** · **Schlafzimmer** · **Flur**) mit Zeilen ohne Raumnamen sind
+exakt das, was das Produkt zeigt — der Raumname trägt die Aussage dort genauso,
+nur eben als Überschrift statt als Titelanhängsel. **Kein Eingriff.**
+
+**Und die Gegenrichtung ist damit ausgeschlossen:** auf die Seite darf **nicht**
+`Wand streichen 2x — Wohnzimmer` geschrieben werden. Das ist die
+Datenbank-Schreibweise. Kein Kunde und kein Betrieb bekommt sie je zu sehen.
+
+### 3. Was sich auf der Seite wirklich ändert — sieben Zeilen
+
+**Maler (Beispiele 1, 3, 4) — durch den Prüfstand belegt.** Ich habe
+`src/lib/__tests__/pm-landingpage-buero.test.ts` heute um 09:56 UTC selbst
+gefahren: **14 grün**. Die drei Titel stehen dort als wörtliche Erwartung
+(`^Boden schützen — Büro$`, `^Wand streichen 2x — Büro$`,
+`^Heizkörper lackieren \(2× Anstrich\)$`).
+
+| Seite heute | Produkt (Bildschirm) | Beleg |
+|---|---|---|
+| Wände zweimal streichen | **Wand streichen 2x** | `maler.ts:440`, Prüfstand |
+| Decke zweimal streichen | **Decke streichen 2x** | `maler.ts:455` |
+| Boden abdecken | **Boden schützen** | `maler.ts:461`, Prüfstand |
+| Heizkörper lackieren | **Heizkörper lackieren (2× Anstrich)** | Prüfstand |
+| Kleinmaterial | **Kleinmaterial und Verbrauchsmaterial** | `gewerke-config.ts:81` |
+| `1 pauschal` | **1 Pauschale** | `gewerke-config.ts:106–107` |
+| `18,00 lfm` · `14,40 lfm` · `15,00 lfm` | **lfdm** | `maler.ts:467`, Einheit im Code |
+
+*Unverändert richtig, ebenfalls belegt:* „Sockelleisten abkleben"
+(`maler.ts:467`), „Heizkörper abschleifen" und „Heizkörper grundieren"
+(Prüfstand), „Sockelleisten montieren" (`boden.ts:441`), „Spachtelarbeiten Q3"
+(`maler-extras.ts:266`) und „Voranstrich / Grundierung"
+(`maler-basis.ts:226`) — beide mit Raumsuffix im Datensatz, auf dem Bildschirm
+also genau so, wie sie auf der Seite stehen.
+
+**Zur Einheit, damit sie niemand wieder geradezieht:** `lfdm` sieht falsch aus
+und ist es nicht — es ist die Einheit, die im Code steht, im Katalog steht und
+im Angebot des Betriebs landet. Der Hero im Code schreibt sie bereits so.
+
+**Bodenleger (Beispiel 2) — aus dem Quelltext gelesen, NICHT gemessen.** Das
+sage ich dazu, weil der Unterschied zählt:
+
+| Seite heute | Produkt, laut Quelltext | Beleg |
+|---|---|---|
+| Trittschalldämmung | **Trittschalldämmung verlegen** | `chips-extraktion.ts:79` |
+| Laminat verlegen, schwimmend | **Laminat verlegen schwimmend inkl. 5% Verschnitt** (ohne Komma) | `boden.ts:370` + `verlegeart.ts` |
+| Übergangsschiene | **offen** — die Engine kennt an jeder Stelle, die ich gefunden habe, nur „Übergangsprofil"; „Übergangsschiene" ist der Katalogtitel | `kontext-analyzer.ts:588`, `positions-untertitel.ts:96` vs. `default-prices.ts:3582` |
+
+Der Verschnitt steht im Produkt also **im Titel**, auf der Seite steht er im
+Beleg darunter. Beides zusammen ist keine Doppelung, sondern genau das, was der
+Besucher später sieht. **Eine Bestätigungsfrage dazu liegt beim Prüfmeister**
+(seine Datei, eine Messung, blockiert nichts) — solange sie offen ist, bleibt
+Beispiel 2 auf dem heutigen Stand.
+
+### 4. Warum das hölzernere Wort gewinnt
+
+Drei Gründe, und der dritte ist der eigentliche:
+
+1. **Echtheit verkauft besser als Politur.** „Wand streichen 2x" neben
+   „46,80 m²" sieht aus wie ein Angebot. „Wände zweimal streichen" sieht aus
+   wie eine Werbeagentur.
+2. **Der erste kleine Widerspruch ist teuer.** Wer 14 Tage testet und in
+   Minute zwei eine andere Zeilenbeschriftung sieht, prüft ab da alles nach.
+3. **Es ist das Wort, das der Betrieb seinem Kunden schickt.** Diese Titel
+   stehen später auf seinem PDF. Wenn sie schlecht sind, gehören sie im
+   Produkt geändert — nicht auf der Seite überschrieben.
+
+### 5. Was ich mir damit einhandle — die Nachzieh-Liste
+
+Die Regel bindet die Seite an das Produkt. Ändert sich ein Titel, ändert sich
+die Seite. **Und zwei dieser Titel sind schon zur Änderung entschieden**,
+nachgelesen in `docs/vokabular-abgleich.md`, Abschnitt F.4/F.5 (Prüfmeister,
+11.09.):
+
+* **„Boden schützen" wird „Boden abdecken (Abdeckvlies)"** — drei Engine-Titel
+  für eine Arbeit, einer bleibt. *(Bitterkomisch: „Boden abdecken" ist genau
+  das Wort, das im Entwurf steht. Ich nehme trotzdem den heutigen Stand — die
+  Seite geht vor dieser Änderung live, und der Besucher vergleicht mit dem
+  Produkt von heute, nicht mit dem von morgen.)*
+* **Die Anstrichzahl gehört in JEDEN Wand- und Deckentitel** (F.4, Zeile 1).
+  Das bestätigt „2x", es fällt nicht weg.
+
+**Kein Auftrag an Engineering und keine Eile.** Die Liste steht hier, damit sie
+beim Bauen von F.4 nicht untergeht: **drei Zeilen der Landingpage ziehen dann
+nach.**
+
+### 6. Was ich ausdrücklich nicht entscheide
+
+**Punkt 2 des Chief of Staff — die Reihenfolge der Positionen** (der Entwurf
+beginnt mit Q3, das Produkt mit der Grundierung). Das ist L-06 und gehört dem
+Prüfmeister. Steht die Reihenfolge fest, folgt die Seite ihr, aus demselben
+Grund wie bei den Titeln.
+
+### 7. Stand der Stopper — unverändert bis auf M-3/M-4
+
+| | Stand |
+|---|---|
+| M-1 · M-2 · M-5 · „Echt eingesprochen" · M-6 · Finance-Korrektur 5 | ✅ Text fertig |
+| **M-3 / M-4** | ✅ **zu** — Prüfmeister hat beide Fragen belegt, die Büro-Krücke fällt weg, der Öffnungssatz darf in den Seitensatz |
+| **Positionstitel** | ✅ **entschieden** (dieser Eintrag), beim Designer eingereicht |
+| Finance-Korrektur 8 (49-€-Anker) · MwSt./§ 19 | ⏸ Sandy — hiervon hängt der Livegang |
+| Fassung A/B zur Buchhaltung | ⏸ Sandy (Testlauf), Fassung B steht ohne Prüfung bereit |
+| ZUGFeRD/GoBD (EX-003) | ⏸ Platform |
+
+**Es wartet nichts mehr auf mich.** Was an der Seite ohne fremde Antwort
+geschrieben werden kann, ist geschrieben.
+
+*Head of Marketing · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

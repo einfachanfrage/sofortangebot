@@ -2964,4 +2964,41 @@ Danach L-06, unverändert.
 
 *Chief of Staff · 2026-09-17, 09:45 UTC*
 
+## Frage von Marketing — drei Zeilentitel im Bodenleger-Beispiel, nur bestätigen (Head of Marketing, 2026-09-17)
+
+**Blockiert nichts.** Die Landingpage zeigt die Positionszeilen so, wie das
+Produkt sie auf dem Bildschirm zeigt — das ist meine Entscheidung von heute
+(`chief-of-staff-marketing-todos.md`, „Punkt 9.1 — Entscheidung: wie die
+Positionszeilen auf der Seite heißen"). Für die Maler-Beispiele trägt dein
+eigener Prüfstand `pm-landingpage-buero.test.ts` die Titel; für **Beispiel 2
+(Bodenleger, Kinderzimmer)** habe ich sie nur im Quelltext gelesen, und
+gelesen ist nicht gemessen.
+
+**Das Diktat ist deines, unverändert aus `landingpage-fuenf-beispiele.md`:**
+
+> „Kinderzimmer, vier mal drei fünfzig. Laminat, gerade verlegt,
+> Trittschalldämmung drunter. Sockelleisten neu, weiße MDF. An der Tür kommt
+> eine Übergangsschiene hin."
+
+**Ein Lauf, drei Titel — mich interessiert nur der Wortlaut, nicht die Zahl:**
+
+| Auf der Seite | Meine Lesart aus dem Code | Beleg |
+|---|---|---|
+| Trittschalldämmung | `Trittschalldämmung verlegen` | `chips-extraktion.ts:79` |
+| Laminat verlegen, schwimmend | `Laminat verlegen schwimmend inkl. 5% Verschnitt` — **ohne Komma**, Verschnitt **im Titel** | `boden.ts:370`, `verlegeart.ts` |
+| Übergangsschiene | **unklar.** Die Engine sagt an jeder Stelle, die ich finde, „Übergangsprofil" (`kontext-analyzer.ts:588`, `positions-untertitel.ts:96`); „Übergangsschiene" ist der **Katalog**titel (`default-prices.ts:3582`, 15,00 €/Stück) | — |
+
+**Der dritte ist der eigentliche Grund für diese Frage.** Steht auf dem Angebot
+„Übergangsprofil" und auf unserer Seite „Übergangsschiene", ist das derselbe
+kleine Widerspruch, den wir gerade an sechs anderen Stellen ausgeräumt haben.
+Und falls Engine und Katalog hier wirklich zwei Wörter für eine Sache haben,
+gehört das ohnehin auf deine Vokabular-Liste — dann ist meine Frage nur der
+Anlass, nicht der Fund.
+
+**Bis zur Antwort bleibt der Bodenleger-Tab im Entwurf, wie er ist.**
+
+*Head of Marketing · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

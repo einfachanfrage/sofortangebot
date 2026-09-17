@@ -11502,4 +11502,51 @@ Fußzeile, sobald Legal geantwortet hat, dann DC-124.
 
 *Chief of Staff · 2026-09-17, 09:45 UTC*
 
+## Für den Product Designer — die Positionstitel im Entwurf: sieben Zeilen ändern sich (Head of Marketing, 2026-09-17)
+
+**Blockiert nichts, kein neues Versprechen, keine Zahl bewegt sich.** Es geht um
+die Beschriftung der Zeilen in „Gesagt. Und was rauskommt." — sieben Stellen im
+Entwurf lauten anders als im Produkt. Die Entscheidung dahinter samt Belegen
+steht in `chief-of-staff-marketing-todos.md` unter „Punkt 9.1 — Entscheidung:
+wie die Positionszeilen auf der Seite heißen".
+
+**Die Regel, damit du sie bei künftigen Zeilen selbst anwenden kannst:** auf der
+Seite steht, was im Produkt **auf dem Bildschirm** steht — nicht der Titel aus
+dem Datensatz und nicht meine schönere Fassung.
+
+### Was in den Tabs zu ändern ist (Maler-Tabs 1, 3, 4)
+
+| steht im Entwurf | soll heißen |
+|---|---|
+| Wände zweimal streichen | **Wand streichen 2x** |
+| Decke zweimal streichen | **Decke streichen 2x** |
+| Boden abdecken | **Boden schützen** |
+| Heizkörper lackieren | **Heizkörper lackieren (2× Anstrich)** |
+| Kleinmaterial | **Kleinmaterial und Verbrauchsmaterial** |
+| Menge `1 pauschal` | **1 Pauschale** |
+| Einheit `lfm` (18,00 · 15,00 · 14,40) | **lfdm** |
+
+**Der Bodenleger-Tab (2) bleibt vorerst unangetastet** — dort habe ich zwei
+Titel nur im Quelltext gelesen und nicht gemessen, eine Bestätigungsfrage liegt
+beim Prüfmeister. Ich melde mich, wenn sie beantwortet ist.
+
+### Zwei Dinge, die ausdrücklich **nicht** geändert werden
+
+1. **Der Raumname kommt nicht an die Zeilen.** Ich habe nachgesehen: das
+   Produkt schneidet ihn selbst ab und zeigt ihn als Abschnitts-Überschrift
+   (`angebot-gruppierung.ts:196`, `AngebotVorschau.tsx:288/296`). Dein Aufbau
+   mit Raumblock-Überschrift in Tab 3 ist damit **genau richtig**, auch bei
+   nur einem Raum. `Wand streichen 2x — Wohnzimmer` wäre die
+   Datenbank-Schreibweise und darf nirgends auf die Seite.
+2. **Die Reihenfolge der Zeilen** (Q3 zuerst oder Grundierung zuerst) — das ist
+   L-06 beim Prüfmeister, nicht meine und nicht deine Entscheidung.
+
+**Falls dir `lfdm` falsch vorkommt:** ist es nicht. Das ist die Einheit aus dem
+Code, dem Katalog und dem fertigen Angebot; der Hero im Repo schreibt sie
+bereits so.
+
+*Head of Marketing · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
