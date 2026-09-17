@@ -31,9 +31,9 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 | Einbauküche bleibt stehen, wird abgeklebt | **PM-041** |
 | Einbauschrank vor der Wand | gemessen, ohne Fund: keine Zeile, keine Rückfrage, Wandfläche unverändert. Gehört zu PM-041 |
 | Kamin / Kaminsockel im Raum (Boden: Aussparung) | **PM-074** 🔴 — Nebensatzmaß baut eine Sockelleistenzeile |
-| Wandnische im Bad, gefliest (eigene Katalogzeile, 95,00 €/Stück) | **PM-075** 🔴 — Nischensatz ändert nichts |
+| Wandnische im Bad, gefliest (eigene Katalogzeile, 95,00 €/Stück) | **PM-075** 🔴 — Nischensatz ändert nichts. **17.09.: Bauauftrag steht** — bepreiste Position, Anzahl aus dem Satz (Einheit ist Stück, nichts zu messen). Engineering, Zug 2 |
 | Erker (Zusatzfläche über 2,5 m²) | **PM-081** 🔴 — gesagte Zusatzfläche verschwindet spurlos |
-| Wandnische / Regalnische | **PM-089** 🔴 — **Katalog-Lücke** wie PM-076: der Malerkatalog kennt die Nische nur beim Tapezieren (6,00 €/lfdm), nicht beim Streichen. Der Satz ändert heute gar nichts |
+| Wandnische / Regalnische | **PM-089** ✅ **gebaut** (Engineering, 17.09.) — der Satz hinterlässt jetzt einen Fehlt-Eintrag, Wortlaut vom Prüfmeister am 17.09. getauscht (Rückwand + Laibungen, nicht nur Laibungen). Katalog-Lücke bleibt, bepreiste Zeile bewusst nicht. **Neu offen als eigener Fall: dieselbe Nische im TAPEZIER-Diktat** — die Katalogzeile gibt es dort (6,00 €/lfdm), sie hinterlässt trotzdem keine Spur. Menge entschieden: `2 × (Breite + Höhe)` der Öffnung, ohne Höhe nur Fehlt-Eintrag (Prüfmeister, 17.09.) |
 | Rollladenkästen | **PM-076** 🔴 — **Katalog-Lücke**, nicht Code |
 | Bodenluke, Bodentank, Revisionsklappe | **PM-082** 🔴 — Katalogzeile da (35,00 €/St), keine Position |
 
@@ -109,7 +109,7 @@ aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 | Nachtrag zu einem bestehenden Angebot | **PM-096** 🔴 — „Nachtrag" wirkt nirgends, es entsteht ein normales Erstangebot. Trägt Anfahrt und Kleinmaterial ein zweites Mal. Zusammenführen liegt oberhalb der Pipeline (Live-Lauf), das **Bemerken** nicht |
 | Skonto / Zahlungsziel / Abschlagszahlungen | offen (Legal) |
 | Kunde will Material selbst stellen | **PM-088** 🔴 — der Satz kommt gar nicht erst an |
-| Zwei Bauabschnitte, getrennte Angebote | **PM-097** 🔴 — „wird getrennt abgerechnet" wirkt nirgends: eine Liste, eine Summe über beide Abschnitte. Auftrennen liegt oberhalb der Pipeline, das **Bemerken** nicht |
+| Zwei Bauabschnitte, getrennte Angebote | **PM-097** 🔴 — „wird getrennt abgerechnet" wirkt nirgends: eine Liste, eine Summe über beide Abschnitte. **17.09.: Sollstand nach DC-116 umformuliert** — nicht „zwei Abschnitte unterscheidbar" (die zweite Gruppierungsebene ist bewusst abgelehnt), sondern: ausgenommener Abschnitt raus **und** Weglassen sichtbar. Wortgleich mit PM-116. Engineering, CoS-E-074 |
 
 ---
 

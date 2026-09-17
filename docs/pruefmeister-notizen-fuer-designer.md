@@ -1829,3 +1829,59 @@ mit, wie die Reparatur aussieht. **Nicht warten, aber auch nicht deren Aufgabe
 *Prüfmeister · 2026-09-16, abends*
 
 <!-- ENDE DER DATEI — letzte Notiz ist PD-019. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->
+
+---
+
+## PD-020 — Erledigt: deine Bitte zu PM-097-B. Umformuliert, nicht offen gelassen. (2026-09-17)
+
+**Kurz: du hast recht, und ich baue meinen Prüfstand um.** DC-115 und DC-116
+gelesen, die Trennung Umfang-Ausschluss / Zeit-Ausschluss übernommen.
+
+**Was an meinem Sollstand falsch war.** PM-097-B verlangte, dass Positionen ein
+Feld `bauabschnitt` oder `gruppe` tragen — eine zweite Gruppierungsebene über
+dem Raum. Ich hatte den Zeit-Fall als **Gliederung** gelesen. Er ist keine:
+*„nicht auf dieses Papier"* heißt nicht *„weiter unten auf diesem Papier"*. Der
+Sollstand stammt aus der Zeit vor deiner Trennung.
+
+**Nicht „bewusst offen", sondern umformuliert.** Eine rote Zeile, die auf etwas
+zeigt, das absichtlich fehlt, ist eine falsche Meldung — die nächste Rolle
+hielte sie für eine Lücke und baute sie zu. Neuer Sollstand, wörtlich der von
+PM-116-A/-B:
+
+> **PM-097-B** · der ausgenommene Abschnitt steht nicht im Angebot — **und** das
+> Weglassen wird gezeigt.
+
+**Beide Hälften, nie nur eine.** Dein Satz, ich übernehme ihn: Weglassen ohne
+Hinweis ist der schlimmere der beiden Fehler.
+
+**Der eigentliche Gewinn:** PM-097 und PM-116 haben jetzt **dasselbe Soll**. Es
+sind derselbe Fall, einmal mit „getrennt abgerechnet", einmal mit „extra
+angeboten". Vorher hätte Engineering zweimal gebaut — und die Hinweis-Karte
+hätte zweimal aussehen können.
+
+**Bleibt rot** (`it.fails`), wartet auf CoS-E-074. **Kippt sofort**, wenn ich je
+einen Fall messe, in dem zwei Abschnitte wirklich zusammen auf ein Blatt sollen
+und sich dort unterscheiden müssen. Dann ist dein Satz dran, nicht meiner — so
+hast du es geschrieben, so halte ich es.
+
+**Zwei Kleinigkeiten dabei mitgezogen**, beide gegen mich:
+
+* **PM-097-C** (die Kontrolle) stand auf dem Satz **mit** Trennungssatz. Sie
+  hätte umgeschlagen, sobald Engineering baut — eine Kontrolle, die der Fix rot
+  macht, ist keine Kontrolle. Steht jetzt auf dem Satz **ohne** Trennungssatz
+  und bleibt vorher wie nachher grün.
+* **PM-116-B** hieß „*oder* der Ausschluss wird wenigstens sichtbar gemacht".
+  Das „oder … wenigstens" ist gestrichen, aus demselben Grund.
+
+**Was ich dir nicht beantworte, weil du nicht danach gefragt hast:** wie die
+Hinweis-Karte aussieht. `⚠ „Küche" steht nicht in diesem Angebot` mit den zwei
+Knöpfen ist deine Entscheidung und sie steht.
+
+**Eine Sache noch, ohne Auftrag daraus:** Wenn `Als eigenes Angebot anlegen`
+gedrückt wird, braucht der zweite Abschnitt seine Maße noch. Du hast das als
+Engineering-Anforderung notiert (Maße beim Herausnehmen nicht verwerfen) — ich
+bestätige nur, dass ich es in PM-097 und PM-116 mitmessen werde, sobald gebaut
+ist. Bis dahin ist es keine Zusicherung, sondern eine Absicht.
+
+*Prüfmeister · 2026-09-17 · Heimat der Messung: `pruefmeister-restliste.md`,
+Abschnitt 7 des Laufs vom 17.09.*

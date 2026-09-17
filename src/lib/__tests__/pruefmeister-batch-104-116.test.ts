@@ -373,13 +373,17 @@ describe('PM-109 · bewohnte Baustelle', () => {
     expect(preisKategoriePasstZuGewerk(rein.category, 'maler')).toBe(false)
   })
 
-  it.fails('PM-109-A · die gesagte Staubschutzwand hinterlässt eine Spur', () => {
+  // Grün seit dem PM-090-Fix (17.09.2026, Engineering): `pruefeStaubschutzwand`
+  // und `pruefeBaustellenreinigung` legen je einen Fehlt-Eintrag an. Bepreiste
+  // Positionen entstehen bewusst nicht — die Wand ist vom Maler aus gesperrt
+  // (PM-090-D), und bei der Reinigung fehlt die Menge, nicht der Preis.
+  it('PM-109-A · die gesagte Staubschutzwand hinterlässt eine Spur', () => {
     const erg = laufVoll('maler', T, WZ_MALER())
     expect(titel(erg.positionen).some(t => /staubschutz|trennwand/i.test(t))
       || fehltHat(erg.fehlende, /staubschutz|trennwand/i)).toBe(true)
   })
 
-  it.fails('PM-109-B · die gesagte Abendreinigung hinterlässt eine Spur', () => {
+  it('PM-109-B · die gesagte Abendreinigung hinterlässt eine Spur', () => {
     const erg = laufVoll('maler', T, WZ_MALER())
     expect(titel(erg.positionen).some(t => /reinig|besenrein/i.test(t))
       || fehltHat(erg.fehlende, /reinig|besenrein/i)).toBe(true)
@@ -629,7 +633,12 @@ describe('PM-116 · der ausgenommene zweite Bauabschnitt', () => {
     expect(titel(lauf('maler', T, R())).some(t => /Küche/.test(t))).toBe(false)
   })
 
-  it.fails('PM-116-B · oder der Ausschluss wird wenigstens sichtbar gemacht', () => {
+  // „oder … wenigstens" gestrichen am 17.09.2026 (Prüfmeister, nach DC-116).
+  // Der Designer hat entschieden, und ich ziehe nach: -A und -B sind keine
+  // Alternativen, sondern zwei Hälften desselben Solls. Das Weglassen OHNE
+  // Hinweis ist der schlimmere der beiden Fehler — dann fehlen 305,40 €
+  // Arbeit und niemand erfährt es. Wortgleich mit PM-097-B.
+  it.fails('PM-116-B · und das Weglassen wird gezeigt, nicht stumm ausgeführt', () => {
     expect(fehltHat(laufVoll('maler', T, R()).fehlende, /bauabschnitt|küche|später/i)).toBe(true)
   })
 })

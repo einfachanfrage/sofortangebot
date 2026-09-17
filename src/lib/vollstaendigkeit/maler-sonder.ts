@@ -354,5 +354,12 @@ export function pruefeNische(ergaenzt: BerechnetePosition[], fehlende: string[],
   // schützen / Abdeckfolie". Der Eintrag wäre stillschweigend unterdrückt
   // worden.
   if (hat(ergaenzt, 'nische', 'laibung', 'leibung')) return
-  fehlende.push('Nische streichen (Laibungsflächen aufmessen — keine Katalogzeile)')
+  // Wortlaut vom Prüfmeister (17.09.2026, Antwort auf Engineerings Frage 2):
+  // „Laibungsflächen" allein wäre zu eng. Die gestrichene Fläche einer Nische
+  // ist die RÜCKWAND (Breite × Höhe) PLUS die vier Laibungen (umlaufende
+  // Kante × Tiefe) — die Rückwand ist davon der größere Teil. Wer nur die
+  // Laibungen aufmisst, lässt den Hauptteil weg, und zwar systematisch.
+  // Der Zusatz „keine Katalogzeile" bleibt: er sagt dem Betrieb, dass er hier
+  // nicht nur eine Menge, sondern auch einen Preis selbst setzen muss (K.5).
+  fehlende.push('Nische streichen (Rückwand + Laibungen aufmessen — keine Katalogzeile)')
 }

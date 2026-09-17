@@ -159,17 +159,31 @@ describe('PM-089 · Regalnische außerhalb des Bades', () => {
     expect(mitNische || inFehlt).toBe(true)
   })
 
-  // BLEIBT ROT, und zwar absichtlich — Widerspruch an den Prüfmeister:
-  // -B verlangt eine andere POSITIONSLISTE, PM-108-D (grün, Kontrolle)
-  // verlangt ausdrücklich dieselbe. Beides zugleich geht nur mit einer
-  // erfundenen oder einer 0,00-€-Zeile (K.5 / PM-066). Bis dort ein Satz
-  // steht, bleibt die Sperrklinke stehen.
-  it.fails('PM-089-B · und das Angebot unterscheidet sich vom Angebot ohne Nische', () => {
-    const mit = lauf('maler', T_NISCHE, [malerRaum('Wohnzimmer', 4, 5)])
-    const ohne = lauf('maler', T_OHNE, [malerRaum('Wohnzimmer', 4, 5)])
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const abbild = (ps: any[]) => ps.map(p => `${p.beschreibung}|${p.menge}`).join('\n')
-    expect(abbild(mit)).not.toBe(abbild(ohne))
+  // UMGESTELLT am 17.09.2026 (Prüfmeister — Antwort auf Engineerings Frage 1).
+  //
+  // Der Widerspruch lag bei mir, nicht bei Engineering: -B verlangte eine
+  // andere POSITIONSLISTE, PM-108-D verlangt ausdrücklich dieselbe. Beides
+  // zugleich ginge nur mit einer erfundenen oder einer 0,00-€-Zeile — genau
+  // das, was K.5 verbietet.
+  //
+  // Die Positionsliste war nie das Ziel, sie war mein Behelf: Als ich -B
+  // schrieb, gab es die Fehlt-Liste als Ablage für „gesagt, aber nicht
+  // bepreisbar" noch nicht. Jetzt gibt es sie, also misst -B dort.
+  //
+  // Und -B ist damit NICHT dasselbe wie -A: -A verlangt, dass überhaupt eine
+  // Spur da ist. -B verlangt, dass diese Spur vom NISCHENSATZ kommt — der
+  // gleiche Satz ohne Nische darf sie nicht erzeugen. Ohne diese Gegenprobe
+  // wäre -A auch dann grün, wenn die Fehlt-Liste aus einem anderen Grund
+  // etwas mit „Nische" enthielte.
+  //
+  // PM-108-D bleibt unangetastet und grün: die Positionsliste ändert sich
+  // weiterhin nicht, und das ist richtig so, solange die Katalogzeile fehlt.
+  it('PM-089-B · und diese Spur kommt vom Nischensatz, nicht von woanders', () => {
+    const mit = laufVoll('maler', T_NISCHE, [malerRaum('Wohnzimmer', 4, 5)])
+    const ohne = laufVoll('maler', T_OHNE, [malerRaum('Wohnzimmer', 4, 5)])
+    expect(fehltHat(mit.fehlende, /Nische/i)).toBe(true)
+    expect(fehltHat(ohne.fehlende, /Nische/i)).toBe(false)
+    expect(mit.fehlende).not.toEqual(ohne.fehlende)
   })
 })
 
@@ -223,12 +237,16 @@ describe('PM-090 · bewohnte Baustelle', () => {
     expect(abbild(lauf('maler', T_VOLL, RAUM))).toBe(abbild(lauf('maler', T_BEWOHNT, RAUM)))
   })
 
-  it.fails('PM-090-A · die gesagte Staubschutzwand steht in der Fehlt-Liste', () => {
+  // Grün seit dem PM-090-Fix (17.09.2026, Engineering): `pruefeStaubschutzwand`
+  // und `pruefeBaustellenreinigung` legen je einen Fehlt-Eintrag an. Bepreiste
+  // Positionen entstehen bewusst nicht — die Wand ist vom Maler aus gesperrt
+  // (PM-090-D), und bei der Reinigung fehlt die Menge, nicht der Preis.
+  it('PM-090-A · die gesagte Staubschutzwand steht in der Fehlt-Liste', () => {
     const erg = laufVoll('maler', T_VOLL, RAUM)
     expect(fehltHat(erg.fehlende, /staubschutz|trennwand/i)).toBe(true)
   })
 
-  it.fails('PM-090-B · die gesagte Abendreinigung wird Position oder Fehlt-Eintrag', () => {
+  it('PM-090-B · die gesagte Abendreinigung wird Position oder Fehlt-Eintrag', () => {
     const erg = laufVoll('maler', T_VOLL, RAUM)
     const alsPosition = finde(erg.positionen, /reinigung/i) != null
     const alsFehlt = fehltHat(erg.fehlende, /reinigung|besenrein/i)
@@ -523,25 +541,64 @@ describe('PM-097 · zwei Bauabschnitte', () => {
     'Erster Bauabschnitt Erdgeschoss: Wohnzimmer vier mal fünf, Höhe zwo fünfzig, Wände und Decke streichen. '
     + 'Zweiter Bauabschnitt Obergeschoss, das kommt später und wird getrennt abgerechnet: '
     + 'Schlafzimmer drei mal vier, Wände streichen.'
+  const T_OHNE_TRENNUNG =
+    'Wohnzimmer vier mal fünf, Höhe zwo fünfzig, Wände und Decke streichen. '
+    + 'Schlafzimmer drei mal vier, Wände streichen.'
   const RAEUME = [malerRaum('Wohnzimmer', 4, 5), wandRaum('Schlafzimmer', 3, 4)]
 
-  it('PM-097-C · Kontrolle: beide Räume werden gerechnet, 45 m² und 35 m²', () => {
+  // Die Kontrolle steht bewusst auf dem Satz OHNE den Trennungssatz: sie muss
+  // vor UND nach dem Bau grün bleiben. Sie belegt, dass beide Räume überhaupt
+  // gerechnet werden können — der Fund ist also der Trennungssatz, keine
+  // Extraktionslücke. (Vorher stand sie auf T_ZWEI und hätte beim Bau von
+  // CoS-E-074 umschlagen müssen; eine Kontrolle, die der Fix rot macht, ist
+  // keine Kontrolle.)
+  it('PM-097-C · Kontrolle: ohne den Trennungssatz werden beide Räume gerechnet, 45 m² und 35 m²', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const p = lauf('maler', T_ZWEI, RAEUME) as any[]
+    const p = lauf('maler', T_OHNE_TRENNUNG, RAEUME) as any[]
     expect(p.filter(x => /Wand streichen/.test(x.beschreibung)).map(x => x.menge)).toEqual([45, 35])
   })
 
   it.fails('PM-097-A · „getrennt abgerechnet" hinterlässt eine Spur', () => {
     const erg = laufVoll('maler', T_ZWEI, RAEUME)
-    const inFehlt = fehltHat(erg.fehlende, /bauabschnitt|getrennt|abschnitt/i)
+    const inFehlt = fehltHat(erg.fehlende, /bauabschnitt|getrennt|abschnitt|obergeschoss|schlafzimmer|später/i)
     const inPositionen = finde(erg.positionen, /bauabschnitt/i) != null
     expect(inFehlt || inPositionen).toBe(true)
   })
 
-  it.fails('PM-097-B · und die beiden Abschnitte sind im Angebot unterscheidbar', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const p = lauf('maler', T_ZWEI, RAEUME) as any[]
-    const abschnitte = new Set(p.map(x => x.bauabschnitt ?? x.gruppe ?? null).filter(Boolean))
-    expect(abschnitte.size).toBe(2)
+  // UMFORMULIERT am 17.09.2026 (Prüfmeister — auf Bitte des Product Designers,
+  // DC-116 in `docs/design-check.md`).
+  //
+  // Hier stand: „die beiden Abschnitte sind im Angebot unterscheidbar" — ein
+  // Feld `bauabschnitt` oder `gruppe` an der Position, also eine zweite
+  // Gruppierungsebene über dem Raum. Der Designer hat sie ausdrücklich gegen
+  // diesen Prüfstand abgelehnt, und ich gebe ihm recht: Der Sollstand stammt
+  // aus der Zeit, bevor Ausschluss im UMFANG („wird gar nicht gemacht",
+  // PM-034) und Ausschluss in der ZEIT („kommt später", „wird getrennt
+  // abgerechnet") getrennt waren. Ich hatte den Zeit-Fall als Gliederung
+  // gelesen. Er ist keine: „nicht auf dieses Papier" heißt nicht „weiter
+  // unten auf diesem Papier".
+  //
+  // Es gibt in der ganzen Fallbasis keinen gemessenen Fall, in dem zwei
+  // Abschnitte zusammen auf EIN Blatt sollen und sich dort unterscheiden
+  // müssten. Eine rote Zeile, die auf etwas zeigt, das absichtlich fehlt,
+  // ist eine falsche Meldung — deshalb umformuliert und nicht „bewusst offen".
+  //
+  // Der neue Sollstand ist wörtlich der von PM-116-A/-B, und das ist der
+  // Punkt: PM-097 und PM-116 sind derselbe Fall, einmal mit „getrennt
+  // abgerechnet", einmal mit „extra angeboten". Sie müssen dasselbe Soll
+  // haben, sonst baut Engineering zweimal.
+  //
+  // Beide Hälften gehören zusammen (DC-116: „Beides zusammen, nie nur eines").
+  // Weglassen ohne Hinweis wäre der schlimmere Fehler von beiden: dann fehlt
+  // die Arbeit, und niemand erfährt es.
+  //
+  // Kippt, sobald ein gemessener Fall zwei Abschnitte wirklich auf ein Blatt
+  // verlangt. Bis dahin gilt dieser hier.
+  it.fails('PM-097-B · der ausgenommene Abschnitt steht nicht im Angebot — und das Weglassen wird gezeigt', () => {
+    const erg = laufVoll('maler', T_ZWEI, RAEUME)
+    // 1. Das Obergeschoss ist nicht gerechnet: keine Schlafzimmer-Zeile.
+    expect(erg.positionen.some(p => /Schlafzimmer/.test(p.beschreibung))).toBe(false)
+    // 2. Und das Weglassen steht als Hinweis da, nicht stumm.
+    expect(fehltHat(erg.fehlende, /schlafzimmer|obergeschoss|bauabschnitt/i)).toBe(true)
   })
 })

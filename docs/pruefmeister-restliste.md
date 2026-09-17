@@ -1,6 +1,20 @@
-# Restliste Prüfmeister — Stand 16.09.2026, abends
+# Restliste Prüfmeister — Stand 17.09.2026, vormittags
 
-**Diese Datei ersetzt die Fassung vom 16.09. nachmittags** und führt sie fort:
+**Diese Datei ersetzt die Fassung vom 16.09. abends** und führt sie fort:
+Am Dateiende steht der Lauf vom 17.09. — **die fünf offenen Punkte meiner Spur
+sind alle zu**: Marketings zwei Fragen (Kleinmaterial · das Büro in der
+Seiten-Fassung, PM-098 trägt), Engineerings zwei Rückfragen (PM-089-B
+umgestellt · Wortlaut getauscht) und die Bitte des Designers zu PM-097-B
+(umformuliert nach DC-116). Dazu zwei Funde gegen mich: **L-08 widerlegt** und
+**PM-097-C war eine Kontrolle, die der Fix rot gemacht hätte**. Gemessen auf
+Sandys Rechner, nicht in der Ersatzumgebung.
+
+*Die älteren Teile darunter stehen unverändert.*
+
+---
+
+**Der ältere Kopf, Stand 16.09.2026 abends:** Diese Fassung führt die vom
+16.09. nachmittags fort:
 Die älteren Teile stehen unverändert, dahinter steht, was der Lauf danach
 gemacht hat. **Neu in diesem Lauf:** dreizehn neue Fälle aus dem
 Themenspeicher als Batch **PM-104 bis PM-116** (Fallbasis jetzt **116**), die
@@ -2420,3 +2434,359 @@ Heimat ist der jeweilige Abschnitt in dieser Datei:
 *Chief of Staff · 2026-09-17*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
+
+---
+
+# Lauf 17.09.2026, 07:2x UTC — die fünf offenen Punkte meiner Spur, alle zu
+
+**Zugriff:** Die Shell auf Sandys Rechner ist erreichbar. Alles unten ist
+**dort** gemessen, mit dem echten Code und dem echten Standardkatalog — keine
+Ersatzumgebung, keine übernommenen Zahlen.
+
+**Abgleich unverändert:** `node scripts/vokabular-abgleich.mjs` → 182
+Engine-Titel, 32 ohne Preis, 3 knapp, 147 gute Treffer, **0 nicht prüfbar**.
+Zeile für Zeile derselbe Stand wie gestern abend. Keine Drift.
+
+---
+
+## 1. ✅ An Marketing, Frage 1 — Kleinmaterial: **ja, es kommt von allein.**
+
+**Der Entwurf ist richtig, lass ihn stehen.** Aber der Grund ist ein anderer
+als deine Vermutung, und der Unterschied zählt: Es liegt **nicht** daran, dass
+die Pauschale in meinem Testkonto nicht hinterlegt wäre. Sie ist **ab Werk an**
+und braucht überhaupt keine Einstellung.
+
+```
+KLEINMATERIAL_CONFIG (gewerke-config.ts) — alle sechs aktiven Gewerke aktiv: true
+  maler          ab 200,00 €  →  25,00 €
+  boden_parkett  ab 300,00 €  →  35,00 €
+  fliesen        ab 300,00 €  →  30,00 €
+  trockenbau     ab 250,00 €  →  25,00 €
+  sanitaer       ab 400,00 €  →  40,00 €
+  elektro        ab 300,00 €  →  30,00 €
+```
+
+Ein Betrieb, der die Einstellung nie anfasst, bekommt sie trotzdem. Die
+Betriebs-Einstellung überschreibt den Gewerk-Wert nur, wenn es sie gibt.
+
+**Warum sie in keinem meiner Läufe steht:** Sie hängt seit CoS-E-041 in
+`generiere-positionen/route.ts` (Zeile 815 ff.) — **eine Ebene über** der
+Pipeline, die mein Prüfstand fährt. Mein Prüfstand kann sie also gar nicht
+sehen. Das ist eine Grenze meines Aufbaus, kein Produktbefund.
+
+**Belegt hat es dein eigener Verdacht schon, nur andersherum:** Im Live-Lauf
+vom 16.09. kam die Pauschale in 048 bis 054 mit — ich habe sie dort als L-08
+notiert.
+
+Damit sind deine vier Tabs belegt:
+
+| Tab | Arbeitssumme | Pauschale | Entwurf |
+|---|---|---|---|
+| Bodenleger · Laminat | 366,30 € | + 35,00 € | **401,30 €** ✅ |
+| Maler · ganze Wohnung | 1.666,31 € | + 25,00 € | **1.691,31 €** ✅ |
+| Maler · Wohnzimmer | 703,00 € | + 25,00 € | **728,00 €** ✅ |
+| Maler · Büro mit Q3 | **1.518,80 €** (unten gemessen) | + 25,00 € | **1.543,80 €** ✅ |
+
+Sperrklinken: `src/lib/__tests__/pm-landingpage-buero.test.ts`.
+
+### Dabei erledigt, und zwar gegen mich: **L-08 war die falsche Diagnose**
+
+L-08 stand als Fund auf meiner Liste: die Pauschale komme „mal 25,00 €, mal
+nichts", abhängig davon, „wie viele Positionen zufällig entstanden sind".
+**Das stimmt nicht.** Es ist die Schwelle, und sie lässt sich in einem Satz
+erklären. Nachgemessen:
+
+```
+PM-047  nur die Decke streichen      170,80 €  <  200,00 €  → keine Pauschale
+PM-055  Kork vollflächig verklebt    288,00 €  <  300,00 €  → keine Pauschale
+PM-048  Wände zweimal streichen      511,50 €  >  200,00 €  → 25,00 €  ✅
+```
+
+L-08 verlangte „entweder immer oder nach einer Regel, die sich erklären lässt".
+Die Regel gibt es, sie ist die Schwelle, und sie ist einstellbar. **L-08 ist
+damit erledigt** — nicht gebaut, sondern widerlegt. Ob 200,00 € die richtige
+Schwelle sind, ist die Entscheidung des Betriebs und kein Befund.
+
+---
+
+## 2. ✅ An Marketing, Frage 2 — das Büro in der Fassung, die auf die Seite soll
+
+**Gelaufen, mit Fenster und Tür im Satz. PM-098 trägt. Deine Zahl stimmt.**
+
+Gelaufener Satz — dein Entwurfssatz **plus** der Öffnungssatz, den die
+Arbeitsreihenfolge verlangt:
+
+> „Büro, fünf mal vier, zwei sechzig hoch. Die Wände müssen vollflächig
+> gespachtelt werden, Qualitätsstufe Q3, da kommt Streiflicht drauf. Danach
+> zweimal streichen. Die 2 Heizkörper bitte mit lackieren. **Ein Fenster, eine
+> Tür.**"
+
+```
+Spachtelarbeiten Q3 — Büro             46,80 m²  × 14,00 =  655,20
+Voranstrich / Grundierung — Büro       46,80 m²  ×  4,50 =  210,60
+Wand streichen 2x — Büro               46,80 m²  ×  9,50 =  444,60
+Heizkörper abschleifen                     2 St  × 20,00 =   40,00
+Heizkörper grundieren                      2 St  × 25,00 =   50,00
+Heizkörper lackieren (2× Anstrich)         2 St  × 40,00 =   80,00
+Boden schützen — Büro                  20,00 m²  ×  1,20 =   24,00
+Sockelleisten abkleben — Büro          18,00 lfdm×  0,80 =   14,40
+                                          Summe netto    1.518,80
+                            + Kleinmaterial-Pauschale       25,00
+                                                        1.543,80  ✅
+```
+
+**Acht Zeilen, 1.543,80 €. Genau dein Entwurf.**
+
+**Und der Punkt, um den es dir ging:** Keine Fensterlackierung, keine
+Türlackierung — obwohl „lackieren" und „ein Fenster, eine Tür" beide im Satz
+stehen. Das ist die PM-098-Konstellation auf das Wort genau, und die Bremse
+hält. Drei Fassungen gegeneinander gemessen (ohne Öffnungssatz · mit
+Öffnungssatz · „zwei" ausgeschrieben statt „2") liefern **Zeile für Zeile
+dasselbe Angebot**.
+
+**Damit ist die Auflage aus der Arbeitsreihenfolge mit erledigt:** Die Krücke
+— Fenster und Tür aus Beispiel 4 herauszuhalten — wird nicht mehr gebraucht.
+Der Öffnungssatz kann in den Seitensatz, er ändert nichts. **M-4 ist zu.**
+
+### Drei Zeilentitel lauten im Produkt anders als auf der Seite
+
+Du hast nach der Summe gefragt, nicht nach den Titeln — aber deine Seite zeigt
+Positionstitel, deshalb gehört es gesagt:
+
+| Auf der Seite | Im Produkt |
+|---|---|
+| Wände zweimal streichen | **Wand streichen 2x — Büro** |
+| Boden abdecken | **Boden schützen — Büro** |
+| Heizkörper lackieren | **Heizkörper lackieren (2× Anstrich)** |
+
+Die Raumnamen hängen im Produkt am Titel (`— Büro`), die Seite lässt sie weg.
+Bei einem Ein-Raum-Beispiel ist das unschädlich; bei Beispiel 3 (drei Räume)
+trägt der Raumname die ganze Aussage. **Das ist deine Entscheidung, nicht
+meine** — ich sage nur, dass es abweicht.
+
+Auch die **Reihenfolge** weicht ab (dein Entwurf beginnt mit Q3, das Produkt
+mit der Grundierung). Das ist mein alter Fund L-06, er steht auf meiner Liste
+und ist nicht deiner.
+
+**Die Sockelleisten-Rückgabe nehme ich an**, ohne Einspruch: 14,40 lfm bei drei
+Türen ist richtig, Öffnungen unter 1,00 m werden nach VOB-012 nicht abgezogen.
+
+---
+
+## 3. ✅ An Engineering, Frage 1 — PM-089-B: **umgestellt, und der Fehler lag bei mir.**
+
+**Antwort: auf die Fehlt-Liste umstellen. Ist erledigt, ich habe es selbst
+gemacht** — `pruefmeister-batch-89-97.test.ts`, PM-089-B steht jetzt auf `it`
+und ist **grün**. Der Widerspruch ist damit weg, ohne dass ihr etwas anfasst.
+
+**Warum ihr recht hattet:** Als ich -B schrieb, gab es die Fehlt-Liste als
+Ablage für „gesagt, aber nicht bepreisbar" noch nicht. Die Positionsliste war
+mein **Behelf**, nicht mein Ziel — ich wollte messen, dass der Nischensatz
+überhaupt ankommt. Jetzt gibt es die richtige Ablage, also misst -B dort.
+
+**-B ist damit nicht dasselbe wie -A**, und das ist Absicht:
+
+* **-A** verlangt, dass überhaupt eine Spur da ist.
+* **-B** verlangt, dass diese Spur **vom Nischensatz kommt** — derselbe Satz
+  ohne Nische darf sie nicht erzeugen. Gemessen: mit Nische ein Fehlt-Eintrag,
+  ohne Nische **keiner**. Ohne diese Gegenprobe wäre -A auch dann grün, wenn
+  die Fehlt-Liste aus einem anderen Grund etwas mit „Nische" enthielte.
+
+**PM-108-D bleibt unangetastet und grün.** Die Positionsliste ändert sich
+weiterhin nicht — richtig so, solange die Katalogzeile fehlt.
+
+---
+
+## 4. ✅ An Engineering, Frage 2 — der Wortlaut. **Getauscht, ihr müsst nichts tun.**
+
+Ihr habt gesagt, es sei eine Zeile — dann mache ich sie selbst, statt euch
+einen Satz zu schicken. Geändert in `vollstaendigkeit/maler-sonder.ts`:
+
+```
+vorher   Nische streichen (Laibungsflächen aufmessen — keine Katalogzeile)
+nachher  Nische streichen (Rückwand + Laibungen aufmessen — keine Katalogzeile)
+```
+
+**Das ist kein Geschmack, sondern ein Fund.** Die gestrichene Fläche einer
+Nische ist die **Rückwand** (Breite × Höhe) **plus** die vier Laibungen
+(umlaufende Kante × Tiefe). Die Rückwand ist davon der größere Teil. Bei einer
+Nische 1,20 × 0,80 × 0,30 m:
+
+```
+Rückwand     1,20 × 0,80                    = 0,96 m²
+Laibungen  2×(1,20+0,80) × 0,30             = 1,20 m²
+```
+
+„Laibungsflächen aufmessen" hätte den Handwerker also auf gut die Hälfte
+gezeigt — und zwar systematisch, bei jeder Nische. Der Zusatz „keine
+Katalogzeile" bleibt: er sagt dem Betrieb, dass er hier nicht nur eine Menge,
+sondern auch einen **Preis** selbst setzen muss (K.5).
+
+---
+
+## 5. ✅ An Engineering, Punkt 3 — der Tapezier-Fall: **hier ist die Zahl.**
+
+Ihr habt recht, das ist eine Fachfrage und meine. Nachgemessen habe ich
+zuerst, dass es den Fall gibt: Eine Nische in einem **Tapezier**-Diktat
+hinterlässt heute **keine Spur** — nicht in den Positionen, nicht in der
+Fehlt-Liste. Bestätigt.
+
+**Die Zahl: `2 × (Breite + Höhe)` der Nischenöffnung, in lfdm.**
+
+**Die Begründung, und sie ist im Produkt schon da:** Für Laibungen gibt es hier
+eine gemessene Regel — PM-037 / VOB-013 rechnet die Fensterlaibung
+**dreiseitig**: `(Breite + 2 × Höhe) × Tiefe`. Dreiseitig, weil die vierte Seite
+die Fensterbank ist und getrennt abgerechnet wird. **Eine Nische hat keine
+Fensterbank** — also alle vier Seiten, also der volle Umfang der Öffnung.
+
+**Die Tiefe geht nicht ein.** Die Katalogzeile `Ecken / Nischen / Laibungen
+tapezieren (Aufpreis)` steht in **lfdm**, nicht in m² — der Aufpreis gilt der
+Kante, nicht der Fläche. Die Tiefe steckt bereits im Einheitspreis. (Die
+m²-Lesart gibt es im Katalog auch, aber beim Putzer: `Laibung verputzen
+(>30cm Tiefe)`, 32,00 €/m². Wer beim Tapezieren in m² rechnet, hat die falsche
+Zeile erwischt.)
+
+**Eure Lesart 1 — die genannte Breite allein — ist damit ausgeschlossen:** Eine
+Nische 1,00 m breit und 2,00 m hoch ist nicht dieselbe Kantenarbeit wie eine
+1,00 m breit und 0,20 m hoch.
+
+**Verworfen habe ich auch den doppelten Umfang** (Mündungskanten *und* die
+inneren Kanten zur Rückwand, also `4 × (B + H)`). Beide Kanten entstehen im
+selben Arbeitsgang, beide zu berechnen wäre zweimal Geld für einmal Schneiden.
+
+**Beispiel, damit es nicht abstrakt bleibt** — Nische 1,00 × 2,00 m:
+
+```
+2 × (1,00 + 2,00) = 6,00 lfdm  × 6,00 €/lfdm = 36,00 €
+```
+
+### ⚠️ Zwei Auflagen, bevor jemand das baut
+
+1. **Ohne Höhe gibt es keine Menge.** Die Diktate nennen fast immer nur die
+   Breite („ein Meter zwanzig breit"). Fehlt die Höhe, entsteht **keine
+   bepreiste Position**, sondern der Fehlt-Eintrag — sonst ist die Zahl
+   geraten. Das ist der häufigere Fall, nicht der Randfall.
+2. **Eine Gegenprobe gehört dazu**, wie bei jedem Eingriff, der eine Menge
+   erfindet: derselbe Satz ohne Nische darf keine lfdm-Zeile bekommen.
+
+**Das ist eine Fachentscheidung von mir, keine Messung** — genau das, wonach
+ihr gefragt habt. Sie kippt, wenn Manfred das anders kalkuliert; dann ist sein
+Wort das stärkere.
+
+---
+
+## 6. ✅ An Engineering, Punkt 4 — PM-075 (Nische im Bad): **ja, baut sie in Zug 2.**
+
+Und zwar **als bepreiste Position**, nicht als Fehlt-Eintrag. Der Unterschied
+zum Malerfall ist die **Einheit**:
+
+```
+Nische / Wandnische fliesen                      95,00 €/Stück   ← zählbar
+Ecken / Nischen / Laibungen tapezieren (Aufpreis)  6,00 €/lfdm   ← messbar, Maße nötig
+(Streichen)                                      — keine Zeile —
+```
+
+**Stück heißt: die Menge steht im Satz.** „In der Dusche kommt eine Wandnische
+rein" ist Anzahl 1. Es gibt nichts zu messen, nichts zu raten und keine zwei
+Lesarten — genau die Unsicherheit, die mich beim Tapezieren zu den zwei
+Auflagen oben zwingt, gibt es hier nicht. Die Zeile existiert, das Gewerk ist
+aktiv, K.5 steht nicht im Weg.
+
+**Also: PM-075 in Zug 2, bepreiste Position, Anzahl aus dem Satz.** Sperrklinke
+stelle ich um, sobald ihr gebaut habt.
+
+---
+
+## 7. ✅ An den Product Designer — PM-097-B: **umformuliert, nicht offen gelassen.**
+
+**Du hast recht, und ich baue meinen Prüfstand um, nicht du deine
+Entscheidung.** DC-116 ist gelesen, die Trennung Umfang/Zeit sitzt.
+
+**Was an meinem alten Sollstand falsch war:** PM-097-B verlangte ein Feld
+`bauabschnitt` oder `gruppe` an der Position — eine zweite Gruppierungsebene
+über dem Raum. Ich hatte den Zeit-Fall als **Gliederung** gelesen. Er ist
+keine: *„nicht auf dieses Papier"* heißt nicht *„weiter unten auf diesem
+Papier"*. Der Sollstand stammt aus der Zeit vor deiner Trennung, und du hast
+genau die Stelle getroffen.
+
+**Nicht „bewusst offen", sondern umformuliert** — eine rote Zeile, die auf
+etwas zeigt, das absichtlich fehlt, ist eine falsche Meldung. Neuer Sollstand,
+wörtlich der von PM-116-A/-B:
+
+> **PM-097-B** · der ausgenommene Abschnitt steht nicht im Angebot — **und**
+> das Weglassen wird gezeigt.
+
+**Beide Hälften, nie nur eine** — dein Satz, ich übernehme ihn: Weglassen ohne
+Hinweis ist der schlimmere der beiden Fehler.
+
+**Und das ist der eigentliche Gewinn:** PM-097 und PM-116 haben jetzt **dasselbe
+Soll**. Es sind derselbe Fall, einmal mit „getrennt abgerechnet", einmal mit
+„extra angeboten". Vorher hätte Engineering zweimal gebaut.
+
+Bleibt `it.fails` — gemessen, heute nicht erfüllt, wartet auf CoS-E-074.
+**Kippt sofort**, wenn ich je einen Fall messe, in dem zwei Abschnitte wirklich
+zusammen auf ein Blatt sollen. Dann ist deine Entscheidung dran, nicht meine.
+
+**Zwei Kleinigkeiten dabei mitgezogen:**
+
+* **PM-097-C** stand auf dem Satz *mit* Trennungssatz und hätte beim Bau von
+  CoS-E-074 umschlagen müssen. Eine Kontrolle, die der Fix rot macht, ist
+  keine Kontrolle — sie steht jetzt auf dem Satz **ohne** Trennungssatz und
+  bleibt vorher wie nachher grün.
+* **PM-116-B** hieß „*oder* der Ausschluss wird wenigstens sichtbar gemacht".
+  Das „oder … wenigstens" ist gestrichen, aus demselben Grund.
+
+---
+
+## Stand der Prüfumgebung nach diesem Lauf — auf Sandys Rechner
+
+| Prüfung | Ergebnis |
+|---|---|
+| `npx tsc --noEmit` | **fehlerfrei** |
+| `node scripts/vokabular-abgleich.mjs` | 182 / 32 ohne Preis / 3 knapp / **0 nicht prüfbar** — unverändert |
+| `pm-landingpage-buero.test.ts` (neu) | **14 grün** |
+| `pruefmeister-batch-89-97.test.ts` | 19 grün, 14 Sperrklinken (PM-089-B **von rot auf grün**) |
+| `pruefmeister-batch-104-116.test.ts` | 49 Prüfungen, unverändert |
+| `src/lib/vollstaendigkeit/__tests__` (13 Dateien) | grün, keine Nebenwirkung des Wortlaut-Tausches |
+
+**Angefasst außerhalb meiner eigenen Dateien:** genau eine Zeile in
+`src/lib/vollstaendigkeit/maler-sonder.ts` (der Fehlt-Wortlaut, Punkt 4) — mit
+Begründung im Code, auf Engineerings ausdrückliches Angebot hin.
+
+---
+
+## Offen — nachgezogener Stand (17.09.2026, 07:2x UTC)
+
+**Von meiner Spur ist nichts mehr offen.** Die fünf Punkte oben sind zu.
+
+**Unverändert offen und nicht von mir zu schließen** (Heimat jeweils oben):
+
+| Fall | Wartet auf |
+|---|---|
+| PM-116 · PM-105 · PM-106 · PM-110 · PM-109 · PM-113 · PM-104 · PM-111 · PM-112 · PM-114 · PM-108 · PM-115 | Engineering (Bauauftrag, Geldweg-sortiert wie gestern) |
+| PM-097-A/-B | Engineering, CoS-E-074 |
+| PM-075 | Engineering, Zug 2 — **Antwort liegt jetzt vor** (Punkt 6) |
+| Tapezier-Nische | Engineering — **Zahl liegt jetzt vor** (Punkt 5) |
+| PM-101 · PM-102 · PM-103 · PM-079-A/B | Engineering |
+| L-06 (Reihenfolge der Positionen) | meine Liste, nicht dringend |
+| alles unter „Braucht die laufende App (Spur 6)" · PM-013-A · `Untergrund spachteln / ausgleichen (bis 5mm)` · die 142 Vorlagen der gesperrten Gewerke · PM-077 vor CoS-E-059 | unverändert |
+
+**Von der Liste weg:** Marketings zwei Fragen · Engineerings zwei Rückfragen ·
+PM-097-B · **L-08** (widerlegt, siehe Punkt 1) · **M-4** (die Büro-Krücke,
+siehe Punkt 2).
+
+**Nicht geprüft, und ich behaupte es deshalb nicht:**
+
+* **Die Landingpage selbst habe ich nicht aufgerufen.** Ich habe den Satz
+  gerechnet, nicht die Seite angesehen. Ob der Entwurf die Zahl richtig
+  abdruckt, ist Marketings Sache.
+* **Die Kleinmaterial-Pauschale habe ich nicht live in einem Angebot gesehen**,
+  sondern im Code und im Live-Lauf vom 16.09. (L-08). Mein Prüfstand kann die
+  Route-Ebene nicht fahren.
+* **Die 1.666,31 € und 703,00 €** der beiden anderen Tabs sind Marketings bzw.
+  meine älteren Zahlen, in diesem Lauf **nicht** neu gerechnet — nur die
+  Pauschale darauf ist geprüft.
+* **Manfreds Kalkulation zur Tapezier-Nische** kenne ich nicht. Punkt 5 ist
+  meine Fachentscheidung, kein Messwert.
+
+*Prüfmeister · 2026-09-17 · Ergebnisse gehören nach `pruefmeister-testfaelle.md`*
