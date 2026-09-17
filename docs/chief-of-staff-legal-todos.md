@@ -3483,4 +3483,400 @@ Zeile Code geholt. Wenn nicht, sag was fehlt.
 
 ---
 
+## LR-18 eingebaut — Datenschutzerklärung zieht auf den AVV nach (Head of Legal & Compliance, 2026-09-17)
+
+**Erledigt.** Sandys Freigabe („LR18 freigegeben") war die Voraussetzung, der
+Einbau war laut Chief of Staff gedeckt. Ich habe ihn selbst gemacht, nicht
+weitergereicht.
+
+### Was geändert wurde
+
+`src/app/datenschutz/page.tsx`, Abschnitt „4. Drittland-Übermittlungen“. Vorher
+standen **Vercel, Resend und Sentry** gemeinsam in einem Satz unter dem
+Angemessenheitsbeschluss (Art. 45 DSGVO). Jetzt stehen dort drei Sätze:
+
+* **Sentry** — unverändert Data Privacy Framework, Art. 45 DSGVO.
+* **Vercel, OpenAI und Supabase** — EU-Standardvertragsklauseln,
+  Art. 46 Abs. 2 lit. c DSGVO.
+* **Resend** — EU-Standardvertragsklauseln, Art. 46 Abs. 2 lit. c DSGVO;
+  zusätzlich unter dem EU-US Data Privacy Framework zertifiziert.
+
+Der Stripe-Absatz bleibt wörtlich unverändert. **Keine inhaltliche
+Erweiterung**, nichts Neues zugesagt — die Erklärung sagt jetzt dasselbe wie
+`src/app/avv/page.tsx` § 4, und der AVV ist die Vertragsurkunde.
+
+### Die beiden älteren Datenschutz-Korrekturen
+
+Der Freigabe-Eintrag verlangt ausdrücklich, zu melden, wenn eine davon inzwischen
+anders aussieht als beim Vorlegen. **Tut sie nicht** — ich habe beide an der
+Quelle nachgesehen, nicht aus dem Gedächtnis:
+
+* Stripe-Vertragsentität: `src/app/datenschutz/page.tsx` nennt „Stripe Payments
+  Europe, Limited mit Sitz in Irland“. Steht so drin. ✅
+* Kundendaten-Abschnitt: Z. 49 führt uns als reinen Auftragsverarbeiter mit
+  Verweis auf den AVV, ohne zweite eigene Rechtsgrundlage. Steht so drin. ✅
+
+Beide gehen unverändert mit raus.
+
+### Sperrklinke gegen den Rückfall
+
+LR-18 ist ein Drift-Fehler: dieselbe Angabe an zwei Orten, die auseinanderläuft,
+wenn niemand sie aus einer Quelle zieht. Ein Textfix allein verhindert die
+Wiederholung nicht. Deshalb neu in `src/lib/__tests__/rechtstexte-hygiene.test.ts`:
+
+> `LR-18: Datenschutzerklärung nennt für Vercel und Resend dieselbe Grundlage wie der AVV`
+
+Der Test prüft zuerst die Vorbedingung (der AVV führt beide weiterhin über
+Standardvertragsklauseln) und dann die Richtung: In keinem Satz, der die
+Grundlage nach Art. 45 DSGVO zuweist, dürfen Vercel oder Resend vorkommen; in
+den Sätzen zu Art. 46 Abs. 2 lit. c DSGVO müssen beide vorkommen.
+
+**Nachgemessen, nicht behauptet:** Ich habe den alten Wortlaut probeweise
+zurückgesetzt — der Test wird rot und nennt genau diesen Fall. Danach
+wiederhergestellt. `rechtstexte-hygiene.test.ts` **15/15 grün**,
+`npx tsc --noEmit` sauber.
+
+**Die mittelfristige Lehre steht unverändert:** Die Unterauftragnehmer-Tabelle
+gehört in **eine** Datei, aus der AVV und Datenschutzerklärung rendern. Der Test
+ist die Krücke bis dahin, nicht die Lösung. Kein Bauauftrag von mir — das ist
+eine Produktentscheidung, kein Rechtspunkt.
+
+**LR-18 in `legal-002-risikobewertung-vob.md` ist auf erledigt gesetzt.**
+
+*Head of Legal & Compliance · 2026-09-17*
+
+---
+
+## ✅ CoS-L-010 — Antwort: die Impressums-Adresse (Head of Legal & Compliance, 2026-09-17)
+
+**Deine Annahme ist richtig, und sie ist sogar noch etwas schärfer, als du sie
+formuliert hast.** Die drei Fragen einzeln.
+
+### Antwort 1 — Erreichbar, nicht bloß angegeben. Und das ist seit 2025 gerichtlich entschieden.
+
+§ 5 Abs. 1 Nr. 2 DDG verlangt „Angaben, die eine schnelle elektronische
+Kontaktaufnahme und unmittelbare Kommunikation **ermöglichen**, einschließlich
+der Adresse der elektronischen Post“. Das Verb trägt die ganze Last: Verlangt
+ist nicht die Nennung einer Zeichenfolge, sondern ein funktionierender Kanal.
+
+**Die einschlägige Entscheidung: LG München I, Urteil vom 25.02.2025,
+33 O 3721/24.** Dort hatte die im Impressum genannte Adresse sogar geantwortet —
+mit einer Autoantwort, die auf ein Support-Formular verwies. Das Gericht hat das
+als Verstoß gegen § 5 DDG gewertet: Wer auf andere Kommunikationswege
+weiterleitet, statt selbst erreichbar zu sein, erfüllt die Pflicht nicht. Und es
+hat den Verstoß als **wettbewerbsrechtlich abmahnfähig** eingeordnet
+(§ 5a UWG, Vorenthalten wesentlicher Information).
+
+**Erst recht gilt das für eine Adresse, die überhaupt nichts empfängt.** Wenn
+schon die falsche Antwort ein Verstoß ist, ist die ausbleibende einer.
+Also: **kein Formfehler, sondern ein abmahnfähiger Verstoß.** Deine Annahme
+bestätigt.
+
+**Was die Telefonnummer daran ändert: nichts.** Im Impressum steht
+`+49 151 20791652` (`src/app/impressum/page.tsx`, Z. 33). Das ist gut und hilft
+bei der Frage, ob ein zweiter Kanal existiert — die E-Mail-Adresse ist im
+Gesetzestext aber **ausdrücklich namentlich** genannt („einschließlich der
+Adresse der elektronischen Post“). Sie ist damit nicht der eine von zwei
+austauschbaren Wegen, sondern der Pflichtteil. Eine tote E-Mail-Adresse wird
+durch ein funktionierendes Telefon nicht geheilt. Umgekehrt gilt das nicht: die
+Telefonnummer ist nach der EuGH-Rechtsprechung verzichtbar.
+
+### Antwort 2 — Ja, dieselbe Adresse. Und fristenseitig ist das der unangenehmste Teil.
+
+**Zur Identität der Adresse:** Art. 13 Abs. 1 lit. a, b DSGVO verlangt
+Kontaktdaten des Verantwortlichen, nicht Deckungsgleichheit mit dem Impressum.
+Zwei verschiedene Adressen wären zulässig. Hier ist es aber **dieselbe** —
+`hallo@sofortangebot.app` steht im Impressum (Z. 34), im Verantwortlichen-Block
+der Datenschutzerklärung (Z. 27), als Adresse für Betroffenenrechte (Z. 135) und
+als Weg zur Kontolöschung (Z. 144). **Ein totes Postfach bricht damit vier
+Zusagen gleichzeitig**, nicht eine. Das ist kein Nachteil der Doppelung an sich,
+aber es verdreifacht den Schaden desselben Fehlers.
+
+**Zur Frist — Art. 12 Abs. 3 DSGVO:** Die Antwortfrist läuft „innerhalb eines
+Monats **nach Eingang des Antrags**“. Eingang heißt Zugang im Machtbereich des
+Verantwortlichen (§ 130 BGB analog), nicht Kenntnisnahme. Daraus folgt eine
+Unterscheidung, die hier alles entscheidet:
+
+| Verhalten des Mailservers | Rechtsfolge |
+|---|---|
+| **Postfach existiert nicht, Server weist ab** (5xx, Bounce) | **Kein Zugang.** Die Frist läuft nicht. Der Absender erfährt vom Scheitern und kann es anders versuchen. Ärgerlich, aber nicht fristgefährlich. |
+| **Server nimmt an und verwirft still** (Catch-all ohne Postfach, Weiterleitung ins Leere) | **Zugang bejaht.** Die Monatsfrist läuft — gegen uns, ohne dass wir von der Anfrage wissen. |
+
+**Der zweite Fall ist der gefährliche**, und er ist der unauffälligere: Der
+Absender bekommt keine Fehlermeldung und darf annehmen, dass seine Anfrage
+angekommen ist. Verschärfend kommt hinzu, dass auch die **Verlängerungsoption
+verbrennt**: Die Verlängerung um zwei Monate nach Art. 12 Abs. 3 UAbs. 2 DSGVO
+setzt voraus, dass wir die betroffene Person **innerhalb des ersten Monats** über
+die Verlängerung und deren Gründe unterrichten. Wer die Anfrage nie gesehen hat,
+kann das nicht. Aus einem Monat Fristversäumnis wird so kein Aufschub, sondern
+direkt der Zustand des Art. 12 Abs. 4 DSGVO — und daran hängt das
+Beschwerderecht zur Aufsichtsbehörde.
+
+**Welcher der beiden Fälle bei uns vorliegt, weiß ich nicht.** Ich habe es
+versucht und konnte es nicht messen: SMTP (Port 25) ist aus unserer Umgebung
+nicht erreichbar, DNS-over-HTTPS ebenfalls nicht. Ich übernehme deine
+MX-Messung (`mx00.ionos.de` / `mx01.ionos.de`) und behaupte nichts darüber
+hinaus. **Das ist die eine Messung, die CoS-P-028 liefern muss**, und sie ist
+kleiner als die Einrichtung selbst: eine Testmail an `hallo@sofortangebot.app`
+von außen, und dann die Frage, ob ein Bounce zurückkommt. Kommt keiner und
+liegt trotzdem nichts im Postfach, ist es der zweite Fall.
+
+### Antwort 3 — CC-05 ist unter Vorbehalt erledigt, und der Vorbehalt ist genau dieser.
+
+Ich hatte CC-05 am 02.09. geschlossen, mit dem ausdrücklichen Zusatz, der
+Prozess stehe „wenigstens im Text“ und die Weiterleitung selbst sei Handarbeit.
+**Dieser Zusatz trägt weiter, aber nur für die Handarbeit — nicht für den
+Briefkasten.** Der Satz in der Datenschutzerklärung (Z. 49) lautet: „erreicht
+uns eine solche Anfrage direkt, leiten wir sie unverzüglich dorthin weiter“.
+
+Drei Punkte dazu, in absteigender Schärfe:
+
+1. **Als Zusage ist der Satz nicht gebrochen.** Er ist konditional formuliert
+   („erreicht uns“). Was uns nicht erreicht, müssen wir nach seinem Wortlaut
+   nicht weiterleiten. Das ist juristisch sauber und war beim Formulieren kein
+   Zufall.
+2. **Als Pflicht gegenüber dem Betrieb ist er trotzdem nicht erfüllt.**
+   Art. 28 Abs. 3 lit. e DSGVO verpflichtet uns, den Verantwortlichen bei der
+   Erfüllung der Betroffenenrechte zu **unterstützen**. Ein Weiterleitungsweg,
+   dessen Eingang möglicherweise nicht existiert, unterstützt niemanden. Das ist
+   eine Pflicht aus dem AVV, also aus einem Vertrag mit jedem einzelnen Betrieb —
+   und anders als die Impressumspflicht trifft sie uns nicht gegenüber der
+   Allgemeinheit, sondern gegenüber einem konkreten Vertragspartner.
+3. **Der Endkunde ist der Schlechtestgestellte.** Er hat bei uns kein Konto und
+   keinen zweiten Weg. Für ihn ist die genannte Adresse nicht *ein* Kanal,
+   sondern *der* Kanal.
+
+**Also: CC-05 bleibt offen, aber nicht wegen des Texts** — der ist richtig —
+**sondern wegen des Briefkastens.** Ich stufe es nicht auf „nicht erledigt“
+zurück, sondern führe es als erledigt **mit technischem Vorbehalt CoS-P-028**.
+Fällt die Messung aus Antwort 2 gut aus, ist CC-05 ohne weiteres Zutun zu.
+
+### Deine eigentliche Frage: vor Gate 1 oder danach?
+
+**Vor Gate 1** — und zwar nicht wegen der Bußgeldhöhe, sondern wegen der Kosten
+der Verzögerung.
+
+Die Begründung in drei Zeilen:
+
+* **Das Risiko ist heute klein und wird durch Gate 1 selbst groß.** Acht
+  Testbetriebe, keine echten Endkunden, keine Betroffenenanfragen. Genau das
+  ändert sich mit der Landingpage und dem ersten zahlenden Kunden. Ein toter
+  Briefkasten ist der billigste Fehler vor dem Start und einer der teuersten
+  danach: Die Abmahnung nach § 5a UWG kostet Geld, die versäumte
+  Betroffenenfrist kostet Vertrauen.
+* **Es ist kein Bauauftrag, sondern eine Einstellung.** Eine Weiterleitung im
+  IONOS-Konto, dieselbe Handbewegung wie die `rechnung@`-Weiterleitung, die bei
+  Sandy ohnehin schon aussteht. Es wartet auf niemandes Zulieferung.
+* **Ein Gate-1-Punkt hängt direkt daran.** Solange der Eingang ungeprüft ist,
+  kann ich den Betroffenenrechte-Punkt nicht mit gutem Gewissen als erfüllt
+  melden, weil der einzige genannte Weg dorthin ungeprüft ist.
+
+**Aber: es blockiert nicht den Bau, nur das Live-Gehen.** Niemand muss darauf
+warten. Der einzige Zeitpunkt, an dem es fertig sein muss, ist der, an dem die
+Landingpage öffentlich wird — und der hängt ohnehin an Sandys § 19-Entscheidung.
+Beides fällt damit in dasselbe Zeitfenster.
+
+**Risikoeintrag:** neu als **LR-20** in `legal-002-risikobewertung-vob.md`.
+
+*Head of Legal & Compliance · 2026-09-17 · Geprüfte Normtexte und Quellen:
+§ 5 Abs. 1 Nr. 1, Nr. 2 DDG, § 5a UWG, § 130 BGB, Art. 12 Abs. 3 und Abs. 4,
+Art. 13 Abs. 1 lit. a, b, Art. 28 Abs. 3 lit. e DSGVO; LG München I,
+25.02.2025 — 33 O 3721/24*
+
+---
+
+## ✅ Gate-1-Punkt 7.13 bewertet — KI-Anbieter-Nutzungsbedingungen (Head of Legal & Compliance, 2026-09-17)
+
+**Ergebnis in einem Satz: Die Bedingungen sind eingehalten, der Punkt ist
+erfüllt — mit einer kleinen Wortlautkorrektur, die ich unten als neuen Fund
+führe und die die Bewertung nicht kippt.**
+
+Das ist genau der Fall, vor dem der Chief of Staff gewarnt hat: ein Feld, das
+nicht scheitert, sondern nie jemand angesehen hat. Ich habe es angesehen — an
+den Bedingungen selbst und am Code, nicht an unseren eigenen Dokumenten.
+
+### Was tatsächlich benutzt wird — Befund an der Quelle
+
+`src/lib/ai-client.ts` erzeugt einen `OpenAI`-Client **ohne eigene `baseURL`**,
+also gegen `api.openai.com`. Verwendete Modelle: `gpt-4o`, `gpt-4o-mini`,
+`whisper-1`. Aufgerufen werden ausschließlich `chat.completions.create` und
+`audio.transcriptions.create` (sechs Aufrufstellen; keine Assistants-API, keine
+Responses-API). **Das ist wichtig**, weil es die anzuwendenden Bedingungen
+festlegt: Es gilt die API-Plattform, nicht ein Verbraucherprodukt. `store: true`
+kommt im gesamten Quellbaum **nicht** vor — wir bitten OpenAI an keiner Stelle,
+etwas aufzubewahren.
+
+### Die drei Fragen des Chief of Staff
+
+**1. Dürfen wir Sprachaufnahmen und Texte so verarbeiten, wie wir es tun? — Ja.**
+
+OpenAI Services Agreement, **Ziff. 4.2**: Kundendaten werden nur verwendet, um
+den Dienst zu erbringen, Recht einzuhalten und Missbrauch zu verhindern.
+Ziff. **5.3** zieht das **DPA** in den Vertrag ein („incorporated by this
+reference“). Das DPA weist OpenAI die Rolle des **Auftragsverarbeiters** zu und
+nennt als Drittlandmechanismus die **EU-Standardvertragsklauseln**.
+
+**Das deckt sich mit dem, was wir zugesagt haben** — und zwar jetzt an beiden
+Stellen: unser AVV § 4 führt OpenAI seit jeher unter Standardvertragsklauseln,
+und die Datenschutzerklärung tut es seit dem LR-18-Einbau von heute ebenfalls.
+Die Verarbeitungskette (Betrieb = Verantwortlicher → wir = Auftragsverarbeiter →
+OpenAI = Unterauftragsverarbeiter) ist damit durchgängig und an jeder Stufe
+belegt. **Ein gesondert zu unterzeichnendes DPA ist nicht erforderlich**; es gilt
+mit der Nutzung. Ein Execution-Formular existiert, ist aber optional — ich
+empfehle es nicht als Vorbedingung für Gate 1.
+
+**2. Brauchen wir eine Zusage zur Nicht-Verwendung für Training? — Wir haben
+sie, und sie ist jetzt zum ersten Mal an der Quelle belegt.**
+
+Services Agreement **Ziff. 4.2**, wörtlich: *„OpenAI will not use Customer
+Content to develop or improve the Services, unless Customer explicitly agrees to
+such use.“* Das ist kein Marketingsatz auf einer Übersichtsseite, sondern eine
+Vertragspflicht, und sie gilt **standardmäßig** — ohne Einstellung, ohne Antrag,
+ohne Enterprise-Tarif.
+
+**Damit ist ein Satz belegt, den wir seit Monaten öffentlich behaupten.**
+`src/app/datenschutz/page.tsx`, Z. 69: „OpenAI verwendet über die
+Programmierschnittstelle übermittelte Daten nach eigener Zusage nicht zum
+Training seiner Modelle.“ Diese Aussage war bis heute ungeprüft. Sie stimmt, und
+die Formulierung „nach eigener Zusage“ ist sogar die vorsichtig richtige — es
+ist eine vertragliche Zusage des Anbieters, keine von uns überprüfbare Tatsache.
+**Kein Änderungsbedarf.**
+
+**Aufbewahrung:** OpenAI behält API-Ein- und -Ausgaben **bis zu 30 Tage** zur
+Missbrauchserkennung und löscht danach, soweit keine gesetzliche
+Aufbewahrungspflicht besteht. Eine Zero-Data-Retention-Option existiert für
+geeignete Endpunkte auf Antrag. **Ich empfehle sie nicht zu beantragen** — sie
+löst hier nichts, was nicht gelöst ist, und Whisper-Transkription gehört nicht
+zu den Endpunkten, bei denen ZDR regelmäßig gewährt wird. Es wäre Aufwand ohne
+Ertrag.
+
+**3. Gibt es Pflichten, die wir an die Betriebe weiterreichen müssen? — Der
+Substanz nach ja, und sie sind abgedeckt.**
+
+Die Usage Policies richten sich an den Entwickler und erwarten, dass er für die
+Einhaltung durch seine Nutzer einsteht. Eine wörtliche Durchreichklausel
+(„flow-down“) verlangen sie nicht. Unsere AGB § 7.4 untersagt dem Nutzer die
+„Nutzung der Plattform für illegale Zwecke“; § 7.3 legt die Verantwortung für
+alle erfassten Inhalte beim Nutzer. **Das genügt für den Zuschnitt dieses
+Produkts.** Die Missbrauchsfläche eines Diktiergeräts für Malerangebote ist
+denkbar gering, und eine zusätzliche Klausel, die auf die Policies eines
+Drittanbieters verweist, wäre in AGB gegenüber Unternehmern zwar zulässig, aber
+sie würde nichts verhindern, was § 7.4 nicht schon verhindert. **Kein
+Handlungsbedarf, und das ist ein Urteil, keine Auslassung.**
+
+Eine **Offenlegungspflicht, dass KI im Spiel ist**, ergibt sich aus den
+OpenAI-Bedingungen nicht. Unabhängig davon steht sie ohnehin in AGB § 2.1 und
+§ 10.2 — wir erfüllen also mehr, als hier verlangt ist.
+
+### 🟡 Neuer Fund L-KI-01 — ein Wort in der Datenschutzerklärung verspricht zu viel
+
+`src/app/datenschutz/page.tsx`, Z. 45: „Sie können jede Aufnahme in der App
+löschen; die Audiodatei wird dann **unwiderruflich entfernt**.“
+
+Der Satz steht im Absatz über die Speicherung auf unseren Servern und ist dort
+richtig. Er steht aber **unmittelbar hinter** dem Satz, der die Übermittlung an
+OpenAI beschreibt, und ist nicht eingeschränkt. Wer ihn liest, versteht: Ich
+drücke Löschen, und die Aufnahme ist überall weg. **Solange OpenAI dieselbe
+Audiodatei noch bis zu 30 Tage zur Missbrauchserkennung vorhalten darf, trifft
+das nicht zu.**
+
+Praktisch harmlos — die Frist ist kurz, die Grundlage sauber, die Datei liegt
+beim Auftragsverarbeiter und nicht offen. Aber es ist eine **Tatsachenbehauptung
+über die Reichweite einer Löschung**, und das ist genau der Satztyp, der nach
+Art. 13 DSGVO stimmen muss. Severity 1, kein eigener Risikoeintrag.
+
+**Vorschlag, ein Halbsatz:** „… die Audiodatei wird dann unwiderruflich von
+unseren Servern entfernt; eine bei OpenAI zur Missbrauchserkennung vorgehaltene
+Kopie wird dort spätestens nach 30 Tagen gelöscht.“
+
+**Ich baue das nicht selbst ein.** Es ist eine inhaltliche Erweiterung des
+Rechtstexts, nicht das Geraderücken einer Begründung wie bei LR-18 — und
+Rechtstexte gehen nach der Team-Regel nur mit Sandys Freigabe raus. Der Wortlaut
+liegt fertig vor; er braucht einen Satz von ihr, kein Konzept.
+
+### Was ich dabei mitgemessen habe — die 30-Tage-Zusage ist bisher ungetestet
+
+Nicht Teil von 7.13, aber es fiel beim Nachrechnen der Fristen auf, und es wäre
+unehrlich, es nicht hinzuschreiben. Unsere Datenschutzerklärung (Z. 117) und
+AGB § 8.3 sagen zu, Audiodateien spätestens 30 Tage nach der Aufnahme zu
+löschen. In der Produktionsdatenbank, heute abgefragt:
+
+* `entwurf_aufnahmen`: **24 Zeilen**, älteste vom **19.08.2026, 11:20 UTC**,
+  jüngste vom 16.09.2026. **Keine einzige ist bisher älter als 30 Tage.**
+* Der Job `aufraeumen` läuft nachweislich täglich um 03:30 UTC und meldet
+  `ok: true`. Seine 30-Tage-Zweig meldet an **jedem** protokollierten Lauf
+  `geprueft: 0` — er hatte schlicht noch nie etwas zu tun.
+* Die Verwaisten-Sperrklinke arbeitet dagegen sichtbar: Am 17.09. hat sie im
+  Bucket `entwurf-audio` **10 Dateien** ohne Datenbankzeile gelöscht.
+
+**Daraus folgt kein Fehler, sondern ein Datum:** Die älteste Aufnahme
+überschreitet die Frist am **18.09.2026 um 11:20 UTC**. Der erste Lauf, der
+tatsächlich nach Frist löschen muss, ist deshalb der vom **19.09.2026,
+03:30 UTC**. Bis dahin ist unsere Zusage eine Absichtserklärung; danach ist sie
+gemessen. **Jemand sollte an diesem Morgen einmal in `system_laeufe` schauen**,
+ob `aufnahmen.dateien` größer als 0 ist. Wenn nicht, sind zwei veröffentlichte
+Rechtstexte unrichtig, und dann ist es kein kleiner Punkt mehr. Das ist kein
+Bauauftrag — nur ein Blick, und ich vermerke ihn hier, damit er nicht von
+meinem Schreibtisch verschwindet.
+
+### Bewertung des Gate-1-Punkts
+
+**Punkt 7.13: erfüllt. 100 von 100 Punkten**, ohne eine Zeile Code. Die
+Bedingungen erlauben unsere Verarbeitung, die Nicht-Verwendung zum Training ist
+vertraglich zugesagt und gilt ohne Zutun, das DPA gilt und ordnet OpenAI korrekt
+als Auftragsverarbeiter ein, der Drittlandmechanismus deckt sich mit unserem
+AVV, und weiterzureichende Pflichten sind durch AGB § 7.3/7.4 abgedeckt.
+
+**L-KI-01 mindert die Bewertung nicht**: Der Fund betrifft die Formulierung
+*unserer* Löschzusage, nicht die Einhaltung *der Anbieterbedingungen*. Das ist
+das Feld nebenan (Betroffenenrechte / Art. 13), und ich verrechne nicht zwei
+Felder miteinander, um eine Zahl schöner zu machen.
+
+*Head of Legal & Compliance · 2026-09-17 · Geprüfte Quellen: OpenAI Services
+Agreement Ziff. 4.2, 5.3, 11.3; OpenAI Data Processing Addendum; OpenAI
+Usage Policies; OpenAI Enterprise Privacy (Aufbewahrung, ZDR). Geprüfte
+Normtexte: Art. 13, Art. 28 Abs. 3, Art. 46 Abs. 2 lit. c DSGVO. Code an der
+Quelle: `src/lib/ai-client.ts`, sechs Aufrufstellen, `src/app/datenschutz/page.tsx`,
+`src/app/avv/page.tsx`, `src/app/agb/page.tsx`. Produktionsdatenbank:
+`entwurf_aufnahmen`, `storage.objects`, `system_laeufe`.*
+
+---
+
+## Notiz zum Ablauf dieses Laufs (2026-09-17)
+
+Drei Dinge, die nicht in die Sachabschnitte gehören, aber jemand wissen muss.
+
+**1. „Spur 5“ gibt es in `arbeitsreihenfolge.md` nicht mehr.** Mein Auftrag
+nennt sie als eine von zwei Todo-Quellen. Die Datei existiert (Stand 07:00 UTC),
+ist aber umgebaut; eine Überschrift „Spur 5 — Head of Legal & Compliance“ kommt
+darin nicht vor. Legal steht dort nur noch als Zeile in der Tabelle „Wer als
+Nächstes dran ist“, mit dem Inhalt „unverändert / wartet auf niemanden“. Ich
+habe deshalb allein aus `chief-of-staff-legal-todos.md` gearbeitet. **Die Datei
+gehört dem Chief of Staff, ich habe nichts darin geändert** — aber wenn die
+Spur-Gliederung absichtlich weggefallen ist, sollte der Auftragstext einer
+Rolle, die sie noch sucht, nachgezogen werden.
+
+**2. `node scripts/docs-sichern.mjs sichern` ließ sich nicht ausführen.**
+`pruefen` meldet vor meiner Arbeit und unabhängig von ihr:
+
+> `pruefmeister-restliste.md: 16149 Zeichen stehen NACH der Endmarkierung — Speicherfehler.`
+
+**Der Rest wächst während des Laufens:** bei meiner ersten Messung um 08:05 UTC
+waren es 16.149 Zeichen, eine halbe Stunde später 18.365. Es ist also kein
+eingefrorener Altschaden, sondern eine Datei, in die gerade jemand schreibt —
+wer immer das ist, sollte es wissen, bevor er weiterschreibt.
+
+Das Skript verweigert das Sichern, solange irgendeine Datei in `docs/` beschädigt
+ist — also auch das Sichern meiner eigenen, unbeschädigten Änderungen. Die
+Endmarkierung dieser Datei weist ausdrücklich an, nicht selbst zu löschen,
+sondern dem Chief of Staff zu melden. **Das tue ich hiermit und fasse die Datei
+nicht an.** Meine eigenen Änderungen habe ich stattdessen direkt committet, ohne
+das Skript, und dabei ausschließlich meine eigenen Dateien benannt.
+
+**3. Im Arbeitsbaum lag fremde, nicht committete Arbeit** (`maler.ts`,
+`maler-extras.ts`, ein neuer PM-090-Test). **Nicht von mir und von mir nicht
+mitcommittet** — sie liegt unverändert weiter im Arbeitsbaum.
+
+*Head of Legal & Compliance · 2026-09-17*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

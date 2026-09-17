@@ -89,6 +89,32 @@ describe('Datenschutzerklärung nennt genau die Dienste, die wir einsetzen', () 
     expect(DATENSCHUTZ).toContain('Art. 46 Abs. 2 lit. c DSGVO')
   })
 
+  // LR-18 (16.09.2026): Datenschutzerklärung und AVV nannten für Vercel und
+  // Resend zwei verschiedene Rechtsgrundlagen für den Drittlandtransfer — der
+  // AVV Standardvertragsklauseln, die Erklärung den Angemessenheitsbeschluss.
+  // Der AVV ist die Vertragsurkunde und an den Anbieter-DPAs belegt, also zieht
+  // die Erklärung nach. Der Test hält die Richtung fest: Wer im AVV auf
+  // Standardvertragsklauseln steht, darf in der Erklärung nicht unter dem
+  // Angemessenheitsbeschluss geführt werden.
+  it('LR-18: Datenschutzerklärung nennt für Vercel und Resend dieselbe Grundlage wie der AVV', () => {
+    // Vorbedingung: der AVV führt beide weiterhin über Standardvertragsklauseln.
+    for (const dienst of ['Vercel Inc. (USA) — Hosting der Webanwendung, Übermittlung auf Basis von EU-Standardvertragsklauseln', 'Resend Inc. (USA) — E-Mail-Versand, Übermittlung auf Basis von EU-Standardvertragsklauseln']) {
+      expect(AVV).toContain(dienst)
+    }
+    // Der Satz, der die Grundlage nach Art. 45 DSGVO zuweist, darf Vercel und
+    // Resend nicht mehr enthalten.
+    const art45Saetze = DATENSCHUTZ.split('<br /><br />').filter(s => s.includes('Art. 45 DSGVO'))
+    expect(art45Saetze.length).toBeGreaterThan(0)
+    for (const satz of art45Saetze) {
+      expect(satz).not.toContain('Vercel')
+      expect(satz).not.toContain('Resend')
+    }
+    // Und sie müssen stattdessen bei den Standardvertragsklauseln stehen.
+    const sccSaetze = DATENSCHUTZ.split('<br /><br />').filter(s => s.includes('Art. 46 Abs. 2 lit. c DSGVO'))
+    expect(sccSaetze.some(s => s.includes('Vercel'))).toBe(true)
+    expect(sccSaetze.some(s => s.includes('Resend'))).toBe(true)
+  })
+
   it('AVV führt dieselben Unterauftragnehmer wie die Datenschutzerklärung', () => {
     for (const dienst of ['OpenAI', 'Sentry', 'Supabase', 'Vercel', 'Resend', 'Stripe']) {
       expect(AVV).toContain(dienst)

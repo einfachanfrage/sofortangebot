@@ -999,7 +999,7 @@ Erinnerungsmail an den Endkunden). Voller Befund mit Zeilennummern:
 
 ---
 
-## LR-18 🟠 — Datenschutzerklärung und AVV nennen für denselben Dienstleister zwei verschiedene Rechtsgrundlagen für den Drittlandtransfer
+## LR-18 ✅ ERLEDIGT (17.09.2026) — Datenschutzerklärung und AVV nennen für denselben Dienstleister zwei verschiedene Rechtsgrundlagen für den Drittlandtransfer
 
 **Ebene:** B (Sofortangebot unmittelbar). Anders als fast alles andere in
 diesem Register ist das kein Risiko des Handwerkers, sondern unseres: Beide
@@ -1050,6 +1050,27 @@ ist an der Quelle belegt und die Vertragsurkunde. Konkret in
 * Resend: „Standardvertragsklauseln; zusätzlich unter dem EU-US Data Privacy
   Framework zertifiziert"
 * Sentry: unverändert.
+
+### ✅ Erledigt am 17.09.2026
+
+Sandy hat am 16.09. freigegeben („LR18 freigegeben"). Der Einbau ist am
+17.09.2026 erfolgt, durch Head of Legal & Compliance selbst.
+
+`src/app/datenschutz/page.tsx`, Abschnitt „4. Drittland-Übermittlungen" nennt
+jetzt: **Sentry** unter Art. 45 DSGVO (unverändert), **Vercel, OpenAI und
+Supabase** unter Art. 46 Abs. 2 lit. c DSGVO, **Resend** unter
+Art. 46 Abs. 2 lit. c DSGVO mit dem Zusatz der DPF-Zertifizierung. Der
+Stripe-Absatz ist unverändert. Damit sagt die Erklärung dasselbe wie der AVV.
+
+**Gegen den Rückfall gesichert:** neuer Prüffall `LR-18: Datenschutzerklärung
+nennt für Vercel und Resend dieselbe Grundlage wie der AVV` in
+`src/lib/__tests__/rechtstexte-hygiene.test.ts`. Er prüft die Vorbedingung im
+AVV und beide Richtungen in der Erklärung. Der alte Wortlaut wurde probeweise
+zurückgesetzt und macht den Prüffall rot — die Sperrklinke greift also wirklich.
+`rechtstexte-hygiene.test.ts` 15/15 grün, `tsc --noEmit` sauber.
+
+Voller Eintrag: `chief-of-staff-legal-todos.md`, Abschnitt „LR-18 eingebaut"
+vom 17.09.
 
 **Restrisiko danach: gering.** Es bleibt die Pflicht, die Liste bei jedem
 Wechsel eines Unterauftragnehmers an **beiden** Stellen nachzuziehen. Das ist
@@ -1149,5 +1170,135 @@ das Wort das Regelwerk der Mengenermittlung, nicht einen Vorgang am Objekt.
 2 BGB, § 5 Abs. 1 Nr. 2 DDG, § 6 Abs. 1 Nr. 2 DDG, § 3a und § 5 UWG, Art. 13
 Abs. 1 lit. f, Art. 28 Abs. 3, Art. 45, Art. 46 Abs. 2 lit. c DSGVO*
 
+
+
+---
+
+## LR-20 🟠 — Die im Impressum und in der Datenschutzerklärung genannte E-Mail-Adresse empfängt möglicherweise nichts
+
+**Datum:** 2026-09-17 · Head of Legal & Compliance · Anlass: CoS-L-010
+**Ebene:** B (Sofortangebot unmittelbar). Kein Risiko des Handwerkers — beide
+Dokumente sind von uns veröffentlicht.
+
+### Risikobeschreibung
+
+`hallo@sofortangebot.app` ist die einzige E-Mail-Adresse, die wir nach außen
+nennen, und sie steht an **vier** Stellen mit je eigener Rechtsfolge:
+
+| Fundstelle | Funktion | Norm |
+|---|---|---|
+| `src/app/impressum/page.tsx`, Z. 34 | Pflichtangabe im Impressum | § 5 Abs. 1 Nr. 2 DDG |
+| `src/app/datenschutz/page.tsx`, Z. 27 | Kontakt des Verantwortlichen | Art. 13 Abs. 1 lit. a, b DSGVO |
+| `src/app/datenschutz/page.tsx`, Z. 135 | Ausübung der Betroffenenrechte | Art. 12, 15–22 DSGVO |
+| `src/app/datenschutz/page.tsx`, Z. 144 | Antrag auf Kontolöschung | Art. 17 DSGVO |
+
+Dazu Z. 49: die Zusage, Anfragen von Endkunden eines Betriebs unverzüglich an
+diesen weiterzuleiten (CC-05, Art. 28 Abs. 3 lit. e DSGVO). Auch dieser Weg
+setzt voraus, dass die Adresse Post empfängt.
+
+**Ob sie das tut, ist ungeprüft.** Die MX-Einträge der Domain zeigen auf IONOS
+(`mx00.ionos.de` / `mx01.ionos.de`, vom Chief of Staff abgefragt); ob dort ein
+Postfach oder eine Weiterleitung für `hallo@` existiert, weiß niemand. Ich
+konnte es selbst nicht messen — SMTP und DNS-over-HTTPS sind aus unserer
+Umgebung nicht erreichbar. **Ich übernehme die MX-Messung und behaupte nichts
+darüber hinaus.**
+
+### Severity 2 — Minor heute, und die Schwere hängt an einem technischen Detail
+
+Die bloße *Angabe* genügt nicht: § 5 Abs. 1 Nr. 2 DDG verlangt Angaben, die
+schnelle elektronische Kontaktaufnahme „ermöglichen". **LG München I,
+25.02.2025 — 33 O 3721/24** hat eine Adresse, die nur mit einer auf ein
+Formular verweisenden Autoantwort reagierte, als Verstoß gewertet und ihn als
+**abmahnfähig nach § 5a UWG** eingeordnet. Eine Adresse, die gar nicht
+antwortet, steht erst recht darunter. Die Telefonnummer im Impressum heilt das
+nicht — die E-Mail-Adresse ist im Normtext namentlich genannt.
+
+**Der Zweitschlag liegt bei den Fristen**, und er hängt daran, wie der
+Mailserver sich verhält:
+
+* **Abweisung (Bounce):** kein Zugang, die Frist des Art. 12 Abs. 3 DSGVO läuft
+  nicht. Der Absender merkt es und kann es anders versuchen.
+* **Annahme und stilles Verwerfen** (Catch-all ohne Postfach): **Zugang bejaht**,
+  die Monatsfrist läuft gegen uns, ohne dass wir von der Anfrage wissen. Auch
+  die Verlängerung um zwei Monate fällt weg, weil sie eine Unterrichtung
+  **innerhalb** des ersten Monats voraussetzt. Aus dem Versäumnis wird direkt
+  der Zustand des Art. 12 Abs. 4 DSGVO mitsamt Beschwerderecht.
+
+**Die Unterscheidung ist die ganze Bewertung.** Fall 1 ist ärgerlich, Fall 2
+ist das eigentliche Risiko. Welcher vorliegt, entscheidet eine einzige Messung.
+
+### Likelihood 2 — Unlikely heute, wahrscheinlich ab dem ersten echten Kunden
+
+Acht Testbetriebe, keine echten Endkunden, bisher keine bekannte
+Betroffenenanfrage. Die Wahrscheinlichkeit steigt sprunghaft mit der
+Landingpage: Eine öffentliche Seite wird von Abmahnkanzleien automatisiert
+abgegriffen, und der Impressums-Check ist der billigste Treffer, den es gibt.
+
+### Mitigation
+
+1. **Messen, nicht einrichten:** eine Testmail von außen an
+   `hallo@sofortangebot.app`. Kommt ein Bounce, ist es Fall 1; kommt keiner und
+   liegt trotzdem nichts im Postfach, ist es Fall 2. Liegt sie im Postfach, ist
+   LR-20 gegenstandslos und wird geschlossen. **Technisch bei Platform
+   (CoS-P-028)**, kein Bauauftrag.
+2. **Falls kein Empfang:** Weiterleitung im IONOS-Konto auf eine Adresse, die
+   gelesen wird — dieselbe Handbewegung wie die ohnehin ausstehende
+   `rechnung@`-Weiterleitung, und sinnvollerweise derselbe Arbeitsgang.
+3. **Danach einmal gegenprüfen**, dass die vier Fundstellen oben dieselbe
+   Adresse nennen wie die eingerichtete. Dieselbe Drift-Lehre wie LR-01,
+   LR-16 und LR-18: eine Angabe an mehreren Orten läuft auseinander.
+
+**Zeitpunkt: vor Gate 1** — nicht wegen der Bußgeldhöhe, sondern weil das
+Risiko heute klein ist und durch Gate 1 selbst groß wird. **Es blockiert den
+Bau nicht**, nur das Live-Gehen der Landingpage, und fällt damit in dasselbe
+Zeitfenster wie Sandys § 19-Entscheidung.
+
+**Restrisiko danach: gering.** Es bleibt ein Postfach, das jemand lesen muss.
+
+**Begründung im Volltext:** `chief-of-staff-legal-todos.md`, Abschnitt
+„CoS-L-010 — Antwort" vom 17.09.
+
+---
+
+## Angrenzend, kein eigener Risikoeintrag: die Reichweite unserer Löschzusage bei Sprachaufnahmen (L-KI-01)
+
+**Datum:** 2026-09-17 · Head of Legal & Compliance · Anlass: Gate-1-Punkt 7.13
+
+`src/app/datenschutz/page.tsx`, Z. 45: „Sie können jede Aufnahme in der App
+löschen; die Audiodatei wird dann **unwiderruflich entfernt**." Der Satz steht
+unmittelbar hinter der Beschreibung der Übermittlung an OpenAI und ist nicht
+eingeschränkt. **OpenAI darf API-Ein- und -Ausgaben bis zu 30 Tage zur
+Missbrauchserkennung vorhalten** (Enterprise-Privacy-Zusage, an der Quelle
+geprüft). Solange das gilt, ist „unwiderruflich entfernt" als unbeschränkte
+Aussage zu weit.
+
+**Severity 1, Likelihood gering** — kurze Frist, saubere Rechtsgrundlage, Kopie
+liegt beim Auftragsverarbeiter unter Standardvertragsklauseln, nicht offen.
+Deshalb kein eigener Eintrag. Es ist aber eine Tatsachenbehauptung über die
+Reichweite einer Löschung und gehört damit zu den Sätzen, die nach Art. 13
+DSGVO stimmen müssen.
+
+**Fertiger Wortlaut** (ein Halbsatz, keine inhaltliche Erweiterung im Übrigen):
+„… die Audiodatei wird dann unwiderruflich von unseren Servern entfernt; eine
+bei OpenAI zur Missbrauchserkennung vorgehaltene Kopie wird dort spätestens
+nach 30 Tagen gelöscht."
+
+**Nicht eingebaut** — Rechtstexte gehen nach der Team-Regel nur mit Sandys
+Freigabe raus, und anders als bei LR-18 liegt für diesen Satz keine vor. Er
+braucht einen Satz von ihr, kein Konzept.
+
+**Nicht zu verwechseln mit der 30-Tage-Frist auf unseren eigenen Servern.** Die
+ist gebaut, der Job läuft täglich — aber sein Fristzweig hatte bis heute noch
+nie etwas zu tun, weil die älteste Aufnahme in der Produktionsdatenbank vom
+19.08.2026 stammt. Der erste Lauf, der tatsächlich nach Frist löschen muss, ist
+der vom **19.09.2026, 03:30 UTC**. Bis dahin ist die Zusage in
+Datenschutzerklärung Z. 117 und AGB § 8.3 unbelegt. Messung und Fundstellen:
+`chief-of-staff-legal-todos.md`, Abschnitt „Gate-1-Punkt 7.13 bewertet" vom 17.09.
+
+*Head of Legal & Compliance · 2026-09-17 · Geprüfte Normtexte und Quellen:
+§ 5 Abs. 1 Nr. 2 DDG, § 5a UWG, § 130 BGB, Art. 12 Abs. 3 und 4, Art. 13
+Abs. 1 lit. a, b, Art. 17, Art. 28 Abs. 3 lit. e DSGVO; LG München I,
+25.02.2025 — 33 O 3721/24; OpenAI Services Agreement Ziff. 4.2 und 5.3,
+OpenAI Data Processing Addendum, OpenAI Enterprise Privacy*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

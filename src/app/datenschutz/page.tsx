@@ -92,8 +92,9 @@ export default function DatenschutzPage() {
             content: (
               <p>
                 OpenAI, Resend, Sentry und Vercel sind US-amerikanische Unternehmen; auch Supabase Inc. hat seinen Sitz in den USA, betreibt unsere Datenbank aber in der EU (Frankfurt). Wir unterscheiden ausdrücklich:<br /><br />
-                <strong className="font-black">Vercel, Resend und Sentry</strong> sind unter dem EU-US Data Privacy Framework zertifiziert; die Übermittlung stützt sich auf den Angemessenheitsbeschluss der EU-Kommission (Art. 45 DSGVO).<br /><br />
-                <strong className="font-black">OpenAI und Supabase</strong>: Die Übermittlung stützt sich auf die EU-Standardvertragsklauseln gemäß Art. 46 Abs. 2 lit. c DSGVO, ergänzt um vertragliche und technische Schutzmaßnahmen.<br /><br />
+                <strong className="font-black">Sentry</strong> ist unter dem EU-US Data Privacy Framework zertifiziert; die Übermittlung stützt sich auf den Angemessenheitsbeschluss der EU-Kommission (Art. 45 DSGVO).<br /><br />
+                <strong className="font-black">Vercel, OpenAI und Supabase</strong>: Die Übermittlung stützt sich auf die EU-Standardvertragsklauseln gemäß Art. 46 Abs. 2 lit. c DSGVO, ergänzt um vertragliche und technische Schutzmaßnahmen.<br /><br />
+                <strong className="font-black">Resend</strong>: Die Übermittlung stützt sich auf die EU-Standardvertragsklauseln gemäß Art. 46 Abs. 2 lit. c DSGVO; Resend ist zusätzlich unter dem EU-US Data Privacy Framework zertifiziert.<br /><br />
                 <strong className="font-black">Stripe</strong>: Unser Vertragspartner ist Stripe Payments Europe, Limited mit Sitz in Irland — insoweit findet keine Drittlandübermittlung statt. Soweit Stripe Daten innerhalb der Unternehmensgruppe in die USA weitergibt, stützt sich dies auf die Zertifizierung unter dem EU-US Data Privacy Framework sowie ergänzend auf die EU-Standardvertragsklauseln.
               </p>
             ),
