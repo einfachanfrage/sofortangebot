@@ -333,7 +333,9 @@ describe('PM-108 · Wandnische', () => {
       .toEqual(titel(lauf('maler', 'Wohnzimmer vier mal fünf, Höhe zwo fünfzig. Wände streichen.', WZ_MALER())))
   })
 
-  it.fails('PM-108-A · die mitgestrichene Nische hinterlässt eine Spur', () => {
+  // Grün seit dem PM-089-Fix (17.09.2026, Engineering) — derselbe Fall,
+  // dieselbe Reparatur: `pruefeNische` in `vollstaendigkeit/maler-sonder.ts`.
+  it('PM-108-A · die mitgestrichene Nische hinterlässt eine Spur', () => {
     expect(fehltHat(laufVoll('maler', T, WZ_MALER()).fehlende, /nisch|laibung|leibung/i)).toBe(true)
   })
 })

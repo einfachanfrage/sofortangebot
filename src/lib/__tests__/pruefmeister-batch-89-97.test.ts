@@ -149,14 +149,21 @@ describe('PM-089 · Regalnische außerhalb des Bades', () => {
     expect(malerNischen).toHaveLength(0)
   })
 
-  it.fails('PM-089-A · die gesagte Nische hinterlässt überhaupt eine Spur', () => {
+  // Grün seit dem PM-089-Fix (17.09.2026, Engineering): `pruefeNische` legt
+  // einen Fehlt-Eintrag an. Eine bepreiste Position entsteht bewusst nicht —
+  // der Malerkatalog führt fürs Streichen keine Zeile (PM-089-D).
+  it('PM-089-A · die gesagte Nische hinterlässt überhaupt eine Spur', () => {
     const erg = laufVoll('maler', T_NISCHE, [malerRaum('Wohnzimmer', 4, 5)])
     const mitNische = finde(erg.positionen, /Nische/) != null
     const inFehlt = fehltHat(erg.fehlende, /Nische/i)
-    // Gemessen: beides false. Der Satz verschwindet spurlos.
     expect(mitNische || inFehlt).toBe(true)
   })
 
+  // BLEIBT ROT, und zwar absichtlich — Widerspruch an den Prüfmeister:
+  // -B verlangt eine andere POSITIONSLISTE, PM-108-D (grün, Kontrolle)
+  // verlangt ausdrücklich dieselbe. Beides zugleich geht nur mit einer
+  // erfundenen oder einer 0,00-€-Zeile (K.5 / PM-066). Bis dort ein Satz
+  // steht, bleibt die Sperrklinke stehen.
   it.fails('PM-089-B · und das Angebot unterscheidet sich vom Angebot ohne Nische', () => {
     const mit = lauf('maler', T_NISCHE, [malerRaum('Wohnzimmer', 4, 5)])
     const ohne = lauf('maler', T_OHNE, [malerRaum('Wohnzimmer', 4, 5)])

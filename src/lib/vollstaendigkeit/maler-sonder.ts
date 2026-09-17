@@ -314,3 +314,45 @@ export function pruefeDachschraege(ergaenzt: BerechnetePosition[], fehlende: str
     if (!hat(ergaenzt, 'boden schütz')) add(ergaenzt, fehlende, 'Boden schützen / Abdeckfolie')
   }
 }
+
+// ── PM-089 / PM-108 (Prüfmeister, 16.09.2026) ───────────────────────────────
+//
+// „… da ist eine Regalnische in der Wand, ein Meter zwanzig breit, die muss
+// mit gestrichen werden." → heute Zeile für Zeile dasselbe Angebot wie ohne
+// den Satz, und `fehlende` bleibt leer. Der Satz verschwindet spurlos.
+//
+// Das ist NICHT die Familie „Titel trifft den Katalog nicht", sondern eine
+// echte Katalog-Lücke wie PM-076 (Rollladenkästen): Der Malerkatalog führt
+// die Nische nur fürs TAPEZIEREN (`Ecken / Nischen / Laibungen tapezieren
+// (Aufpreis)`, 6,00 €/lfdm), fürs STREICHEN gibt es keine Zeile — gemessen
+// über alle Maler-Kategorien, null Treffer (PM-089-D, PM-108-C). Im Bad gibt
+// es sie (`Nische / Wandnische fliesen`, 95,00 €/Stück), das ist aber ein
+// anderes Gewerk und bleibt hier unberührt (PM-075, weiter offen).
+//
+// Solange die Katalogzeile fehlt, ist die richtige Antwort ein Fehlt-Eintrag
+// — keine erfundene bepreiste Position (K.5) und keine Nullzeile (PM-066).
+//
+// Wortgrenzen statt Wortstamm, dieselbe Falle wie PM-064 und PM-074:
+// „nische" steckt in „technische", „mechanische", „elektronische",
+// „hygienische", „spanische", „botanische". Ein blosses
+// `lower.includes('nische')` hätte in jedem zweiten Diktat gefeuert. Die
+// Umlaute stehen ausgeschrieben statt `\b`, weil `\b` in JavaScript ASCII
+// ist und an „Fußnische" wieder eine falsche Grenze sähe.
+const NISCHE_WORT = /(?<![a-zäöüß])(?:regal|wand|mauer)?nischen?(?![a-zäöüß])/
+
+export function pruefeNische(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {
+  if (!NISCHE_WORT.test(lower)) return
+  // Nur wo im Angebot wirklich an der Wand gestrichen wird. Die Nische ist
+  // Mehrarbeit auf derselben Grundfläche — ohne Wandposition gibt es nichts,
+  // wozu sie Mehrarbeit wäre. Beide gemessenen Fälle (PM-089, PM-108) sagen
+  // „Wände streichen". Der Tapezier-Fall ist NICHT gebaut: dort gibt es die
+  // Katalogzeile, und eine bepreiste Position daraus ist ein eigener
+  // Eingriff mit eigener Messung.
+  if (!ergaenzt.some(p => istWandStreichen(p.beschreibung ?? ''))) return
+  // Nicht über `add`: dessen Dopplungsschutz nimmt die ersten ZWEI Wörter
+  // des Titels, hier also „nische" und „/" — und „/" steckt in „Boden
+  // schützen / Abdeckfolie". Der Eintrag wäre stillschweigend unterdrückt
+  // worden.
+  if (hat(ergaenzt, 'nische', 'laibung', 'leibung')) return
+  fehlende.push('Nische streichen (Laibungsflächen aufmessen — keine Katalogzeile)')
+}

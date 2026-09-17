@@ -4,7 +4,7 @@ import { wendeNurXFilterAn, pruefeStreichenBasis, pruefeGrundierung } from './ma
 import { pruefeTuerenLackieren, pruefeFensterLackieren, pruefeHeizkLackieren } from './maler-lackieren'
 import { pruefeBodenAbdecken, pruefeFliesenspiegel, pruefeLampenAbkleben, pruefeHeizkAbkleben, pruefeTreppenhausGelaender } from './maler-abkleben'
 import {
-  pruefeSchimmel, pruefeWasserflecken, pruefeFeuchtraum, pruefeAbwaschbar, pruefeChlor,
+  pruefeSchimmel, pruefeWasserflecken, pruefeFeuchtraum, pruefeAbwaschbar, pruefeChlor, pruefeNische,
   pruefeBetonwand, pruefeKalkputz, pruefeDachschraege,
 } from './maler-sonder'
 import {
@@ -82,4 +82,9 @@ export function pruefeMaler(
   const hatTapeteWegFlag = pruefeTapeteWegDannStreich(ergaenzt, fehlende, verstaendnis)
   pruefeTapezieren(ergaenzt, fehlende, lower, transkript, positionen, hatTapeteWegFlag)
   pruefeFassade(ergaenzt, lower, transkript, verstaendnis)
+  // PM-089 / PM-108: MUSS ganz hinten stehen. Die Regel prueft, ob im
+  // Angebot ueberhaupt eine Wand gestrichen wird — das steht erst fest,
+  // wenn alle Regeln durch sind (pruefeStreichenBasis legt an, die
+  // nur-X-Filter nehmen wieder weg).
+  pruefeNische(ergaenzt, fehlende, lower)
 }

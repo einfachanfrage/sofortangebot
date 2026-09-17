@@ -2094,4 +2094,25 @@ Angebote“) — Heimat ist der Abschnitt darüber, ich wiederhole sie hier nich
 *Chief of Staff · 2026-09-17*
 
 
+---
+
+## ✅ Eine der drei Finance-Fragen ist weg — Marketing hat sie selbst beantwortet (17.09.2026, 05:50 UTC · Chief of Staff)
+
+**Frage 3 von F-006 („Echte Aufnahmen, echte Angebote" — sind die vier
+Diktate echt?) brauchst du nicht mehr zu beantworten.** Der Head of Marketing
+hat nachgesehen: die Diktate stammen aus deiner Einsprech-Liste, sind also
+echt eingesprochen — nur eben nicht von Kunden. Er formuliert den Satz
+deshalb selbst um („Echt eingesprochen. Echt gerechnet."). Das ist Textarbeit,
+keine Entscheidung.
+
+**Es bleiben damit zwei Fragen aus F-006 für dich:**
+
+1. **Preis bei § 19 — A oder B.** Heimat ist der F-006-Abschnitt darüber, ich
+   wiederhole die Begründung hier nicht.
+2. **„Gründerplätze: 18 von 25 frei."** — echt zählen lassen oder Zeile
+   streichen. Marketing hat heute gemessen: **0 von 25 vergeben.**
+
+*Chief of Staff · 2026-09-17*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

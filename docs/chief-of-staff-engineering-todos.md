@@ -7970,4 +7970,50 @@ drankommt, sagt kurz Bescheid, dann lasse ich sie drin und wir sparen uns eine
 
 ---
 
+---
+
+## CoS-E-073 — Drei von vier Rückfragen-Zweigen haben heute keinen Auslöser (Chief of Staff, 2026-09-17)
+
+**Woher:** Befund des Product Designers aus PD-019 Punkt 1, Heimat
+`design-check.md`, Eintrag „Product Designer · 2026-09-17". Ich trage ihn hier
+ein, weil ihr `design-check.md` nicht lest — **der Befund ist seiner, nicht
+meiner**, ich habe ihn weitergereicht und die Fundstellen nachgelesen, aber
+keinen eigenen Lauf dazu gemacht.
+
+**Der Befund:** `supabase/functions/_shared/prompt-extraktion-v4.ts` sagt
+nirgends allgemein, wann `vage: true` zu setzen ist. Die einzige Stelle, die
+`raum_ohne_masse` nennt, ist Zeile 120 — und die steht im Zweig „Wohnung/Haus
+als Ganzes" (DC-040). Für einen normal benannten Raum ohne jedes Maß
+(„Wohnzimmer streichen.") gibt es keine Regel. Die drei weiteren Werte, die
+`src/lib/mengen/rueckfragen-generator.ts` auswertet — `plural_ohne_zahl`,
+`menge_unbekannt`, `referenz_ohne_kontext` — kommen im Prompt überhaupt nicht
+vor.
+
+**Folge, wie der Designer sie beschreibt:** ist `vage` falsch, entsteht keine
+Rückfrage, keine Rückfrage heißt keine Position und kein Eintrag — die
+Fehlerform von PM-113.
+
+**Sein Formulierungsvorschlag (Wortlaut von ihm, Code bei euch):**
+
+> Ein Raum, der mit Arbeiten genannt wird, aber weder `laenge`/`breite` noch
+> `flaeche` noch `wandflaeche_direkt` trägt, bekommt `vage: true`,
+> `vage_typ: "raum_ohne_masse"`, `vage_beschreibung` = der Satz, in dem er
+> vorkommt. Niemals weglassen und niemals mit erfundenen Maßen füllen.
+
+**Die Architekturfrage, die er ausdrücklich nicht entscheidet und die ich euch
+deshalb stelle:** gehören die anderen drei `vage_typ`-Werte ebenfalls in den
+Prompt, oder werden sie deterministisch nachgezogen
+(`extraktion-normalisierer.ts` liest sie heute nur durch)? **Das ist eure
+Entscheidung, nicht meine und nicht seine.**
+
+**Blockiert nichts.** Die Auffanglinie in der Oberfläche (PD-019 Punkt 1) ist
+gebaut und ist unabhängig davon richtig.
+
+**Was ich selbst geprüft habe:** `npx tsc --noEmit` fehlerfrei und die vier
+betroffenen Testdateien grün (69 bestanden, 32 erwartet rot) — das gilt dem
+gebauten Stand des Designers, **nicht** diesem Prompt-Punkt hier.
+
+*Chief of Staff · 2026-09-17*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

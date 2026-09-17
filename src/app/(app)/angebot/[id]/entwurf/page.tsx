@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { AudioPlayer } from '@/components/AudioPlayer'
 import type { RueckfrageItem } from '@/lib/mengen/rueckfragen-generator'
+import { beurteileLeeresErgebnis } from '@/lib/leeres-ergebnis'
 import type { ExtrahierteDaten } from '@/lib/mengen/types'
 import type { EntwurfAufnahme, ErkanntPosition, VollExtraktionCache } from '@/lib/types'
 import { extrahiereRaumdaten } from '@/lib/extraktion-masse'
@@ -609,6 +610,14 @@ export default function EntwurfPage() {
   // ersetzt die vorherige feste Liste aus AufnahmeCard-Kästen in der Timeline.
   const [aufnahmeDetail, setAufnahmeDetail] = useState<string | null>(null)
   const [rueckfragen, setRueckfragen] = useState<RueckfrageItem[]>([])
+  // PD-019 Punkt 1 (PM-113, Prüfmeister 2026-09-16): Wer eine Rückfrage
+  // überspringt, für die es keine Ersatzzahl gibt, bekam bisher ein rotes
+  // Banner „Keine Positionen erkannt" — einen Satz, der in genau diesem Fall
+  // unwahr ist. Gehört wurde etwas („Wohnzimmer streichen."), gerechnet werden
+  // konnte nur nichts. Hier stehen dann die offen gebliebenen Fragen im
+  // Wortlaut, mit dem einzigen Weg zurück, der hilft: derselbe
+  // Rückfragen-Screen. Leer = der Normalfall, es gibt nichts zu zeigen.
+  const [offenGeblieben, setOffenGeblieben] = useState<string[]>([])
   const [basisExtraktion, setBasisExtraktion] = useState<ExtrahierteDaten | null>(null)
   // PM-007: `null` als Wert = „diese Frage wurde bewusst übersprungen".
   const [gesammelteAntworten, setGesammelteAntworten] = useState<Record<string, RueckfragenAntwort | null>>({})
@@ -814,6 +823,7 @@ export default function EntwurfPage() {
     setScreen('fertigstellen_loading')
     setFehler('')
     setMassWarnungen([])
+    setOffenGeblieben([])
     setLoadingMsg('Alle Aufnahmen werden zusammengeführt…')
 
     const nochwarten = aufnahmen.some(a => a.typ === 'sprache' && a.verarbeitung_status === 'verarbeitung')
@@ -851,6 +861,23 @@ export default function EntwurfPage() {
           fehlende_positionen?: Array<{ beschreibung: string; einheit: string }>
         }
         const fehlende = err.fehlende_positionen ?? []
+
+        // PD-019 Punkt 1 (PM-113): „null Positionen" hat zwei völlig
+        // verschiedene Ursachen, und bisher bekamen beide denselben roten
+        // Satz. Die Regel, die sie trennt, steht als eigene, geprüfte
+        // Funktion in `src/lib/leeres-ergebnis.ts` — mit der Begründung.
+        const befund = beurteileLeeresErgebnis({
+          fehlerText: err.error ?? '',
+          anzahlFehlendePreise: fehlende.length,
+          fragen: rueckfragen,
+          antworten: alleAntworten,
+        })
+        if (befund.art === 'offene_angaben') {
+          setOffenGeblieben(befund.fragen)
+          setScreen('timeline')
+          return
+        }
+
         setFehler(fehlende.length > 0
           ? `Preis fehlt in deiner Preisdatenbank: ${fehlende.map(p => `${p.beschreibung} (${p.einheit})`).join(', ')}`
           : (err.error ?? 'Fehler beim Berechnen'))
@@ -962,6 +989,9 @@ export default function EntwurfPage() {
   function raeumeStaleKeinePositionenFehler(positionen: ErkanntPosition[] | undefined) {
     if ((positionen ?? []).some(p => p.erkannt)) {
       setFehler(prev => prev === 'Keine Positionen erkannt' ? '' : prev)
+      // PD-019 Punkt 1: dieselbe Begründung wie eine Zeile darüber — die
+      // Karte erklärt einen Stand, den die neue Aufnahme gerade überholt hat.
+      setOffenGeblieben([])
     }
   }
 
@@ -1450,6 +1480,39 @@ export default function EntwurfPage() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* PD-019 Punkt 1 (PM-113): gehört, aber nicht rechenbar — kein Fehler,
+          sondern ein offener Punkt. Deshalb weiß statt rot, in der Machart der
+          beiden Sheets weiter oben, und mit dem Weg zurück in dieselbe
+          Rückfrage statt einer Sackgasse. */}
+      {offenGeblieben.length > 0 && (
+        <div className="mx-4 mt-4 bg-white border border-anthracite/10 rounded-2xl px-4 py-4">
+          <h2 className="font-syne font-extrabold text-anthracite text-[17px] mb-2">
+            Gehört — rechnen kann ich noch nicht
+          </h2>
+          <p className="text-anthracite/50 font-semibold text-[13px] mb-4 leading-relaxed">
+            {offenGeblieben.length === 1 ? 'Eine Angabe fehlt' : 'Ein paar Angaben fehlen'} noch.
+            Ohne sie entsteht keine Position — geraten wird hier nichts.
+          </p>
+          <div className="flex flex-col gap-2 mb-5">
+            {offenGeblieben.map((frage, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <span className="text-yellow font-black shrink-0">→</span>
+                <span className="text-anthracite font-bold text-[13px] leading-snug">{frage}</span>
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={() => setScreen('rueckfragen')}
+            className="w-full bg-yellow text-anthracite rounded-2xl py-3.5 font-extrabold text-[15px]"
+          >
+            {offenGeblieben.length === 1 ? 'Angabe ergänzen' : 'Angaben ergänzen'}
+          </button>
+          <p className="text-anthracite/35 font-semibold text-[12px] mt-3 leading-relaxed">
+            Oder nimm unten weiter auf — die Maße lassen sich auch einsprechen.
+          </p>
         </div>
       )}
 

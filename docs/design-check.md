@@ -10059,4 +10059,193 @@ Absicht.". Inhaltlich richtig so. Ob der Dateiname stört, ist deine Ecke.
 
 ---
 
+## DC-114 ✅ — PD-019 Punkt 1 (PM-113): „Keine Positionen erkannt" war in diesem Fall unwahr — jetzt steht die offene Frage da, mit dem Weg zurück (Product Designer, 17.09.2026)
+
+**Bezug:** PD-019 Punkt 1 (PM-113) in `docs/pruefmeister-notizen-fuer-designer.md` ·
+Vorrang laut Prüfmeister **hoch** · Reihenfolge laut `arbeitsreihenfolge.md`,
+Product Designer Punkt 2 — der höchste unblockierte Punkt bei uns.
+**Eigene ID, weil DC-112 bereits doppelt vergeben ist** (runder Raum + Logo im
+Angebotskopf); umnummeriert habe ich nichts, das gehört dem Chief of Staff.
+
+**Die Antwort in einem Satz:** Ja — es ist dieselbe Ansicht, und sie greift ab
+jetzt auch hier; was gefehlt hat, war nicht ein zweiter Screen, sondern die
+Unterscheidung zwischen „nichts verstanden" und „verstanden, aber nicht
+rechenbar".
+
+---
+
+### Was der Betrieb bisher gesehen hat — nachgesehen, nicht vermutet
+
+`„Wohnzimmer streichen."` läuft heute so:
+
+```
+/api/entwurf/generiere-positionen   →  positionen.length === 0
+                                    →  400 { error: "Keine Positionen erkannt" }
+entwurf/page.tsx, fertigstellen()   →  setFehler(err.error)
+                                    →  rotes Banner, zurück auf die Timeline
+```
+
+**Der Satz ist in genau diesem Fall falsch.** Erkannt wurde die Leistung sehr
+wohl — „Wohnzimmer", „streichen". Nicht erkannt wurde eine *Menge*. Der Betrieb
+liest aber „Keine Positionen erkannt", schließt daraus auf ein Hörproblem und
+nimmt neu auf — und bekommt dasselbe Ergebnis, weil die zweite Aufnahme das Maß
+genauso wenig enthält wie die erste. Das ist die Sackgasse hinter PM-113.
+
+**Und es gibt einen zweiten, echten Fall hinter demselben Satz:** Rauschen,
+abgebrochener Satz, kein Gewerk. Dort ist „Noch nichts erkannt" wahr und eine
+neue Aufnahme genau richtig. Beide Fälle bekamen bisher dieselbe Meldung — das
+ist der ganze Befund.
+
+### Die Regel, und woran sie die beiden Fälle trennt
+
+An dem einzigen Merkmal, das sicher trägt: **Gab es zu dieser Runde Rückfragen,
+die unbeantwortet geblieben sind?**
+
+* Ja → verstanden, aber nicht rechenbar. Der richtige Weg ist **dieselbe
+  Rückfrage**, nicht eine neue Aufnahme.
+* Nein → es ist wirklich nichts angekommen. Alles bleibt wie bisher.
+
+`null` in `gesammelteAntworten` heißt „bewusst übersprungen" (PM-007) und zählt
+hier wie *nicht beantwortet* — der Betrieb hat die Frage gesehen und
+weggetippt, die Zahl fehlt trotzdem. **Geraten wird nichts:** ohne offen
+gebliebene Frage greift die neue Karte nicht.
+
+Damit gilt die harte Grenze aus DC-112 auch hier, wörtlich wie vom Prüfmeister
+verlangt: **nie null Positionen und null Einträge.**
+
+### Was ab jetzt auf dem Bildschirm steht
+
+Weiß, nicht rot — es ist kein Fehler des Handwerkers, sondern ein offener
+Punkt. Machart wie die beiden Sheets weiter oben in derselben Datei
+(`font-syne`-Überschrift, gelber Primärknopf, gedeckte Nebenzeile):
+
+> **Gehört — rechnen kann ich noch nicht**
+> Eine Angabe fehlt noch. Ohne sie entsteht keine Position — geraten wird hier
+> nichts.
+>
+> → *Wie groß ist das Wohnzimmer?*
+>
+> `Angabe ergänzen`
+> Oder nimm unten weiter auf — die Maße lassen sich auch einsprechen.
+
+**Die vier Bestandteile und warum jeder einzelne dasteht:**
+
+* **„Gehört"** ist der ganze Punkt. Der erste Satz muss das Gegenteil von
+  „Keine Positionen erkannt" sagen, sonst nimmt der Betrieb wieder neu auf.
+* **Die Frage im Wortlaut**, nicht umformuliert. Es ist derselbe String, den
+  der Rückfragen-Screen zeigt (`RueckfrageItem.frage`) — der Betrieb erkennt
+  die Frage wieder, die er gerade übersprungen hat. Eine eigene Zweitfassung
+  wäre eine zweite Stelle, die auseinanderlaufen kann.
+* **„geraten wird hier nichts"** ist die Begründung, warum das Blatt leer ist.
+  Sie ist dieselbe wie bei Regel H und bei DC-112 und darf nicht fehlen: ohne
+  sie wirkt das leere Ergebnis wie ein Defekt statt wie eine Haltung.
+* **`Angabe ergänzen` führt in denselben `RueckfragenScreen` zurück**, mit
+  denselben Fragen und den bereits gegebenen Antworten. Kein neues Bauteil,
+  kein zweiter Weg — nur der vorhandene, jetzt erreichbar. Der Plural richtet
+  sich nach der Anzahl der offenen Fragen.
+
+Die Zeile *„Oder nimm unten weiter auf"* steht bewusst klein und unter dem
+Knopf: sie ist der zweitbeste Weg, nicht der erste — aber sie ist wahr, ein
+nachgesprochenes Maß löst denselben Fall auf.
+
+### Gebaut
+
+| Datei | Was |
+|---|---|
+| `src/lib/leeres-ergebnis.ts` *(neu)* | `beurteileLeeresErgebnis()` — die Regel als eigene, reine Funktion, mit der Begründung im Kopf der Datei |
+| `src/app/(app)/angebot/[id]/entwurf/page.tsx` | Zustand `offenGeblieben`, Verzweigung im `!res.ok`-Zweig von `fertigstellen()`, die Karte über dem Fehler-Banner |
+| `src/lib/__tests__/pd019-leeres-ergebnis.test.ts` *(neu)* | 8 Zusicherungen |
+
+**Warum die Regel eine eigene Datei bekommt und nicht drei Zeilen in der
+Seite:** In `page.tsx` wäre sie nicht prüfbar — das Projekt hat keine
+Komponenten-Testumgebung (kein `@testing-library`, kein `jsdom` in
+`package.json`, nachgesehen). Als reine Funktion ist sie es, und genau die
+Gegenproben sind hier das Wertvolle.
+
+**Die Gegenproben, die mir wichtiger waren als der Positivfall.** Der teuerste
+Fehler bei dieser Änderung wäre, zu viel einzufangen und einen präzisen Text zu
+verdecken. Festgenagelt ist deshalb, dass die neue Karte **nicht** greift bei:
+fehlendem Datenbankpreis (der behält „Preis fehlt in deiner Preisdatenbank: …"),
+wirklich nichts Verstandenem (keine Rückfrage gestellt), allen beantworteten
+Rückfragen trotz leerem Ergebnis, und jedem anderen Fehlertext (Netzwerk,
+Raummaße, 500). Eine leere Fragestellung erzeugt keine leere Zeile.
+
+### Verifikation — auf Sandys Rechner am echten Projekt
+
+1. **`npx vitest run src/lib/__tests__/pd019-leeres-ergebnis.test.ts`: 8 grün.**
+2. **Nachbarschaft gegengeprüft:** `pm007-rueckfragen`, `pd018-nullzeilen`,
+   `pm034-ausschlusssatz-raum` → **27 grün, kein Fehlschlag.**
+3. **`npx tsc --noEmit -p tsconfig.json` über das ganze Projekt: sauber.**
+   (TypeScript 5.9.3 aus dem Projekt selbst, nicht aus einer Ersatzumgebung.)
+4. **`npx eslint` über die drei Dateien: 0 Fehler.** 7 Warnungen in `page.tsx`,
+   alle vorbestehend und an unberührten Zeilen (`handleAudioStop`,
+   `react-hooks/exhaustive-deps`); die beiden neuen Dateien sind warnungsfrei.
+
+`device_bash` ist in diesem Lauf erreichbar — zur stehenden Regel, Punkt 1:
+hiermit vermerkt. Kein Staging, keine Ersatzumgebung.
+
+---
+
+### 🔴 Der Rest gehört Engineering — und er ist die eigentliche Ursache
+
+**Das hier ist die Auffanglinie, nicht die Reparatur.** Sie greift erst, wenn
+eine Rückfrage *gestellt und übersprungen* wurde. Der Fall, den der Prüfmeister
+gemessen hat (`null Positionen, fehlende leer`), entsteht aber schon davor —
+und beim Nachsehen ist auch klar, warum:
+
+**Der Extraktions-Prompt sagt nirgends, wann `vage: true` zu setzen ist.**
+
+```
+supabase/functions/_shared/prompt-extraktion-v4.ts
+  Zeile 120:  „OHNE jede Zahl ('die ganze Wohnung streichen')
+               → weiterhin vage: true, vage_typ: 'raum_ohne_masse'."
+```
+
+**Das ist die einzige Stelle in der ganzen Datei**, die `raum_ohne_masse` nennt
+— und sie steht im Zweig „Wohnung/Haus als Ganzes" (DC-040). Für einen ganz
+normalen benannten Raum ohne jedes Maß („Wohnzimmer streichen.") gibt es keine
+Regel. Die drei anderen Werte, die
+`src/lib/mengen/rueckfragen-generator.ts` auswertet — `plural_ohne_zahl`,
+`menge_unbekannt`, `referenz_ohne_kontext` — kommen im Prompt **überhaupt
+nicht vor** (gesucht, nicht vermutet).
+
+**Damit hängt der komplette Rückfragen-Zweig `raum_ohne_masse` an einer Regel,
+die nur für die Wohnung als Ganzes formuliert ist.** Ist `vage` falsch,
+entsteht keine Rückfrage, keine Rückfrage heißt keine Position und auch kein
+Eintrag — exakt PM-113. Dieselbe Fehlerform wie bei DC-112 Punkt 1: die
+Oberfläche kann den Fall sauber, der Auslöser fehlt.
+
+**Was ich vorschlage — Wortlaut von mir, Code von euch** (eine Zeile im Prompt,
+allgemein statt im DC-040-Zweig):
+
+> Ein Raum, der mit Arbeiten genannt wird, aber **weder** `laenge`/`breite`
+> **noch** `flaeche` **noch** `wandflaeche_direkt` trägt, bekommt
+> `vage: true`, `vage_typ: "raum_ohne_masse"`, `vage_beschreibung` = der Satz,
+> in dem er vorkommt. Niemals weglassen und niemals mit erfundenen Maßen
+> füllen.
+
+**Was ich nicht entscheide:** ob die anderen drei `vage_typ`-Werte ebenfalls in
+den Prompt gehören oder deterministisch nachgezogen werden
+(`extraktion-normalisierer.ts` liest sie heute nur durch). Das ist eine
+Architekturfrage, keine Gestaltungsfrage — aber sie sollte nicht untergehen:
+**drei von vier Zweigen des Rückfragen-Generators haben heute keinen
+Auslöser.**
+
+**Blockiert bei uns nichts.** Die Karte oben ist unabhängig davon richtig und
+bleibt es auch, wenn die Extraktion repariert ist — sie greift dann nur
+seltener.
+
+### Nicht in diesem Ticket
+
+PD-019 Punkt 2 (Nachtrag ohne Kennzeichnung, PM-115) und Punkt 3 (zwei
+Bauabschnitte, PM-116) — beide offen, beide bei uns, beide Produktfragen ohne
+Code. PD-018 Punkt 3 (Prozentzuschlag ohne Bezugsgröße) wartet unverändert auf
+die Messung des Prüfmeisters.
+
+**Status: ✅ erledigt.**
+
+*Product Designer · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
