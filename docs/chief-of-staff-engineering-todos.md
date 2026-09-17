@@ -9851,4 +9851,86 @@ Umbenennen ansehen, das ist der teure Teil daran.
 
 ---
 
+## CoS-E-081 🔴 — `anzahlAus`: ein Ausdruck, drei Zweige, drei Richtungen falsch (17.09.2026, 16:50 UTC · Chief of Staff)
+
+**Vorrang: direkt nach CoS-E-078, vor PM-061-A.** Begründung unten. Wenn du
+den Fachweg anders siehst, sag es mit einem Satz — dann ziehe ich die
+Reihenfolge nach, das ist deine Entscheidung und nicht meine.
+
+**Heimat der Fälle:** `docs/pruefmeister-restliste.md`, Abschnitt 3 im Eintrag
+„Antwort an Marketing, und fünf neue Fälle: PM-129 bis PM-133" (ab Zeile
+4329). Prüfstand liegt schon: `src/lib/__tests__/pruefmeister-batch-131-133.test.ts`
+(21 Zusicherungen, 17 grün, 4 Sperrklinken, gemessen vom Prüfmeister 16:40 UTC).
+
+**Der Ort — selbst nachgesehen, nicht abgeschrieben:**
+`src/lib/vollstaendigkeit/helpers.ts`, `anzahlAus()` ab Zeile 175.
+
+```
+const vorher        = `(\d+)\s*(?:stück\s*)?(?:[a-zäöüß]+)?SCHLÜSSEL`
+const nachher       = `SCHLÜSSEL\s*(\d+)`
+const stueckAllgemein = `(\d+)\s*stück`
+lower.match(vorher) ?? lower.match(nachher) ?? lower.match(stueckAllgemein)
+```
+
+**Selbst gezählt:** 17 Aufrufstellen in `src/` außerhalb der Prüfstände
+(Türen, Fenster, Heizkörper, Zimmer/Räume, Leuchten, Spots, Rosetten, Träger,
+Rohre, Dübellöcher, Schadstellen, Meter). Wer diesen Ausdruck anfasst, fasst
+alle 17 an — deshalb ist das ein Auftrag und nicht drei.
+
+| Fall | Satz (Prüfmeister, am Flur gemessen) | Ergebnis | Geld |
+|---|---|---|---|
+| **PM-131** | „Wohnzimmer**,** fünf mal vier …" / dasselbe ohne Komma | 1 Tür / **5 Türen** | **720,00 €** an einem Satzzeichen |
+| **PM-132** | „Die Türen lackieren. Wir liefern **50 Stück** Fliesen dazu." | **50 Türen** | 457,25 € → 9.277,25 € = **8.820,00 €** |
+| **PM-132-D** | „Die Türen lackieren. **20 Stück** Dübellöcher zumachen." | **20 Türen** | 3.420,00 € |
+| **PM-133-A** | „Die Fenster streichen. **Fenster 3** ist kaputt." | **3 Fenster** | 200,00 € |
+| **PM-133-B** | „Die Heizkörper lackieren. **Heizkörper 2** im Flur." | **2 Heizkörper** | 85,00 € |
+| **PM-133-C** | „**3 alte Türen** lackieren." | **1 Tür** | 360,00 € **gegen den Betrieb** |
+
+**Warum das zusammengehört und ein halber Fix schadet:** Zweig 3
+(`(\d+)\s*stück`) kennt das gesuchte Wort **gar nicht** und greift immer dann,
+wenn die ersten beiden nichts finden — also im Normalfall. Damit wird jede
+Stückzahl im Diktat zur Stückzahl **jedes** Bauteils, dessen Arbeit bestellt
+ist, gleichzeitig. Zweig 2 (`SCHLÜSSEL\s*(\d+)`) macht die Ordnungszahl am
+Bauteil zur Menge. Zweig 1 verfehlt den gemeinten Fall, weil das optionale
+Wort zwischen Zahl und Schlüssel **kein Leerzeichen** haben darf („3 türen" →
+3, „3 stück türen" → 3, „3 alte türen" → **0**). Repariert man einen Zweig,
+fällt der Fall nur in den nächsten. **PM-128 ist ein Sonderfall davon, nicht
+die Ursache** — es hängt am Komma hinter dem Raumnamen.
+
+**Der zweite Teil des Auftrags, und er ist nicht kosmetisch:** Die Zeile
+druckt dazu den Rechenweg
+
+```
+Türen abschleifen · 50 Stück · „50 Tür(en) aus Transkript"
+```
+
+**Im Transkript steht keine Türzahl.** Bei PM-128 stand „angenommen" daneben —
+sauber gekennzeichnet, nur falsch. „aus Transkript" ist das stärkere der
+beiden Herkunftswörter und hält einen Menschen genau davon ab, nachzuschauen.
+Wenn die Zahl nicht aus dem gesuchten Wort stammt, darf der Rechenweg sie
+nicht als „aus Transkript" ausgeben.
+
+**Warum ich den Vorrang so setze:** Es ist der Geldweg zum Kunden, auf einem
+gewöhnlichen Diktat und ohne Randfall — 8.820,00 € auf einem Nebensatz, der
+in einem Malerdiktat völlig normal ist. Sandys stehende Regel („es gibt keine
+echten Betriebe, also wird richtig gebaut, nicht schnell") und die Rangfolge,
+die sie am 15.09. selbst gesetzt hat (Mengen-/Sperrgrundfehler auf dem Geldweg
+vor Pflichtangaben), zeigen beide hierhin. PM-061-A und PM-062-A rücken einen
+Platz nach hinten.
+
+**Nicht geprüft, also behaupte ich es nicht:** ob Prüfstände außerhalb
+`pruefmeister-batch-131-133.test.ts` auf das heutige Verhalten von `anzahlAus`
+zusagen. Das ist der teure Teil an dieser Reparatur — bitte vorher ansehen,
+so wie Marketing es bei `lfm`/`lfdm` empfohlen hat.
+
+**Was NICHT hierher gehört:** Themenspeicher-Punkt 18 des Prüfmeisters („die
+Rückfrage nach der Höhe ist nirgends beauftragt"). Nachgesehen: sie ist das
+Soll von **PM-094**, und PM-094 hängt bereits in **Zug 3** deiner Liste. Kein
+neues Ticket, kein Auftrag hier.
+
+*Chief of Staff · 2026-09-17, 16:50 UTC*
+
+---
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

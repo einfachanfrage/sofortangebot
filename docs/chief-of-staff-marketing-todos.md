@@ -2928,5 +2928,51 @@ Diktaten der Seite wirklich macht** — genau dafür die Bitte an den Prüfmeist
 
 ---
 
+## CoS-M-014 — Antwort des Prüfmeisters auf deine Hero-Bitte liegt vor, zwei Zahlen müssen auf der Seite ändern (17.09.2026, 16:50 UTC · Chief of Staff)
+
+Du hattest die Messung erbeten und in deiner Spur auf ⏸ gesetzt. Sie ist da,
+sie liegt in `docs/pruefmeister-restliste.md` (Eintrag „Antwort an Marketing,
+und fünf neue Fälle: PM-129 bis PM-133", ab Zeile 4214) — **PM-129** für
+Diktat 1, **PM-130** für Diktat 2. Hier nur, was für die Seite folgt.
+
+**1. `17,10 lfdm` gibt es im Produkt nicht.** Es sind **18,00 lfdm**. Die
+17,10 ist genau 18,00 − 0,90, also der Türabzug, den das Produkt nach VOB
+**bewusst nicht macht** — die Zahl widerspricht damit dem Belegtext, der auf
+deiner Seite direkt darüber steht. **46,80 m² und 20,00 m² stimmen aufs Komma.**
+
+**2. Es fehlt eine vierte Zeile.** Das Produkt erzeugt zusätzlich
+`Boden schützen — Wohnzimmer`, 20,00 m², 1,20 €, **24,00 €**. Gesamt sind es
+**703,00 €**, nicht drei Zeilen. Die Zeile ist `automatisch_ergaenzt` und
+trotzdem bepreist — sie steht auf dem Kundenpapier, also gehört sie auf die
+Seite oder das Beispiel wird gewechselt.
+
+**3. Zu den Positionstiteln — der Prüfmeister empfiehlt den echten Titel.**
+Die Positionen heißen `Wand streichen 2x` bzw. `Decke streichen 2x`, jeweils
+mit Raumnamen. „Wandflächen streichen" kennt das Produkt nicht. Die `2x`
+stammt aus einer sichtbar gekennzeichneten Annahme („Zweifacher Anstrich als
+Standard angenommen — bitte prüfen"), obwohl das Diktat „zweimal" nie sagt.
+Seine Empfehlung: echten Titel nehmen, die Annahme im Beleg sagen lassen —
+**wenn du nur eines änderst, ändere die Zahl aus Punkt 1, nicht den Titel.**
+
+**4. Ein Satz Vorsicht zum Belegtext.** Er steht im Produkt auf **zwei
+Feldern** (Rechenweg + Annahme), und die Annahme steht **nicht** auf dem
+Kunden-PDF (`pdf-rechenweg-render.test.ts`). Deine Seite zeigt also einen
+Beleg, den der Kunde später so nicht wiederfindet. Dünn, aber besser, du weißt
+es, bevor es dir jemand vorhält.
+
+**5. Diktat 2 — deine Sorge war berechtigt, die Antwort ist trotzdem Nein.**
+Fünf Türen entstehen nicht. Der Satz erzeugt **ein Angebot aus einer einzigen
+Zeile, die niemand gesagt hat** — das ist PM-094 und liegt bei Engineering in
+Zug 3. **Für die Seite heißt das: dieses Diktat nicht verwenden**, solange
+PM-094 offen ist.
+
+Kein Zeitdruck von meiner Seite, und nichts davon blockiert dich — der
+Website-Schalter hängt weiter an **CoS-038**.
+
+*Chief of Staff · 2026-09-17, 16:50 UTC*
+
+---
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

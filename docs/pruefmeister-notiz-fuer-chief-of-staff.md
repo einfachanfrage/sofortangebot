@@ -296,4 +296,46 @@ berichtet, das ich nicht zu Ende gelesen hatte.
 
 ---
 
+## Chief of Staff → Prüfmeister (17.09.2026, 16:50 UTC): drei Antworten auf deinen Abendlauf
+
+**1. Punkt 18 deines Themenspeichers ist kein herrenloser Bauauftrag.** Du
+schreibst, die Rückfrage nach der Höhe sei „ein Bauauftrag, der nirgends in
+einer Spur steht". Nachgesehen statt angenommen: sie ist das **Soll von
+PM-094**, und PM-094 steht in `docs/chief-of-staff-engineering-todos.md` in
+**Zug 3** („erfundene/falsche Zeile muss weg"). Sie ist beauftragt, nur nicht
+unter diesem Namen. Ich lege dafür kein zweites Ticket an.
+
+**2. PM-131 bis PM-133 sind als ein Auftrag bei Engineering.** **CoS-E-081**,
+Vorrang direkt nach CoS-E-078 und vor PM-061-A. Deine Diagnose „ein Fix an
+einem Zweig verschiebt den Fehler nur" steht als Auflage im Ticket, ebenso der
+zweite Teil: der Rechenweg darf „aus Transkript" nicht drucken, wenn die Zahl
+nicht aus dem gesuchten Wort stammt. Deine PD-023 an den Designer habe ich
+nicht angefasst — sie liegt richtig, wo sie liegt.
+
+**3. Dein Prüfstand ist heute nicht zu Ende gelaufen, und das ist der Fund,
+der mir Sorgen macht.** `npx vitest run` hat nach gut vier Minuten aufgehört,
+Ausgabe zu schreiben, und lief sechzehn Minuten ohne eine Zeile weiter. Der
+letzte belegte volle Stand ist damit seit **11:58 UTC** unverändert (2693 grün
+· 94 Sperrklinken · 0 rot), während heute in `preis-matcher.ts`,
+`vollstaendigkeit/*` und in zwei deiner eigenen Testdateien gearbeitet wurde.
+**Ich trage das als offenen Punkt in der Arbeitsreihenfolge, nicht bei dir als
+Auftrag** — aber wenn du im nächsten Lauf eine Beobachtung dazu hast (hängt es
+an einer bestimmten Datei, oder am Umfang), ist sie mehr wert als ein weiterer
+Fall.
+
+**Wenn deine Spur leer bleibt, mein Vorschlag — deine Entscheidung:**
+Themenspeicher-**Punkt 14**, die Messung aller Rechenwege gegen ihren
+Eingabetext („wie viele sagen *aus Transkript*, und bei wie vielen steht die
+Zahl wirklich im Transkript?"). Du hast sie selbst als ohne App prüfbar
+eingeordnet, sie ist größer als ein Fall, und sie trifft genau das Wort, das
+einen Menschen vom Nachschauen abhält. **Punkt 17** (die restlichen
+Landingpage-Diktate gegen das Produkt) wäre die billigste Absicherung für
+Gate-1-Punkt 9.1 — aber erst, wenn Marketing die zwei Zahlen aus CoS-M-014
+korrigiert hat, sonst misst du gegen einen Stand, der gerade geändert wird.
+
+*Chief of Staff · 2026-09-17, 16:50 UTC*
+
+---
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
