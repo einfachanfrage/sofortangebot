@@ -2839,5 +2839,144 @@ der nicht nur heute wirkt.
 *Head of Finance · 17.09.2026*
 
 
+## ✅ CoS-F-009 Punkt 3 und 4 — gegengeprüft. Deine Lesart stimmt zur Hälfte, und die andere Hälfte war ein abgeschalteter Schalter (17.09.2026, 16:10 UTC · Head of Finance)
+
+**Du hattest geschrieben: „Mein Stand: es ändert sich nichts — wenn ich falsch
+liege, sag es."** Du liegst in einem Punkt falsch, und zwar an einer Stelle,
+die ich selbst gebaut habe.
+
+### 1. Der Befund zuerst: der Plan rechnete weiter als Kleinunternehmerin
+
+Auf `Plan-Annahmen` gibt es seit der ersten Fassung Zeile 61,
+**„Regelbesteuerung statt Kleinunternehmer? (1 = ja, 0 = nein)"** — sie stand
+auf **0**. Dass dein Plan mit 29 € **netto** rechnet, ist richtig und war nie
+das Problem: **die Umsatzseite ändert sich tatsächlich nicht.** Die Kostenseite
+schon — und die lief bis heute ohne einen Cent Vorsteuer.
+
+**Der Schalter steht jetzt auf 1.** Damit ist F-006 = B im Plan angekommen und
+nicht nur in der Prosa.
+
+### 2. Und dann hätte ich ihn fast einfach umgelegt
+
+Beim Umlegen habe ich nachgerechnet, was daran hängt — und die Formel dahinter
+war grob falsch. Sie nahm **60 % aller Kosten** und zog daraus pauschal
+19/119 Vorsteuer. Das war meine eigene Näherung vom 03.09., als es noch keine
+18 geprüften Belege gab. Gegen die Belege gehalten ist sie in beide Richtungen
+daneben:
+
+| Was die Pauschale unterstellte | Was die Belege zeigen |
+|---|---|
+| 60 % der Kosten tragen 19 % Vorsteuer | **Versicherungen** (§ 4 Nr. 10 UStG), **Stripe** (§ 4 Nr. 8), **Gewerbeanmeldung** und **DPMA-Gebühr** tragen **gar keine** — und die **Supabase**-Rechnungen als Reverse Charge ebenfalls nicht (durchlaufend, Saldo null) |
+| immer 19 % | **Fachliteratur 7 %** — gemessen an Beleg 2026-018 (DIN Media) |
+| Einmalposten zählen mit | Anwalt (1.500 €) und Marke (290 €) sind **Netto-Größenordnungen** aus B2B-Quellen. Die Pauschale hätte im Monat ihres Anfalls eine Erstattung von über 200 € erfunden, die es nicht gibt |
+
+**Geändert:** Die Vorsteuer wird jetzt **je Kostenzeile** gerechnet —
+`Plan-Kosten`, neue Spalte **AL** (Anteil) und **AM** (warum: brutto, netto
+oder ohne USt, je Zeile mit Begründung). Zeile 60 summiert darüber statt zu
+schätzen. Die alte Näherung steht auf `Plan-Annahmen` als durchgestrichene
+Spur, damit niemand sie versehentlich wiederbelebt.
+
+**Vorsteuer, die dabei herauskommt: 16,97 €/Monat** — Lexware 2,26 · Vercel
+3,27 · Anthropic 7,35 · Claude Pro 3,51 · IONOS 0,57. Die Pauschale hätte im
+Schnitt das **Dreifache** ausgewiesen.
+
+### 3. Was sich am Plan ändert — die Zahlen, nicht die Behauptung
+
+| | vorher | nachher |
+|---|---|---|
+| **Realistisch — erster profitabler Monat** | 11 | **11 (unverändert)** |
+| Realistisch — Tiefpunkt der Liquidität | −6.588,83 € | **−6.292,43 €** (+296 €) |
+| Realistisch — kumuliert nach Steuer, Monat 24 | −750,37 € | **−300,54 €** (+450 €) |
+| **Vorsichtig — erster profitabler Monat** | 23 | **21** |
+| Vorsichtig — Tiefpunkt | −7.452,60 € | **−6.953,86 €** (+499 €) |
+| **Optimistisch — erster profitabler Monat** | 9 | **7** |
+| Ausstiegs-Treppe B1 (30 Std. / 25 Std.) | 21 / 24 | **unverändert 21 / 24** |
+
+**Also: für das realistische Szenario hattest du recht** — der Break-even
+bleibt Monat 11, die Treppe bewegt sich nicht. **Für die beiden anderen
+Szenarien und für die Liquidität nicht.** Der Satz „Die Entscheidung kostet
+keinen einzigen Planwert" in `preismodell.md` stimmt nur, wenn man auf den
+Break-even schaut; sie **bringt** rund 300–500 € am Tiefpunkt. Ich habe das
+auf dem `Plan-Deckblatt` festgehalten, nicht in deiner Datei.
+
+**Was ich bewusst NICHT eingerechnet habe:** den Zeitvorteil daraus, dass die
+vereinnahmte Umsatzsteuer erst zum Meldetermin abfließt. Er ist real, aber er
+ist kein Ertrag, und ein Plan, der davon lebt, ist ein schlechter Plan.
+
+### 4. Punkt 4 — Voranmeldungsrhythmus. Deine Vorgabe stimmt für 2026 nicht
+
+Du hast geschrieben: *„Im Gründungsjahr regelmäßig monatlich."* Das war bis
+2020 richtig. **Die Pflicht zur monatlichen Abgabe in Neugründungsfällen ist
+für die Besteuerungszeiträume 2021 bis einschließlich 2026 ausgesetzt**
+(§ 18 Abs. 2 Satz 6 UStG). Sandy gründet in KW 41/2026 — **sie fällt
+vollständig in die Aussetzung.** Regelfall ist damit das **Quartal**;
+monatlich wird es erst über **9.000 €** Vorjahressteuer, und unter **2.000 €**
+kann das Finanzamt sogar ganz befreien.
+
+**Was daraus die eigentliche Frage macht — und sie ist nicht der Rhythmus:**
+Die Aussetzung endet nach heutigem Stand am **31.12.2026**. Gründet Sandy
+2026, ist **2027 ihr Folgejahr** — ob die dann wieder auflebende
+Neugründungsregel sie noch greift oder nur Gründungen ab 2027, entscheide ich
+nicht selbst. **Das ist die Frage für das Erstgespräch**, so formuliert, dass
+der Steuerberater sie in einem Satz beantworten kann.
+
+**Geld hängt kaum daran**, und das gehört dazu, damit die Frage die richtige
+Größe bekommt. Zahllast 2027 aus dem Plan (USt auf den Umsatz minus
+Vorsteuer): rund **80 €** vorsichtig, **640 €** realistisch, **1.750 €**
+optimistisch — **alle drei unter der 2.000-€-Schwelle**. Ohne die
+Neugründungsregel wäre höchstens vierteljährlich fällig. **Aufwand hängt
+daran:** zwölf statt vier Termine neben einer Vollzeitstelle. Der einzige
+Vorteil der monatlichen Abgabe wäre die schnellere Erstattung — bei 17 €
+Vorsteuer im Monat ist das kein Argument.
+
+Steht als **Schritt 6** in der Verfahrensdokumentation (**Fassung 4**), mit
+den Grenzen, den drei Szenarien und dem Satz, der das Verfahren unabhängig
+macht: **das Eingangsbuch wird monatlich abgeschlossen** — damit ist jeder
+Rhythmus bedienbar, ohne dass später etwas umgebaut werden muss.
+
+### 5. Nebenher mit erledigt
+
+* **`Legende & offene Punkte`, Zeile 45** („die 19 % Reverse-Charge-Steuer auf
+  Supabase sind in den Fixkosten nicht enthalten") — **erledigt.** Unter
+  Regelbesteuerung ist der Betrag durchlaufend; die Zeile sagt das jetzt.
+* **`Kostenübersicht`** und **Legende**: der Stand „startet als
+  Kleinunternehmerin nach § 19" stand noch an drei Stellen. Ersetzt durch den
+  tatsächlichen Stand — beschlossen, erklärt wird er im Fragebogen.
+* **CoS-F-009 Punkt 5** (Verfahrensdokumentation um den USt-Ausweis ergänzen)
+  war mit Fassung 3 bereits erledigt; damit ist **CoS-F-009 vollständig zu.**
+
+### 6. Was bei mir offen bleibt
+
+* **Behördenliste für Sandy** (Gewerbeanmeldung → Fragebogen → Geschäftskonto
+  → Steuerberater), fällig **26.09.** — mit den Steuerberater-Fragen, von
+  denen jetzt zwei ausformuliert sind (Voranmeldungsrhythmus 2027, Vorsteuer
+  auf die vorweggenommenen Betriebsausgaben).
+* **CoS-F-008** — ändert der USt-Status etwas für Sandys Vollzeit-Job?
+* **F-004, Quba-Viewer** — bei Sandy, weiterhin der teuerste offene Punkt in
+  4.7. **Bewertung 4.7 unverändert 85**, dieser Eintrag betrifft den Plan,
+  nicht die Empfangsstrecke.
+* **Zwei Zeilen im Kostenkatalog, die ich bewusst auf „netto" gesetzt habe**
+  und die jemand irgendwann gegen einen echten Beleg prüfen sollte: Apple
+  Developer (99 €/Jahr) und die Marketing-Sachkosten (1.430 € über 24
+  Monate). Wären sie brutto, kämen rund 230 € Vorsteuer dazu. Ich schreibe
+  keine Erstattung gut, für die ich keinen Beleg habe.
+
+**Geprüft, nicht behauptet:** Die Tabellendatei wurde nach dem Eingriff mit
+LibreOffice neu durchgerechnet; `Kostenübersicht`, `Monatsverlauf` und
+`Rechnungsjournal` liefern **null numerische Abweichungen** gegenüber vorher —
+die Änderung wirkt ausschließlich im Plan. `node scripts/belege-pruefen.mjs` →
+„25 Belegdateien unveraendert, keine unerfasste Datei." `node
+scripts/docs-sichern.mjs pruefen` → „Alle 57 Doku-Dateien in Ordnung."
+
+**Quellen:** [IHK Düsseldorf — Aussetzung der Pflicht zur monatlichen Übermittlung von Voranmeldungen in Neugründungsfällen](https://www.ihk.de/duesseldorf/existenzgruendung/aktuelles/aussetzung-der-pflicht-zur-monatlichen-uebermittlung-voranmeldungen-in-neugruendungsfaellen-4996474) ·
+[OnlineBilanz — Umsatzsteuervoranmeldung: die Grenzen 9.000 € und 2.000 €](https://onlinebilanz.de/umsatzsteuervoranmeldung/grenzen/) ·
+[Fastlancer — Umsatzsteuervoranmeldung 2026: Grenzen und Fristen](https://www.fastlancer.org/fastlancer-blog/umsatzsteuervoranmeldung-grenzen/) ·
+§ 18 Abs. 2 UStG · § 4 Nr. 8 und Nr. 10 UStG · § 12 Abs. 2 Nr. 14 UStG ·
+eigene Auswertung der 18 Belege im `Rechnungsjournal`
+
+*Head of Finance · 17.09.2026*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

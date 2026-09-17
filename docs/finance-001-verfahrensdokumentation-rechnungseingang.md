@@ -1,6 +1,6 @@
 # Verfahrensdokumentation Rechnungseingang (GoBD)
 
-**Fassung 3 · 17.09.2026 · erstellt und fortgeschrieben vom Head of Finance**
+**Fassung 4 · 17.09.2026 · erstellt und fortgeschrieben vom Head of Finance**
 **Betrieb:** Sandra Holm, Einzelunternehmen (Gewerbeanmeldung geplant KW 41/2026)
 **Geltungsbereich:** Alle Rechnungen, die der Betrieb **empfaengt** — Papier,
 PDF, XRechnung, ZUGFeRD. Ausgangsrechnungen sind hier **nicht** geregelt; es
@@ -258,6 +258,48 @@ Einmal im Monat gleicht der Head of Finance das Eingangsbuch gegen den Ordner
 ab, prueft die Pruefsummen nach und haelt das Ergebnis in
 `chief-of-staff-finance-todos.md` fest. Abweichung = Vorfall (Teil 4).
 
+### Schritt 6 — Umsatzsteuer-Voranmeldung: in welchem Rhythmus?
+
+**Stand 17.09.2026: noch nicht gesetzt — und die naheliegende Annahme
+„Gruendungsjahr heisst monatlich" trifft fuer 2026 nicht zu.**
+
+| Was gilt | Quelle |
+|---|---|
+| Regelfall ist das **Kalendervierteljahr** | § 18 Abs. 2 Satz 1 UStG |
+| **monatlich**, wenn die Steuer des Vorjahres ueber **9.000 €** lag | § 18 Abs. 2 Satz 2 UStG (Grenze seit 2025, vorher 7.500 €) |
+| Das Finanzamt **kann von der Voranmeldung befreien**, wenn die Vorjahressteuer **2.000 €** nicht uebersteigt — dann nur die Jahreserklaerung. Geschieht nicht automatisch, es braucht einen Bescheid | § 18 Abs. 2 Satz 3 UStG |
+| Die Sonderregel fuer Neugruendungen (**Pflicht zur monatlichen Abgabe im Gruendungsjahr und im Folgejahr**) ist fuer die Besteuerungszeitraeume **2021 bis einschliesslich 2026 ausgesetzt** | § 18 Abs. 2 Satz 6 UStG; BMF-Schreiben vom 16.12.2020 |
+
+**Fuer Sandy heisst das:**
+
+* **2026** (Gewerbeanmeldung KW 41) faellt vollstaendig in die Aussetzung.
+  Massgeblich ist die **voraussichtliche Steuer des laufenden Jahres** —
+  bei einem Umsatz von rund 29 € im Restjahr und laufender Vorsteuer ist das
+  ein **Erstattungsfall**, keine Zahllast. Monatlich ist **nicht** Pflicht.
+* **2027 ist die offene Frage.** Die Aussetzung endet nach heutigem Stand am
+  31.12.2026. Gruendet Sandy 2026, ist 2027 ihr **Folgejahr** — ob die dann
+  wieder auflebende Neugruendungsregel sie noch erfasst oder nur Gruendungen
+  ab 2027, ist der Punkt, den ich nicht selbst entscheide. **Das ist die
+  Frage fuer das Steuerberater-Erstgespraech**, nicht der Rhythmus als
+  solcher.
+* **Geld haengt kaum daran.** Aus dem Finanzplan (Fassung vom 17.09.2026):
+  Umsatzsteuer minus Vorsteuer ergibt fuer 2027 eine Zahllast von rund
+  **80 € (vorsichtig)**, **640 € (realistisch)** und **1.750 €
+  (optimistisch)** — in allen drei Faellen unter der 2.000-€-Schwelle und
+  weit unter 9.000 €. Ohne die Neugruendungsregel waere also **hoechstens
+  vierteljaehrlich** faellig, unter Umstaenden sogar die Befreiung moeglich.
+* **Aufwand haengt daran.** Zwoelf statt vier Meldungen im Jahr sind zwoelf
+  statt vier Termine, die Sandy neben einer Vollzeitstelle nicht vergessen
+  darf. Der einzige Vorteil der monatlichen Abgabe: solange die Vorsteuer
+  groesser ist als die Umsatzsteuer, kommt die Erstattung frueher — bei
+  rund 17 € Vorsteuer im Monat ist das kein Argument.
+
+**Was dieses Verfahren festhaelt, bis der Steuerberater antwortet:** Das
+Eingangsbuch wird **monatlich** abgeschlossen (Schritt 5). Damit ist jeder
+Rhythmus bedienbar, ohne dass hier etwas geaendert werden muss.
+
+---
+
 ---
 
 ## Teil 3 — Technische Systemdokumentation
@@ -390,6 +432,7 @@ ohnehin im Plan steht.
 | 1 | 17.09.2026 | Erstfassung im Rahmen von Gate-1-Punkt 4.7 | Head of Finance |
 | 2 | 17.09.2026 | Hinweis zu Pruefpunkt 9 korrigiert (nur Supabase ist Reverse Charge); **Schritt 2a Fremdwaehrungsumrechnung neu** (§ 16 Abs. 6 UStG, amtliche BMF-Monatskurse) | Head of Finance |
 | 3 | 17.09.2026 | **Schritt 2b Kleinbetragsrechnungen neu** (§ 33 UStDV, 250-€-Grenze) — Korrektur nach Einwand von Sandy. Erster echter Durchgang mit 25 abgelegten Dateien. **Namensschema zurueckgenommen** (Schritt 1) — der Lieferantendateiname bleibt, die Ordnung macht das Eingangsbuch. **Kontrollbefehl `scripts/belege-pruefen.mjs`** neu (Schritt 3). **Datensicherung und Kontrolle am Zielort** in Teil 3 und 4 aufgenommen, mit vierteljaehrlichem Rhythmus und der Unterscheidung Sicherung/Archiv. **USt-Status auf Regelbesteuerung** umgestellt (Entscheidung F-006 = B, erklaert wird sie erst im Fragebogen) | Head of Finance |
+| 4 | 17.09.2026 | **Schritt 6 Umsatzsteuer-Voranmeldung neu**: Rhythmus ist nicht gesetzt. Die Pflicht zur monatlichen Abgabe in Neugruendungsfaellen ist bis einschliesslich 2026 ausgesetzt (§ 18 Abs. 2 Satz 6 UStG); Regelfall ist das Quartal, Grenzen 9.000 € und 2.000 €. Fuer 2027 offen und als Frage fuer das Steuerberater-Erstgespraech festgehalten, mit der Zahllast aus allen drei Planszenarien | Head of Finance |
 
 *Diese Dokumentation ist fortzuschreiben, sobald eine Buchhaltungsloesung
 eingefuehrt wird oder sich der Eingangsweg aendert. Alte Fassungen bleiben in
