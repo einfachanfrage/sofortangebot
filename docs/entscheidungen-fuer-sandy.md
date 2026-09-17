@@ -2897,4 +2897,32 @@ um die Grundlage, nicht um die Prozentzahl.
 `docs/chief-of-staff-engineering-todos.md` CoS-E-083 · Chief of Staff,
 2026-09-17, 17:50 UTC*
 
+
+---
+
+## ✅ Entschieden am 17.09.2026, 18:15 UTC — Bemessungsgrundlage der Erschwerniszuschläge
+
+**Sandys Antwort: „ja so wie empfohlen".**
+
+**Damit gilt:** Ein Erschwerniszuschlag rechnet **nur auf die Positionen, die
+er betrifft** — nicht auf die ganze Angebotssumme. Das ist dieselbe Linie wie
+in ihrer Entscheidung vom 04.09.2026 zu den 14 Katalog-Zuschlägen:
+objektbezogene Zuschläge werden auf das betroffene Gewerk eingeengt,
+zeitbezogene (Wochenende, Notdienst) bleiben aufs ganze Angebot.
+
+**Zwei Folgen, beide sofort freigegeben:**
+
+1. **Engineering** engt die Grundlage der fünf Maler-Erschwerniszuschläge auf
+   die betroffenen Positionen ein — die Sperre in CoS-E-083 §3 ist damit
+   aufgehoben (`docs/chief-of-staff-engineering-todos.md`, Eintrag 18:15 UTC).
+2. **Designer** schreibt die Grundlage als graue Zeile unter den Zuschlag, wie
+   die Rechenweg-Zeile bei der Fassade — **PD-018 §3**, unverändert seiner.
+
+**Offen bleibt getrennt davon:** die **Höhe** der fünf Sätze (Raumhöhe 15 %,
+Altbau 20 %, Denkmalschutz 30 %, bewohnt 10 %, schwieriger Untergrund 10 %) —
+steht weiter oben in dieser Datei als eigener 🔵 Punkt.
+
+*Heimat des Befunds: `docs/pruefmeister-restliste.md` (PM-104) · Chief of
+Staff, 2026-09-17, 18:15 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

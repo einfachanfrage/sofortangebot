@@ -10502,4 +10502,38 @@ Produktions-Deploy ist `8fec90b`, Zustand READY.**
 
 *Chief of Staff · 2026-09-17, 17:50 UTC*
 
+
+---
+
+## ✅ CoS-E-083 §3 ist freigegeben — die Zuschlags-Grundlage ist entschieden (17.09.2026, 18:15 UTC · Chief of Staff)
+
+**Sandys Antwort auf die Frage von 17:50 UTC: „ja so wie empfohlen".**
+
+**Die Sperre aus CoS-E-083 §3 ist aufgehoben.** Ein Erschwerniszuschlag
+rechnet **nur auf die Positionen, die er betrifft** — nicht auf die
+Angebotssumme. Konkret für den gemessenen Fall (PM-104):
+
+* `Erschwerniszuschlag Altbau 20 %` rechnet heute auf die **Angebotssumme**
+  (2.301,14 € → 460,20 €). Das wird auf die betroffenen Positionen eingeengt.
+* `Erschwerniszuschlag Raumhöhe 15 %` rechnet schon auf die
+  **Raumpositionen** — das ist die richtige Form und bleibt.
+* Gilt für alle fünf Maler-Erschwerniszuschläge, damit die Grundlage im
+  Katalog einheitlich ist.
+* **Keine Änderung an den Prozentsätzen** — deren Höhe ist eine getrennte,
+  weiter offene Frage bei Sandy. Wer die Grundlage baut, lässt die Sätze, wie
+  sie sind.
+* Maßgeblich ist Sandys Linie vom 04.09.2026: objektbezogen → auf das
+  betroffene Gewerk, zeitbezogen (Wochenende, Notdienst) → aufs ganze
+  Angebot. `zuschlag-basis.ts` ist die Stelle, die es schon einmal konnte.
+
+**An der Reihenfolge ändert sich nichts:** CoS-E-081 fertig → PM-102 + PM-103
+→ PM-079-A → PM-106 + PM-107 → PM-105 → CoS-038 → PM-119/L-06 → CoS-E-080.
+Die Grundlage hängt an PM-103/PM-104 und wird mit diesem Block gebaut, nicht
+vorgezogen.
+
+**Die Darstellung gehört nicht dir:** die graue Zeile mit der Grundlage unter
+dem Zuschlag ist PD-018 §3 beim Designer.
+
+*Chief of Staff · 2026-09-17, 18:15 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

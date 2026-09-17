@@ -1,7 +1,7 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 17.09.2026, 18:00 UTC · Chief of Staff**
-*(ersetzt die Fassung von 17:00 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 17.09.2026, 18:15 UTC · Chief of Staff**
+*(ersetzt die Fassung von 18:00 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
 *Alle Uhrzeiten sind **UTC**. In Deutschland ist es gerade **MESZ = UTC + 2**,
 also 20:00 Uhr Ortszeit.*
 
@@ -40,7 +40,8 @@ Vorschau-Deploy an.
 | **CoS** | **CoS-E-083 angelegt** — die sechs Funde als ein Auftrag mit Reihenfolge; dazu die Korrektur, dass CoS-E-081 entgegen der Meldung von 17:15 **doch im Arbeitsbaum läuft** (selbst nachgesehen: +69 Zeilen in `helpers.ts`) | ✅ verteilt |
 | **CoS** | **CoS-P-032** (Vorschau-Deploy) und **CoS-M-015** (Rücknahme meines falschen Satzes) angelegt, Antwort an den Designer eingetragen, **Punkt 9.1 in `launch-readiness.md` richtiggestellt** | ✅ verteilt |
 | **CoS** | **Verfahren entschieden statt weitergereicht:** der Baustein „geteilter Arbeitsbaum" steht jetzt in `AGENTS.md` — inklusive des dritten Schritts, ohne den „eigener Index" fremde Einträge löscht | ✅ erledigt |
-| **CoS** | **Eine neue Entscheidung für Sandy:** auf welche Grundlage ein Erschwerniszuschlag rechnet (PM-104). Empfehlung steht im Eintrag | 🔵 bei Sandy |
+| **CoS** | **Eine Entscheidung für Sandy gestellt:** auf welche Grundlage ein Erschwerniszuschlag rechnet (PM-104), mit Empfehlung | ✅ verteilt |
+| **Sandy** | **Entschieden, 18:15 UTC — „ja so wie empfohlen":** ein Erschwerniszuschlag rechnet **nur auf die Positionen, die er betrifft**, nicht auf die Angebotssumme. Die Prozentsätze (15/20/30/10/10 %) bleiben als eigener Punkt offen. Freigabe an Engineering und Designer ist eingetragen | ✅ erledigt |
 
 ---
 
@@ -88,15 +89,15 @@ Vorschau-Deploy an.
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | 🔵 **Einmal pushen.** 4 Commits liegen hier, alle reine Doku und Regeln, kein Code. Block steht unten im Chat | ein Befehl |
-| 2 | 🔵 **NEU: eine Entscheidung** — worauf rechnet ein Erschwerniszuschlag (ganze Angebotssumme oder nur die betroffenen Positionen)? Empfehlung und Begründung stehen in `entscheidungen-fuer-sandy.md`, ganz unten. Ein Satz von dir reicht | eine Antwort |
-| 3 | 🔵 **Nach Italien, ab 26.09.:** Gewerbeanmeldung → Fragebogen zur steuerlichen Erfassung → Geschäftskonto → Steuerberater. Finance und Legal legen die Reihenfolge fertig hin | nichts jetzt |
-| 4 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office, fünf Minuten — schaltet den stärksten Satz der Landingpage frei) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
-| 5 | 🔵 **Versicherung** (exali/Markel 1 Mio. €) · **Stripe** (Konto + 2 Preise) · **Vercel-Benachrichtigung** · Gewerbeanmeldung KW 41 (CoS-041) | unverändert |
-| 6 | 🔵 Heute Abend nach 20:00 Uhr einmal auf `onedrive.live.com` schauen, ob der erste **automatische** Sicherungslauf angekommen ist | ein Blick |
+| 1 | 🔵 **Einmal pushen.** 5 Commits liegen hier, alle reine Doku und Regeln, kein Code. Block steht unten im Chat | ein Befehl |
+| 2 | 🔵 **Nach Italien, ab 26.09.:** Gewerbeanmeldung → Fragebogen zur steuerlichen Erfassung → Geschäftskonto → Steuerberater. Finance und Legal legen die Reihenfolge fertig hin | nichts jetzt |
+| 3 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office, fünf Minuten — schaltet den stärksten Satz der Landingpage frei) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
+| 4 | 🔵 **Versicherung** (exali/Markel 1 Mio. €) · **Stripe** (Konto + 2 Preise) · **Vercel-Benachrichtigung** · Gewerbeanmeldung KW 41 (CoS-041) | unverändert |
+| 5 | 🔵 Heute Abend nach 20:00 Uhr einmal auf `onedrive.live.com` schauen, ob der erste **automatische** Sicherungslauf angekommen ist | ein Blick |
 
-**Nichts davon blockiert eine Rolle** — auch die neue Entscheidung nicht: sie
-sperrt nur **einen** Teil von PM-104, alles andere läuft weiter.
+**Nichts davon blockiert eine Rolle.** Die Entscheidung von 18:15 UTC hat den
+letzten gesperrten Punkt freigegeben — es wartet derzeit **keine Rolle auf
+Sandy**.
 
 ---
 
@@ -104,8 +105,8 @@ sperrt nur **einen** Teil von PM-104, alles andere läuft weiter.
 
 | Rolle | Nächstes | Wartet auf |
 |---|---|---|
-| **Engineering** | **1. CoS-E-081 fertig** (läuft uncommittet in `helpers.ts` — wer ihn angefangen hat, beendet ihn, und committet `helpers.ts` **allein**). **2. Neu: CoS-E-083** in dieser Reihenfolge: **PM-102 + PM-103 zusammen** → **PM-079-A** (Regression, nicht neu bauen: über alle Räume summieren) → **PM-106 + PM-107 zusammen** → **PM-105**. Danach unverändert **CoS-038 → PM-119/L-06 → CoS-E-080**. Die Bemessungsgrundlage aus PM-104 ist **gesperrt**, bis Sandy antwortet | Sandy (nur die Zuschlags-Grundlage) |
-| **Designer** | **DC-127** (dunkler Tabellenkopf, nur eine der beiden Seiten ändern), dann **DC-128 zu Ende** und committen. **PD-023** liegt zum Lesen da, **PD-018 §3** (Zuschlagszeile lesbar machen) ist seiner. **Keine Aussage zu 9.1 erwartet**, bis CoS-P-032 eine Adresse liefert; DC-122 Fußzeile bleibt bei Legal | Legal (nur DC-122) · Platform (nur 9.1) |
+| **Engineering** | **1. CoS-E-081 fertig** (läuft uncommittet in `helpers.ts` — wer ihn angefangen hat, beendet ihn, und committet `helpers.ts` **allein**). **2. Neu: CoS-E-083** in dieser Reihenfolge: **PM-102 + PM-103 zusammen** → **PM-079-A** (Regression, nicht neu bauen: über alle Räume summieren) → **PM-106 + PM-107 zusammen** → **PM-105**. Danach unverändert **CoS-038 → PM-119/L-06 → CoS-E-080**. **Neu freigegeben (18:15 UTC):** die Bemessungsgrundlage der fünf Erschwerniszuschläge wird auf die betroffenen Positionen eingeengt, Prozentsätze unverändert — gebaut wird sie mit PM-103/PM-104, nicht vorgezogen | niemanden |
+| **Designer** | **DC-127** (dunkler Tabellenkopf, nur eine der beiden Seiten ändern), dann **DC-128 zu Ende** und committen. **PD-023** liegt zum Lesen da, **PD-018 §3** (Zuschlagszeile lesbar machen) ist seiner und seit 18:15 UTC vollständig entschieden — sinnvoll erst, nachdem Engineering die Grundlage umgestellt hat. **Keine Aussage zu 9.1 erwartet**, bis CoS-P-032 eine Adresse liefert; DC-122 Fußzeile bleibt bei Legal | Legal (nur DC-122) · Platform (nur 9.1) |
 | **Prüfmeister** | **Spur leer, Fallbasis 133.** Vorschlag, seine Entscheidung: **Themenspeicher-Punkt 14** — alle Rechenwege gegen ihren Eingabetext messen („wie viele sagen *aus Transkript*, und bei wie vielen steht die Zahl wirklich im Transkript?"). **Punkt 17** erst, wenn Marketing CoS-M-014 eingearbeitet hat | niemanden |
 | **Platform** | **🆕 CoS-P-032** — Vorschau-Deploy mit `NEXT_PUBLIC_COMING_SOON=false`, **nur** im Geltungsbereich `preview`, Produktion und Live-Schalter unberührt, Adresse in `design-check.md` und die Marketing-Liste eintragen. Dazu der Termin **CoS-P-029:** am **19.09. nach 03:30 UTC** `system_laeufe` prüfen (`aufnahmen.dateien > 0`?) | niemanden |
 | **Marketing** | **CoS-M-014** (zwei Zahlen im Entwurfs-Code korrigieren — dafür braucht es keine Adresse) und **CoS-M-015 lesen** (mein falscher Satz ist zurückgezogen). Danach Zustelltest `support@`. Der Website-Schalter bleibt hinter **CoS-038** | Engineering (CoS-038) · Sandys Buchhaltungs-Testlauf |
@@ -159,4 +160,4 @@ sperrt nur **einen** Teil von PM-104, alles andere läuft weiter.
   Rollen eine Seite prüfen sollen, die es nicht gibt — und der Designer hat
   die Messung gemacht, die ich hätte machen müssen.
 
-*Chief of Staff · 2026-09-17, 18:00 UTC*
+*Chief of Staff · 2026-09-17, 18:15 UTC*

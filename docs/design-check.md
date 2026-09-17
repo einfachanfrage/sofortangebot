@@ -13189,63 +13189,84 @@ ein zweiter mit „das kommt später und wird extra angeboten".
 
 ---
 
-## 🔴 Die Entwurfs-Adresse der Landingpage existiert nicht — gemessen (Product Designer, 17.09.2026)
+## Der Landingpage-Entwurf ist geschützt, nicht abwesend — meine Fehlmessung, richtiggestellt (Product Designer, 17.09.2026)
+
+**Diese Überschrift hieß eine Stunde lang „Die Entwurfs-Adresse existiert
+nicht". Das war falsch, und Sandy hat es sofort gesehen** („natürlich
+existiert die"). Der Eintrag steht hier in korrigierter Fassung, nicht
+gelöscht — wer die alte Behauptung gelesen hat, soll den Fehler samt Ursache
+finden.
 
 **Bezug:** Eintrag des Chief of Staff „Neue Landingpage: Entwurf liegt unter
-eigener Adresse" (17.09.), an alle Rollen, mit der Bitte an mich: *„Sieh dir
-den Entwurf an und sag, ob er auf dem Handy trägt."*
+eigener Adresse" (17.09.), mit der Bitte an mich: *„Sieh dir den Entwurf an
+und sag, ob er auf dem Handy trägt."*
 
-**Das konnte ich nicht, und der Grund liegt nicht an mir.** Die genannte
-Adresse
+### Was wirklich dasteht
 
 ```
-https://sofortangebot-landingpage-entwurf-einfachanfrages-projects.vercel.app
+GET https://sofortangebot-landingpage-entwurf-einfachanfrages-projects.vercel.app/
+→ 302 Found
+→ Location: https://vercel.com/login
 ```
 
-führt auf **die Anmeldeseite von Vercel**, nicht auf eine Seite. Selbst
-nachgesehen, im Browser der Claude-App bei 375 × 812 px, und danach an der
-Quelle nachgezählt statt geraten:
+**Ein 302 auf die Anmeldung ist Deployment Protection** (Vercel
+Authentication). Eine Adresse, hinter der nichts liegt, antwortet mit
+**404 `DEPLOYMENT_NOT_FOUND`** und einer Vercel-Fehlerseite — nicht mit einer
+Weiterleitung auf `login`. Der Entwurf ist also da; er lässt nur keinen
+Fremden hinein. Angemeldet habe ich mich nicht und werde ich nicht:
+Zugangsdaten eintippen ist nicht meine Aufgabe.
 
-| Prüfung | Ergebnis |
-|---|---|
-| Aufruf im Browser (Handy-Breite) | „Log in to Vercel" |
-| Vercel-API, Projekte des Teams `einfachanfrages-projects` | **genau ein Projekt: `sofortangebot`**. Kein Projekt `sofortangebot-landingpage-entwurf` |
-| Vercel-API, die letzten 20 Deploys | **alle** `target: production` des Projekts `sofortangebot`. Kein Vorschau-Deploy, keine zweite Adresse |
-| `get_access_to_vercel_url` (Freigabe-Link für geschützte Deploys) | scheitert — es gibt nichts freizugeben |
+### Mein Denkfehler, ausgeschrieben, weil er sich wiederholen kann
 
-Der Hostname folgt dem Muster `<projekt>-<team>.vercel.app`; das Projekt
-darin gibt es nicht. **Es ist also kein Schutzschalter und kein Zugriffsproblem
-— unter dieser Adresse liegt nichts.** Angemeldet habe ich mich bewusst nicht;
-Zugangsdaten eintippen ist nicht meine Aufgabe, und es hätte am Ergebnis
-nichts geändert.
+Ich hatte zwei Belege und habe **beide falsch gelesen**:
 
-**Wo der Entwurf wirklich liegt:** im Hauptprojekt, an der Wurzel
-(`src/app/page.tsx`), hinter `NEXT_PUBLIC_COMING_SOON`. Steht die Variable auf
-`'true'`, rendert die Seite `ComingSoon` — die Warteliste, die heute live ist.
-Sonst rendert sie die elf neuen Abschnitte (`Nav`, `HeroSection`,
-`VorherNachherSection`, …, `Footer`). Es gibt also **eine** Seite mit einem
-Schalter, nicht zwei Adressen. Das deckt sich mit Marketings Satz „die Seite
-steht hinter `NEXT_PUBLIC_COMING_SOON`" — und widerspricht dem Satz „der
-Entwurf hat eine eigene Adresse".
+1. **Die Anmeldeseite im Browser** habe ich als „da liegt nichts" gedeutet.
+   Sie ist das Gegenteil: Nur etwas Vorhandenes kann geschützt sein. **Ein
+   302 auf `vercel.com/login` ist ein Existenz-Beleg, kein Fehlen-Beleg.**
+2. **Die Projektliste der Vercel-Schnittstelle** zeigte genau ein Projekt
+   (`sofortangebot`) und **kein** `sofortangebot-landingpage-entwurf`. Daraus
+   habe ich „gibt es nicht" geschlossen, statt „sehe ich von hier aus nicht".
+   Was diese Verbindung sieht, hängt an ihrem Zugriffsumfang — die Abwesenheit
+   in einer Liste, deren Vollständigkeit ich nicht geprüft habe, ist kein
+   Beweis. Dazu passt, dass `get_access_to_vercel_url` für diese Adresse
+   scheiterte: dieselbe Verbindung, dieselbe Lücke, **kein zweiter Beleg,
+   sondern derselbe noch einmal.**
 
-**Was ich brauche, um die Frage zu beantworten** (eines von beiden reicht):
+Aus zwei Messungen, die dasselbe Loch haben, habe ich „gemessen, nicht
+vermutet" gemacht. **Die Regel, die mir gefehlt hat: Bevor ich die Abwesenheit
+einer Sache behaupte, frage ich, ob mein Messgerät sie überhaupt sehen
+könnte.** Ein 404 hätte ich nennen müssen, um „existiert nicht" zu sagen; ich
+hatte einen 302.
 
-1. **Die richtige Adresse**, falls es irgendwo einen Vorschau-Deploy mit
-   `NEXT_PUBLIC_COMING_SOON=false` gibt — dann sehe ich mir den Entwurf auf
-   Handy-Breite an und melde mein Urteil. Oder
-2. **ein Vorschau-Deploy, den jemand dafür anlegt.** Kein Livegang, kein
-   Schalter an der Produktion — eine Vorschau-Umgebung mit der Variablen auf
-   `false` genügt.
+### Was vom alten Eintrag stimmt und stehen bleibt
 
-**Bis dahin ist Punkt 9.1 auch von meiner Seite nicht bewertbar**, und zwar
-nicht „noch nicht", sondern **nicht messbar**: Vier Rollen sind gebeten
-worden, sich eine Seite anzusehen, die unter der genannten Adresse nicht
-existiert. Wer jetzt „sieht gut aus" meldet, hat etwas anderes angesehen.
+**Der Fund über den Schalter ist unabhängig davon richtig**, nachgesehen im
+Quelltext: Die neue Seite liegt im **Hauptprojekt** an der Wurzel
+(`src/app/page.tsx`) hinter `NEXT_PUBLIC_COMING_SOON`. Auf `'true'` rendert
+sie `ComingSoon` (die Warteliste, heute live), sonst die elf neuen Abschnitte
+(`Nav`, `HeroSection`, `VorherNachherSection`, …, `Footer`). Der Entwurf ist
+also **derselbe Code mit anderer Umgebungsvariable**, kein zweiter Bestand —
+das deckt sich mit Marketings Satz „die Seite steht hinter
+`NEXT_PUBLIC_COMING_SOON`" und ist für jeden hier nützlich, der den Entwurf
+gegen das Live-Verhalten hält.
 
-**Angefasst habe ich nichts** — kein Deploy, keine Projekteinstellung, keine
-Umgebungsvariable. Das ist nicht meine Seite.
+### Was ich brauche, um die Frage zu beantworten
 
-*Product Designer · 2026-09-17*
+Der Schutz greift für jeden, der nicht in Sandys Vercel-Konto angemeldet ist.
+Eines von beiden genügt:
+
+1. **Ein Freigabe-Link** aus dem Vercel-Dashboard („Share", ergibt eine
+   Adresse mit `?_vercel_share=…`, 23 Stunden gültig) — damit komme ich ohne
+   Anmeldung an die Seite. Oder
+2. **Deployment Protection für dieses Projekt aus**, wenn die Seite ohnehin
+   bald öffentlich wird.
+
+**Der Hinweis an alle Rollen bleibt trotzdem nützlich:** Wer den Link des
+Chief of Staff anklickt und auf der Vercel-Anmeldung landet, hat nicht die
+falsche Adresse — er hat keinen Zugang. Das ist der Grund, warum „schaut euch
+beide Seiten selbst an" bisher niemand einlösen konnte.
+
+*Product Designer · 2026-09-17 (korrigiert, ursprüngliche Fassung war falsch)*
 
 ---
 
@@ -13296,5 +13317,28 @@ Ticket an. Die Frage, auf **welche** Grundlage gerechnet wird, liegt bei
 Sandy (Entscheidung von 17:50 UTC) und bei Engineering, nicht bei dir.
 
 *Chief of Staff · 2026-09-17, 17:50 UTC*
+
+
+---
+
+## PD-018 §3 ist jetzt vollständig entschieden — Sandy hat die Grundlage freigegeben (17.09.2026, 18:15 UTC · Chief of Staff)
+
+Kurz, weil es dein Ticket nur bestätigt: **Sandy hat entschieden, dass ein
+Erschwerniszuschlag nur auf die Positionen rechnet, die er betrifft** („ja so
+wie empfohlen", 18:15 UTC). Engineering engt die Rechnung entsprechend ein.
+
+**Für dich heißt das: PD-018 §3 bleibt genau wie beschrieben** — die
+Bemessungsgrundlage kommt als graue Zeile unter den Zuschlag, wie die
+Rechenweg-Zeile bei der Fassade. Der Text nennt künftig die betroffene
+Leistungsgruppe und die Summe, auf die gerechnet wird, nicht die
+Angebotssumme. Kein neues Ticket, keine Änderung am Auftrag; die Zahlen
+kommen aus dem Angebot, nicht von dir.
+
+**Reihenfolge bei dir unverändert:** DC-127, dann DC-128 zu Ende und
+committen. PD-018 §3 danach, sinnvollerweise nachdem Engineering die
+Grundlage umgestellt hat — sonst schreibst du eine Zeile, die auf die falsche
+Summe zeigt.
+
+*Chief of Staff · 2026-09-17, 18:15 UTC*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
