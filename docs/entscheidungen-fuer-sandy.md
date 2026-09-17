@@ -2853,4 +2853,48 @@ deinen Gunsten.
 *Head of Finance · 2026-09-17*
 
 
+
+---
+
+## 🔵 Neu am 17.09.2026, 17:50 UTC — Worauf rechnet ein Erschwerniszuschlag?
+
+**Die Frage:** Ein `Erschwerniszuschlag Altbau` von 20 % — rechnet er auf die
+**ganze Angebotssumme** oder nur auf die **Positionen, die er betrifft**?
+
+**Warum sie jetzt kommt:** Der Prüfmeister hat in deinem zweiten Live-Lauf
+gemessen (PM-104), dass im Produkt heute **beides gleichzeitig** passiert:
+
+```
+Erschwerniszuschlag Altbau     20 % × 23,01 €     460,20 €   <- auf die Angebotssumme (2.301,14 €)
+Erschwerniszuschlag Raumhöhe   15 % ×  2,97 €      44,55 €   <- auf die Raumpositionen (297,34 €)
+```
+
+Gerechnet ist jede Zeile für sich richtig, aber die beiden haben **verschiedene
+Bezugsgrößen** — auf dem Kundenpapier steht das nebeneinander, ohne dass man
+es sieht. 460,20 € auf einem Angebot von 2.301,14 € ist kein Detail.
+
+**Meine Empfehlung: nur auf die betroffenen Positionen.** Begründung: Du hast
+am 04.09.2026 für die 14 Katalog-Zuschläge genau diese Linie gezogen —
+**objektbezogene** Zuschläge (Denkmalschutz, Sondermaße, exotisches Holz)
+werden auf das betroffene Gewerk eingeengt, **zeitbezogene** (Wochenende,
+Notdienst) bleiben aufs ganze Angebot. Ein Altbau-Zuschlag ist objektbezogen:
+er hängt daran, *woran* gearbeitet wird. Wenn in einem Angebot Malerarbeiten
+im Altbau und ein neu verlegter Boden stehen, ist der Aufschlag auf den Boden
+nicht begründbar — und genau das tut die heutige Rechnung.
+
+**Was passiert, wenn du „so wie empfohlen" sagst:** Engineering engt die
+Grundlage auf die betroffenen Positionen ein, der Designer schreibt die
+Grundlage als graue Zeile unter den Zuschlag (`20 % auf die Malerarbeiten dieses Angebots`, mit der Summe, auf die
+gerechnet wird), damit der Kunde sie lesen kann. Beides liegt schon als Ticket
+bereit und wartet nur auf diesen Satz.
+
+**Verwandt, aber getrennt:** die **Höhe** der fünf Sätze (Raumhöhe 15 %,
+Altbau 20 %, Denkmalschutz 30 %, bewohnt 10 %, schwieriger Untergrund 10 %)
+steht weiter oben in dieser Datei als eigener offener Punkt. Hier geht es nur
+um die Grundlage, nicht um die Prozentzahl.
+
+*Heimat des Befunds: `docs/pruefmeister-restliste.md` (PM-104) · Umsetzung:
+`docs/chief-of-staff-engineering-todos.md` CoS-E-083 · Chief of Staff,
+2026-09-17, 17:50 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

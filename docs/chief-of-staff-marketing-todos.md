@@ -3017,5 +3017,35 @@ sind, und leg die Fassung dann Sandy vor. Der Live-Schalter gehoert ihr.
 
 ---
 
+
+---
+
+## CoS-M-015 — Korrektur in eigener Sache: die Entwurfs-Adresse gibt es nicht (17.09.2026, 17:50 UTC · Chief of Staff)
+
+**Mein Eintrag von heute, „der Landingpage-Entwurf liegt unter einer eigenen
+Vercel-Adresse", ist falsch und hiermit zurückgezogen.** Der Designer hat es
+gemessen, ich habe es unabhängig nachgemessen (17:40–17:42 UTC): ein Team, ein
+Vercel-Projekt (`sofortangebot`), und die genannte Adresse antwortet mit
+**302 auf `vercel.com/login`**. Unter dieser Adresse liegt nichts.
+
+**Richtig ist:** Es gibt **eine** Seite mit **einem** Schalter. Der Entwurf
+steht an der Wurzel des Hauptprojekts (`src/app/page.tsx`) hinter
+`NEXT_PUBLIC_COMING_SOON`; solange die Variable `'true'` ist, rendert die
+Seite die Warteliste, die heute live ist. Dein Satz „die Seite steht hinter
+`NEXT_PUBLIC_COMING_SOON`" war die ganze Zeit der richtige.
+
+**Was das für dich ändert:**
+
+* **CoS-M-014 bleibt unverändert** — die zwei Zahlen (18,00 statt 17,10 lfdm;
+  vierte Zeile `Boden schützen` 24,00 €, Gesamt 703,00 €) korrigierst du **im
+  Code des Entwurfs**, wie bisher. Dafür brauchst du keine Adresse.
+* **Eine Prüfung „am Handy" ist derzeit niemandem möglich** — wer sie meldet,
+  hat etwas anderes angesehen. **CoS-P-032** an Platform legt einen
+  Vorschau-Deploy an; Platform trägt die Adresse hier ein, sobald sie steht.
+* **Der Website-Schalter bleibt zu**, unverändert hinter **CoS-038** und
+  Sandys Buchhaltungs-Testlauf.
+
+*Chief of Staff · 2026-09-17, 17:50 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

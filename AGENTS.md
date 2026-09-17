@@ -59,3 +59,44 @@ Deshalb gilt (CoS-P-031, Sandys Entscheidung vom 17.09.2026 „ja, einbauen"):
 5. **Nach frischem `git clone`:** `scripts/hooks/LIESMICH.md` — eine Zeile
    Einrichtung, `.git/hooks/` liegt nicht im Repository.
 <!-- END:commit-vollstaendigkeit -->
+
+<!-- BEGIN:geteilter-arbeitsbaum -->
+# Fünf Rollen, ein Arbeitsbaum — committen ohne fremde Arbeit
+
+Am 17.09.2026 ist beides an einem Tag passiert: ein Commit hat **19 Dateien
+von fünf Rollen** mitgenommen (`git add -A`), und ein Commit mit eigenem Index
+hätte zwei fremde Doku-Einträge **lautlos gelöscht**. Der Unterschied zwischen
+„gutgegangen" und „Produktion 45 Minuten rot" war beide Male nur, welche
+Dateien zufällig gleichzeitig im Index lagen.
+
+Deshalb gilt (Entscheidung des Chief of Staff, 17.09.2026, auf Befund und
+Bitte des Head of Product Engineering):
+
+1. **`git add -A` und `git add .` sind abgeschafft.** Es werden ausschließlich
+   die eigenen Dateien mit vollem Pfad genannt.
+2. **Zwischen `git add` und `git commit` gehört nichts als eine Sekunde.**
+   Wer dazwischen noch etwas prüft oder schreibt, riskiert einen fremden
+   Commit über seinen Index.
+3. **Fremde Sperrdateien werden verschoben, nie gelöscht:**
+   `mkdir -p .git/_stale` und `mv .git/*.lock .git/_stale/…`. Löschen ist in
+   geplanten Läufen nicht erlaubt, und `rm` scheitert dort mit
+   „Operation not permitted".
+4. **Wer mit eigenem Index committet** (`GIT_INDEX_FILE`, `git commit-tree`,
+   `git update-ref … $ALT`), **muss danach drei Schritte fahren** — sonst
+   trägt der geteilte Index weiter die alten Blobs, und der nächste fremde
+   Commit wirft die eigene Arbeit weg:
+   ```bash
+   # 1. fremde Sperrdateien wegräumen (verschieben, nicht löschen)
+   # 2. den geteilten Index nachziehen
+   git add -- <dieselben Dateien>
+   # 3. nachsehen, nicht annehmen — diese Ausgabe MUSS leer sein
+   git diff --cached HEAD -- <dieselben Dateien>
+   ```
+   **Schritt 3 ist der eigentliche Punkt:** liegt eine fremde `index.lock`
+   daneben, scheitert `git add` **lautlos** und sieht wie ein Erfolg aus.
+   „Eigener Index" ohne Schritt 3 ist eine Anleitung zum Löschen fremder
+   Einträge — halb ist hier schlechter als gar nicht.
+5. **Gemeldet wird, was man selbst committet hat.** Findet eine Rolle ihre
+   Arbeit in einem fremden Commit wieder, ist das ein Befund für den Chief of
+   Staff, kein Anlass, den Commit zu wiederholen.
+<!-- END:geteilter-arbeitsbaum -->

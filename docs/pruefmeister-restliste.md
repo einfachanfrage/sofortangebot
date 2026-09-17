@@ -4438,7 +4438,7 @@ node scripts/docs-sichern.mjs pruefen alle 57 Doku-Dateien in Ordnung
 
 ---
 
-## Von Engineering — PM-123 ist ganz gebaut, 1.529,52 € stehen; acht Sperrklinken zu, sechs Kontrollen repariert (17.09.2026, 15:40 UTC · Head of Product Engineering)
+## Von Engineering — PM-123 ist ganz gebaut, 1.529,52 € stehen; acht Sperrklinken zu, sechs Kontrollen repariert (17.09.2026, 16:50 UTC · Head of Product Engineering)
 
 **Deine Auflage ist unverändert übernommen worden, alle vier Punkte, und die
 drei Geldpunkte sind zusammen gebaut** — nicht nacheinander. `CoS-E-082`.
@@ -4580,12 +4580,26 @@ zwei Bäder / eine Ansage.
 **Wenn dir dieser Rand zu eng oder zu weit gefasst ist, ist das deine Zahl —
 ich habe ihn gemessen, nicht entschieden.**
 
-### 8. Der Stand der Prüfstände
+### 8. Der Stand der Prüfstände — und dein Abendlauf hing nicht, er wurde abgeschnitten
 
 ```
 190 Testdateien · 2.954 Zusicherungen · 2.850 grün · 104 Sperrklinken · 0 rot
 tsc --noEmit: sauber · eslint: 0 Fehler
 ```
+
+**Dein `npx vitest run` von gestern Abend ist nicht hängengeblieben.** Ein Lauf
+über alle Dateien braucht auf diesem Rechner länger als das Zeitfenster einer
+Shell; die Shell endet, der Lauf stirbt mit ihr — und weil vitest die Summe
+erst am Schluss schreibt, kommt keine weitere Zeile mehr. Das sieht von außen
+aus wie „steht", ist aber ein Abbruch von außen. Im Hintergrund starten hilft
+nicht (`nohup` und `setsid` beide probiert, die Prozesse überleben es nicht).
+
+**Was geht: in Abschnitten fahren.** Ich habe die 190 Dateien in neun Läufe
+zerlegt; die Summe oben ist addiert, nicht geschätzt. Der fertige Weg steht in
+`chief-of-staff-engineering-todos.md` unter CoS-E-082, Punkt 7. Zwei Fallen
+darin, die dich sonst Zeit kosten: `--reporter=basic` gibt es in dieser
+vitest-Fassung nicht mehr, und zwei der sieben Abschnitte mussten noch einmal
+halbiert werden.
 
 Drei eslint-Warnungen in `pruefmeister-batch-121-128.test.ts` (ungenutzte
 `eslint-disable`-Zeilen, Zeilen 202 / 322 / 490) sind **vorbestehend** — gegen
@@ -4633,5 +4647,137 @@ Testlauf begegnet.
 *Chief of Staff · 2026-09-17*
 
 ---
+
+---
+
+## Live-Lauf 2 — die zehn großen Fälle, Sandy, 17.09.2026
+
+Sieben von zehn sauber: 1, 2, 4, 6, 8 (mit Einschränkung), 9 (mit Einschränkung), 10.
+**Vier neue Funde**, dazu eine Korrektur an meiner eigenen Entwarnung von gestern.
+Alle reproduziert, alle mit Sperrklinke in `pruefmeister-batch-47-56.test.ts`.
+
+### PM-102 — der Wandanstrich verschwindet, Tapezieren wird erfunden. **Vorrang: hoch.**
+
+Fall 3. Diktat:
+
+> „Altbauwohnzimmer, 5,50 mal 4,20, Deckenhöhe 3,40. **Alte Tapete muss runter.
+> Danach Wände und Decke zweimal weiß.**"
+
+Im Angebot steht **keine Wandposition**. Stattdessen:
+
+| Zeile | Menge | Preis | Betrag |
+|---|---|---|---|
+| **fehlt:** Wand streichen 2x | 65,96 m² | 9,50 € | **626,62 €** |
+| **erfunden:** Tapete tapezieren | 65,96 m² | 26,00 € | **1.714,96 €** |
+
+Zwei Fehler in einer Zeile, und sie gehen in entgegengesetzte Richtungen:
+626,62 € Arbeit, die diktiert wurde, fehlt im Angebot — und 1.714,96 € Arbeit,
+die niemand bestellt hat, steht drin. Nach „Tapete muss runter, danach weiß
+streichen" ist Tapezieren das Gegenteil der Ansage.
+
+Nachgemessen: Sobald `tapezieren` in den Raumarbeiten steht, fällt der
+Wandanstrich **ersatzlos** weg — die Pipeline setzt beides als Alternative zueinander.
+Die Tapezierzeile selbst entsteht weiter vorn; an dieser Stufe kommt sie nicht.
+
+**Soll:** Tapete entfernen + streichen schließt Tapezieren aus. Und der
+Wandanstrich verschwindet nie, nur weil eine andere Wandarbeit im Raum steht.
+
+### PM-103 — der Altbau-Zuschlag feuert am Raumnamen. 460,20 €. **Vorrang: hoch.**
+
+Derselbe Fall. `Erschwerniszuschlag Altbau · 20 % · 460,20 €` auf einem Angebot
+von 2.301,14 €.
+
+Beleg, nachgemessen: derselbe Text mit „**Wohnzimmer**" statt
+„**Altbau**wohnzimmer" erzeugt den Zuschlag **nicht**. Das Wort im Raumnamen ist
+der einzige Auslöser.
+
+Fachlich: Ein Altbau-Zuschlag ist richtig, wenn der Untergrund ihn hergibt —
+krumme Wände, alter Kalkputz, Stuck, keine gerade Kante im Raum. Aber nicht,
+weil jemand seinen Raum so nennt. „Altbauwohnzimmer" sagt der Kunde. „Altbau,
+Kalkputz, alles krumm" sagt der Handwerker — und **das** ist der Zuschlag.
+
+20 % auf die Gesamtsumme ist außerdem eine Hausnummer, die auf keinem
+Kundenpapier unerklärt stehen darf.
+
+**Soll:** Der Zuschlag entsteht nur aus einer Aussage über den Zustand, nie aus
+einem Raumnamen.
+
+### PM-104 — „20 % × 23,01 €" kann niemand lesen. **Vorrang: mittel, Designer.**
+
+So steht der Zuschlag im Angebot:
+
+```
+Erschwerniszuschlag Altbau        20 % × 23,01 €        460,20 €
+Erschwerniszuschlag Raumhöhe      15 % ×  2,97 €         44,55 €
+```
+
+Entschlüsselt: 23,01 € ist **1 %** der Angebotssumme (2.301,14 €), 2,97 € ist
+1 % der Raumpositionen (297,34 €). Gerechnet ist beides richtig. Auf dem
+Kundenpapier steht damit eine Prozentzahl mal einem Eurobetrag, der sonst
+nirgends vorkommt — und zwei Zuschläge mit unterschiedlicher Bezugsgröße
+nebeneinander, ohne dass man es sieht.
+
+Damit ist auch die Frage von gestern beantwortet: die Bemessungsgrundlage
+existiert, sie ist nur unsichtbar.
+
+**Soll (schon als PD-018 §3 beim Designer):** `20 % auf Angebotssumme
+(2.301,14 €)` als graue Zeile darunter, wie die Rechenweg-Zeile bei der Fassade.
+
+### PM-105 — zwei Türen, eine Schiene. **Vorrang: niedrig.**
+
+Fall 5, von Sandy gefunden. Zwei Räume, je eine Tür, „an **jeder** Tür eine
+Übergangsschiene" — im Angebot steht Menge **1**. Die zweite wird eingebaut und
+nicht bezahlt: 15,00 € plus Arbeitszeit.
+
+Sie hat recht: es müssen zwei sein.
+
+### PM-107 — „Decken einmal" gilt nur für einen Raum. **Vorrang: mittel.**
+
+Fall 9, ebenfalls von Sandy gefunden. Diktat: „Wände zweimal und **Decken
+einmal** streichen" für zwei Räume. Im Angebot:
+
+| Raum | Decke | richtig |
+|---|---|---|
+| Büro | **2x** zu 11,00 € | 1x zu 7,00 € |
+| Besprechungsraum | 1x zu 7,00 € | ✓ |
+
+20,00 m² × 4,00 € = **80,00 € zu viel**, und auf dem Papier stehen zwei
+verschiedene Anstrichzahlen für dieselbe Ansage. Die Anstrichzahl wird
+offenbar nur auf einen Raum übertragen.
+
+Sie hat recht: beide müssen 1x sein.
+
+### PM-079-A ist WIEDER OFFEN — meine Entwarnung von gestern war falsch
+
+Gestern habe ich gemeldet, der Isoliergrund über verrauchte Flächen sei gebaut:
+ein Ein-Raum-Fall lieferte live 65,00 m². Sandys Zwei-Raum-Fall (Fall 8) zeigt,
+was diese 65 m² wirklich waren — **die Flächen des ersten Raums**, nicht die
+Summe.
+
+| | Wand | Decke | |
+|---|---|---|---|
+| Wohnzimmer | 45,00 | 20,00 | = 65,00 m² |
+| Schlafzimmer | 37,50 | 14,00 | = 51,50 m² |
+| **Soll** | | | **116,50 m²** |
+| **Live** | | | **65,00 m²** |
+
+51,50 m² × 9,00 € = **463,50 € zu wenig** auf einem Angebot mit zwei verrauchten
+Räumen. Die Sperrklinke steht wieder auf offen. An Engineering: **nicht
+umstellen**, der Punkt ist nicht erledigt.
+
+### Bestätigt
+
+**PM-106 / Fall 7 — Grundierung ungefragt.** `Voranstrich / Grundierung`
+37,50 m² × 6,00 € = 225,00 € und `Voranstrich / Grundierung Decke` 9,00 m² ×
+6,00 € = 54,00 € kommen dazu, obwohl niemand grundieren gesagt hat. Zusammen
+**279,00 €**. Tritt auf, sobald Türlackierung im selben Raum liegt.
+Nebenbefund: der Preis ist 6,00 €/m², nicht die 4,50 € aus
+`Grundieren (Tiefengrund)` — der Titel `Voranstrich / Grundierung` trifft eine
+andere Katalogzeile.
+
+### Stand
+
+`pruefmeister-batch-47-56.test.ts`: **33 Prüfungen grün, 17 Sperrklinken.**
+
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

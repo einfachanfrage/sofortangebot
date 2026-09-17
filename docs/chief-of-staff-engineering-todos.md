@@ -10280,5 +10280,226 @@ diesem Lauf gemessen bzw. nachgesehen worden.
 
 *Head of Product Engineering · 2026-09-17, 17:15 UTC*
 
+---
+
+## 🔴 Vom Prüfmeister — vier neue Funde aus Sandys zweitem Live-Lauf (17.09.2026)
+
+Sieben von zehn sauber: 1, 2, 4, 6, 8 (mit Einschränkung), 9 (mit Einschränkung), 10.
+**Vier neue Funde**, dazu eine Korrektur an meiner eigenen Entwarnung von gestern.
+Alle reproduziert, alle mit Sperrklinke in `pruefmeister-batch-47-56.test.ts`.
+
+### PM-102 — der Wandanstrich verschwindet, Tapezieren wird erfunden. **Vorrang: hoch.**
+
+Fall 3. Diktat:
+
+> „Altbauwohnzimmer, 5,50 mal 4,20, Deckenhöhe 3,40. **Alte Tapete muss runter.
+> Danach Wände und Decke zweimal weiß.**"
+
+Im Angebot steht **keine Wandposition**. Stattdessen:
+
+| Zeile | Menge | Preis | Betrag |
+|---|---|---|---|
+| **fehlt:** Wand streichen 2x | 65,96 m² | 9,50 € | **626,62 €** |
+| **erfunden:** Tapete tapezieren | 65,96 m² | 26,00 € | **1.714,96 €** |
+
+Zwei Fehler in einer Zeile, und sie gehen in entgegengesetzte Richtungen:
+626,62 € Arbeit, die diktiert wurde, fehlt im Angebot — und 1.714,96 € Arbeit,
+die niemand bestellt hat, steht drin. Nach „Tapete muss runter, danach weiß
+streichen" ist Tapezieren das Gegenteil der Ansage.
+
+Nachgemessen: Sobald `tapezieren` in den Raumarbeiten steht, fällt der
+Wandanstrich **ersatzlos** weg — die Pipeline setzt beides als Alternative zueinander.
+Die Tapezierzeile selbst entsteht weiter vorn; an dieser Stufe kommt sie nicht.
+
+**Soll:** Tapete entfernen + streichen schließt Tapezieren aus. Und der
+Wandanstrich verschwindet nie, nur weil eine andere Wandarbeit im Raum steht.
+
+### PM-103 — der Altbau-Zuschlag feuert am Raumnamen. 460,20 €. **Vorrang: hoch.**
+
+Derselbe Fall. `Erschwerniszuschlag Altbau · 20 % · 460,20 €` auf einem Angebot
+von 2.301,14 €.
+
+Beleg, nachgemessen: derselbe Text mit „**Wohnzimmer**" statt
+„**Altbau**wohnzimmer" erzeugt den Zuschlag **nicht**. Das Wort im Raumnamen ist
+der einzige Auslöser.
+
+Fachlich: Ein Altbau-Zuschlag ist richtig, wenn der Untergrund ihn hergibt —
+krumme Wände, alter Kalkputz, Stuck, keine gerade Kante im Raum. Aber nicht,
+weil jemand seinen Raum so nennt. „Altbauwohnzimmer" sagt der Kunde. „Altbau,
+Kalkputz, alles krumm" sagt der Handwerker — und **das** ist der Zuschlag.
+
+20 % auf die Gesamtsumme ist außerdem eine Hausnummer, die auf keinem
+Kundenpapier unerklärt stehen darf.
+
+**Soll:** Der Zuschlag entsteht nur aus einer Aussage über den Zustand, nie aus
+einem Raumnamen.
+
+### PM-104 — „20 % × 23,01 €" kann niemand lesen. **Vorrang: mittel, Designer.**
+
+So steht der Zuschlag im Angebot:
+
+```
+Erschwerniszuschlag Altbau        20 % × 23,01 €        460,20 €
+Erschwerniszuschlag Raumhöhe      15 % ×  2,97 €         44,55 €
+```
+
+Entschlüsselt: 23,01 € ist **1 %** der Angebotssumme (2.301,14 €), 2,97 € ist
+1 % der Raumpositionen (297,34 €). Gerechnet ist beides richtig. Auf dem
+Kundenpapier steht damit eine Prozentzahl mal einem Eurobetrag, der sonst
+nirgends vorkommt — und zwei Zuschläge mit unterschiedlicher Bezugsgröße
+nebeneinander, ohne dass man es sieht.
+
+Damit ist auch die Frage von gestern beantwortet: die Bemessungsgrundlage
+existiert, sie ist nur unsichtbar.
+
+**Soll (schon als PD-018 §3 beim Designer):** `20 % auf Angebotssumme
+(2.301,14 €)` als graue Zeile darunter, wie die Rechenweg-Zeile bei der Fassade.
+
+### PM-105 — zwei Türen, eine Schiene. **Vorrang: niedrig.**
+
+Fall 5, von Sandy gefunden. Zwei Räume, je eine Tür, „an **jeder** Tür eine
+Übergangsschiene" — im Angebot steht Menge **1**. Die zweite wird eingebaut und
+nicht bezahlt: 15,00 € plus Arbeitszeit.
+
+Sie hat recht: es müssen zwei sein.
+
+### PM-107 — „Decken einmal" gilt nur für einen Raum. **Vorrang: mittel.**
+
+Fall 9, ebenfalls von Sandy gefunden. Diktat: „Wände zweimal und **Decken
+einmal** streichen" für zwei Räume. Im Angebot:
+
+| Raum | Decke | richtig |
+|---|---|---|
+| Büro | **2x** zu 11,00 € | 1x zu 7,00 € |
+| Besprechungsraum | 1x zu 7,00 € | ✓ |
+
+20,00 m² × 4,00 € = **80,00 € zu viel**, und auf dem Papier stehen zwei
+verschiedene Anstrichzahlen für dieselbe Ansage. Die Anstrichzahl wird
+offenbar nur auf einen Raum übertragen.
+
+Sie hat recht: beide müssen 1x sein.
+
+### PM-079-A ist WIEDER OFFEN — meine Entwarnung von gestern war falsch
+
+Gestern habe ich gemeldet, der Isoliergrund über verrauchte Flächen sei gebaut:
+ein Ein-Raum-Fall lieferte live 65,00 m². Sandys Zwei-Raum-Fall (Fall 8) zeigt,
+was diese 65 m² wirklich waren — **die Flächen des ersten Raums**, nicht die
+Summe.
+
+| | Wand | Decke | |
+|---|---|---|---|
+| Wohnzimmer | 45,00 | 20,00 | = 65,00 m² |
+| Schlafzimmer | 37,50 | 14,00 | = 51,50 m² |
+| **Soll** | | | **116,50 m²** |
+| **Live** | | | **65,00 m²** |
+
+51,50 m² × 9,00 € = **463,50 € zu wenig** auf einem Angebot mit zwei verrauchten
+Räumen. Die Sperrklinke steht wieder auf offen. An Engineering: **nicht
+umstellen**, der Punkt ist nicht erledigt.
+
+### Bestätigt
+
+**PM-106 / Fall 7 — Grundierung ungefragt.** `Voranstrich / Grundierung`
+37,50 m² × 6,00 € = 225,00 € und `Voranstrich / Grundierung Decke` 9,00 m² ×
+6,00 € = 54,00 € kommen dazu, obwohl niemand grundieren gesagt hat. Zusammen
+**279,00 €**. Tritt auf, sobald Türlackierung im selben Raum liegt.
+Nebenbefund: der Preis ist 6,00 €/m², nicht die 4,50 € aus
+`Grundieren (Tiefengrund)` — der Titel `Voranstrich / Grundierung` trifft eine
+andere Katalogzeile.
+
+### Stand
+
+`pruefmeister-batch-47-56.test.ts`: **33 Prüfungen grün, 17 Sperrklinken.**
+
+
+**Reihenfolge, wie ich sie sehe:** PM-102 und PM-103 vor allem anderen aus
+diesem Block — beide verbiegen die Angebotssumme um Hunderte Euro und beide
+sind mit einem einzigen Wort auszulösen. PM-079-A danach, weil der Punkt
+fälschlich als erledigt bei euch lag. PM-107 und PM-106 zusammen, sie sitzen
+beide in der Übertragung von Ansagen auf mehrere Räume bzw. Bauteile.
+PM-105 ist Kleinkram, aber billig zu bauen.
+
+*Prüfmeister · 2026-09-17*
+
+
+---
+
+## CoS-E-083 🔴 — Sandys zweiter Live-Lauf: sechs Funde, eine Reihenfolge (17.09.2026, 17:50 UTC · Chief of Staff)
+
+**Bezug:** der Eintrag des Prüfmeisters von 17:31 UTC in dieser Datei
+(PM-102, PM-103, PM-104, PM-105, PM-106, PM-107 und die Rücknahme von
+PM-079-A). Ich vergebe **eine** Nummer für den ganzen Block, nicht sechs —
+fünf der sechs Funde sitzen in derselben Familie: eine Ansage wird auf einen
+Raum bzw. ein Bauteil angewandt statt auf alle, die sie betrifft.
+
+### 1. Zuerst eine Korrektur an deinem Eintrag von 17:15 — CoS-E-081 läuft doch
+
+Dort steht, dieser Lauf habe CoS-E-081 nicht angefangen, und der Punkt sei
+„unangetastet". **Selbst nachgesehen, 17:44 UTC, nicht angenommen:**
+`src/lib/vollstaendigkeit/helpers.ts` steht mit **+69 Zeilen** im Arbeitsbaum,
+und der neue Kopf der Funktion trägt wörtlich
+`── CoS-E-081 · PM-131 / PM-132 / PM-133 —` samt der Herleitung aller drei
+Zweige. Der Bau **läuft**, er ist nur uncommittet und nicht aus deinem Lauf.
+
+Daraus zwei Dinge:
+
+* **CoS-E-081 bleibt der oberste Punkt** und wird von dem Lauf beendet, der
+  ihn angefangen hat. Kein zweiter Lauf fasst `helpers.ts` an, bis er
+  committet ist.
+* **Wer ihn beendet, committet `helpers.ts` allein.** Im selben Arbeitsbaum
+  liegen die vier Dateien des Designers (`angebot/[id]/entwurf/page.tsx`,
+  `api/entwurf/generiere-positionen/route.ts`, `zeit-ausschluss.ts`,
+  `dc128-zeit-ausschluss-sichtbar.test.ts`) und zwei Testreihen des
+  Prüfmeisters (`pruefmeister-batch-47-56.test.ts`,
+  `pruefmeister-batch-131-133.test.ts`). Nichts davon gehört in denselben
+  Commit — genau die Form, die du selbst um 17:15 als Befund gemeldet hast.
+
+### 2. Die Reihenfolge, ab jetzt gültig
+
+| # | Punkt | Warum hier |
+|---|---|---|
+| 1 | **CoS-E-081** fertigstellen | läuft, uncommittet, 8.820,00 € auf einem gewöhnlichen Malerdiktat |
+| 2 | **PM-102 + PM-103 zusammen** | beide verbiegen die Angebotssumme um Hunderte Euro, beide werden von **einem einzigen Wort** ausgelöst („tapezieren" bzw. „Altbau" im Raumnamen), und beide sitzen in derselben Stufe der Pipeline |
+| 3 | **PM-079-A** | steht bei euch fälschlich als erledigt; 463,50 € **zu wenig**, sobald ein zweiter Raum betroffen ist. Nicht neu bauen — die Fläche wird über alle betroffenen Räume summiert statt nur über den ersten |
+| 4 | **PM-106 + PM-107 zusammen** | dieselbe Familie: eine Ansage („Decken einmal", „niemand hat grundieren gesagt") gilt nur für einen Raum bzw. kippt, sobald eine zweite Arbeit im Raum liegt |
+| 5 | **PM-105** | Kleinkram, 15,00 € plus Arbeitszeit — aber billig zu bauen, und der Handwerker baut die zweite Schiene trotzdem ein |
+| 6 | danach unverändert | **CoS-038 → PM-119/L-06 → CoS-E-080** |
+
+**Warum PM-102 vor PM-103:** bei PM-102 gehen zwei Fehler in entgegengesetzte
+Richtungen auf derselben Zeile (626,62 € fehlen, 1.714,96 € sind erfunden) —
+ein Kunde, der das Papier liest, sieht eine Arbeit, die er nicht bestellt hat,
+und findet die, die er bestellt hat, nicht. Das ist teurer als ein Zuschlag,
+der zu Unrecht 20 % aufschlägt.
+
+### 3. Ein Teil von PM-104 gehört dir, ein Teil nicht
+
+**Nicht dir:** die Darstellung (`20 % auf Angebotssumme (2.301,14 €)` als graue
+Zeile) — die liegt als **PD-018 §3** beim Designer und bleibt dort.
+
+**Dir, aber gesperrt:** die **Bemessungsgrundlage**. Der Prüfmeister hat
+gemessen, dass `Erschwerniszuschlag Altbau` auf die **Angebotssumme** rechnet
+und `Erschwerniszuschlag Raumhöhe` auf die **Raumpositionen**. Sandy hat am
+04.09.2026 für die 14 Katalog-Zuschläge entschieden: **objektbezogene
+Zuschläge werden auf das betroffene Gewerk eingeengt, zeitbezogene bleiben
+aufs ganze Angebot.** Ein Altbau-Zuschlag ist objektbezogen — die heutige
+Rechnung widerspricht der Richtung ihrer eigenen Entscheidung, aber für die
+fünf Maler-Erschwerniszuschläge ist die Grundlage nie ausdrücklich freigegeben
+worden. **Ich habe sie Sandy zur Entscheidung gestellt**
+(`entscheidungen-fuer-sandy.md`, 17:50 UTC, mit Empfehlung „nur auf die
+betroffenen Positionen"). **Bau an der Grundlage nichts, bis ihre Antwort da
+ist.** Der andere Teil von PM-103 — der Zuschlag darf nicht am Raumnamen
+entstehen — ist davon unberührt und freigegeben.
+
+### 4. Was ich in diesem Lauf nicht geprüft habe
+
+**Keinen Prüfstand.** Der letzte belegte volle Stand bleibt deiner von 17:15
+UTC (190 Testdateien · 2.850 grün · 104 Sperrklinken · 0 rot). **Die CI ist in
+diesem Lauf nicht messbar** — zwei Abfragen kamen mit 403 zurück, die dritte
+lieferte eine Liste, die bei **#202 vom 16.09.** endet und damit nicht der
+aktuelle Stand sein kann. Ich behaupte deshalb für `8fec90b` **keinen**
+CI-Stand. Was ich belegen kann: **Vercel, 17:42 UTC — jüngster
+Produktions-Deploy ist `8fec90b`, Zustand READY.**
+
+*Chief of Staff · 2026-09-17, 17:50 UTC*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

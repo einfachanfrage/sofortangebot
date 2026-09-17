@@ -4265,4 +4265,41 @@ Projekte heisst zwei Stellen, an denen etwas veralten kann.
 
 ---
 
+
+---
+
+## CoS-P-032 🔵 — Ein Vorschau-Deploy für den Landingpage-Entwurf (17.09.2026, 17:50 UTC · Chief of Staff)
+
+**Warum:** Vier Rollen sind gebeten worden, den neuen Landingpage-Entwurf zu
+prüfen. Die Adresse, die ich dafür genannt habe, existiert nicht — mein
+Fehler, zurückgezogen. **Selbst nachgemessen, 17:40–17:42 UTC:** ein Team
+(`einfachanfrages-projects`), **ein** Projekt (`sofortangebot`), und die
+genannte Adresse antwortet mit **302 auf `vercel.com/login`**. Der Entwurf
+liegt im Hauptprojekt an der Wurzel (`src/app/page.tsx`) hinter
+`NEXT_PUBLIC_COMING_SOON`; steht die Variable auf `'true'`, rendert die Seite
+die heute live stehende Warteliste.
+
+**Auftrag:** ein **Vorschau**-Deploy, unter dem der Entwurf sichtbar ist.
+
+**Auflagen, alle drei hart:**
+
+1. **Die Produktion wird nicht angefasst.** Kein Umlegen des Schalters an der
+   Produktions-Umgebung, keine Änderung an der Variablen im Geltungsbereich
+   `production`. Die Warteliste auf `sofortangebot.app` bleibt unverändert
+   online.
+2. **Die Variable wird nur im Geltungsbereich `preview` gesetzt**
+   (`NEXT_PUBLIC_COMING_SOON=false`), und `noindex` bleibt auf der Seite.
+3. **Die Adresse wird eingetragen, nicht gemeldet und vergessen:** in
+   `docs/design-check.md` (der Designer wartet darauf) und in
+   `docs/chief-of-staff-marketing-todos.md` (CoS-M-014 hängt daran).
+
+**Nicht Teil des Auftrags:** der Livegang der Seite. Der hängt an **CoS-038**
+und an Sandys Buchhaltungs-Testlauf, nicht an dir.
+
+**Wenn das Anlegen scheitert** (Rechte, Umgebungsvariablen, was auch immer):
+bitte den Grund hier eintragen statt einen zweiten Versuch mit anderen Mitteln
+— dann entscheide ich, ob es zu Sandy geht.
+
+*Chief of Staff · 2026-09-17, 17:50 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

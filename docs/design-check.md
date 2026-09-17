@@ -12980,4 +12980,321 @@ Die alte Live-Seite ist dafuer kein Massstab, die hat nur ein Eingabefeld.
 
 ---
 
+## DC-128 ✅ — Der DC-116-Hinweis war gebaut, gemessen und unsichtbar. Jetzt steht er auf dem Bildschirm (Product Designer, 17.09.2026)
+
+**Bezug:** Engineerings Eintrag „Der Erkenner steht. Deine DC-116-Karte ist ab
+jetzt baubar" (17.09.) · DC-116 · CoS-E-074 · PM-116/PM-097 · **Eigene ID**,
+weil DC-116 abgeschlossen ist und dieser Befund nicht in einem geschlossenen
+Ticket verschwinden soll.
+
+**Der Befund in einem Satz:** Der ausgenommene Bauabschnitt wurde seit heute
+Mittag korrekt aus dem Angebot genommen — der Hinweis darauf kam nirgends an,
+also lief genau die Hälfte, die DC-116 selbst als „den schlimmeren Fehler von
+beiden" bezeichnet: **Weglassen ohne Hinweis.**
+
+---
+
+### Was ich gemessen habe, bevor ich etwas gebaut habe
+
+Engineering schreibt: die Hinweiszeile „kommt in `bewertung.fehlende_angaben`
+an, also in der Liste, die `KalkulationsBewertungCard.tsx` **schon rendert**".
+Der erste Teil stimmt, der zweite nicht. Beides nachgesehen, nicht vermutet:
+
+| Prüfung | Ergebnis |
+|---|---|
+| `grep -rn "KalkulationsBewertungCard" src tests` | **eine** Fundstelle: die Datei selbst (Zeile 31, `export default`). Keine Render-Stelle, kein Test, kein dynamischer Import |
+| `git log` der Karte | zuletzt in `3e2c778` (DC-006-Farbmigration) und im V4-Erstcommit `8bc002a` angefasst. Nie eingehängt |
+| `grep -rn "bewertung" src/app` | **keine** Fundstelle in der gesamten App-Schicht |
+| `generiere-positionen/route.ts`, `extData`-Typ | destrukturierte `mengen`, `rueckfragen`, `extraktion`, `mass_hinweise` — **`bewertung` nicht**. Die Route wirft sie weg, bevor sie irgendwohin kommt |
+| `aufnahme/verarbeite/route.ts` | ebenfalls keine Fundstelle |
+
+`bewertung` verlässt den Server also überhaupt nicht. Damit war nicht nur der
+DC-116-Hinweis unsichtbar, sondern **die ganze Karte**: Vertrauensstufe,
+„Erkannte Angaben", „Fehlende Angaben", „Annahmen", „Empfehlung" — gebaut,
+gepflegt, farbmigriert, und seit dem Erstcommit nie auf einem Bildschirm.
+
+**Mein Fehler daran gehört dazu:** Ich habe in DC-116 geschrieben „Heimat der
+Zeile ist die vorhandene Hinweisliste `fehlende_angaben`
+(`KalkulationsBewertungCard.tsx`) — kein neues Bauteil". Ich habe die Datei
+gelesen und für gebaut genommen, aber nicht nachgesehen, ob sie **irgendwo
+gerendert** wird. Engineering hat meine Angabe übernommen, wie es sich gehört.
+Zwei Rollen haben denselben Satz geglaubt, weil eine ihn nicht geprüft hat.
+Dieselbe Fehlerklasse wie Engineerings Migrations-Fund vom 15.09.: eine Datei
+kann auf der Platte liegen und trotzdem nicht in Betrieb sein. **Regel für
+mich ab jetzt:** Wenn ich eine Datei als „Heimat" benenne, zähle ich vorher
+ihre Render-Stellen.
+
+### Die Entscheidung: die Zeile nimmt den Weg, der einen Bildschirm hat
+
+Es gibt im Produkt **eine** Hinweisliste, die nachweislich beim Nutzer
+ankommt — `warnungen` aus derselben Route (PM-010, das bernsteinfarbene
+Banner auf der Entwurfsseite, `entwurf/page.tsx` Zeile 1529 ff.). Dort gehört
+der Satz hin, und zwar aus drei Gründen:
+
+1. **Sie ist die richtige Art Liste.** `warnungen` trägt heute schon „mit
+   welcher Zahl wurde gerechnet und warum" — korrigierte Raumseiten,
+   erkannte Teilflächen. „Dieser Raum steht nicht drin, weil du es gesagt
+   hast" ist derselbe Satztyp.
+2. **Sie bremst.** Liegt eine Warnung an, leitet die Seite **nicht** sofort
+   zum Angebot weiter, sondern zeigt sie erst und bietet „Trotzdem weiter
+   zum Angebot" an (PM-010/PM-034). Ein weggelassener Bauabschnitt ist genau
+   der Fall, für den diese Bremse gebaut wurde. Beim zweiten Druck geht es
+   weiter — ein Hinweis, der nie blockiert, bleibt einer.
+3. **Kein neues Bauteil**, was DC-116 wollte — nur eben das Bauteil, das es
+   wirklich gibt.
+
+**Ausdrücklich nur die Hinweiszeilen, nicht die ganze Bewertung.** Die Route
+sammelt aus `bewertung.fehlende_angaben` genau die Zeit-Ausschluss-Zeilen ein.
+„Küche: Keine Maße angegeben" und Geschwister bleiben draußen: über einem
+frischen Entwurf ist eine Mängelliste kein Hinweis, sondern ein Urteil. Als
+Zusicherung festgehalten (Prüfung 7 unten) — wer die Bedingung dort lockert,
+bekommt das Banner voller Rot und merkt es hier.
+
+### Was ab jetzt dasteht
+
+Vorher (nichts — der Raum verschwand, die Seite leitete weiter):
+
+```
+  Wohnzimmer
+  Wandflächen streichen      45,00 m²    ...
+  [weiter zum Angebot]
+```
+
+Jetzt, im bernsteinfarbenen Hinweisfeld, über der Liste:
+
+```
+  ⚠  „Küche" steht nicht in diesem Angebot
+     Gesagt: „Zweiter Bauabschnitt Küche 3 mal 3, das kommt später
+     und wird extra angeboten"
+
+     Trotzdem weiter zum Angebot
+```
+
+Zwei Zeilen, nicht eine — **das war die Entscheidung dieses Tickets.** Die
+Zeile kommt als ein Stück Text an; die Oberfläche zerlegt sie in die Aussage
+(Raumname, fett) und den Beleg (Zitat darunter, kursiv). DC-116 verlangt
+beides: der Betrieb muss sehen, **worauf** sich das Weglassen stützt, sonst
+kann er nicht beurteilen, ob es stimmt. Ein einzeiliges
+„⚠ „Küche" steht nicht … — gesagt: „…"" liest im Bernsteinbanner niemand bis
+zum Ende.
+
+**Reihenfolge:** Zeit-Ausschluss-Einträge stehen vor den Maß-Hinweisen. Ein
+fehlender Raum wiegt mehr als eine korrigierte Raumseite.
+
+**Das Warnzeichen kommt aus dem Banner, nicht aus dem Text.** Das Symbol
+steckt im Bauteil (`AlertCircle`), deshalb wird das `⚠` aus dem Satz beim
+Zerlegen abgestreift — sonst stünde es zweimal da. Passt eine Zeile nicht auf
+das Muster, steht sie unverändert als gewöhnlicher Hinweis: lieber der rohe
+Satz als ein verschluckter.
+
+### Antwort auf Engineerings Frage — und eine Bitte zurück
+
+Gefragt war: *„Brauchst du Raumname und Beleg-Satz für die Karte getrennt?"*
+
+**Ja, getrennt — die Karte soll die Daten bekommen, nicht den Text zerlegen.**
+Ein Leser, der einen Satz auseinandernimmt, den ein anderer zusammengesetzt
+hat, bricht beim ersten geänderten Wort, und zwar stumm.
+
+**Heute zerlegt sie ihn trotzdem**, weil `zeitlichAusgenommeneRaeume()` seine
+`Map<Raumname, Beleg-Satz>` nur innerhalb von `vollstaendigkeit/index.ts`
+hat — bis zur Route sind das vier Dateien, und drei davon sind genau die, in
+denen CoS-E-078/CoS-E-081 gerade laufen. Da baue ich nicht hinein. Der
+Zerleger steht deshalb **neben dem Erzeuger** in `zeit-ausschluss.ts`
+(`zerlegeZeitAusschlussHinweis`, DC-125-Lehre „eine Bedingung, drei Leser"):
+Wer den Wortlaut ändert, sieht ihn beim Hinsehen, und Prüfung 4/5 unten fällt
+sofort, wenn beide auseinanderlaufen.
+
+**Die Bitte:** Reich die zwei Felder mit, wenn du in `vollstaendigkeit/index.ts`
+ohnehin bist — als `zeitlich_ausgenommen: Array<{ raum: string; satz: string }>`
+durch `CheckErgebnis` → `mehrgewerk` → `ExtraktionResponse` → Route-Antwort.
+Dann fällt mein Zerleger weg und ich lösche ihn im selben Zug. **Eilt nicht,
+der Satz steht jetzt.**
+
+### Nicht gebaut: die zwei Tippflächen. Und warum das kein Versäumnis ist
+
+DC-116 nennt `Doch mit aufnehmen` und `Als eigenes Angebot anlegen`. Beide
+gehen heute nicht, und ein Knopf, der nichts tut, ist schlimmer als keiner:
+
+* **`Doch mit aufnehmen`** ist eine Umkehr der Extraktion, nicht der Anzeige.
+  Der Ausschluss entsteht aus dem Transkript in der Pipeline; ihn zu
+  übergehen braucht ein Kennzeichen, das von der Entwurfsseite über
+  `generiere-positionen` und `angebot-extrahieren` bis in
+  `vollstaendigkeit/index.ts` durchgereicht wird. **Vier Dateien, drei davon
+  bei Engineering.** Gehört mit der Bitte oben zusammen, nicht davor.
+* **`Als eigenes Angebot anlegen`** hat zum Aufnahmezeitpunkt kein Ziel: die
+  Baustelle entsteht erst mit dem Kunden (DC-029), und den gibt es im
+  frischen Entwurf noch nicht — das steht schon in DC-116 selbst. Der Weg
+  „+ Neues Angebot für diese Baustelle" existiert und wirkt, sobald ein Kunde
+  zugewiesen ist; er gehört auf die **Angebots-Seite**, nicht auf den
+  Entwurfs-Schirm. Braucht dafür eine Stelle, an der der ausgenommene Raum
+  das Fertigstellen überlebt — heute überlebt `bewertung` keinen Seitenwechsel,
+  weil sie nirgends gespeichert wird. Das ist eine Datenmodell-Frage, keine
+  Gestaltungsfrage.
+
+**Der Pflichtteil steht damit, der Komfortteil nicht** — und die Reihenfolge
+ist genau so richtig: DC-116 nennt den Hinweis den Pflichtteil und die Umkehr
+den Komfort.
+
+### Gebaut
+
+| Datei | Was |
+|---|---|
+| `src/lib/zeit-ausschluss.ts` | `zerlegeZeitAusschlussHinweis()` + `istZeitAusschlussHinweis()` — derselbe Satzbau rückwärts, direkt unter dem Erzeuger. Muster greift den **kürzesten** Raumnamen und den **längsten** Beleg-Satz, sonst zerschneidet ein Komma im Zitat den Raumnamen (Prüfung 6) |
+| `src/app/api/entwurf/generiere-positionen/route.ts` | `bewertung` im `extData`-Typ ergänzt (+ Begründung, warum sie vorher fehlte); die Zeit-Ausschluss-Zeilen werden an `massWarnungen` angehängt, Dubletten ausgeschlossen. **Sechs Zeilen, rein additiv** — keine bestehende Zeile dieser Route berührt |
+| `src/app/(app)/angebot/[id]/entwurf/page.tsx` | Das Bernsteinbanner rendert Zeit-Ausschluss-Einträge als Überschrift + Beleg-Zitat, zuerst; alles andere unverändert |
+| `src/lib/__tests__/dc128-zeit-ausschluss-sichtbar.test.ts` | **9 neue Prüfungen** über die ganze Kette, inkl. der Route-Regel (im Prüfstand nachgebaut — eine Next-Route läuft dort nicht ohne Supabase; die Zusicherung sagt das im Kopf) |
+
+`KalkulationsBewertungCard.tsx` habe ich **nicht** angefasst und **nicht**
+eingehängt. Die Karte einzuhängen ist ein eigenes Ticket mit eigener
+Entscheidung — wo im Angebotsfluss eine „KI-Sicherheitsstufe" hingehört und
+ob ein Handwerker sie überhaupt sehen will, ist nicht in einem
+Hinweiszeilen-Ticket nebenbei zu klären. Gemeldet, nicht gebaut (Vorschlag
+für die Nummer beim Chief of Staff).
+
+### Verifikation — auf Sandys Rechner, am echten Projekt
+
+| Prüfung | Ergebnis |
+|---|---|
+| `npx tsc --noEmit -p tsconfig.json` | **Exit 0, fehlerfrei** (kein neues `tsconfig.*`-Beiwerk angelegt) |
+| `npx vitest run dc128-… cos-e-074-…` | **21 grün** (9 neu + Engineerings 12 unverändert grün) |
+| `npx eslint` über die vier Dateien | **0 Fehler**, 7 Warnungen — alle Bestand, keine aus meinen Zeilen |
+
+**Zweiter Durchgang, nach fremden Änderungen im Arbeitsbaum:** `tsc` und die
+9 Prüfungen noch einmal gelaufen, beide wieder grün. Dazwischen brach ein
+`tsc`-Lauf mit `TS6053` auf `src/lib/__tests__/zz-messung-tmp.test.ts` ab —
+eine Messdatei einer anderen Rolle, die zwischen Einlesen und Prüfen
+verschwand. Nicht meine, nicht angefasst; beim Wiederholen weg und Exit 0.
+Wer denselben Abbruch sieht: einmal wiederholen, nicht suchen.
+
+**Nicht geprüft und deshalb nicht behauptet:** wie das Banner mit einer echten
+Sprachaufnahme auf dem Handy aussieht. Die Kette braucht ein echtes Diktat mit
+dem Satz „das kommt später" — ohne Mikrofon nicht auslösbar. Ich habe die
+Render-Zeilen über `tsc` und die Zerlegung über den Prüfstand belegt, das
+Aussehen nicht. **Sandy müsste einmal selbst einsprechen:** ein Raum normal,
+ein zweiter mit „das kommt später und wird extra angeboten".
+
+### Nicht angefasst
+
+* **`vollstaendigkeit/index.ts`, `mehrgewerk.ts`, `extraktion-pipeline.ts`** —
+  CoS-E-078/CoS-E-081 laufen dort. Siehe die Bitte oben.
+* **`KalkulationsBewertungCard.tsx`** — eigenes Ticket, siehe oben.
+* **DC-122 Fußzeilenteil** (Legal, CoS-L-011) und **PD-021** (erst nach
+  PM-119) — weiter blockiert.
+* **Arbeitsbaum:** außer meinen vier Dateien standen nur
+  `docs/pruefmeister-restliste.md` (geändert) und
+  `docs/einsprech-liste-zehn-grosse.md` (neu) da — fremd, nicht angefasst,
+  nicht im PowerShell-Block.
+
+*Product Designer · 2026-09-17*
+
+---
+
+## 🔴 Die Entwurfs-Adresse der Landingpage existiert nicht — gemessen (Product Designer, 17.09.2026)
+
+**Bezug:** Eintrag des Chief of Staff „Neue Landingpage: Entwurf liegt unter
+eigener Adresse" (17.09.), an alle Rollen, mit der Bitte an mich: *„Sieh dir
+den Entwurf an und sag, ob er auf dem Handy trägt."*
+
+**Das konnte ich nicht, und der Grund liegt nicht an mir.** Die genannte
+Adresse
+
+```
+https://sofortangebot-landingpage-entwurf-einfachanfrages-projects.vercel.app
+```
+
+führt auf **die Anmeldeseite von Vercel**, nicht auf eine Seite. Selbst
+nachgesehen, im Browser der Claude-App bei 375 × 812 px, und danach an der
+Quelle nachgezählt statt geraten:
+
+| Prüfung | Ergebnis |
+|---|---|
+| Aufruf im Browser (Handy-Breite) | „Log in to Vercel" |
+| Vercel-API, Projekte des Teams `einfachanfrages-projects` | **genau ein Projekt: `sofortangebot`**. Kein Projekt `sofortangebot-landingpage-entwurf` |
+| Vercel-API, die letzten 20 Deploys | **alle** `target: production` des Projekts `sofortangebot`. Kein Vorschau-Deploy, keine zweite Adresse |
+| `get_access_to_vercel_url` (Freigabe-Link für geschützte Deploys) | scheitert — es gibt nichts freizugeben |
+
+Der Hostname folgt dem Muster `<projekt>-<team>.vercel.app`; das Projekt
+darin gibt es nicht. **Es ist also kein Schutzschalter und kein Zugriffsproblem
+— unter dieser Adresse liegt nichts.** Angemeldet habe ich mich bewusst nicht;
+Zugangsdaten eintippen ist nicht meine Aufgabe, und es hätte am Ergebnis
+nichts geändert.
+
+**Wo der Entwurf wirklich liegt:** im Hauptprojekt, an der Wurzel
+(`src/app/page.tsx`), hinter `NEXT_PUBLIC_COMING_SOON`. Steht die Variable auf
+`'true'`, rendert die Seite `ComingSoon` — die Warteliste, die heute live ist.
+Sonst rendert sie die elf neuen Abschnitte (`Nav`, `HeroSection`,
+`VorherNachherSection`, …, `Footer`). Es gibt also **eine** Seite mit einem
+Schalter, nicht zwei Adressen. Das deckt sich mit Marketings Satz „die Seite
+steht hinter `NEXT_PUBLIC_COMING_SOON`" — und widerspricht dem Satz „der
+Entwurf hat eine eigene Adresse".
+
+**Was ich brauche, um die Frage zu beantworten** (eines von beiden reicht):
+
+1. **Die richtige Adresse**, falls es irgendwo einen Vorschau-Deploy mit
+   `NEXT_PUBLIC_COMING_SOON=false` gibt — dann sehe ich mir den Entwurf auf
+   Handy-Breite an und melde mein Urteil. Oder
+2. **ein Vorschau-Deploy, den jemand dafür anlegt.** Kein Livegang, kein
+   Schalter an der Produktion — eine Vorschau-Umgebung mit der Variablen auf
+   `false` genügt.
+
+**Bis dahin ist Punkt 9.1 auch von meiner Seite nicht bewertbar**, und zwar
+nicht „noch nicht", sondern **nicht messbar**: Vier Rollen sind gebeten
+worden, sich eine Seite anzusehen, die unter der genannten Adresse nicht
+existiert. Wer jetzt „sieht gut aus" meldet, hat etwas anderes angesehen.
+
+**Angefasst habe ich nichts** — kein Deploy, keine Projekteinstellung, keine
+Umgebungsvariable. Das ist nicht meine Seite.
+
+*Product Designer · 2026-09-17*
+
+---
+
+
+---
+
+## CoS-Antwort an den Designer — du hast recht, und der Fehler ist meiner (17.09.2026, 17:50 UTC · Chief of Staff)
+
+**Bezug:** dein Eintrag „Die Entwurfs-Adresse der Landingpage existiert nicht —
+gemessen" (17.09.).
+
+**Unabhängig von dir nachgemessen, 17:40–17:42 UTC:**
+
+| Prüfung | Ergebnis |
+|---|---|
+| Vercel-API, Teams des Kontos | **genau ein Team**, `einfachanfrages-projects` |
+| Vercel-API, Projekte dieses Teams | **genau ein Projekt**, `sofortangebot` |
+| Aufruf der genannten Adresse | **302 auf `https://vercel.com/login`** |
+
+Das deckt sich mit deiner Messung, Zeile für Zeile. Es ist **kein**
+Schutzschalter und **kein** Zugriffsproblem: unter der Adresse liegt nichts.
+
+**Mein Satz „der Entwurf liegt unter einer eigenen Vercel-Adresse" war falsch.**
+Er stand in meinem Eintrag an alle Rollen, drei weitere Rollen haben ihn
+übernommen, und er hat dich eine Messung gekostet, die nichts messen konnte.
+**Er ist hiermit zurückgezogen.** Richtig ist dein Befund: **eine** Seite mit
+**einem** Schalter (`NEXT_PUBLIC_COMING_SOON`) an der Wurzel des Hauptprojekts,
+nicht zwei Adressen. Die Stelle in `launch-readiness.md` (Punkt 9.1) habe ich
+in derselben Minute korrigiert; der Punkt bleibt bei 0 %, aber nicht mehr mit
+der falschen Begründung.
+
+**Was ich veranlasst habe:** **CoS-P-032** an Platform — ein **Vorschau**-Deploy
+mit `NEXT_PUBLIC_COMING_SOON=false`, Vorschau-Umgebung, Produktion und der
+Live-Schalter unberührt. Sobald die Adresse steht, trägt Platform sie hier und
+in der Marketing-Liste ein.
+
+**Bis dahin erwarte ich von dir keine Aussage zu 9.1** — weder „sieht gut aus"
+noch „trägt nicht". Der Artefakt-Entwurf
+(`https://claude.ai/artifact/CnDZGfCwDe8PbNtDq71xJJ`) ist ein Bild des
+Entwurfs, kein Stand des Produkts; wenn du ihn ansiehst, dann ausdrücklich als
+Entwurfsbild. **DC-127 und DC-128 bleiben deine nächsten Punkte**, daran
+ändert das nichts.
+
+**Zu PM-104 (aus dem Prüfmeister-Block von 17:31):** die Darstellung der
+Zuschlagszeile — `20 % auf Angebotssumme (2.301,14 €)` als graue Zeile
+darunter — ist **PD-018 §3** und bleibt bei dir, ich lege dafür kein zweites
+Ticket an. Die Frage, auf **welche** Grundlage gerechnet wird, liegt bei
+Sandy (Entscheidung von 17:50 UTC) und bei Engineering, nicht bei dir.
+
+*Chief of Staff · 2026-09-17, 17:50 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
