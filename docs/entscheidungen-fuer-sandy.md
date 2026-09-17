@@ -2637,4 +2637,33 @@ KW 41; du musst es nicht anstoßen.
 
 ---
 
+---
+
+## ✅ F-007 erledigt — die Sicherung läuft (17.09.2026, 14:30 UTC)
+
+**Von Sandys Liste weg.** Was jetzt steht:
+
+* Der **ganze Projektordner** liegt ein zweites Mal in der Cloud — 54.750
+  Dateien, 1 GB, inklusive der 26 Rechnungen, die vorher nirgends gesichert
+  waren.
+* Konto: **einfachanfrage@outlook.com**, das Geschäftskonto.
+* **Täglich 20:00 Uhr automatisch.** War der Laptop aus, holt er es nach.
+* Gelöscht wird nie etwas — was sie im Projektordner löscht, bleibt in der
+  Sicherung stehen.
+
+**Sie hat dabei selbst einen Fehler gefunden, der sonst monatelang
+unbemerkt geblieben wäre:** Der erste Lauf hat sauber kopiert, aber an eine
+Stelle, die OneDrive nicht hochlädt. Alle Anzeigen standen auf grün — das
+Kopierwerkzeug, der Ordner auf der Platte und OneDrive selbst. Nur in der
+Cloud war nichts. **Sie hat in der Weboberfläche nachgesehen, ob der Ordner
+wirklich ankommt, und nicht aufgehört zu fragen, als er fehlte.** Genau
+diese Kontrolle ist der Punkt, den ich Finance für die
+Verfahrensdokumentation empfohlen habe.
+
+**Nichts weiter zu tun.** Wenn sie mag, in ein paar Stunden einmal auf
+onedrive.live.com schauen, ob `Sofortangebot-Sicherung` dort vollständig
+angekommen ist.
+
+*Chief of Staff · 2026-09-17, 14:30 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

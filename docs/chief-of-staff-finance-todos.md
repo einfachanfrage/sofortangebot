@@ -2447,5 +2447,65 @@ unberührt und offen — jetzt allerdings unter der Annahme Regelbesteuerung.
 
 ---
 
+---
+
+## ✅ F-007 ist zu — die Sicherung läuft. Mit einem Befund, der in deine Verfahrensdokumentation gehört (17.09.2026, 14:30 UTC · Chief of Staff)
+
+### Der Stand, den du eintragen kannst
+
+| | |
+|---|---|
+| **Was** | der **gesamte** Projektordner, ohne `node_modules` und `.next` (Bauergebnisse, jederzeit neu herstellbar) |
+| **Umfang** | **54.750 Dateien · 5.468 Ordner · 1,012 GB**, darunter die 26 Eingangsrechnungen |
+| **Wohin** | `C:\Users\runni\OneDrive-einfachanfrage\OneDrive\Sofortangebot-Sicherung`, Konto **einfachanfrage@outlook.com** (Geschäftskonto, von Sandy bestätigt) |
+| **Wie oft** | **täglich 20:00 Uhr**, Windows-Aufgabe `Sofortangebot Sicherung`, Status *Ready*. War der Rechner aus, holt sie es beim nächsten Einschalten nach |
+| **Löschverhalten** | **es wird nichts gelöscht.** Was Sandy im Projektordner löscht, bleibt in der Sicherung stehen |
+| **Skript** | `scripts/sicherung-onedrive.ps1`, im Repo |
+
+**Erster Lauf am 17.09. um 14:05 Uhr durchgelaufen**, Hochladen lief um 14:30
+noch. **Eine** Datei von 54.750 konnte nicht kopiert werden — mutmaßlich in
+Benutzung; das Skript weist so etwas ab jetzt sichtbar aus.
+
+### 🔴 Der Befund, der dich als Prüfer interessieren muss
+
+**Der erste Lauf hat eine Stunde lang ins Leere gesichert, und nichts hat es
+gemeldet.** Das Ziel lag eine Ebene zu hoch — der Einrichtungsassistent von
+OneDrive fragt nicht, welcher Ordner das OneDrive **ist**, sondern **wo** er
+ihn anlegen soll, und legt dann seinen eigenen Ordner darin an. Nur der wird
+hochgeladen.
+
+**Alle drei Anzeigen standen dabei auf grün:** robocopy meldete Erfolg
+(stimmte — es hatte kopiert), die Dateien lagen vollständig auf der Platte
+(stimmte), und OneDrive meldete „Gesichert und synchronisiert" (stimmte auch —
+sein eigener Ordner war in Ordnung). **Nur in der Cloud war nichts.**
+
+**Aufgefallen ist es ausschließlich, weil Sandy in der Weboberfläche
+nachgesehen hat, ob der Ordner dort wirklich ankommt** — und nicht
+lockergelassen hat, als er fehlte.
+
+**Was daraus für dein Verfahren folgt** (deine Entscheidung, nicht meine):
+
+1. **Eine Sicherung gilt erst als Sicherung, wenn sie am Zielort sichtbar ist.**
+   Ein Erfolgsmeldung des Kopierwerkzeugs belegt das nicht. Wenn du in der
+   Verfahrensdokumentation einen Sicherungsschritt beschreibst, gehört eine
+   **Kontrolle am Zielort** hinein, nicht nur der Lauf.
+2. **Wie oft soll diese Kontrolle stattfinden?** Einmal jetzt reicht nicht
+   ewig — ein OneDrive kann volllaufen (5 GB Kontingent, 1 GB belegt), abgemeldet
+   werden oder anhalten. Vierteljährlich? Das ist deine Vorgabe.
+3. Das Skript bricht ab sofort ab, wenn das Ziel nicht nach einem
+   synchronisierten Ordner aussieht. **Das ersetzt die Kontrolle nicht** — es
+   fängt nur diesen einen Fehler.
+
+### Was weiterhin bei dir offen ist
+
+* **Reicht OneDrive als zweiter Ort für die 8-Jahres-Pflicht?** Unverändert
+  offen — es ist eine mitlaufende Kopie, kein Archiv.
+* **Gehört die Sicherung in die Verfahrensdokumentation?** Ich vermute ja,
+  schreibe aber nichts in dein Dokument.
+* **Die 26 Belege** warten weiterhin auf Prüfung, Eingangsbuch und Prüfsummen.
+* **CoS-F-008** (ändert § 19 etwas für Sandys Vollzeit-Job?).
+
+*Chief of Staff · 2026-09-17, 14:30 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
