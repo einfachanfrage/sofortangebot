@@ -29,10 +29,21 @@ $Quelle = Split-Path -Parent $PSScriptRoot
 # Wird automatisch gesucht. Stimmt der gefundene Pfad nicht, trag ihn hier
 # einfach fest ein, zum Beispiel:
 #   $OneDrive = 'C:\Users\runni\OneDrive'
-# Fest eingetragen am 17.09.2026: Sandy hat diesen Ordner beim Einrichten
-# selbst angelegt. Fest statt automatisch gesucht, damit die Sicherung nicht
-# aus Versehen im OneDrive des privaten Kontos landet.
-$OneDrive = 'C:\Users\runni\OneDrive-einfachanfrage'
+# Fest eingetragen am 17.09.2026, korrigiert am selben Tag.
+#
+# ACHTUNG, hier steckt die Falle: Der Einrichtungsassistent fragt nicht,
+# welcher Ordner das OneDrive IST, sondern WO er ihn anlegen soll. Sandy hat
+# 'OneDrive-einfachanfrage' gewaehlt - und OneDrive hat darin seinen eigenen
+# Ordner 'OneDrive' angelegt. Nur DIESER Unterordner wird hochgeladen.
+#
+# Der erste Lauf hat deshalb 1 GB sauber kopiert, aber eine Ebene zu hoch,
+# und nichts davon kam in der Cloud an. OneDrive meldete dabei voellig zu
+# Recht "alles synchronisiert" - sein eigener Ordner war ja in Ordnung.
+#
+# Wer diesen Pfad je aendert: er muss INNERHALB des Ordners liegen, der in
+# der Taskleiste als OneDrive gefuehrt wird. Kontrolle: im Explorer traegt
+# nur der richtige Ordner die Spalte "Status" mit Wolken-Symbolen.
+$OneDrive = 'C:\Users\runni\OneDrive-einfachanfrage\OneDrive'
 
 # Falls der Ordner mal umzieht: automatische Suche als Rueckfalloption.
 if (-not (Test-Path $OneDrive)) {
@@ -45,6 +56,21 @@ if (-not $OneDrive -or -not (Test-Path $OneDrive)) {
     Write-Host 'ABBRUCH: Es wurde kein OneDrive-Ordner gefunden.' -ForegroundColor Red
     Write-Host 'Melde dich zuerst in der OneDrive-App an (einfachanfrage@outlook.com),'
     Write-Host 'oder trag den Pfad in diesem Skript bei $OneDrive fest ein.'
+    Write-Host ''
+    exit 1
+}
+
+# Sicherheitsnetz gegen genau den Fehler vom 17.09.: liegt im OneDrive-Ordner
+# keine desktop.ini, ist es sehr wahrscheinlich NICHT der synchronisierte
+# Ordner, sondern nur sein Elternordner. Dann lieber abbrechen als eine
+# Stunde lang ins Leere kopieren.
+if (-not (Test-Path (Join-Path $OneDrive 'desktop.ini'))) {
+    Write-Host ''
+    Write-Host 'ABBRUCH: Der Zielordner sieht nicht nach einem synchronisierten' -ForegroundColor Red
+    Write-Host 'OneDrive-Ordner aus (keine desktop.ini gefunden):' -ForegroundColor Red
+    Write-Host "  $OneDrive"
+    Write-Host 'Vermutlich ist der echte OneDrive-Ordner ein Unterordner davon.'
+    Write-Host 'Im Explorer erkennst du ihn an der Spalte "Status" mit Wolken-Symbolen.'
     Write-Host ''
     exit 1
 }
