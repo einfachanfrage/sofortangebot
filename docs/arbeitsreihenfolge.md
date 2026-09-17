@@ -1,7 +1,7 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 17.09.2026, 12:10 UTC · Chief of Staff**
-*(ersetzt die Fassung von 11:55 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 17.09.2026, 14:30 UTC · Chief of Staff**
+*(ersetzt die Fassung von 12:10 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
 *Alle Uhrzeiten in dieser Fassung sind **UTC**.*
 
 ---
@@ -180,9 +180,8 @@ läuft bis dahin auf `980c271` (11:04 UTC, grün).
 |---|---|---|
 | 1 | 🔴 **Pushen — und diesmal repariert es die Produktion.** Ein Befehl, alle offenen Commits auf einmal (12:05 UTC waren es fünf, es kommen laufend welche dazu — die Zahl ist egal, `git push` nimmt alle). Darunter der Fix für die beiden roten Deploys, auf genau dem Stand nachgemessen, der bei Vercel ankommt. | ein Befehl |
 | 2 | 🔵 **Nach Italien, ab 26.09.:** Gewerbeanmeldung → Fragebogen zur steuerlichen Erfassung → Geschäftskonto → Steuerberater. Finance und Legal legen die Reihenfolge fertig hin, sie stößt nichts an. Termin steht in `kalender.md` | nichts jetzt |
-| 3 | 🔴 **Sicherung einschalten.** OneDrive mit `einfachanfrage@outlook.com` anmelden, dann `scripts\sicherung-onedrive.ps1` einmal starten und als tägliche Aufgabe einrichten. Anleitung liegt bereit | einmal 10 Minuten |
-| 4 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
-| 5 | Vercel-Benachrichtigung · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert, in diesem Lauf nicht geprüft |
+| 3 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
+| 4 | Vercel-Benachrichtigung · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert, in diesem Lauf nicht geprüft |
 
 **Neu erledigt um 12:05: F-006.** Sandy hat mit **B** geantwortet und dazu
 gesagt, dass es für alle betroffenen Rollen festgehalten werden soll — das ist
@@ -191,7 +190,24 @@ geschehen (Finance CoS-F-009, Legal CoS-L-012, Marketing, plus die Heimat in
 der Verzicht erst im Fragebogen zur steuerlichen Erfassung, nach der
 Gewerbeanmeldung** — heute ist nichts unwiderruflich.
 
-**Erledigt und weg von ihrer Liste:** **CoS-P-013** (Passwort-Reset komplett
+**Neu erledigt um 14:30: die Sicherung läuft, F-007 ist zu.** Sandy hat
+OneDrive mit dem Geschäftskonto eingerichtet, der erste Lauf ist durch
+(**54.750 Dateien · 1,012 GB**, inklusive der 26 Rechnungen), und die
+Windows-Aufgabe `Sofortangebot Sicherung` steht auf **täglich 20:00 Uhr,
+Ready**.
+
+**🔴 Dabei ist ein Fehler aufgeflogen, der sonst monatelang unbemerkt geblieben
+wäre:** Der erste Lauf hat eine Stunde lang ins Leere gesichert — das Ziel lag
+eine Ebene über dem Ordner, den OneDrive tatsächlich hochlädt. **Alle drei
+Anzeigen standen auf grün** (robocopy meldete Erfolg, die Dateien lagen
+vollständig auf der Platte, OneDrive meldete „Gesichert und synchronisiert"),
+und jede hatte für sich recht. **Nur in der Cloud war nichts.** Aufgefallen ist
+es ausschließlich, weil **Sandy** in der Weboberfläche nachgesehen und nicht
+lockergelassen hat, als der Ordner fehlte. Das Skript bricht in dem Fall jetzt
+ab; die Empfehlung an Finance lautet, eine **Kontrolle am Zielort** ins
+Verfahren aufzunehmen — ein Skript-Abbruch ersetzt sie nicht.
+
+**Erledigt und weg von ihrer Liste:** **F-007/Sicherung** · **CoS-P-013** (Passwort-Reset komplett
 durchgelaufen) · **IONOS-Weiterleitung `rechnung@`** · **Zustelltest** (kam an,
 mit allen drei Anhängen — damit ist der E-Rechnungs-Empfang belegt und nicht
 nur eingerichtet) · **L-KI-01** (freigegeben, Einbau läuft) · **F-007**
@@ -267,4 +283,4 @@ aber der neue wiegt schwerer als die fünf, die gegangen sind.
   nicht nur die Schritt-Ebene gesperrt, sondern auch die Laufliste. Ohne Token
   aus Sandys Konto ist der CI-Stand zeitweise gar nicht messbar.
 
-*Chief of Staff · 2026-09-17, 11:50 UTC*
+*Chief of Staff · 2026-09-17, 14:30 UTC*
