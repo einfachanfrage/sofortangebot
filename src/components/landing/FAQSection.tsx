@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 const faqs = [
   {
     q: 'Woher weiß ich, dass die Mengen stimmen?',
-    a: 'Weil du es nachrechnen kannst. Sofortangebot schätzt keine Flächen mit KI, sondern berechnet sie: Umfang × Höhe, Fenster und Türen abgezogen. An jeder Position steht der Rechenweg — z.B. „18 lfm × 2,60 m − Fenster 1,20 m²". Und bevor etwas rausgeht, prüfst du es selbst.',
+    a: 'Weil du es nachrechnen kannst. Sofortangebot schätzt keine Flächen mit KI, sondern berechnet sie: Umfang × Höhe, Öffnungen über 2,5 m² nach VOB abgezogen. Wo gerechnet wurde, steht der Rechenweg an der Position — z.B. „Umfang 18 lfm × 2,60 m = 46,80 m²". Und bevor etwas rausgeht, prüfst du es selbst.',
   },
   {
     q: 'Warum nur Maler und Boden — und nicht alle Gewerke?',
@@ -34,11 +34,11 @@ const faqs = [
   },
   {
     q: 'Sind meine Kundendaten sicher?',
-    a: 'Ja. Alles liegt verschlüsselt auf Servern in Deutschland. Kein Verkauf, kein Tracking, kein Teilen mit Dritten. DSGVO-konform.',
+    a: 'Ja. Deine Angebots- und Kundendaten liegen verschlüsselt in einer Datenbank in Frankfurt am Main. Kein Verkauf deiner Daten, keine Werbe-Tracker. Weitergegeben wird nur, was der Betrieb braucht — die Spracherkennung zum Beispiel —, und jeder dieser Dienstleister steht mit Namen in der Datenschutzerklärung. DSGVO-konform.',
   },
   {
     q: 'Kann ich jederzeit kündigen?',
-    a: 'Ja. Monatlich, ohne Frist, ohne Anruf. Einfach in den Einstellungen auf Kündigen klicken.',
+    a: 'Ja. Monatlich, ohne Frist, ohne Anruf. In den Einstellungen unter „Abo" öffnest du deine Rechnungs- und Zahlungsverwaltung — dort kannst du den Plan wechseln oder kündigen.',
   },
 ]
 

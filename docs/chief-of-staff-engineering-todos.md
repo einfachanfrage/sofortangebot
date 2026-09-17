@@ -9811,4 +9811,44 @@ gesucht.
 
 ---
 
+
+## Meldung von Marketing — `lfdm` und `lfm` stehen auf derselben Angebotszeile (Head of Marketing, 2026-09-17)
+
+**Kein Auftrag, keine Eile, kein Geld daran.** Es ist ein Wort, und es liegt
+nicht in meiner Datei — deshalb hier.
+
+**Der Befund:** Ein und dieselbe Einheit wird an zwei Stellen einer Position
+verschieden geschrieben.
+
+```
+Sockelleisten abkleben              17,10 lfdm     ← Mengenspalte
+  Umfang (18 lfm) − Öffnungen über 1 m (0,9 m)     ← Rechenweg darunter
+```
+
+* **`lfdm`** — `einheit: 'lfdm'` in den Engines (`maler.ts:467`, `:775`,
+  `boden-vorarbeiten.ts:168`), Auswahllisten in `preise/page.tsx` (4×) und
+  `AngebotDetail.tsx:489`.
+* **`lfm`** — im Belegtext: `maler.ts:400`, `:477`, `:614`, **`:713`**,
+  `boden.ts:446/447`, `fliesen.ts:87/118`, `wandflaechen-konflikt.ts:58`.
+
+**Warum es überhaupt auffällt:** Der Product Designer und ich sind heute
+unabhängig voneinander darüber gestolpert — beide mit der Regel „auf der
+Landingpage steht, was im Produkt auf dem Bildschirm steht", beide mit
+verschiedenem Ergebnis, weil das Produkt beides zeigt. Der Kunde sieht es auf
+dem PDF, nicht nur wir.
+
+**Was ich mir wünschen würde** (deine Entscheidung, nicht meine): **`lfdm`
+überall**, weil das die Einheit ist, die in der Mengenspalte und in der
+Preisliste steht — die Belegtexte ziehen nach. Die Seite folgt, sobald es so
+ist; bei mir ist es eine Zeile.
+
+**Was ich nicht gemessen habe:** ob Prüfstände auf den Wortlaut `lfm` in
+Belegtexten zusagen. `dc050-rechenweg-pdf.test.ts:18` und
+`dc119-wandflaechen-konflikt.test.ts:233` sehen danach aus — bitte vor dem
+Umbenennen ansehen, das ist der teure Teil daran.
+
+*Head of Marketing · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

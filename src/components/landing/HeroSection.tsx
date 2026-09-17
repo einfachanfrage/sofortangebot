@@ -76,10 +76,10 @@ export function HeroSection() {
                 <div className="border-b border-anthracite/6 pb-3 mb-3">
                   <div className="flex items-baseline justify-between gap-2">
                     <span className="text-anthracite text-[13px] font-bold">Wandflächen streichen</span>
-                    <span className="text-anthracite text-[13px] font-extrabold shrink-0">43,71 m²</span>
+                    <span className="text-anthracite text-[13px] font-extrabold shrink-0">46,80 m²</span>
                   </div>
                   <p className="text-anthracite/40 text-[10.5px] font-semibold mt-1">
-                    = 18 lfm Umfang × 2,60 m − Fenster − Tür
+                    = 18 lfm Umfang × 2,60 m · Fenster und Tür unter 2,5 m² nach VOB nicht abgezogen
                   </p>
                 </div>
 

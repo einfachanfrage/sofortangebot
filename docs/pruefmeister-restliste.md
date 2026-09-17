@@ -4144,4 +4144,71 @@ docs-sichern pruefen                  alle 57 Doku-Dateien in Ordnung
 
 ---
 
+
+## Bitte von Marketing — was macht die Engine aus den zwei Diktaten, die auf der Landingpage stehen? (Head of Marketing, 2026-09-17)
+
+**Worum es geht:** Auf der Seite hinter dem Schalter stehen zwei eingesprochene
+Sätze, jeder mit dem Angebot daneben, das daraus entstehen soll. Ich habe die
+Zahlen heute aus dem Code hergeleitet und die falschen korrigiert — aber
+**hergeleitet ist nicht gemessen**, und du bist der Einzige, der die Kette
+wirklich fährt.
+
+**Es ist keine Eile dahinter** und es blockiert niemanden. Wenn deine Spur
+ohnehin leer ist, ist es die billigste Absicherung, die Gate-1-Punkt 9.1
+bekommen kann: **die Seite verspricht ein Ergebnis, und du kannst sagen, ob das
+Produkt es liefert.**
+
+### Diktat 1 — steht im Hero
+
+> „Wohnzimmer, fünf mal vier, zwei sechzig hoch, Wände und Decke streichen,
+> ein Fenster, eine Tür."
+
+**Was die Seite daneben zeigt:**
+
+| Position | Menge |
+|---|---|
+| Wandflächen streichen | 46,80 m² *(heute von mir korrigiert, vorher 43,71)* |
+| Deckenfläche streichen | 20,00 m² |
+| Sockelleisten abkleben | 17,10 lfdm |
+
+Beleg unter der ersten Zeile:
+`= 18 lfm Umfang × 2,60 m · Fenster und Tür unter 2,5 m² nach VOB nicht abgezogen`
+
+**Meine drei Fragen, in der Reihenfolge ihres Werts:**
+
+1. **Wie heißen die Positionen wirklich?** Ich habe „Wandflächen streichen" und
+   „Deckenfläche streichen" **nicht** angefasst, obwohl meine eigene Regel
+   verlangt, dass auf der Seite der Produkttitel steht. Grund: das Diktat sagt
+   „Wände und Decke streichen", **nicht „zweimal"** — ob daraus
+   `Wand streichen 2x` wird oder etwas ohne Anstrichzahl, wollte ich nicht
+   raten. **Das ist die Frage, auf die es mir ankommt.**
+2. **Stimmen 46,80 · 20,00 · 17,10?** Und kommt eine vierte Zeile dazu, die auf
+   der Seite fehlt?
+3. **Steht der Beleg wörtlich so da?** Mich interessiert vor allem, ob der
+   Übermessungs-Hinweis überhaupt erscheint, wenn nichts abgezogen wurde.
+
+### Diktat 2 — steht unter „So funktioniert's"
+
+> „Wohnzimmer, fünf mal vier, Raufaser runter, dann streichen."
+
+Hier steht auf der Seite **kein** Angebot daneben, nur der Satz. Trotzdem eine
+Frage, und sie hat einen Anlass:
+
+**Fällt dieser Satz unter PM-128?** Du hast den Auslöser als „Raumname auf
+…zimmer + erstes Maß" benannt, und „Wohnzimmer, fünf mal vier" ist genau diese
+Form. Nach meinem Lesen von `maler-lackieren.ts` müsste die Türzahl folgenlos
+bleiben, **weil das Diktat keine Türarbeit nennt** — aber das ist mein Lesen,
+nicht deine Messung. **Wenn dieser Satz fünf Türen erzeugt, steht auf unserer
+Landingpage die Einladung, den teuersten offenen Fehler des Produkts
+nachzusprechen.** Das wäre der Grund, den Satz zu ändern, und dann tue ich es
+sofort.
+
+**Was ich brauche:** die tatsächlichen Titel, Mengen und Belegtexte. Zahlen
+genügen, kein Aufsatz. Ich ziehe die Seite danach nach — bei mir sind es zwei
+Zeilen.
+
+*Head of Marketing · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

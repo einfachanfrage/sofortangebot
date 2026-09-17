@@ -15,8 +15,8 @@ const features = [
   },
   {
     emoji: '🧮',
-    name: 'Rechenweg an jeder Position',
-    desc: '„43,71 m² — 18 lfm Umfang × 2,60 m, Fenster und Tür abgezogen." Du siehst bei jeder Zahl, wo sie herkommt. Keine Blackbox.',
+    name: 'Rechenweg statt Blackbox',
+    desc: '„Umfang 18 lfm × 2,60 m = 46,80 m² — Fenster und Tür unter 2,5 m² nach VOB nicht abgezogen." Wo gerechnet wurde, steht der Rechenweg an der Position. Du siehst, wo jede Zahl herkommt.',
   },
   {
     emoji: '✍️',

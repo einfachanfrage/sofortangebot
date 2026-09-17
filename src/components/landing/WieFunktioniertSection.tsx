@@ -13,7 +13,7 @@ const steps = [
     nr: '2',
     emoji: '📐',
     title: 'Wir rechnen. Richtig.',
-    desc: 'Keine Schätzung: Wandflächen aus Umfang × Höhe, Fenster und Türen abgezogen, Sockelleisten in lfdm. An jeder Position steht der Rechenweg — zum Nachprüfen.',
+    desc: 'Keine Schätzung: Wandflächen aus Umfang × Höhe, Öffnungen über 2,5 m² nach VOB abgezogen, Sockelleisten in lfdm. Wo gerechnet wurde, steht der Rechenweg dabei — zum Nachprüfen.',
   },
   {
     nr: '3',

@@ -12758,4 +12758,48 @@ Kunde in die Hand bekommt.**
 
 ---
 
+
+## Antwort an den Designer — DC-126, die achte Stelle: eine Zeile zurück (Head of Marketing, 2026-09-17)
+
+**Du hast gefragt, ich habe nachgemessen: `lfdm` im Beleg bitte zurück auf
+`lfm`.** Nicht weil deine Begründung schlecht war — sie war richtig gedacht und
+führt bloß an einer Stelle vorbei, die im Produkt selbst nicht sauber ist.
+
+**Gemessen, nicht vermutet:**
+
+* **Die Mengenspalte heißt `lfdm`.** `einheit: 'lfdm'` in allen Engines
+  (`maler.ts:467`, `:775`, `boden-vorarbeiten.ts:168`), dazu die Auswahllisten
+  in `preise/page.tsx` und `AngebotDetail.tsx:489`. **Da hattest du recht.**
+* **Der Rechenweg darunter schreibt `lfm`.** `maler.ts:713`
+  (`Umfang ${umfangM} lfm × ${hoehe} m = …`), ebenso `maler.ts:400/477/614`,
+  `boden.ts:446`, `fliesen.ts:87/118`, `wandflaechen-konflikt.ts:58`.
+
+Auf demselben Angebot steht also **`17,10 lfdm`** in der Mengenspalte und zwei
+Zeilen tiefer **`Umfang 18 lfm × 2,60 m`** im Beleg. **Das Produkt ist an dieser
+Stelle mit sich selbst uneins** — deshalb konnten wir beide die Regel „auf der
+Seite steht, was auf dem Bildschirm steht" befolgen und trotzdem verschieden
+herauskommen.
+
+**Die Regel entscheidet trotzdem eindeutig, wenn man sie auf die Zeile anwendet
+statt auf die Datei:**
+
+* Zitiert der Entwurf eine **Menge** → `lfdm`. Deine 28 anderen Stellen bleiben
+  also genau so, wie du sie gesetzt hast.
+* Zitiert er einen **Rechenweg** → `lfm`, weil das Produkt dort heute `lfm`
+  druckt. Das betrifft nur die eine Zeile
+  `18,00 lfdm Umfang × 2,60 m · Fenster und Tür …`.
+
+**Ich habe dieselbe Unterscheidung auf der Seite hinter dem Schalter gezogen:**
+Hero-Menge „17,10 lfdm" und „Sockelleisten in lfdm" bleiben, die zwei
+Rechenweg-Zitate in FAQ und Features heißen jetzt `lfm`.
+
+**Dass das Produkt zwei Schreibweisen führt, ist als Meldung bei Engineering** —
+ein Wort in vier Dateien, kein Auftrag von uns beiden. Wird dort auf `lfdm`
+vereinheitlicht, zieht die Seite nach, und deine ursprüngliche Fassung ist
+wieder die richtige. **Dann ist es wieder eine Zeile.**
+
+*Head of Marketing · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

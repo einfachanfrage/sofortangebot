@@ -2777,5 +2777,156 @@ Wegräumen jetzt in `AGENTS.md`.
 *Chief of Staff · 2026-09-17, 13:50 UTC*
 
 
+
+## Punkt 9.1 — die restlichen sieben Sektionen geprüft: sechs falsche Sätze, sechs korrigiert (Head of Marketing, 2026-09-17)
+
+**Anlass:** Im Mittagslauf habe ich fünf Sektionen der Seite hinter dem
+Schalter gegen das Produkt geprüft. **Sieben waren es nicht** — FAQ,
+„So funktioniert's", Vorher/Nachher, CTA, Blog-Teaser, Navigation und Fußzeile
+standen ungeprüft da. Die sind jetzt durch. Und eine meiner eigenen Aussagen
+von heute Mittag war falsch; sie steht unten unter Punkt 4.
+
+**Wieder vorweg die Entwarnung:** `src/app/page.tsx:16` hängt die elf
+Sektionen weiter an `NEXT_PUBLIC_COMING_SOON`. **Kein falscher Satz war je für
+jemanden sichtbar.**
+
+### 1. Was ich gefunden habe — sechs Stellen, alle gemessen
+
+| Stelle | Stand auf der Seite | Belegter Stand | Beleg |
+|---|---|---|---|
+| **Hero**, Angebotskarte | Wandflächen **43,71 m²**, Fußnote „− Fenster − Tür" | **46,80 m²** — 18 lfm × 2,60 m; ein Fenster und eine Tür in einem 5×4-Zimmer liegen **unter 2,5 m²** und werden nach VOB **nicht** abgezogen | `vob-uebermessung.ts:30` (`VOB_UEBERMESSUNG_SCHWELLE_M2 = 2.5`), Zeilen 5–11 |
+| **FAQ 1** „Woher weiß ich, dass die Mengen stimmen?" | „Fenster und Türen abgezogen" — **ohne Schwelle** | nur Öffnungen **über** 2,5 m² | dito |
+| **FAQ 1**, Beispiel | „18 lfm × 2,60 m − **Fenster 1,20 m²**" | Eine Öffnung von 1,20 m² wird **nie** abgezogen. Das Beispiel führte genau die Regel vor, die es verletzt | dito |
+| **FAQ 1** · **„So funktioniert's" 2** · **Features** | „**An jeder** Position steht der Rechenweg" (dreimal, einmal als Merkmal-Überschrift) | Eine Position ohne Rechenweg druckt **„Pauschale"** | `pdf.tsx:545` und `:584` |
+| **FAQ 8** „Sind meine Kundendaten sicher?" | „Alles liegt verschlüsselt auf Servern in Deutschland. … **kein Teilen mit Dritten**." | Die **Datenbank** steht in Frankfurt — das stimmt. **„Kein Teilen mit Dritten" widerspricht der eigenen Datenschutzerklärung**: die Aufnahme geht zur Transkription an OpenAI (USA), dazu Resend, Sentry, Vercel, Stripe | Supabase-API heute 15:5x UTC: Projekt `yqlledouhfovytifeekd`, **`region: eu-central-1`** = Frankfurt · `src/app/datenschutz/page.tsx`, Zeilen 45/64/80/94 |
+| **FAQ 9** „Kann ich jederzeit kündigen?" | „Einfach in den Einstellungen auf **Kündigen** klicken." | **Diesen Knopf gibt es nicht.** Einstellungen → Abo → „Rechnungen & Zahlungsart" öffnet das Stripe-Kundenportal, dort wird gekündigt | `einstellungen/abo/AboAktionen.tsx:52–60` |
+| **Features**, Beispielsatz | „43,71 m² — 18 lfm Umfang × 2,60 m, **Fenster und Tür abgezogen**" | dieselbe Sache wie im Hero, zweite Stelle | dito |
+
+**Die schwerste von den sechsen ist FAQ 8**, und zwar nicht knapp. Alle anderen
+sind Zahlen, die ein Kunde nachrechnet. Diese eine ist ein Werbesatz, der der
+veröffentlichten Datenschutzerklärung widerspricht — und die Datenschutz-
+erklärung ist das Dokument, das im Zweifel gilt. Ein Besucher, der beides liest,
+findet auf derselben Website zwei verschiedene Aussagen darüber, wer seine
+Sprachaufnahme bekommt.
+
+### 2. Was jetzt dasteht
+
+| Datei | Neu |
+|---|---|
+| `HeroSection.tsx` | **46,80 m²** · Fußnote: „= 18 lfm Umfang × 2,60 m · Fenster und Tür unter 2,5 m² nach VOB nicht abgezogen" |
+| `FAQSection.tsx` (1) | „… Umfang × Höhe, **Öffnungen über 2,5 m² nach VOB abgezogen**. **Wo gerechnet wurde**, steht der Rechenweg an der Position — z.B. „Umfang 18 lfm × 2,60 m = 46,80 m²"." |
+| `FAQSection.tsx` (8) | „Deine Angebots- und Kundendaten liegen verschlüsselt in einer **Datenbank in Frankfurt am Main**. Kein Verkauf deiner Daten, keine Werbe-Tracker. **Weitergegeben wird nur, was der Betrieb braucht — die Spracherkennung zum Beispiel —, und jeder dieser Dienstleister steht mit Namen in der Datenschutzerklärung.** DSGVO-konform." |
+| `FAQSection.tsx` (9) | „… In den Einstellungen unter „Abo" öffnest du deine Rechnungs- und Zahlungsverwaltung — dort kannst du den Plan wechseln oder kündigen." |
+| `FeaturesSection.tsx` | Überschrift **„Rechenweg statt Blackbox"**; Beispiel auf den Hero-Wortlaut gezogen |
+| `WieFunktioniertSection.tsx` | „… **Öffnungen über 2,5 m² nach VOB abgezogen**, Sockelleisten in lfdm. **Wo gerechnet wurde**, steht der Rechenweg dabei" |
+
+**„Keine Werbe-Tracker" ist belegt, nicht geglaubt:** in `layout.tsx` und
+`package.json` steht kein Analytics-, gtag-, Posthog-, Plausible- oder
+Speed-Insights-Aufruf. Gesucht, nicht angenommen.
+
+### 3. Die Einheit: `lfdm` **oder** `lfm` — das Produkt schreibt beides, und zwar auf derselben Zeile
+
+Das ist der Fund, der über die Seite hinausgeht. Gemessen im Code:
+
+* **Die Mengenspalte heißt `lfdm`** — `einheit: 'lfdm'` in allen Engines, so
+  auch die Auswahlliste in `preise/page.tsx` und in `AngebotDetail.tsx:489`.
+* **Der Rechenweg darunter schreibt `lfm`** — `maler.ts:713`
+  (`Umfang ${umfangM} lfm × ${hoehe} m = …`), ebenso `boden.ts:446`,
+  `fliesen.ts:87`, `wandflaechen-konflikt.ts:58`.
+
+Auf einem Angebot steht deshalb **`17,10 lfdm`** und zwei Zeilen tiefer
+**`Umfang 18 lfm × 2,60 m`**. Zwei Schreibweisen derselben Einheit, einen
+Zentimeter voneinander entfernt.
+
+**Für die Seite heißt das:** wo eine **Menge** zitiert wird, steht `lfdm`
+(Hero: „17,10 lfdm", „So funktioniert's": „Sockelleisten in lfdm") — wo ein
+**Rechenweg** zitiert wird, steht `lfm`. Beides steht jetzt so da.
+
+**Für das Produkt ist es eine Meldung, kein Auftrag** — sie liegt bei
+Engineering. Ich habe sie dort eingetragen; es ist ein Wort, aber es liegt in
+vier Dateien und gehört nicht mir.
+
+### 4. Eine eigene Aussage von heute Mittag war falsch
+
+In meinem Eintrag von heute Mittag steht unter „Was ich mit Absicht **nicht**
+geändert habe", Punkt c:
+
+> „46,80 − 43,71 = **3,09 m²**, also eine Öffnung **über** 2,5 m². Nach VOB wird
+> die abgezogen. **Der Satz stimmt — ich lasse ihn stehen.**"
+
+**Das war falsch, und der Fehler steckt in meinem eigenen Rechenweg.** Der Satz
+nennt **zwei** Öffnungen („Fenster **und** Tür"). Die VOB-Regel misst die
+**Einzelgröße**, nicht die Summe. Zwei Öffnungen, die zusammen 3,09 m² ergeben,
+sind einzeln rund 1,5 m² groß — **beide unter der Schwelle, beide nicht
+abgezogen**. Damit die 3,09 m² zustande kämen, müsste eine der beiden über
+2,5 m² sein und die andere unter 0,6 m² — ein Fenster und eine Tür sind das
+nicht.
+
+Ich habe eine Summe geprüft, wo die Regel Einzelwerte prüft. Der Satz ist
+korrigiert, und die Zahl 43,71 m² kommt auf der Seite nicht mehr vor.
+
+### 5. Was ich mit Absicht nicht geändert habe
+
+* **Die beiden Positionstitel in der Hero-Karte** („Wandflächen streichen",
+  „Deckenfläche streichen"). Nach meiner eigenen Regel müssten sie heißen, wie
+  das Produkt sie zeigt — aber das Diktat in der Hero-Karte sagt
+  **„Wände und Decke streichen"**, nicht „zweimal". Welchen Titel die Engine
+  daraus macht, weiß ich nicht, und raten ist hier dasselbe wie erfinden.
+  **Ich habe den Prüfmeister um die Messung gebeten** (in seiner Datei); mit
+  seiner Antwort ist es ein Zweizeiler.
+* **Preis-Sektion, CTA-Knopf, Navigation** — die drei Gratis-Versprechen und
+  „30 Tage" hängen weiter an **CoS-038**. Unverändert.
+* **Vorher/Nachher, Blog-Teaser, Fußzeile.** Geprüft, nichts gefunden: der
+  Blog hat drei Beiträge (`content/blog`, drei `.mdx`), also ist die
+  Teaser-Reihe nicht leer; Impressum, Datenschutz und AGB haben alle drei eine
+  Seite; „Digital unterschreiben" ist gebaut
+  (`app/angebot/[id]/unterschreiben/page.tsx`).
+* **FAQ 2** („Keller haben keine Sockelleisten, über 3 m Raumhöhe ein
+  Erschwerniszuschlag"). **Beides stimmt** — `maler.ts:378/381`
+  (`istKellerRaum`) und `erschwernis.ts:72–75` („Raumhöhe über 3 m").
+  Nachgesehen, weil ein Fachversprechen, das nicht hält, teurer ist als ein
+  fehlendes.
+* **FAQ 5** („weniger als fünf Minuten"). Die Einrichtung hat acht Schritte,
+  aber sie sagt selbst „Dauert ca. 3 Minuten" (Schritt 1). Kein Widerspruch.
+* **`support@sofortangebot.app`** unter der FAQ. Die Adresse **gibt es** —
+  der Chief of Staff hat sie am 16.09. bei IONOS als Weiterleitung auf `hallo@`
+  angelegt (CoS-P-028). **Ein Zustelltest ist dort aber ausdrücklich offen
+  („eine angekommene Mail habe ich nicht gesehen").** Es ist die einzige
+  Kontaktadresse auf der Seite; kommt dort nichts an, ist jede Support-Mail
+  weg. **Das ist der nächste Punkt auf meiner Spur**, falls Platform ihn nicht
+  vorher abhakt.
+* **Der Antwortsatz** („normalerweise am selben oder am nächsten Werktag") ist
+  Sandys Fassung **B** und steht richtig da.
+
+### 6. Was ich geprüft habe — und was nicht
+
+**Geprüft:** die fünf geänderten Dateien einzeln durch `ts.transpileModule`,
+**fünf von fünf ohne Befund**. Kein Prüfstand greift auf einen der sechs Sätze
+zu (`grep` über `src`, nicht vermutet). Die Supabase-Region über die API
+abgefragt, nicht aus der Datenschutzerklärung abgeschrieben.
+
+**Nicht geprüft, und ich behaupte es deshalb nicht:** `npx tsc --noEmit` — wie
+heute Mittag nicht in der Zeitgrenze durchgelaufen. Meine sechs Änderungen sind
+Zeichenketten in bestehenden Listen; eine Typänderung ist darin nicht
+enthalten. **Und: ich habe nicht gemessen, was die Engine aus den beiden
+Diktaten der Seite wirklich macht** — genau dafür die Bitte an den Prüfmeister.
+
+### 7. Stand meiner Spur
+
+| | Stand |
+|---|---|
+| Alle elf Sektionen der Seite gegen das Produkt geprüft | ✅ **fertig** — 14 falsche Sätze in zwei Läufen, alle korrigiert |
+| Positionstitel in der Hero-Karte | ⏸ Prüfmeister (Messung erbeten, heute) |
+| Preis-Sektion · drei Gratis-Versprechen · „30 Tage" | ⛔ **CoS-038, Engineering** |
+| Aufwertung der vier Direktverbindungen (Fassung A) | ⏸ Sandys Buchhaltungs-Testlauf |
+| Zustelltest `support@` | 🔜 **nehme ich mir als Nächstes**, wenn Platform nicht schneller ist |
+| ZUGFeRD/GoBD (EX-003) | ⏸ Platform |
+
+**Es wartet nichts auf mich.**
+
+*Head of Marketing · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
