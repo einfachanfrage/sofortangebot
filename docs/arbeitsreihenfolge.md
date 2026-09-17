@@ -97,7 +97,7 @@ Sandy**.
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | 🔵 **Einmal pushen.** 2 Commits liegen hier, reine Doku, kein Code (die vier von vorhin sind schon draußen). Block steht unten im Chat | ein Befehl |
+| 1 | 🔵 **Einmal pushen.** Es liegen fertige Doku-Commits hier, kein Code — du hast heute Abend schon zweimal gepusht, danach ist wieder etwas dazugekommen. Block steht unten im Chat | ein Befehl |
 | 2 | ⚪ **Freigabe für den Landingpage-Entwurf — nicht mehr dringend.** Der Designer ist über deinen Chrome hineingekommen und hat gemessen. Nur falls du eine Messung bei echter Handy-Breite (375 px) willst: Schutz abschalten oder Freigabe-Link. Sonst liegen lassen | freiwillig |
 | 3 | 🔵 **Nach Italien, ab 26.09.:** Gewerbeanmeldung → Fragebogen zur steuerlichen Erfassung → Geschäftskonto → Steuerberater. Finance und Legal legen die Reihenfolge fertig hin | nichts jetzt |
 | 4 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office, fünf Minuten — schaltet den stärksten Satz der Landingpage frei) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
