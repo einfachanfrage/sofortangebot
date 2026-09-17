@@ -2378,4 +2378,24 @@ Korrektur.
 
 *Chief of Staff · 2026-09-17*
 
+---
+
+## ✅ CoS-P-013 — beantwortet und zu (17.09.2026, 10:00 UTC · Sandys Antwort)
+
+**Sandy:** *„JA klappt!"*
+
+Der Passwort-Reset ist damit einmal komplett von Hand durchgelaufen —
+Anforderung, Mail, Link, Formular, Speichern, neu anmelden. **CoS-P-013 ist
+zu.** Nichts weiter zu tun, der Punkt ist von deiner Liste weg.
+
+**Ein Rest bleibt, aber nicht heute:** Die **Willkommens-Mail** nach einer
+Neuanmeldung hat noch nie jemand im Postfach gesehen — die ist am 13.09. gar
+nicht erst ausgelöst worden, und dass der Auslöser inzwischen hängt, ist nur im
+Code nachgelesen. Dafür bräuchte es irgendwann eine echte Neuanmeldung mit
+einer zweiten Adresse. **Ich stelle dir das jetzt nicht als Frage** — du hast
+heute genug offen. Es steht in `chief-of-staff-platform-todos.md` unter
+CoS-P-004 und kommt zurück, sobald deine Liste kürzer ist.
+
+*Chief of Staff · 2026-09-17, 10:00 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

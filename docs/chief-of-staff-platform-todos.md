@@ -104,7 +104,7 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 | CoS-P-017 | Buchhaltung im Onboarding: „Fertig" geht auch ohne API-Key durch, nirgends sichtbar dass die Verknüpfung unfertig ist (TN-143) | ✅ **erledigt & geprüft** — Hinweis auf dem Dashboard eingebaut („Buchhaltung: Key fehlt noch"). Live mit Test-Account bestätigt: Kachel erscheint korrekt mit Anbieter-Label. Nachtrag am Dateiende | Sandys Live-Test, 2026-09-14 |
 | CoS-P-015 | `/bestaetigt` fehlte in der Liste der Seiten ohne Login-Pflicht (`src/proxy.ts`) | ✅ erledigt 14.09., Deploy READY, Wirkung bestätigt | Sandys Test `+test03`, 2026-09-14 |
 | CoS-P-014 | ✅ **gelöst 14.09. 14:53** (Deploy READY, 3 Commits). War: seit 13.09. 19:46 UTC ging nichts mehr live — acht Produktions-Builds in Folge auf ERROR. Ursache laut `git status`: **13 Produktivdateien, 21 Tests und 3 DB-Migrationen** aus der Manfred-Welle sind untracked, existieren also nur auf Sandys Rechner. Der CoS-P-013-Fix hat nie gelaufen, und „1.942 Tests grün" galt nur lokal | 🔴 dringend. Bericht + Nachtrag am Dateiende | Build-Logs Vercel, 2026-09-14 |
-| CoS-P-013 | Sandys Live-Postfach-Test 13.09.: (1) Bestätigungslink wirft jeden neuen Nutzer auf `/login?error=auth`, Willkommens-Mail geht dadurch nie raus; (2) Reset-Mail kommt nicht an, Fehler wird verschluckt | ✅ **erledigt & geprüft** — beide Befunde im GitHub-Spiegel bereits umgesetzt vorgefunden (Befund 1 über CoS-P-016/token_hash-Fix, Befund 2 per Commit `7bf8ab2`: Mailversand jetzt `await`-et, Fehlschlag geht an Sentry statt zu verschwinden). Heute gegengeprüft: Code entspricht exakt dem vorgeschlagenen Fix, `npm run typecheck` fehlerfrei. Fix-Update am Dateiende | Platform-Check, 2026-09-15 |
+| CoS-P-013 | Sandys Live-Postfach-Test 13.09.: (1) Bestätigungslink wirft jeden neuen Nutzer auf `/login?error=auth`, Willkommens-Mail geht dadurch nie raus; (2) Reset-Mail kommt nicht an, Fehler wird verschluckt | ✅ **erledigt & geprüft** — beide Befunde im GitHub-Spiegel bereits umgesetzt vorgefunden (Befund 1 über CoS-P-016/token_hash-Fix, Befund 2 per Commit `7bf8ab2`: Mailversand jetzt `await`-et, Fehlschlag geht an Sentry statt zu verschwinden). Heute gegengeprüft: Code entspricht exakt dem vorgeschlagenen Fix, `npm run typecheck` fehlerfrei. Fix-Update am Dateiende; **Sandys letzter Klick am 17.09. bestaetigt — Punkt komplett zu, Abschlusseintrag am Dateiende** | Platform-Check, 2026-09-15 |
 | CoS-P-008 | Skalierungs-Kostenmodell: was wächst mit Nutzern, was mit Angeboten, was bleibt flach? | 🟡 Struktur + Zahlen geliefert, Rückmeldung an Head of Finance offen | Sandys Frage zum Finanzplan, 2026-09-03 |
 | CoS-P-007 | Stripe auf das neue Preismodell umstellen (49 €, Gründerpreis 29 € × 25 Plätze, 14 Tage Test ohne Kreditkarte) | 🟡 Technik fertig (DB + Code, Staging + Produktion), blockiert auf Sandy: 2 Preise im Stripe-Dashboard anlegen | Sandys Preisentscheidung 2026-09-03, `docs/preismodell.md` |
 | CoS-P-001 | Row-Level-Security bestätigen: sieht jeder Nutzer wirklich nur eigene Daten? | ✅ erledigt & geprüft | `docs/launch-readiness.md` Abschnitt 6 (vormals CoS-005) |
@@ -3889,5 +3889,53 @@ ein Termin, keine Priorität. Wichtig ist nur, dass er nicht verfällt: Sandy is
 ab dem 18.09. in Italien.
 
 *Chief of Staff · 2026-09-17*
+
+---
+
+## ✅ CoS-P-013 — ZU. Sandy hat den letzten Klick bestätigt (17.09.2026, 10:00 UTC · Chief of Staff)
+
+**Sandys Antwort, wörtlich:** *„ging ‚Passwort speichern' durch? JA klappt!"*
+
+Damit ist der vierte Schritt belegt, der seit dem 16.09. offen war. Die Tabelle
+im Abschnitt darüber ist vollständig:
+
+| Schritt | Beleg |
+|---|---|
+| Anforderung auf `/passwort-vergessen` | ✅ Bildschirmfoto 16.09. |
+| Mail kommt an | ✅ Bildschirmfoto 16.09., 14:06 Uhr |
+| Link führt auf `/passwort-reset` | ✅ Bildschirmfoto 16.09. |
+| **Speichern und neu anmelden** | ✅ **Sandys Aussage, 17.09.** |
+
+**Die Passwort-Reset-Strecke ist damit einmal von Hand end-to-end durchlaufen
+worden.** Der Satz aus dem Abschnitt darüber — *„Ich trage CoS-P-013 trotzdem
+nicht als zu ein"* — ist erledigt und gilt nicht mehr. Ich habe ihn stehen
+lassen; er gehört zur Geschichte des Punktes.
+
+### Was das schließt — und was ausdrücklich NICHT
+
+**Geschlossen:**
+
+* **CoS-P-013** in voller Länge. Beide Befunde vom 13.09. sind im Code behoben
+  (gegengeprüft am 15.09.) **und** die Reset-Strecke ist von Hand belegt.
+* **CoS-P-003**, soweit es den **Passwort-Reset** betrifft. Registrierung,
+  Login und Logout waren schon am 13.09. durch.
+
+**Nicht geschlossen, und ich schreibe es deshalb nirgends grün:**
+
+* **CoS-P-004 bleibt offen.** Sandy hat den Reset getestet, nicht die
+  **Willkommens-Mail**. Die wurde am 13.09. gar nicht erst ausgelöst; dass der
+  Auslöser heute hängt, ist **Code-gelesen, nicht zugestellt gesehen**. Es
+  fehlt weiterhin **eine echte Neuanmeldung mit Bestätigungslink**, bei der die
+  Willkommens-Mail im Postfach ankommt. Das ist der letzte unbelegte Schritt
+  der ganzen Postfach-Strecke.
+* **CoS-P-004 ist damit der Punkt, der von der Mail-Strecke noch auf Gate 1
+  drückt** — nicht CoS-P-013.
+
+**Deine Spur, Platform:** unverändert **CoS-P-029** (Termin am 19.09. nach
+03:30 UTC). CoS-P-004 braucht eine Handlung von Sandy, keine von dir — ich habe
+sie ihr noch nicht gestellt, weil sie heute schon fünf offene Punkte hat. Sie
+kommt, sobald einer davon weg ist.
+
+*Chief of Staff · 2026-09-17, 10:00 UTC*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
