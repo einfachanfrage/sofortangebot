@@ -1,7 +1,7 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 17.09.2026, 11:40 UTC · Chief of Staff**
-*(ersetzt die Fassung von 11:35 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 17.09.2026, 11:50 UTC · Chief of Staff**
+*(ersetzt die Fassung von 11:40 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
 *Alle Uhrzeiten in dieser Fassung sind **UTC**.*
 
 ---
@@ -17,10 +17,10 @@ und steht ab jetzt **vor** allem anderen bei Engineering.
 IONOS-Weiterleitung, Zustelltest, Datenschutz-Freigabe, F-007. Alle fünf hat
 sie selbst beantwortet.
 
-**🔴 Aus F-007 ist dabei ein Fund herausgefallen: die Belegablage ist leer.**
-Sandys Rechnungen liegen in einem anderen Ordner als dem, den Finance gebaut
-hat, und es gibt für sie **keine Sicherung** — auch nicht über GitHub, dort
-sind sie bewusst ausgeschlossen (das Repo ist öffentlich).
+**Die leere Belegablage ist schon wieder erledigt: Sandy hat ihre 26
+Rechnungen selbst hineingezogen**, während wir darüber schrieben. **Offen
+bleibt die Sicherung** — und dazu habe ich ihr zweimal Falsches geschrieben,
+beides unten richtiggestellt.
 
 **Vierzehn Commits liegen ungepusht.** Alles Gepushte ist unverändert grün,
 Produktion läuft auf `da7db10`.
@@ -39,7 +39,11 @@ Produktion läuft auf `da7db10`.
 | **Sandy** | **L-KI-01 freigegeben** („ja darf rein!") | ✅ an Legal, Wortlaut unverändert. **Erst als zu geführt, wenn Legal meldet, dass der Satz drin ist** |
 | **Sandy** | **F-007 beantwortet: es läuft KEINE Sicherung.** OneDrive-Konto vorhanden, nichts eingerichtet. Dazu von sich aus: ihre Rechnungen liegen in `Documents\sofortangebot\Rechnungen` | ✅ beantwortet |
 | **Sandy** | **Neue Frage (CoS-F-008):** ändert die §-19-Entscheidung etwas für ihren Vollzeit-Job? | ✅ vorläufig beantwortet (nein, betrifft nur das Gewerbe), zur Bestätigung an Finance |
-| CoS | **🔴 `belege/eingangsrechnungen/` selbst gezählt: eine Datei, das leere Eingangsbuch.** Keine Rechnung. Vorschlag `OneDrive\Sofortangebot-Belege\` an Finance, Verfahrensentscheidung liegt bei ihm | ✅ gefunden und verteilt |
+| CoS | **🔴 `belege/eingangsrechnungen/` war leer** — eine Datei, das Eingangsbuch | ✅ gefunden, an Finance |
+| **Sandy** | **Alle Rechnungen selbst nach `belege\eingangsrechnungen\` gezogen** — nachgezählt **26 Dateien, 1,7 MB**, Unterordner `2026\` | ✅ **Ablage stimmt jetzt mit der Verfahrensdokumentation überein**, ohne Pfadänderung |
+| **Sandy** | **Widerspruch: sie WILL den ganzen Projektordner gesichert haben** („Laptop ist nicht mehr der neuste") | ✅ **berechtigt — mein Gegenargument war falsch**, siehe unten |
+| CoS | **`scripts/sicherung-onedrive.ps1` gebaut** — ganzer Projektordner nach OneDrive, ohne `node_modules`/`.next`, löscht nichts, reines ASCII ohne BOM | ✅ gebaut, ungetestet (läuft auf Windows, nicht in dieser Shell) |
+| CoS | **Zwei eigene Fehler richtiggestellt** (Größe des Projektordners · „liegt ja auf GitHub") | ✅ korrigiert, an Sandy und Finance |
 | CoS | **CoS-E-078** — PM-117 + PM-060-A als nächster Bau gesetzt, **vor** der Tapezier-Nische; meine eigene Reihenfolge von 09:50 dafür zurückgezogen | ✅ erledigt |
 | CoS | **DC-125** — die Nullzeile ist ab jetzt eine Produktregel, keine Einzelfrage. Regel selbst entschieden, nicht Sandy vorgelegt | ✅ erledigt |
 | CoS | **Beide ENDE-Meldungen des Prüfmeisters erledigt** — fünf Dateien hatten gar keine Markierung, jetzt gesetzt; das Bruchstück in `pruefmeister-testfaelle.md` als Fließtext neu geschrieben | ✅ erledigt |
@@ -66,13 +70,20 @@ Produktion läuft auf `da7db10`.
 * **`node scripts/docs-sichern.mjs pruefen`:** „Alle 57 Doku-Dateien in Ordnung."
 * **`entscheidungen-fuer-sandy.md` frisch gelesen**, bevor ich unten „offen"
   schreibe.
-* **Die Belegablage gezählt:** `belege/eingangsrechnungen/` enthält **eine**
-  Datei (`eingangsbuch.csv`), `belege/` gesamt **4 KB**. `.gitignore` Zeile 59:
-  `belege/eingangsrechnungen/**` — die Belege gehen bewusst nicht ins Repo.
-* **Größen gemessen, bevor ich über Sicherung rede:** Projektordner **2,9 GB**,
-  `.git` **104 MB**, `docs/` 15 MB.
-* **`Documents\sofortangebot\Rechnungen` angefragt:** existiert, ist diesem
-  Projekt aber **nicht angeschlossen** — ich sehe den Namen, nicht den Inhalt.
+* **Die Belegablage zweimal gezählt:** um 10:45 **eine** Datei, um 11:45
+  **26 Dateien / 1,7 MB** in `belege/eingangsrechnungen/2026/`. `.gitignore`
+  Zeile 59 hält sie weiterhin aus dem öffentlichen Repo heraus.
+* **🔴 Die Größe NEU gemessen — meine erste Zahl war falsch.** Ich hatte „2,9 GB"
+  geschrieben; mein `--exclude=node_modules` hatte nicht gegriffen. Richtig:
+  `node_modules` **rund 2,8 GB**, **alles andere zusammen rund 135 MB**
+  (`.git` 100 MB · `docs/` 15 MB · `src/` 7 MB · `_to_delete/` 4,7 MB ·
+  `tests/` 2,3 MB · `belege/` 1,7 MB). **Darauf stand mein „lohnt sich nicht"
+  — es stand auf einer falsch erhobenen Zahl.**
+* **Die OneDrive-Einschränkung nachgelesen, nicht vermutet:** der
+  Windows-Client synchronisiert **nur ein privates Microsoft-Konto
+  gleichzeitig** (Microsoft-Learn-Auskunft).
+* **Sandys Benutzerordner abgefragt:** **kein OneDrive-Ordner sichtbar** —
+  spricht dafür, dass noch keins eingerichtet ist.
 * **Zur CI-Widersprüchlichkeit unten:** die **#206 grün auf `da7db10`** stammt
   aus einer eigenen Messung um **09:43 UTC** aus derselben Shell, zusammen mit
   #205/#204/#203/#202 und dem zweiten Arbeitsablauf #59. Die `403` sind also
@@ -93,8 +104,15 @@ Produktion läuft auf `da7db10`.
 * **Gate 1 rechne ich weiter nicht neu.** Stand bleibt **53,0 %**. Legals 7.13
   und inzwischen sechs DC-Punkte sind nicht eingerechnet — das gehört in einen
   Lauf, der `launch-readiness.md` ganz durchgeht.
-* **Was in `Documents\sofortangebot\Rechnungen` liegt**, weiß ich nicht —
-  wie viele Dateien, wie alt, welches Format.
+* **Die 26 Belege habe ich nicht angefasst** — nicht gelesen, nicht
+  umbenannt, nicht sortiert, nicht ins Eingangsbuch eingetragen. Das ist
+  Finance' Verfahren, daran arbeite ich nicht vorbei.
+* **`scripts/sicherung-onedrive.ps1` ist ungetestet.** Es läuft auf Windows;
+  diese Shell ist Linux und hat weder `robocopy` noch OneDrive. Geprüft habe
+  ich nur, was hier prüfbar ist: Klammern paarig, **kein BOM, reines ASCII**
+  (die Fehlerklasse aus `ci.yml` und `pre-push`).
+* **Ob OneDrive für die 8-Jahres-Aufbewahrungspflicht als zweiter Ort
+  ausreicht**, ist eine Fachfrage und liegt bei Finance.
 * **Ob die §-19-Entscheidung wirklich nichts an Sandys Arbeitsverhältnis
   ändert**, habe ich nicht fachlich geprüft. Ich habe ihr gesagt, was ich weiß,
   und dass ich kein Steuerberater bin. Die Bestätigung holt Finance.
@@ -116,7 +134,7 @@ Produktion läuft auf `da7db10`.
 |---|---|---|
 | 1 | 🟡 **Pushen.** **Vierzehn Commits** liegen bereit. | ein Befehl |
 | 2 | 🔴 **Preis bei § 19 (A/B), F-006** — tendiert zu **B** (Regelbesteuerung). **Die Landingpage darf vorher nicht live gehen.** | ein Satz |
-| 3 | 🔴 **NEU: Belegsicherung.** Deine Rechnungen liegen in `Documents\sofortangebot\Rechnungen`, ungesichert und für Finance unsichtbar. Vorschlag: nach `OneDrive\Sofortangebot-Belege\` umziehen und den Ordner anschließen. **Erst Finance antworten lassen**, dann machen | dreimal etwas, dann nie wieder |
+| 3 | 🔴 **Sicherung einschalten.** OneDrive mit `einfachanfrage@outlook.com` anmelden, dann `scripts\sicherung-onedrive.ps1` einmal starten und als tägliche Aufgabe einrichten. Anleitung liegt bereit | einmal 10 Minuten |
 | 4 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
 | 5 | Vercel-Benachrichtigung · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert, in diesem Lauf nicht geprüft |
 
@@ -143,7 +161,7 @@ aber der neue wiegt schwerer als die fünf, die gegangen sind.
 | **Legal** | **Zuerst: L-KI-01 einbauen** (freigegeben, Wortlaut unverändert) und melden, wenn er drin ist; dabei prüfen, ob dieselbe Zusage noch woanders steht. Danach **CoS-L-011** — dürfen freie Fußzeilen die Pflichtangaben auf dem Angebot ersetzen (A/B/C)? | niemanden |
 | **Marketing** | **Textseitig fertig, wartet bewusst.** Positionstitel entschieden, der Prüfmeister hat die Bodenleger-Zeilen bestätigt. | Sandys A/B zu § 19 · Sandys Buchhaltungs-Testlauf |
 | **Platform** | **CoS-P-029 — ein Termin, kein Auftrag:** am **19.09. nach 03:30 UTC** einmal `system_laeufe` prüfen (`aufnahmen.dateien > 0`?). | niemanden |
-| **Finance** | **🔴 Sein Zug, und der wichtigste außerhalb von Engineering: die Belegablage ist leer.** Entscheidet, ob der Belegordner nach OneDrive umzieht und wie die Verfahrensdokumentation dann lautet. Dazu **CoS-F-008** (ändert § 19 etwas für Sandys Vollzeit-Job?) und ob Gate-1-Punkt 4.7 über die 40/100 steigt | Sandys A/B zu § 19 |
+| **Finance** | **Sein Zug: 26 unbearbeitete Belege liegen jetzt in seiner Ablage** — prüfen, ins Eingangsbuch, Prüfsummen. Dazu drei Fragen von mir: reicht OneDrive als zweiter Ort für die 8 Jahre? · gehört die Sicherung in die Verfahrensdokumentation? · **CoS-F-008** (ändert § 19 etwas für Sandys Vollzeit-Job?). Und ob Gate-1-Punkt 4.7 über die 40/100 steigt | Sandys A/B zu § 19 |
 
 ---
 
@@ -155,10 +173,12 @@ aber der neue wiegt schwerer als die fünf, die gegangen sind.
   (1.308,42 €) scheitern zusätzlich am Wortlaut (PM-060-A) und blieben nach
   einem reinen Router-Fix bei null. **Ein halber Fix sieht behoben aus und ist
   es nicht.** CoS-E-078.
-* **🔴 Die Belege hängen an einer einzigen Festplatte.** Nicht auf GitHub
-  (bewusst, Repo ist öffentlich), keine Sicherung, kein zweiter Ort — acht
-  Jahre Aufbewahrungspflicht gegen null Kopien. Und die Ablage, die Finance
-  dafür gebaut hat, ist **leer**: die echten Rechnungen liegen woanders.
+* **🔴 Der ganze Projektordner hängt an einer einzigen Festplatte**, bis die
+  Sicherung läuft. **„Liegt ja auf GitHub" trägt nicht** — genau die Dateien,
+  die man nicht nachbauen kann, sind dort ausgeschlossen: die 26
+  Eingangsrechnungen (`.gitignore` Zeile 59, richtig so, das Repo ist
+  öffentlich) und die `.env`-Dateien. **Das habe ich Sandy zunächst falsch
+  gesagt; sie hat widersprochen und hatte recht.**
 * **DC-125 — eine Zeile ohne Betrag darf ein Kundenangebot nicht verlassen.**
   Das ist ab jetzt Produktregel, nicht Einzelfall. Vierte Ausprägung derselben
   Frage (H, L.5, DC-112, PM-117). Die Anzeige gehört dem Designer, die Ursache
@@ -194,4 +214,4 @@ aber der neue wiegt schwerer als die fünf, die gegangen sind.
   nicht nur die Schritt-Ebene gesperrt, sondern auch die Laufliste. Ohne Token
   aus Sandys Konto ist der CI-Stand zeitweise gar nicht messbar.
 
-*Chief of Staff · 2026-09-17, 11:40 UTC*
+*Chief of Staff · 2026-09-17, 11:50 UTC*

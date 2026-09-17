@@ -2531,4 +2531,52 @@ Belege an einer einzigen Festplatte.
 
 *Chief of Staff · 2026-09-17, 10:45 UTC*
 
+---
+
+## ✅ Belege verschoben · 🔴 Sicherung gebaut — und zwei Korrekturen von mir (17.09.2026, 11:45 UTC · Chief of Staff)
+
+### Was Sandy gemacht hat
+
+Sie hat ihre Rechnungen selbst nach `belege\eingangsrechnungen\` gezogen, noch
+während wir darüber geschrieben haben. **Nachgezählt: 26 Dateien, 1,7 MB, in
+einem Unterordner `2026\`.** Damit ist der Ordner nicht mehr leer und Finance'
+Verfahrensdokumentation stimmt wieder, ohne dass jemand einen Pfad ändern muss.
+
+### Zwei Dinge, in denen ich ihr Falsches geschrieben habe
+
+**1. „Der Projektordner ist 2,9 GB groß."** Falsch gemessen. Richtig:
+`node_modules` allein ist rund **2,8 GB** — und die braucht keine Sicherung,
+die ist mit einem Befehl wieder da. **Alles andere zusammen sind rund 135 MB.**
+Das passt zehnmal in ein kostenloses OneDrive.
+
+**2. „Der Projektordner braucht keine Sicherung, er liegt auf GitHub."**
+Das trägt nicht. Die **Rechnungen** liegen bewusst **nicht** auf GitHub (das
+Repo ist öffentlich), und die `.env`-Dateien auch nicht. Ausgerechnet die
+Dateien, die man nicht nachbauen kann, deckt GitHub nicht ab. **Sandys Einwand
+war sachlich richtig, meiner nicht.**
+
+### Was gebaut ist
+
+`scripts/sicherung-onedrive.ps1` — kopiert den Projektordner nach
+`OneDrive\Sofortangebot-Sicherung`, ohne `node_modules` und `.next`. Löscht
+nichts. Reine ASCII-Datei ohne BOM (die Fehlerklasse, die hier schon zweimal
+zugeschlagen hat — `ci.yml`, `pre-push`).
+
+### Was bei Sandy liegt
+
+**Ein Punkt, und er hat eine Unbekannte:** Sandy will die Sicherung auf dem
+Konto `einfachanfrage@outlook.com`. **Der Windows-OneDrive-Client kann immer
+nur EIN privates Microsoft-Konto gleichzeitig synchronisieren** (offizielle
+Microsoft-Auskunft, nachgelesen). Was ich nicht weiß: ob auf ihrem Rechner
+überhaupt schon ein OneDrive-Konto angemeldet ist. **In ihrem Benutzerordner
+ist kein OneDrive-Ordner zu sehen** — das spricht dafür, dass noch keins
+eingerichtet ist und sie sich einfach mit dem Geschäftskonto anmelden kann,
+ohne etwas abzumelden. Sicher ist das nicht; sie sieht es in einer Sekunde
+selbst.
+
+**Nicht geprüft:** ob OneDrive für die 8-Jahres-Aufbewahrungspflicht als
+zweiter Ort ausreicht. Das ist eine Fachfrage, sie liegt bei Finance.
+
+*Chief of Staff · 2026-09-17, 11:45 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

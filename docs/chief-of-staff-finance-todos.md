@@ -2314,5 +2314,84 @@ dann weiß sie, dass sie nichts übersehen hat.
 
 *Chief of Staff · 2026-09-17, 10:45 UTC*
 
+---
+
+## ✅🔴 Zwei Nachrichten zur Belegablage — eine gute, eine, die eine Entscheidung von dir braucht (17.09.2026, 11:45 UTC · Chief of Staff)
+
+### 1. Meine Frage von 10:45 ist hinfällig — Sandy hat den kürzeren Weg genommen
+
+Ich hatte dir vorgeschlagen, die Belegablage nach OneDrive zu verlegen und
+gefragt, ob du dafür den Pfad in der Verfahrensdokumentation änderst.
+**Streich das.** Sandy hat stattdessen ihre Rechnungen **in deinen Ordner
+gezogen**, unaufgefordert, während wir noch darüber geschrieben haben.
+
+**Selbst nachgezählt, nicht gemeldet bekommen:**
+
+| | vorher (10:45) | jetzt (11:45) |
+|---|---|---|
+| `belege/eingangsrechnungen/` | 1 Datei (leeres Eingangsbuch) | **26 Dateien**, in einem Unterordner `2026/` |
+| `belege/` gesamt | 4 KB | **1,7 MB** |
+
+**Damit stimmt deine Verfahrensdokumentation wieder — ohne dass du eine Zeile
+änderst.** Der beschriebene Ablageort ist jetzt der tatsächliche. Das war der
+saubere Ausgang, und er ist Sandys Verdienst, nicht meiner.
+
+**Dein Zug, und nur deiner:** die 26 Belege sind **noch nicht** geprüft, nicht
+im Eingangsbuch erfasst und ohne Prüfsummen. Ich habe sie **nicht angefasst** —
+weder gelesen, noch umbenannt, noch sortiert. Das ist dein Verfahren, und ich
+fange nicht an, daran vorbeizuarbeiten. Was ich dir sagen kann: sie liegen in
+`belege/eingangsrechnungen/2026/`, und `.gitignore` Zeile 59 hält sie
+weiterhin aus dem (öffentlichen) Repo heraus.
+
+### 2. 🔴 Sandy hat der Sicherungsfrage widersprochen — und sie hat recht
+
+Ich hatte ihr geschrieben, der Projektordner brauche keine Sicherung, weil er
+auf GitHub liege. **Sie hat das zurückgewiesen**, mit der Begründung, ihr
+Laptop sei alt und ein Totalausfall wäre ein Albtraum.
+
+**Ich hatte in zwei Punkten unrecht, und beide gehören in deine Unterlagen:**
+
+**Erstens, die Zahl.** Ich hatte „2,9 GB" geschrieben. **Falsch gemessen** —
+mein Ausschluss von `node_modules` hat nicht gegriffen. Richtig:
+
+| | |
+|---|---|
+| `node_modules` | rund **2,8 GB** — mit einem Befehl wiederherstellbar (`npm install`) |
+| **alles andere zusammen** | **rund 135 MB** (`.git` 100 MB, `docs/` 15 MB, `src/` 7 MB, `belege/` 1,7 MB) |
+
+**Der schützenswerte Teil ist also winzig.** Mein „lohnt sich nicht" stand auf
+einer Zahl, die ich falsch erhoben hatte.
+
+**Zweitens, die Begründung.** „Liegt ja auf GitHub" trägt für die Belege
+**nicht** — du hast sie genau dort ausgeschlossen, und das war richtig. Für
+`.env`-Dateien gilt dasselbe. **Ausgerechnet die buchhaltungsrelevanten Dateien
+sind die, die GitHub nicht abdeckt.** Das hätte mir auffallen müssen, bevor ich
+ihr „braucht keine Sicherung" schreibe.
+
+### 3. Was ich gebaut habe — und was du daran noch entscheiden musst
+
+Neu: **`scripts/sicherung-onedrive.ps1`**. Kopiert den ganzen Projektordner
+nach `OneDrive\Sofortangebot-Sicherung`, **ohne** `node_modules` und `.next`
+(Bauergebnisse, kein Original). **Es wird nichts gelöscht** — was Sandy im
+Projektordner löscht, bleibt in der Sicherung stehen. Absicht: eine Sicherung,
+die Löschungen mitmacht, schützt nicht vor Versehen.
+
+**Deine Fragen, die ich nicht beantworten kann:**
+
+1. **Reicht OneDrive als zweiter Ort für die 8-Jahres-Pflicht?** Es ist eine
+   Kopie bei einem US-Anbieter, synchron mit dem Original. Eine Sicherung, die
+   jede Änderung sofort mitnimmt, ist etwas anderes als ein Archiv. Du hast in
+   F-007 auf die BMF-Erleichterung für Kleinunternehmer verwiesen — **gilt sie
+   auch hierfür, oder brauchst du zusätzlich eine Fassung, die sich nicht mehr
+   ändert?**
+2. **Gehört die Sicherung in die Verfahrensdokumentation?** Ich vermute ja,
+   aber ich schreibe nichts in dein Dokument.
+3. **Sandy will die Sicherung auf dem Konto `einfachanfrage@outlook.com`**, dem
+   Geschäftskonto — nicht auf ihrem privaten. Das ist aus deiner Sicht
+   vermutlich das richtige Konto; sag es ihr, wenn du es auch so siehst, dann
+   weiß sie, dass sie richtig gedacht hat.
+
+*Chief of Staff · 2026-09-17, 11:45 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
