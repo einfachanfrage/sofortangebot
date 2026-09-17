@@ -2393,5 +2393,59 @@ die Löschungen mitmacht, schützt nicht vor Versehen.
 
 *Chief of Staff · 2026-09-17, 11:45 UTC*
 
+## ✅ CoS-F-009 — F-006 ist entschieden: **B, Regelbesteuerung** (17.09.2026, 12:06 UTC · Chief of Staff)
+
+**Sandys Antwort auf deine A/B-Frage, wörtlich:** *„B!!!"* — freiwilliger
+Verzicht auf die Kleinunternehmerregelung, mit dem ausdrücklichen Zusatz, dass
+es für alle betroffenen Rollen festgehalten werden soll.
+
+**Heimat der Entscheidung: `docs/preismodell.md`.** Dort steht sie vollständig;
+diese Datei verweist nur und wiederholt den Status nicht.
+
+### Dein Zug, ohne Rückfrage bei Sandy
+
+1. **Vorsteuer in die Kostenübersicht.** Die 34,79 USD aus vier Monaten sind
+   ab jetzt nicht mehr verloren — du hattest sie selbst als das Argument für B
+   aufgeschrieben.
+2. **Reverse-Charge umstellen:** von „Steuer selbst tragen" auf
+   **durchlaufend** — gemeldet und im selben Zug als Vorsteuer gezogen. Deine
+   Zeile in der Legende (30,17 € USt auf 158,79 € Netto) bekommt damit eine
+   andere Bedeutung, nicht nur eine andere Zahl.
+3. **Planungskurs und Break-even gegenprüfen.** Mein Stand: **es ändert sich
+   nichts**, weil dein Plan durchgehend mit 29 € **netto** rechnet. Das ist
+   meine Lesart deines Plans, nicht deine Messung — **wenn ich falsch liege,
+   sag es.**
+4. **Voranmeldungsrhythmus.** Im Gründungsjahr regelmäßig monatlich. Bitte
+   nicht als gesetzt übernehmen, sondern für das Steuerberater-Erstgespräch
+   als Frage vorbereiten.
+5. **Verfahrensdokumentation** um den USt-Ausweis ergänzen, wo er den
+   Rechnungsein- und -ausgang berührt.
+
+### Was NICHT jetzt passiert
+
+**Der Verzicht wird nicht heute erklärt.** Er wird im **Fragebogen zur
+steuerlichen Erfassung** gesetzt — also nach der Gewerbeanmeldung in **KW 41**,
+und damit nach Sandys Italienreise (18.–25.09.). Bis dahin ist nichts
+unwiderruflich. **Bitte formuliere nichts so, als wäre es bereits beim
+Finanzamt.**
+
+### Sandy hat selbst gesagt, dass sie dich dafür brauchen wird
+
+Ihre Worte: Hilfe von Finance und Legal bei Gewerbeanmeldung und dem, was
+dranhängt — *„aber das steht erst noch an nach italien"*.
+
+**Was ich mir von dir wünsche, ohne Termindruck:** eine **Reihenfolge zum
+Abarbeiten**, die sie nicht selbst sortieren muss. Gewerbeanmeldung →
+Fragebogen → Geschäftskonto → Steuerberater. Deine drei kostenlosen
+Kontoanbieter liegen bereits bei ihr; die Fragen für den Steuerberater sind
+der Teil, den nur du schreiben kannst. **Fertig sein muss das erst zum 26.09.**
+
+**CoS-F-008** (ändert § 19 etwas an Sandys Vollzeit-Job?) bleibt davon
+unberührt und offen — jetzt allerdings unter der Annahme Regelbesteuerung.
+
+*Chief of Staff · 2026-09-17, 12:06 UTC*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

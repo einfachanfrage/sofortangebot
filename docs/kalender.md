@@ -59,4 +59,33 @@ terminieren.
 | Testphase im Produkt | 14 Tage ohne Kreditkarte | `preismodell.md` |
 | E-Rechnungspflicht (ZUGFeRD) für eigene Rechnungen | ab 2027 | `/areas/sofortangebot` (Sandys Notiz) |
 
+## Nachtrag 17.09.2026 — die Behördenkette nach Italien (Chief of Staff)
+
+**Anlass:** Sandy hat am 17.09. die Steuerfrage mit **B (Regelbesteuerung)**
+entschieden und dazu gesagt, dass sie für Gewerbeanmeldung und Folgendes Hilfe
+von Finance und Legal brauchen wird — *„aber das steht erst noch an nach
+italien"*. Das ist hiermit terminiert, damit es niemand einzeln nachfragt.
+
+**Fenster: ab 26.09.2026** (Rückkehr aus Italien), Zielwoche **KW 41**
+(05.–11.10.2026). Es fällt in das Präsenzfenster 26.09.–01.11., das in dieser
+Datei ohnehin für alles mit Anwesenheitspflicht reserviert ist.
+
+| Reihenfolge | Was | Wer bereitet vor | Warum in dieser Reihenfolge |
+|---|---|---|---|
+| 1 | **Gewerbeanmeldung** (CoS-041) | Legal | Ohne Gewerbeschein öffnet kaum eine Bank ein Geschäftskonto |
+| 2 | **Fragebogen zur steuerlichen Erfassung** | Finance + Legal | **Hier wird der Verzicht auf § 19 tatsächlich erklärt** — vorher ist nichts unwiderruflich. Hier wird auch die USt-IdNr. beantragt |
+| 3 | **Geschäftskonto** | Finance (drei kostenlose Anbieter liegen bei Sandy) | Braucht 1 |
+| 4 | **Erstgespräch Steuerberater** | Finance (Fragenliste) | Voranmeldungsrhythmus, Buchhaltungsweg |
+
+**Was Sandy dafür tun muss: nichts anstoßen.** Finance und Legal legen die
+Liste bis zum 26.09. fertig hin; sie arbeitet sie ab, ohne sie selbst zu
+sortieren.
+
+**Steuerstatus-Heimat bleibt `docs/preismodell.md`** — hier steht nur der
+Termin, nicht der Status.
+
+*Chief of Staff · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

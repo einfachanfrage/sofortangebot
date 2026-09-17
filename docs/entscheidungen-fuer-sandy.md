@@ -2579,4 +2579,62 @@ zweiter Ort ausreicht. Das ist eine Fachfrage, sie liegt bei Finance.
 
 *Chief of Staff · 2026-09-17, 11:45 UTC*
 
+## ✅ F-006 — ENTSCHIEDEN: **B, Regelbesteuerung** (17.09.2026, 12:05 UTC · Sandys Antwort)
+
+**Sandys Antwort, wörtlich:** *„B!!! halte es für alle kollegen für die es
+relevant ist fest."*
+
+**Das ist ab jetzt die eine Wahrheit.** Sofortangebot rechnet mit
+**Regelbesteuerung**, nicht mit der Kleinunternehmerregelung nach § 19 UStG.
+Heimat für alles, was am Preis hängt, bleibt `docs/preismodell.md` — dort ist
+es eingetragen.
+
+**Was sich damit sofort ändert, ohne weitere Rückfrage an Sandy:**
+
+| Wo | Vorher | Ab jetzt |
+|---|---|---|
+| Landingpage-Preis | Stopper: „29 € zzgl. MwSt. — 34,51 € brutto" war bei § 19 unzulässig | **Die Zeile stimmt jetzt.** Kein Kleinunternehmer-Hinweis, kein Umbau |
+| Vorsteuer | nicht abziehbar | **abziehbar** — OpenAI, Supabase, Vercel, Sentry; die aufgelaufenen 34,79 USD sind damit nicht mehr verloren |
+| Reverse-Charge (Supabase, OpenAI) | Steuer selbst tragen | **durchlaufend** — gemeldet und im selben Zug als Vorsteuer gezogen |
+| Angebot und Rechnung | ohne USt-Ausweis | **mit USt-Ausweis**, Pflichtangaben ändern sich (Legal prüft) |
+| Bindung | — | **fünf Jahre**, § 19 Abs. 2 UStG. Kein Zurück vor 2031 |
+
+**Verteilt an:** Head of Finance (CoS-F-009) · Head of Marketing (CoS-M) ·
+Head of Legal (CoS-L-012, und die offene Rückfrage in CoS-L-011 ist damit
+beantwortbar). Alle drei haben es in ihrer eigenen Datei stehen.
+
+---
+
+### Was JETZT nichts von dir braucht
+
+**Nichts.** Die Entscheidung reicht. Die drei Rollen arbeiten damit weiter,
+ohne dass du noch etwas tippst.
+
+### Was NACH Italien ansteht (26.09. oder später)
+
+Du hast selbst gesagt, dass du dafür Finance und Legal brauchen wirst. Das ist
+richtig, und es ist kein Zufall, dass es nach der Reise liegt — **es sind
+Behördensachen, und die brauchen dich vor Ort oder am Rechner mit Ruhe.**
+
+| Reihenfolge | Was | Wer hilft |
+|---|---|---|
+| 1 | **Gewerbeanmeldung** (KW 41, CoS-041) — ohne Gewerbeschein öffnet kaum eine Bank ein Geschäftskonto | Legal (Checkliste liegt in `legal-005`) |
+| 2 | **Fragebogen zur steuerlichen Erfassung** — darin steht das Feld, mit dem du auf § 19 verzichtest. **Hier wird B tatsächlich scharf geschaltet**, nicht heute | Finance + Legal |
+| 3 | **Geschäftskonto** | Finance (drei kostenlose Anbieter liegen bereits bei dir) |
+| 4 | **Erstgespräch Steuerberater** — Voranmeldungsrhythmus (monatlich im Gründungsjahr), Buchhaltungsweg | Finance bereitet die Fragen vor |
+
+**Wichtig, damit du nachts ruhig schläfst:** Bis zur Gewerbeanmeldung ist an
+der Entscheidung nichts unwiderruflich. Du hast sie getroffen, damit die
+anderen weiterarbeiten können — verbindlich wird sie erst mit deinem Kreuz im
+Fragebogen. **Der Zeitpunkt liegt nach Italien, das ist so vorgesehen und
+nicht versäumt.**
+
+Ich bereite dir dafür zusammen mit Finance und Legal eine Reihenfolge vor, die
+du abarbeiten kannst, ohne sie selbst zu sortieren. Das steht im Kalender unter
+KW 41; du musst es nicht anstoßen.
+
+*Chief of Staff · 2026-09-17, 12:05 UTC*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -1,7 +1,7 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 17.09.2026, 11:55 UTC · Chief of Staff**
-*(ersetzt die Fassung von 11:50 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 17.09.2026, 12:10 UTC · Chief of Staff**
+*(ersetzt die Fassung von 11:55 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
 *Alle Uhrzeiten in dieser Fassung sind **UTC**.*
 
 ---
@@ -21,6 +21,12 @@ sie selbst beantwortet.
 Rechnungen selbst hineingezogen**, während wir darüber schrieben. **Offen
 bleibt die Sicherung** — und dazu habe ich ihr zweimal Falsches geschrieben,
 beides unten richtiggestellt.
+
+**✅ F-006 IST ENTSCHIEDEN: B, Regelbesteuerung.** Sandys Antwort um 12:05.
+Damit fällt der letzte Stopper vor der Landingpage weg, die Preiszeile
+„29 € zzgl. MwSt. — 34,51 € brutto" stimmt ab jetzt, und die Vorsteuer aus
+OpenAI/Supabase/Vercel ist abziehbar. Heimat: `docs/preismodell.md`.
+Verteilt an Finance, Legal, Marketing.
 
 **🔴 DIE PRODUKTION IST SEIT 11:10 UTC KAPUTT — und der Fix liegt fertig da.**
 Die letzten **zwei** Vercel-Deploys stehen auf **ERROR**. Ursache gemessen:
@@ -173,10 +179,17 @@ läuft bis dahin auf `980c271` (11:04 UTC, grün).
 | # | Was | Aufwand |
 |---|---|---|
 | 1 | 🔴 **Pushen — und diesmal repariert es die Produktion.** Ein Befehl, alle offenen Commits auf einmal (12:05 UTC waren es fünf, es kommen laufend welche dazu — die Zahl ist egal, `git push` nimmt alle). Darunter der Fix für die beiden roten Deploys, auf genau dem Stand nachgemessen, der bei Vercel ankommt. | ein Befehl |
-| 2 | 🔴 **Preis bei § 19 (A/B), F-006** — tendiert zu **B** (Regelbesteuerung). **Die Landingpage darf vorher nicht live gehen.** | ein Satz |
+| 2 | 🔵 **Nach Italien, ab 26.09.:** Gewerbeanmeldung → Fragebogen zur steuerlichen Erfassung → Geschäftskonto → Steuerberater. Finance und Legal legen die Reihenfolge fertig hin, sie stößt nichts an. Termin steht in `kalender.md` | nichts jetzt |
 | 3 | 🔴 **Sicherung einschalten.** OneDrive mit `einfachanfrage@outlook.com` anmelden, dann `scripts\sicherung-onedrive.ps1` einmal starten und als tägliche Aufgabe einrichten. Anleitung liegt bereit | einmal 10 Minuten |
 | 4 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
 | 5 | Vercel-Benachrichtigung · Versicherung · Stripe · Gewerbeanmeldung KW 41 (CoS-041) | unverändert, in diesem Lauf nicht geprüft |
+
+**Neu erledigt um 12:05: F-006.** Sandy hat mit **B** geantwortet und dazu
+gesagt, dass es für alle betroffenen Rollen festgehalten werden soll — das ist
+geschehen (Finance CoS-F-009, Legal CoS-L-012, Marketing, plus die Heimat in
+`preismodell.md` und der Termin in `kalender.md`). **Scharf geschaltet wird
+der Verzicht erst im Fragebogen zur steuerlichen Erfassung, nach der
+Gewerbeanmeldung** — heute ist nichts unwiderruflich.
 
 **Erledigt und weg von ihrer Liste:** **CoS-P-013** (Passwort-Reset komplett
 durchgelaufen) · **IONOS-Weiterleitung `rechnung@`** · **Zustelltest** (kam an,
@@ -198,10 +211,10 @@ aber der neue wiegt schwerer als die fünf, die gegangen sind.
 | **Engineering** | **🔴 PM-117 + PM-060-A, zusammen** (1.961,38 € auf jedem Bad). Danach **PM-119/L-06** (Soll liegt vor). **Zug 2, die Tapezier-Nische, ist um 11:10 fertig geworden** — von mir nachgemessen und committet, sie steht nicht mehr in der Reihenfolge. Dazu eine Regel aus dem eigenen Lauf: **die Lehre aus PM-075 ist „miss den Titel", nicht „kürze den Titel"** — hier traf die Katalog-Schreibweise mit 1,00, die Einzahl gar nicht. | niemanden |
 | **Designer** | **DC-122** ohne den Fußzeilenteil (Schrift, Akzentfarbe), dann die Fußzeile nach Legals Antwort, dann **DC-124**. Dazu neu und ohne Zeitdruck: **DC-125** (Anzeige der Nullzeile) und **PD-021** (die Gliederung „Nach Arbeitsablauf"). | Legal (nur der Fußzeilenteil von DC-122) |
 | **Prüfmeister** | **Spur leer.** Alles aus dem Mittagslauf ist beantwortet, beide ENDE-Meldungen sind zu. Nächstes: wartet auf neue Bitten, sonst Fallbasis weiter (120 Fälle). | niemanden |
-| **Legal** | **Zuerst: L-KI-01 einbauen** (freigegeben, Wortlaut unverändert) und melden, wenn er drin ist; dabei prüfen, ob dieselbe Zusage noch woanders steht. Danach **CoS-L-011** — dürfen freie Fußzeilen die Pflichtangaben auf dem Angebot ersetzen (A/B/C)? | niemanden |
-| **Marketing** | **Textseitig fertig, wartet bewusst.** Positionstitel entschieden, der Prüfmeister hat die Bodenleger-Zeilen bestätigt. | Sandys A/B zu § 19 · Sandys Buchhaltungs-Testlauf |
+| **Legal** | **Neu: CoS-L-012** — Pflichtangaben auf Angebot und Rechnung mit USt-Ausweis, Kleinunternehmer-Hinweis überall raus, AGB/Impressum. Damit ist auch die Rückfrage in CoS-L-011 („ändert sich das bei Regelbesteuerung?") gegenstandslos: Regelbesteuerung ist der Fall. **Zuerst aber: L-KI-01 einbauen** (freigegeben, Wortlaut unverändert) und melden, wenn er drin ist; dabei prüfen, ob dieselbe Zusage noch woanders steht. Danach **CoS-L-011** — dürfen freie Fußzeilen die Pflichtangaben auf dem Angebot ersetzen (A/B/C)? | niemanden |
+| **Marketing** | **Der Preis-Stopper ist weg — nichts zu ändern.** Die Zeile „29 € zzgl. MwSt. — 34,51 € brutto" stimmt jetzt, der Kleinunternehmer-Hinweis entfällt. Offen nur noch: drei statt sieben Buchhaltungs-Anbindungen auf der Seite | Sandys Buchhaltungs-Testlauf (nicht eilig) |
 | **Platform** | **CoS-P-029 — ein Termin, kein Auftrag:** am **19.09. nach 03:30 UTC** einmal `system_laeufe` prüfen (`aufnahmen.dateien > 0`?). | niemanden |
-| **Finance** | **Sein Zug: 26 unbearbeitete Belege liegen jetzt in seiner Ablage** — prüfen, ins Eingangsbuch, Prüfsummen. Dazu drei Fragen von mir: reicht OneDrive als zweiter Ort für die 8 Jahre? · gehört die Sicherung in die Verfahrensdokumentation? · **CoS-F-008** (ändert § 19 etwas für Sandys Vollzeit-Job?). Und ob Gate-1-Punkt 4.7 über die 40/100 steigt | Sandys A/B zu § 19 |
+| **Finance** | **Neu: CoS-F-009** — Vorsteuer in die Kostenübersicht, Reverse-Charge auf „durchlaufend" umstellen, Voranmeldungsrhythmus als Frage für den Steuerberater. Und die Behördenliste für Sandy bis zum 26.09. fertig hinlegen. **Dazu sein Zug: 26 unbearbeitete Belege liegen jetzt in seiner Ablage** — prüfen, ins Eingangsbuch, Prüfsummen. Dazu drei Fragen von mir: reicht OneDrive als zweiter Ort für die 8 Jahre? · gehört die Sicherung in die Verfahrensdokumentation? · **CoS-F-008** (ändert der Steuerstatus etwas für Sandys Vollzeit-Job? — jetzt unter der Annahme Regelbesteuerung). Und ob Gate-1-Punkt 4.7 über die 40/100 steigt | niemanden |
 
 ---
 

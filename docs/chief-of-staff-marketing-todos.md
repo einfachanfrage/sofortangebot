@@ -2575,5 +2575,35 @@ geschrieben werden kann, ist geschrieben.
 
 ---
 
+## ✅ Der Preis-Stopper ist weg — Sandy hat F-006 mit **B** entschieden (17.09.2026, 12:08 UTC · Chief of Staff)
+
+**Für dich ist das die kürzeste denkbare Nachricht: du musst nichts ändern.**
+
+Sandy hat sich für **Regelbesteuerung** entschieden (freiwilliger Verzicht auf
+§ 19 UStG). Damit gilt:
+
+* **„29 € / Monat · zzgl. MwSt. — 34,51 € brutto" stimmt.** Die Zeile bleibt,
+  wie du sie geschrieben hast.
+* **Kein Kleinunternehmer-Hinweis.** Er wäre ab jetzt falsch.
+* **Der Umbau auf „29 €, ohne Bruttozeile", den Weg A verlangt hätte, entfällt.**
+
+**Heimat der Entscheidung: `docs/preismodell.md`.** Bitte von dort verweisen
+statt den Status auf der Seite oder in deiner Datei zu wiederholen.
+
+### Damit hängt die Landingpage nur noch an einer Sache
+
+Deine Zeile „wartet auf Sandys A/B zu § 19" ist erledigt. **Offen bleibt der
+Buchhaltungs-Testlauf** (Lexware Office) — und der ist nicht eilig und
+blockiert Gate 1 nicht.
+
+**Nicht vergessen, aus dem Prüfmeister-Lauf von heute Mittag:** die Seite
+bewirbt **drei** Buchhaltungs-Anbindungen, es sind **sieben**. Das ist eine
+Meldung, kein Auftrag — aber wenn du die Seite ohnehin noch einmal anfasst,
+ist es die billigste Verbesserung darin.
+
+*Chief of Staff · 2026-09-17, 12:08 UTC*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

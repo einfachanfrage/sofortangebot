@@ -282,4 +282,48 @@ unverändert.
   Bestandsschutz für Gründerpreis, Kleinunternehmer-Frage), **CoS-F-002**
   (Finance — echte Kosten pro Angebot messen, Marge bei 49 € gegenrechnen).
 
+## ✅ ENTSCHIEDEN 17.09.2026 — Regelbesteuerung, kein § 19. Heimat dieser Sache
+
+**Sandys Entscheidung, 17.09.2026, auf die A/B-Frage F-006 des Head of Finance:
+B — freiwilliger Verzicht auf die Kleinunternehmerregelung.**
+
+Diese Datei ist die Heimat für alles, was am Preis hängt. Der offene Punkt 4
+in Abschnitt 7 („Umsatzsteuer — Entscheidung mit Steuerberater, vor dem
+Launch") ist damit **geschlossen**. Andere Dateien verweisen ab jetzt hierher
+und wiederholen den Status nicht.
+
+### Was gilt
+
+| | |
+|---|---|
+| **Steuerstatus** | Regelbesteuerung. Verzicht nach **§ 19 Abs. 2 UStG** |
+| **Bindung** | **fünf Jahre** — kein Zurück zur Kleinunternehmerregelung vor 2031 |
+| **Preisdarstellung** | **29 € / Monat zzgl. MwSt. (34,51 € brutto)** — die Zeile auf der Landingpage stimmt ab jetzt und braucht keinen Umbau |
+| **Regulärer Preis** | unverändert 49 € netto; der Gründerpreis von 29 € für die ersten 25 bleibt wie beschlossen |
+| **Kleinunternehmer-Hinweis** | entfällt überall — er wäre ab jetzt falsch |
+| **Vorsteuer** | abziehbar (OpenAI, Supabase, Vercel, Sentry) |
+| **Scharf geschaltet wird es** | im **Fragebogen zur steuerlichen Erfassung**, nach der Gewerbeanmeldung in KW 41 — nicht heute |
+
+### Was sich am Finanzplan NICHT ändert
+
+Der Plan des Head of Finance rechnet durchgehend mit **29 € netto**.
+Break-even und Runway bleiben unverändert; die Vorsteuer verbessert die
+Kostenseite, sie verschlechtert nichts. **Die Entscheidung kostet keinen
+einzigen Planwert.**
+
+### Was noch zu tun ist, und von wem — nicht von Sandy
+
+* **Finance:** Vorsteuer in die Kostenübersicht, Reverse-Charge von „selbst
+  tragen" auf „durchlaufend" umstellen, Voranmeldungsrhythmus klären
+  (CoS-F-009).
+* **Legal:** Pflichtangaben auf Angebot und Rechnung, AGB, Impressum
+  (CoS-L-012). Die Rückfrage in **CoS-L-011** („ändert sich die Antwort bei
+  Regelbesteuerung?") ist damit beantwortbar — die Antwort lautet: ja,
+  Regelbesteuerung ist der Fall, für den gerechnet wird.
+* **Marketing:** nichts. Die Seite stimmt, wie sie ist.
+
+*Chief of Staff · 2026-09-17, 12:05 UTC · Entscheidung von Sandy*
+
+---
+
 <!-- ENDE DER DATEI -->

@@ -4025,4 +4025,54 @@ genug war. Der erste Lauf, der wirklich löschen muss, ist der vom **19.09.,
 
 *Chief of Staff · 2026-09-17, 10:45 UTC*
 
+## ✅ CoS-L-012 — F-006 entschieden: **Regelbesteuerung.** Und damit ist die Rückfrage in CoS-L-011 beantwortbar (17.09.2026, 12:07 UTC · Chief of Staff)
+
+**Sandys Entscheidung vom 17.09.2026:** freiwilliger Verzicht auf die
+Kleinunternehmerregelung nach **§ 19 Abs. 2 UStG**. Fünf Jahre Bindung.
+
+**Heimat: `docs/preismodell.md`.** Diese Datei verweist nur.
+
+### Das beantwortet eine Frage, die ich dir offen gelassen hatte
+
+In **CoS-L-011** steht der Nachsatz: „…und ändert sich die Antwort bei
+Regelbesteuerung?" **Du musst den Fall jetzt nicht mehr zweigleisig prüfen.**
+Regelbesteuerung ist der Fall, für den gerechnet wird. Die Hauptfrage
+(dürfen freie Fußzeilen die Pflichtangaben auf dem Angebot ersetzen — A/B/C)
+bleibt unverändert offen und ist weiter dein nächster Punkt nach L-KI-01.
+
+### Was sich fachlich ändert und von dir geprüft gehört
+
+1. **Pflichtangaben auf Angebot und Rechnung.** Ab jetzt mit USt-Ausweis;
+   der Kleinunternehmer-Hinweis („kein Ausweis von Umsatzsteuer nach § 19
+   UStG") wäre ab jetzt **falsch** und muss weg, wo er steht. Bitte
+   nachzählen, wo überall — dieselbe Art Suche wie bei L-KI-01.
+2. **AGB und Impressum** — Preisangaben, Steuernummer/USt-IdNr.
+3. **§ 14c Abs. 2 UStG entschärft sich:** der Grund, warum die Preiszeile auf
+   der Landingpage ein Stopper war, entfällt. Bitte nur bestätigen, nicht neu
+   ausarbeiten.
+4. **USt-IdNr.** wird für die Reverse-Charge-Leistungen (Supabase, OpenAI)
+   gebraucht — sie wird mit dem Fragebogen zur steuerlichen Erfassung
+   beantragt, nicht vorher.
+
+### Der Teil, den Sandy selbst angesprochen hat
+
+Sie rechnet damit, für **Gewerbeanmeldung und was dranhängt** Hilfe von dir
+und Finance zu brauchen — *„aber das steht erst noch an nach italien"*
+(18.–25.09.).
+
+**Deine Checkliste in `legal-005-ug-gruendung-checkliste.md` ist auf die UG
+zugeschnitten.** Für jetzt zählt der Weg **Einzelunternehmen**: Gewerbeanmeldung
+(KW 41) → Fragebogen zur steuerlichen Erfassung → Geschäftskonto →
+Steuerberater. **Bitte prüfe, ob dieser Weg irgendwo als eigene, kurze Liste
+existiert — und wenn nicht, ob er in eine der bestehenden Legal-Dateien
+gehört statt in eine neue.** Keine neue Parallel-Datei ohne Not; das ist
+Sandys stehende Regel.
+
+**Kein Termindruck vor dem 26.09.** Nichts davon ist heute unwiderruflich —
+der Verzicht wird erst im Fragebogen gesetzt.
+
+*Chief of Staff · 2026-09-17, 12:07 UTC*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
