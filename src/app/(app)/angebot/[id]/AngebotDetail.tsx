@@ -41,7 +41,7 @@ import {
 } from '@/lib/raum-geometrie'
 import { materialFuerPosition } from '@/lib/material-mapping'
 import { getOrCreateErstbaustelle } from '@/lib/baustellen'
-import { versandHindernisse, unbepreistePositionen } from '@/lib/versandbereit'
+import { versandHindernisse, unbepreistePositionen, preisFehlt, PREIS_FEHLT_KURZ, fehlendePreiseSatz } from '@/lib/versandbereit'
 import { brauchtWandmasse, brauchtRaumhoehe } from '@/lib/raum-anzeige'
 
 interface Props {
@@ -392,7 +392,9 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
   // Titel, sondern in den Annahmen der Position (lack-untergrund.ts setzt ihn
   // dort, wo der Diktattext ist). Deshalb wandert er hier als Kontext mit.
   const materialVorschlag = materialFuerPosition(basisTitel, [item.description, ...(item.annahmen ?? [])].join(' '))
-  const preisFehlt = !item.price_item_id && item.unit_price <= 0
+  // DC-125: Dieselbe Bedingung wie im Versand-Wächter und im Kundenpapier,
+  // jetzt aus einer Datei statt dreimal abgeschrieben (src/lib/versandbereit.ts).
+  const ohnePreis = preisFehlt(item)
 
   // DC-039: nur eine frisch per "+ Position" angelegte, noch nicht mit der
   // Preisdatenbank verknüpfte Zeile bekommt die Such-Vorschläge — bei einer
@@ -578,12 +580,22 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
                 <span className="text-xs text-anthracite/40 font-bold">€</span>
               </div>
             </div>
+            {/* DC-125: Solange kein Preis da ist, rechnet diese Zeile nichts
+                aus — sie behauptete bisher „= 0,00 €" und damit, die Arbeit
+                koste nichts. Der rote Kasten „Preis fehlt" mit dem Knopf
+                „Preis anlegen" steht im Lese-Zweig direkt darunter. */}
             <div className="text-xs text-anthracite/40 font-semibold mt-1 text-right">
-              = {(item.quantity * item.unit_price).toFixed(2).replace('.', ',')} €
-              {vatRate > 0 && (
-                <span className="ml-2 text-anthracite/25">
-                  (brutto {((item.quantity * item.unit_price) * (1 + vatRate / 100)).toFixed(2).replace('.', ',')} €)
-                </span>
+              {ohnePreis ? (
+                <span className="text-red-600 font-bold">Preis fehlt</span>
+              ) : (
+                <>
+                  = {(item.quantity * item.unit_price).toFixed(2).replace('.', ',')} €
+                  {vatRate > 0 && (
+                    <span className="ml-2 text-anthracite/25">
+                      (brutto {((item.quantity * item.unit_price) * (1 + vatRate / 100)).toFixed(2).replace('.', ',')} €)
+                    </span>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -645,7 +657,7 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
                 )}
               </div>
             )}
-            {preisFehlt && (
+            {ohnePreis && (
               <div className="mt-2 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-2.5 py-2">
                 <AlertTriangle size={14} className="shrink-0 text-red-500" />
                 <span className="flex-1 text-[11px] font-bold text-red-700">Preis fehlt in deiner Preisdatenbank</span>
@@ -668,7 +680,9 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
             )}
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
-            <div className="font-black text-anthracite">{fmt(item.quantity * item.unit_price)}</div>
+            <div className={ohnePreis ? 'font-black text-red-600' : 'font-black text-anthracite'}>
+              {ohnePreis ? PREIS_FEHLT_KURZ : fmt(item.quantity * item.unit_price)}
+            </div>
             <button
               onClick={e => { e.stopPropagation(); removeEditItem(item.id) }}
               className="p-1.5 text-anthracite/20 hover:text-red-400 transition-colors"
@@ -1941,6 +1955,15 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     hatKunden: Boolean(currentCustomer),
     items: editItems,
   })
+  // DC-125 (Chief of Staff, 17.09.2026): Solange eine Position keinen Preis
+  // hat, ist die Summe kein Gesamtbetrag. Hier — anders als auf dem
+  // Kundenpapier — bleibt die Zahl trotzdem stehen: der Handwerker braucht
+  // sie, während er tippt (CoS-026, „die Summe wandern sehen"). Sie heißt
+  // dann nur nicht mehr „GESAMT", sondern „Zwischenstand", und daneben steht,
+  // wie viele Zeilen noch fehlen.
+  const ohnePreisImAngebot = unbepreistePositionen(displayItems)
+  const summeIstZwischenstand = ohnePreisImAngebot.length > 0
+  const zwischenstandSatz = fehlendePreiseSatz(ohnePreisImAngebot.length, displayItems.length)
   const kundeIstUnternehmen = quote.customer?.ist_unternehmen === true || !!quote.customer?.ustid
   // DC-100 (2026-09-15): `istZugferd` ist weg. Die Einbettung ist für Angebote
   // abgeschaltet (Sandys Entscheidung, Head of Legal empfohlen, umgesetzt in
@@ -2088,6 +2111,13 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             </div>
             {/* Echtzeit-Gesamtsumme */}
             <div className="text-yellow font-black text-2xl mt-1">{fmt(totalGross)}</div>
+            {/* DC-125: Die große Zahl ist die erste, die der Handwerker sieht,
+                und ohne diesen Zusatz die einzige Aussage des Kopfes. */}
+            {summeIstZwischenstand && (
+              <div className="text-amber-300 md:text-red-600 text-xs font-bold mt-0.5">
+                Zwischenstand — {zwischenstandSatz}
+              </div>
+            )}
             {/* DC-003-Nachtrag (Sandy, 2026-08-24, live getestet): Status-Button
                 stand vorher in der schmalen Icon-Reihe rechts, zwischen Zahnrad
                 und Bearbeiten/Speichern — dort sah er wie ein drittes Icon aus
@@ -2616,7 +2646,8 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           >
                             {item.unit}
                           </button>
-                          <span>× {fmt(item.unit_price)}</span>
+                          {/* DC-125 */}
+                          <span>× {preisFehlt(item) ? PREIS_FEHLT_KURZ : fmt(item.unit_price)}</span>
                         </div>
                         {rechenwegExpandiert.has(item.id) && (
                           <div className="mt-1.5 pt-1.5 border-t border-anthracite/8">
@@ -2631,7 +2662,9 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           </div>
                         )}
                       </div>
-                      <div className="font-black text-anthracite shrink-0">{fmt(item.total_price)}</div>
+                      <div className={`shrink-0 font-black ${preisFehlt(item) ? 'text-red-600' : 'text-anthracite'}`}>
+                        {preisFehlt(item) ? PREIS_FEHLT_KURZ : fmt(item.total_price)}
+                      </div>
                     </div>
                   </div>
                 )
@@ -2659,7 +2692,9 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                             }`}>{raum.raumName}</span>
                           </div>
                           {hatMehrereRaeume && (
-                            <span className="text-[11px] font-black text-anthracite/40">{fmt(raum.summe)}</span>
+                            <span className="text-[11px] font-black text-anthracite/40">
+                              {raum.items.some(gi => { const o = displayItems.find(i => i.id === gi.id); return o ? preisFehlt(o) : false }) ? PREIS_FEHLT_KURZ : fmt(raum.summe)}
+                            </span>
                           )}
                         </div>
 
@@ -2681,7 +2716,9 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                         {hatMehrereRaeume && (
                           <div className="border-t border-dashed border-anthracite/8 px-4 py-2 flex justify-between">
                             <span className="text-xs text-anthracite/40 font-semibold">Summe {raum.raumName}</span>
-                            <span className="text-xs font-black text-anthracite/60">{fmt(raum.summe)}</span>
+                            <span className="text-xs font-black text-anthracite/60">
+                              {raum.items.some(gi => { const o = displayItems.find(i => i.id === gi.id); return o ? preisFehlt(o) : false }) ? PREIS_FEHLT_KURZ : fmt(raum.summe)}
+                            </span>
                           </div>
                         )}
                       </div>
@@ -2824,8 +2861,14 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 </div>
               )}
               <div className="flex justify-between text-white font-black text-xl border-t border-white/20 pt-2 mt-1">
-                <span>GESAMT</span><span>{fmt(totalGross)}</span>
+                <span>{summeIstZwischenstand ? 'ZWISCHENSTAND' : 'GESAMT'}</span><span>{fmt(totalGross)}</span>
               </div>
+              {/* DC-125: siehe `summeIstZwischenstand` oben. */}
+              {summeIstZwischenstand && (
+                <div className="text-amber-300 text-xs font-bold mt-1.5">
+                  {zwischenstandSatz} So kann das Angebot nicht zum Kunden.
+                </div>
+              )}
               {isKleinunternehmer && (
                 <div className="text-white/30 text-xs font-semibold mt-2">Kein MwSt.-Ausweis gem. §19 UStG</div>
               )}

@@ -70,17 +70,44 @@ describe('PM-060 — Bad komplett neu fliesen, Nassbereich', () => {
     expect(finde(p, /verbundabdichtung wand/i).menge).toBe(17.64)
   })
 
-  it('PM-060-A 🔴 sieben von neun Zeilen finden keinen Preis — 1.935,94 € auf einem kleinen Bad', () => {
+  it('PM-060-A ✅ von den sieben preislosen Zeilen ist eine übrig — und die ist eine Frage an den Prüfmeister', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (Engineering, CoS-E-078)
+    //
+    // Nachgezählt statt vermutet: Das hier war KEINE Sperrklinke, sondern
+    // ein gewöhnliches `it`, das den Fund festhielt — es zählte sieben
+    // Zeilen ohne Preis und wurde grün, solange der Fund bestand. Damit hat
+    // es die Fehlstellung gemessen und ist durch den Bau rot geworden.
+    // Dieselbe Lage wie bei PM-097-C, und derselbe Satz des Prüfmeisters
+    // gilt: *eine Kontrolle, die der Fix rot macht, ist keine Kontrolle.*
+    //
+    // Gebaut sind seither beide Ursachen, die er selbst getrennt hat: der
+    // Router (PM-060-B / PM-117) und der Wortlaut (diese Zeile). Sechs der
+    // sieben finden ihren Preis. Die Kontrolle zählt ab jetzt, was übrig
+    // ist — derselbe Gegenstand, dieselbe Zählweise, andere Richtung.
+    //
+    // ── ❓ Die eine, die übrig ist, ist ein Widerspruch in zwei Notizen ───
+    //
+    // `Entsorgung Fliesenmaterial` (16,00 m²) findet nichts: der Katalog
+    // führt `Fliesenschutt entsorgen (Container / Absackung)`, 8,00 €/m².
+    // Gemeinsames Wort: keines. 128,00 €.
+    //
+    // Der Prüfmeister hat die Zeile ZWEIMAL bewertet, und die beiden Notizen
+    // widersprechen sich:
+    //   • PM-060-A rechnet `Fliesenschutt entsorgen` in die 1.935,94 € ein —
+    //     also: es gibt eine Katalogzeile.
+    //   • PM-117 notiert in der Sollspalte „keine Katalogzeile" — also: es
+    //     gibt keine.
+    //
+    // Ob `Entsorgung Fliesenmaterial` und `Fliesenschutt entsorgen` dieselbe
+    // Arbeit sind, ist ein Wortlaut und gehört ihm. **Nicht entschieden, die
+    // Frage liegt in seiner Datei.** Gebaut ist der Stand aus PM-117 (keine
+    // Zeile), weil dessen Sollspalte die jüngere der beiden ist und weil
+    // PM-117-B daran misst. Kippt seine Antwort, ist es eine Zeile
+    // Synonym — dann schlägt diese Zusicherung an.
     const p = pos()
     const ohnePreis = p.filter(z => preis(p, new RegExp(z.beschreibung.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')) === null)
     expect(ohnePreis.map(z => z.beschreibung.replace(/ — .*$/, '')).sort()).toEqual([
-      'Bodenfliesen verlegen',
       'Entsorgung Fliesenmaterial',
-      'Fliesensockel / Abschlussleiste',
-      'Verbundabdichtung Wand',
-      'Verfugung Boden',
-      'Verfugung Wand',
-      'Wandfliesen verlegen',
     ])
     // Was die sieben Zeilen kosten würden, fänden sie ihre Katalogzeile:
     const summe =
@@ -94,12 +121,18 @@ describe('PM-060 — Bad komplett neu fliesen, Nassbereich', () => {
     expect(Math.round(summe * 100) / 100).toBe(1935.94)
   })
 
-  it('PM-060-B 🔴 „Wand" im Titel schickt die Zeile ins Gewerk Maler', () => {
-    // gewerkFuerPosition liest „Wand" und entscheidet auf `maler` — die Zeile
-    // wird danach gegen den MALER-Katalog gehalten und kann ihren Fliesenpreis
-    // gar nicht mehr finden. Betroffen sind die drei Wand-Zeilen des Bades.
+  it('PM-060-B ✅ die drei Wand-Zeilen gehen dorthin, wo ihr Preis steht', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (Engineering, CoS-E-078)
+    //
+    // Auch das war keine Sperrklinke, sondern ein gewöhnliches `it`: es
+    // hielt fest, dass `gewerkFuerPosition` die drei Wand-Zeilen des Bades
+    // zum Maler schickt, und wurde durch den Bau rot. Seit CoS-E-078 geht
+    // Fliesenarbeit VOR der `/wand/`-Regel — die `/wand/`-Regel selbst ist
+    // dabei unangetastet geblieben, ihr Radius gehört dem Maler. Der zweite
+    // Teil der Kontrolle (die Boden-Zwillinge landen richtig) steht
+    // unverändert darunter und war nie betroffen.
     for (const titel of ['Wandfliesen verlegen — Bad', 'Verfugung Wand — Bad', 'Verbundabdichtung Wand — Bad']) {
-      expect(gewerkFuerPosition(titel, 'fliesen')).toBe('maler')
+      expect(gewerkFuerPosition(titel, 'fliesen'), titel).toBe('fliesen')
     }
     // Und die Boden-Zwillinge derselben Arbeit landen richtig:
     for (const titel of ['Bodenfliesen verlegen — Bad', 'Verfugung Boden — Bad', 'Verbundabdichtung Boden — Bad']) {
@@ -114,8 +147,20 @@ describe('PM-060 — Bad komplett neu fliesen, Nassbereich', () => {
     const t = findePreisposition('Verbundabdichtung Wand — Bad', 'm²', nurFliesen)
     expect(t?.position.unit_price).toBe(28)
     expect(Math.round(17.64 * 28 * 100) / 100).toBe(493.92)
-    // …während der Weg, den die App heute geht, nichts findet:
-    expect(preis(pos(), /verbundabdichtung wand/i)).toBeNull()
+    // ── Engineering, 17.09.2026: repariert, nicht umgeschrieben ──────────
+    //
+    // Hier stand `expect(preis(pos(), /verbundabdichtung wand/i)).toBeNull()`
+    // — „…während der Weg, den die App heute geht, nichts findet". Diese
+    // Zeile hat die FEHLSTELLUNG gemessen und ist durch den Bau rot
+    // geworden. Dieselbe Lage, die der Prüfmeister am Morgen bei PM-097-C
+    // selbst repariert hat, mit seinem Satz: *eine Kontrolle, die der Fix
+    // rot macht, ist keine Kontrolle.* Seine Korrektur ist hier angewandt.
+    //
+    // Der Zweck ist unverändert und wiederhergestellt: zu belegen, dass die
+    // Zuordnung davorstand und nicht der Katalog. Die 493,92 € oben sind
+    // sein Betrag und stehen unberührt. Geprüft wird ab jetzt, dass der Weg
+    // der App denselben Preis findet wie der Katalog hergibt.
+    expect(preis(pos(), /verbundabdichtung wand/i)).toBe(28)
   })
 
   it.fails('SOLL: ein aktives Gewerk bringt für jede erzeugte Zeile einen Preis mit', () => {

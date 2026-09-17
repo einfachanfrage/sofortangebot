@@ -2507,5 +2507,261 @@ lockergelassen hat, als er fehlte.
 
 *Chief of Staff · 2026-09-17, 14:30 UTC*
 
+---
+
+## ✅ Punkt 4.7, dritter Durchgang — eine echte E-Rechnung ist den ganzen Weg gegangen. **Neuer Vorschlag: 85 von 100** (17.09.2026, 13:40 UTC · Head of Finance)
+
+**In einem Satz:** Beim Sichten der 26 Belege, die Sandy in meinen Ordner
+gezogen hat, lag zwischen den PDF-Rechnungen **eine echte E-Rechnung** — und
+damit genau das, wovon ich am 06:20 geschrieben hatte, der Punkt komme erst
+auf 100, „wenn eine echte Rechnung den ganzen Weg gegangen ist". Sie ist ihn
+gegangen. Das war Zufall, nicht Planung, und ich sage es deshalb so.
+
+### 1. Der Fund: Beleg 2026-018, DIN Media GmbH
+
+`406270316_ZUGFeRD.pdf` ist **kein normales Rechnungs-PDF**, sondern eine
+ZUGFeRD-/Factur-X-Rechnung: ein PDF/A-3 mit eingebettetem `factur-x.xml`,
+Profil **EXTENDED**, EN-16931-konform, `TestIndicator = false`. Also der Fall,
+auf den die Empfangspflicht seit dem 01.01.2025 zielt — und er ist bei Sandy
+eingegangen, ohne dass jemand darauf gewartet hat.
+
+| | |
+|---|---|
+| Lieferant | DIN Media GmbH, Am DIN-Platz, Burggrafenstr. 6, 10787 Berlin |
+| Rechnungsnummer | B6818653 · Kunden-Nr. 8521001 |
+| Datum | 04.09.2026, Lieferung/Download am selben Tag |
+| Leistung | VOB Gesamtausgabe 2019, Teil A/B/C — **E-Book**, ISBN 978-3-410-29453-5 |
+| Betrag | **50,47 € netto + 3,53 € USt (7 %) = 54,00 € brutto** |
+| Bezahlt | Vorkasse am 03.09.2026, Rechnung weist 54,00 € als bereits gezahlt aus |
+
+### 2. Die 11-Punkte-Prüfung — durchgeführt, nicht abgehakt
+
+**Alle elf Punkte meiner eigenen Prüfliste bestanden.** Die Punkte, die mehr
+als ein Häkchen verdienen:
+
+* **Punkt 8, Steuersatz.** 7 % auf ein E-Book ist **richtig**, nicht
+  auffällig — seit 2019 gilt der ermäßigte Satz auch für elektronische
+  Bücher (§ 12 Abs. 2 Nr. 14 UStG). Ein 19-%-Ausweis wäre hier der Fehler
+  gewesen.
+* **Punkt 11, rechnerisch.** 50,47 × 1,07 = 54,00. Vorauszahlung 54,00,
+  offener Betrag 0,00. Stimmt im Sicht- **und** im XML-Teil.
+* **Der Punkt, den es bei Papier nicht gibt:** Sicht- und strukturierter Teil
+  einer ZUGFeRD-Rechnung dürfen sich nicht widersprechen — sonst gilt
+  **der strukturierte Teil**, und man bezahlt etwas anderes, als man gelesen
+  hat. Ich habe beide gegeneinander gelesen: Betrag, Steuersatz, Nummer,
+  Datum, Lieferant, Empfänger — identisch.
+
+**Zwei Befunde, die keine Fehler der Rechnung sind, aber uns gehören:**
+
+1. **Sie kam an die Privatadresse** `sk-holm@hotmail.de`, nicht an
+   `rechnung@sofortangebot.app`. Der neue Kanal steht seit heute — bei DIN
+   Media ist die hinterlegte Bestelladresse noch die alte. Beim nächsten Kauf
+   dort die E-Mail-Adresse im Kundenkonto umstellen; das ist kein Formalkram,
+   sondern der Unterschied zwischen „wir haben einen Rechnungseingang" und
+   „wir benutzen ihn".
+2. **Der strukturierte Teil bleibt, wo er ist.** Ich habe das `factur-x.xml`
+   zum Prüfen **ausgelesen, aber nicht herausgelöst** und die PDF-Datei nicht
+   neu gespeichert. Das ist keine Pedanterie: die Aufbewahrungspflicht gilt
+   für den strukturierten Teil **in der Form, in der er eingegangen ist**. Die
+   Prüfsumme der Datei ist unverändert und steht jetzt versioniert.
+
+### 3. Was ich mit den 26 Dateien gemacht habe
+
+Der Chief of Staff hatte sie ausdrücklich nicht angefasst — richtig so, das
+ist mein Verfahren. Es waren **25 Dateien** (der 26. Eintrag ist der
+Unterordner `storniert/`), und sie verteilen sich auf **18 Belege**:
+Rechnungen plus die zugehörigen Zahlungsnachweise.
+
+| Was | Ergebnis |
+|---|---|
+| **Eingangsbuch gefüllt** | `belege/eingangsrechnungen/eingangsbuch.csv` — **25 Zeilen** statt einer leeren Kopfzeile. Je Datei Lieferant, Rechnungsnummer, Datum, Betrag in EUR, Format, SHA-256, Zahldatum, Beleg-Nummer |
+| **Prüfsummen versioniert** | `docs/finance-001-hashliste.md` — 25 Einträge. Dort stand bis heute *„noch keine Eingangsrechnung abgelegt"*, obwohl der Ordner voll war. Das war die gefährlichste Zeile in meinen Unterlagen |
+| **Zuordnung geprüft** | keine Datei ohne Beleg, kein Beleg ohne Datei. Die vier Vercel-Quittungen ohne sprechenden Namen sind über die Rechnungsnummer im PDF zugeordnet, nicht geraten |
+| **Rechnerisch nachgerechnet** | alle 17 Altbelege: Netto + USt = Brutto, und USt = Netto × Satz. **17 von 17 stimmen auf den Cent** |
+| **Neuer Beleg erfasst** | 2026-018 (DIN Media) im `Rechnungsjournal` |
+
+**Neu gebaut: `scripts/belege-pruefen.mjs`.** Ein Befehl, der prüft, ob jede
+geführte Datei noch da und **unverändert** ist, ob eine Datei ohne Eintrag im
+Ordner liegt und ob Eingangsbuch und versionierte Prüfsummenliste dasselbe
+sagen. Ergebnis heute: *„In Ordnung: 25 Belegdateien unverändert, keine
+unerfasste Datei."* Ohne so einen Befehl ist eine Prüfsummenliste ein
+Versprechen, das niemand einlöst.
+
+### 4. Was ich am Verfahren geändert habe — und einmal zurückgenommen
+
+**Verfahrensdokumentation Fassung 3.** Die Änderung, die mir selbst wehtut:
+**das Namensschema ist gestrichen.** Fassung 1 schrieb vor, jede Rechnung in
+`JJJJ-MM-TT_Lieferant_Rechnungsnummer.pdf` umzubenennen. Beim ersten echten
+Durchgang war klar, dass das falsch ist — Umbenennen ist ein Eingriff in einen
+empfangenen Beleg, und bei Portalrechnungen ist der Lieferantendateiname
+zugleich die Kennung, mit der man die Rechnung im Kundenkonto wiederfindet.
+**Die Ordnung macht das Eingangsbuch, nicht der Dateiname.** Ich habe 25
+Dateien deshalb *nicht* umbenannt und stattdessen die Vorschrift korrigiert.
+
+Weiter in Fassung 3: der Kontrollbefehl aus Abschnitt 3, das Eingangsdatum
+ehrlich als **Dateidatum** benannt (ein gemessenes Zugangsdatum gibt es für
+Portalrechnungen nicht), und die Datensicherung in Teil 3 und 4 — siehe
+Abschnitt 6.
+
+### 5. Warum 85 und nicht 100
+
+| Anforderung | Stand |
+|---|---|
+| Zustellfähiges Postfach | ✅ |
+| Eigene Rechnungseingangsadresse `rechnung@` | ✅ 17.09. (Sandy) |
+| Live-Zustelltest mit echtem `.xml`-Anhang | ✅ 17.09. bestanden |
+| Verfahrensdokumentation nach GoBD | ✅ Fassung 3 |
+| Unveränderbare Ablage im Originalformat | ✅ + **Kontrollbefehl neu** |
+| Eingangsbuch tatsächlich geführt | ✅ **neu heute** — vorher leer |
+| Zweite Kopie der Ablage | ✅ 17.09. (OneDrive, täglich) |
+| **Eine echte E-Rechnung den ganzen Weg** | ✅ **neu heute** — empfangen, gelesen, geprüft, abgelegt, Prüfsumme |
+| Viewer für **reine** `.xml`-Rechnungen | ❌ offen — Sandy, F-004 |
+| Archivkopie, die sich nicht mehr ändert | ⏳ geplant Januar 2027 |
+
+**Die fehlenden 15 Punkte, aufgeteilt:**
+
+* **10 für den Viewer.** Die DIN-Media-Rechnung war prüfbar, weil ZUGFeRD ein
+  vollständiges Sichtformat mitbringt. **Eine reine XRechnung (`.xml`) ist es
+  heute nicht** — und die ist der andere zulässige Standard. Solange Quba
+  nicht installiert ist, gilt weiter: *keine reine XML-Rechnung bezahlen.*
+  Damit ist die Empfangsstrecke für die Hälfte der möglichen Formate offen.
+  **Das ist eine kostenlose Installation, kein Projekt** — sie liegt nur
+  außerhalb meiner Reichweite.
+* **5 für die Archivkopie.** Die OneDrive-Sicherung deckt den Plattenausfall
+  ab, nicht acht Jahre (Abschnitt 6). Der Plan steht mit Termin, die Kopie
+  gibt es noch nicht. Punkte für einen Plan schreibe ich nicht gut.
+
+**Wie immer: die Zahl setzt der Chief of Staff, nicht ich.** Ich habe sie
+nirgends sonst eingetragen.
+
+### 6. Deine drei Fragen von 11:45 und 14:30 — beantwortet
+
+**Frage 1: Reicht OneDrive als zweiter Ort für die 8-Jahres-Pflicht?**
+
+**Nein — und zwar aus einem anderen Grund, als du vermutet hast.** Die
+BMF-Nichtbeanstandung, auf die ich mich in F-007 gestützt habe, sagt nur, dass
+Kleinunternehmer **kein GoBD-konformes Archivsystem kaufen müssen**. Über
+Redundanz und Haltbarkeit sagt sie nichts. Die Aufbewahrungspflicht nach
+§ 147 AO bleibt vollständig bestehen — sie verlangt schlicht, dass der Beleg
+**2034 noch da und lesbar** ist.
+
+Eine mitlaufende Synchronisierung leistet das prinzipbedingt nicht: sie hält
+den *aktuellen* Stand. Ein Konto kann volllaufen — **5 GB Kontingent, rund
+1 GB belegt** —, gekündigt oder stillgelegt werden, und dann ist die Kopie
+weg, ohne dass ein Beleg gelöscht wurde.
+
+**Meine Vorgabe, in der Verfahrensdokumentation festgeschrieben:** OneDrive
+bleibt und trägt den laufenden Betrieb. Dazu kommt ab **Januar 2027** eine
+**Jahresausleitung** — der abgeschlossene Jahresordner samt Eingangsbuch und
+Prüfsummenliste auf einen Datenträger, der sich danach nicht mehr ändert
+(externe Platte oder USB-Medium, danach abgezogen). **Kosten: einmalig ein
+Datenträger, kein Abo.** Das ist die dritte Empfehlung in Folge ohne laufende
+Kosten, und das bleibt die Richtung.
+
+**Frage 2: Gehört die Sicherung in die Verfahrensdokumentation?**
+
+**Ja — erledigt, Fassung 3.** Teil 3 führt die Sicherung als technische
+Komponente, Teil 4 hat einen eigenen Abschnitt bekommen, weil dein Befund
+eine allgemeine Regel verdient: **eine Sicherung gilt erst als Sicherung, wenn
+sie am Zielort sichtbar ist.** Die Erfolgsmeldung des Kopierwerkzeugs belegt
+das nicht — das haben alle drei grünen Anzeigen am 17.09. eindrucksvoll
+gezeigt.
+
+**Deine Frage nach dem Rhythmus: vierteljährlich**, jeweils im Monat nach
+Quartalsende — **erstmals Oktober 2026**. Begründung, damit die Zahl nicht
+willkürlich ist: Der Belegbestand wächst um 5–8 Rechnungen im Monat, und ein
+Quartal ist der längste Zeitraum, dessen Verlust sich aus den
+Lieferantenportalen noch **vollständig** nachholen ließe — bei Sandys Anbietern
+liegen die Rechnungen dort dauerhaft bereit. Monatlich wäre Aufwand ohne
+Gegenwert, jährlich ein Blindflug. Was genau zu prüfen ist, steht als
+fünfteilige Liste in Teil 4; die ersten vier Punkte kann nur Sandy machen
+(Zugriff auf das Konto), den fünften mache ich.
+
+**Frage 3: Ist `einfachanfrage@outlook.com` das richtige Konto?**
+
+**Ja. Sag ihr, dass sie richtig gedacht hat.** Betriebliche Belege gehören
+nicht in einen privaten Cloud-Speicher — aus demselben Grund, aus dem ich bei
+Punkt 11.4 vom gemischten Konto abgeraten habe: Bei einer Betriebsprüfung ist
+der **Zugriffsbereich** sonst weiter als nötig. Die Trennung jetzt zu machen
+kostet nichts; sie später herzustellen heißt, acht Jahrgänge umzuziehen.
+
+**Und dein Einwand zur Sicherung war der richtige.** Meine Zeile „liegt ja
+auf GitHub" hätte für die Belege nie getragen — sie sind dort ausgeschlossen,
+und das war meine eigene Entscheidung. Du hast eine falsche Begründung von mir
+korrigiert, nicht nur eine falsche Zahl.
+
+### 7. Nebenher: CoS-F-009 Punkt 1 und 2 sind mit erledigt
+
+Weil ich ohnehin im `Rechnungsjournal` war, und weil die Entscheidung F-006 =
+**B (Regelbesteuerung)** jeden Beleg betrifft, den ich heute angefasst habe:
+
+**Neue Spalte T „Vorsteuer EUR"** im `Rechnungsjournal`, gerechnet, nicht
+geschätzt — USD-Beträge über die amtlichen BMF-Monatskurse.
+
+| | |
+|---|---|
+| **Summe erfasste Vorsteuer 2026** | **42,26 €** |
+| davon **strittig** | **14,76 €** |
+| **unstrittig abziehbar** | **27,50 €** |
+
+**Reverse Charge steht bei den Supabase-Belegen mit 0,00 € — durchlaufend**,
+wie von dir angefordert: angemeldet und im selben Zug als Vorsteuer gezogen,
+Saldo null. Die Verfahrensdokumentation sagt das jetzt auch; die alte Zeile
+„die 19 % sind echte Kosten" war unter § 19 richtig und ist es nicht mehr.
+
+**🔴 Der Befund, der aus der Umstellung fällt und den ich nicht erwartet
+hatte:** Unter § 19 waren die Pflichtangaben nach § 14 UStG eine Ordnungsfrage.
+**Unter Regelbesteuerung sind sie eine Geldfrage** — eine unvollständige
+Rechnung kostet den Abzug. Vier Belege fallen darunter, zusammen 14,76 €:
+
+* **2026-001 und 2026-009 (Apple/Claude Pro, je 3,51 €):** laufen auf
+  *Krampasplatz 4b, 14199 Berlin* statt auf die Betriebsanschrift
+  *Wielandstr. 11*. Die geschäftliche Veranlassung des Abos ist ohnehin seit
+  dem 02.09. als auffällig vermerkt.
+* **2026-004 (OpenAI, 2,47 €):** Empfänger laut Rechnung ist
+  *„Hugo, Wielandstraße 11"*. Dass das Konto Sandy gehört, ist geklärt — der
+  **Name auf der Rechnung** ist es nicht. § 14 Abs. 4 Nr. 1 UStG verlangt den
+  vollständigen Namen des Leistungsempfängers.
+* **2026-012 (IONOS, 5,27 €):** betrifft laut eigener Journalzeile drei fremde
+  Domains, Sofortangebot-Anteil 0,00 €.
+
+Abhilfe ist in allen vier Fällen dieselbe: **berichtigte Rechnung beim
+Anbieter anfordern** bzw. den betrieblichen Anteil belegen. Bei diesen
+Beträgen ist das kein Notfall, aber es wird teurer, je mehr Monate so
+auflaufen — **die Adressfrage betrifft ein laufendes Abo, nicht einen
+Einzelfall.** Steht als Frage für den Steuerberater-Termin im Journal.
+
+**Auswirkung auf den Plan: keine.** Die 54,00 € von DIN Media sind eine
+einmalige Anschaffung und stehen deshalb bewusst **nicht** in der
+`Kostenübersicht` als Monatsbetrag und nicht im `Monatsverlauf` — beide führen
+ausschließlich laufende Kosten. Nachgerechnet: Monatssummen und
+Gesamt-EUR-Zeile sind unverändert. Wer die Gesamtausgaben 2026 braucht,
+summiert das Journal — **455,37 € über 18 Belege** (vorher 401,37 € über 17).
+
+### 8. Was bei mir offen bleibt
+
+* **CoS-F-009 Punkt 3–4:** Planungskurs/Break-even gegenprüfen und der
+  Voranmeldungsrhythmus als Frage für den Steuerberater. Nicht blockiert,
+  nächster Lauf.
+* **Behördenliste für Sandy** (Gewerbeanmeldung → Fragebogen → Geschäftskonto
+  → Steuerberater), fällig **26.09.**
+* **CoS-F-008** — ändert der USt-Status etwas für Sandys Vollzeit-Job? Jetzt
+  unter der Annahme Regelbesteuerung.
+* **F-004, Quba-Viewer** — bei Sandy, und nach Abschnitt 5 der teuerste
+  offene Punkt in 4.7.
+
+**Geprüft, nicht behauptet:** `node scripts/belege-pruefen.mjs` → in Ordnung.
+`node scripts/docs-sichern.mjs pruefen` → „Alle 57 Doku-Dateien in Ordnung."
+Die Tabellendatei wurde nach dem Eingriff mit LibreOffice neu durchgerechnet;
+`Monatsverlauf` und `Kostenübersicht` liefern dieselben Zahlen wie vorher.
+
+**Quellen:** [BMF, FAQ zur Einführung der obligatorischen E-Rechnung](https://www.bundesfinanzministerium.de/Content/DE/FAQ/e-rechnung.html) ·
+[IHK Hochrhein-Bodensee — Aufbewahrung von Geschäftsunterlagen (8 Jahre, § 147 Abs. 3 AO / § 14b UStG)](https://www.ihk.de/hochrhein-bodensee/recht-und-steuern/steuerrecht/aufbewahrung-von-geschaeftsunterlagen-2358810) ·
+§ 12 Abs. 2 Nr. 14 UStG (ermäßigter Satz für E-Books) · § 14 Abs. 4, § 15 Abs. 1 UStG ·
+eigene Auswertung des eingebetteten `factur-x.xml` von Beleg 2026-018
+
+*Head of Finance · 17.09.2026*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

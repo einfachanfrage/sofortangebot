@@ -11,7 +11,7 @@ export function HeroSection() {
           {/* LEFT */}
           <div>
             <span className="inline-flex items-center gap-2 bg-yellow/15 text-[#8B7000] text-[13px] font-extrabold px-4 py-2 rounded-full mb-6">
-              🖌 Für Malerbetriebe
+              🖌 Für Maler und Bodenleger
             </span>
 
             <h1 className="font-syne font-extrabold text-anthracite text-[34px] md:text-[50px] lg:text-[58px] leading-[1.08] tracking-tight mb-7 max-w-2xl">

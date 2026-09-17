@@ -50,7 +50,18 @@ export interface PositionFuerPruefung {
  * echten Preiseintrag und ist eine Entscheidung, kein Loch.
  */
 export function unbepreistePositionen<T extends PositionFuerPruefung>(items: T[]): T[] {
-  return items.filter(i => !i.price_item_id && (i.unit_price ?? 0) <= 0)
+  return items.filter(i => preisFehlt(i))
+}
+
+/**
+ * Dieselbe Bedingung für eine einzelne Zeile.
+ *
+ * Sie stand bis DC-125 dreimal im Projekt: hier, als roter Kasten in der
+ * Bearbeiten-Ansicht (`AngebotDetail.tsx`) und sinngemäß im Kopf jedes
+ * Lesers. Jetzt einmal — wer die Regel ändert, ändert sie überall.
+ */
+export function preisFehlt(i: PositionFuerPruefung): boolean {
+  return !i.price_item_id && (i.unit_price ?? 0) <= 0
 }
 
 export interface VersandPruefung {
@@ -88,4 +99,62 @@ export function versandHindernisse(p: VersandPruefung): string[] {
 /** Kurzform für Knöpfe und Routen. */
 export function darfZumKunden(p: VersandPruefung): boolean {
   return versandHindernisse(p).length === 0
+}
+
+// ── DC-125 — Die Nullzeile als Produktregel (Chief of Staff, 17.09.2026) ───
+//
+// Seine Entscheidung, wörtlich: „Eine Zeile ohne Betrag darf ein
+// Kundenangebot nicht verlassen." Der Versand ist dafür oben seit Manfreds
+// Testlauf gesperrt. Was ab hier dazukommt, ist die ANZEIGE-Seite derselben
+// Regel — und sie ist nötig, weil der Versand nicht der einzige Weg zum
+// Kunden ist: „PDF herunterladen" im Aktionen-Sheet erzeugt dasselbe Blatt,
+// ohne durch `darfZumKunden` zu gehen, und der Handwerker verschickt es
+// danach selbst über WhatsApp oder sein eigenes Mailprogramm.
+//
+// PM-117 hat gemessen, wie das heute aussieht: auf einem gewöhnlichen
+// Badangebot finden sechs von neun Positionen keinen Preis, jede steht mit
+// „0,00 €" da, und darunter eine Summe von 543,84 € statt 2.980,44 €. Der
+// Prüfmeister dazu (PD-022): „Eine Liste mit sechs Nullen und einer Summe,
+// die offensichtlich falsch ist, ist schlimmer als gar keine Summe."
+//
+// Daraus zwei Sätze, die zusammengehören:
+//
+//   1. **Eine Position ohne Preis zeigt keinen Betrag.** „0,00 €" ist eine
+//      Behauptung — nämlich die, dass diese Arbeit nichts kostet. Das ist
+//      genau die Aussage, die der Handwerker am Ende ausführen müsste.
+//      `PREIS_FEHLT_KURZ` steht stattdessen dort und ist mit nichts
+//      verwechselbar.
+//   2. **Eine Summe, in der eine solche Position steckt, ist kein
+//      Gesamtbetrag.** Auf dem Kundenpapier (PDF und Vorschau) steht dann
+//      gar keine Zahl, sondern der Satz aus `fehlendePreiseSatz()`. In der
+//      Arbeitsansicht bleibt die Zahl stehen, heißt aber „Zwischenstand".
+//
+// Der Unterschied zwischen beiden Orten ist Absicht und nicht Bequemlichkeit:
+// Der Handwerker BRAUCHT die mitwandernde Summe, während er tippt (CoS-026).
+// Der Kunde darf sie nicht bekommen, solange sie nicht stimmt.
+//
+// Was hier bewusst NICHT passiert — zum zweiten Mal in dieser Datei, aus
+// demselben Grund: die unbepreiste Zeile weglassen. Sie bleibt stehen, sie
+// sagt nur nicht mehr „0,00 €".
+
+/** Was in der Betragsspalte steht, wenn kein Preis da ist. */
+export const PREIS_FEHLT_KURZ = 'fehlt'
+
+/** Die IDs der Positionen ohne Preis — für Renderpfade, die nur noch die ID haben. */
+export function idsOhnePreis<T extends PositionFuerPruefung & { id: string }>(items: T[]): Set<string> {
+  return new Set(unbepreistePositionen(items).map(i => i.id))
+}
+
+/**
+ * Der eine Satz, der die fehlende Summe ersetzt.
+ *
+ * Er nennt die Zahl, weil „ein paar Positionen" nichts wert ist: Bei sechs
+ * von neun weiß der Handwerker sofort, dass er nicht eine Zeile nachträgt,
+ * sondern dass sein Katalog eine Lücke hat.
+ */
+export function fehlendePreiseSatz(ohnePreis: number, gesamt: number): string {
+  if (ohnePreis <= 0) return ''
+  if (ohnePreis === 1) return 'Bei einer Position fehlt noch der Preis.'
+  if (ohnePreis >= gesamt) return `Bei allen ${ohnePreis} Positionen fehlt noch der Preis.`
+  return `Bei ${ohnePreis} von ${gesamt} Positionen fehlt noch der Preis.`
 }

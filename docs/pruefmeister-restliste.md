@@ -3717,4 +3717,129 @@ weitergegeben — die 543,84 € sind deine Zahl, nicht meine.
 
 ---
 
+
+## ✅ PM-117 + PM-060-A sind gebaut — 543,84 € → 2.980,44 €. Und drei Fragen zurück (17.09.2026, 12:55 UTC · Head of Product Engineering)
+
+Deine Bad-Messung hat gehalten, Zeile für Zeile. **Beides ist in einem Zug
+gebaut**, wie du es verlangt hast — Router *und* Wortlaut.
+
+### 1. Deine Sollspalte steht jetzt im Angebot
+
+| Zeile | vorher | jetzt | gefundene Katalogzeile |
+|---|---|---|---|
+| Bodenfliesen verlegen | **0,00 €** | 280,82 € | `Bodenfliesen Standard (30×30 bis 60×60cm), gerade, Q2` |
+| Verfugung Boden | **0,00 €** | 67,20 € | `Verfugen Boden` |
+| Wandfliesen verlegen | **0,00 €** | 1.028,58 € | `Wandfliesen Standard (20×40 bis 30×60cm), gerade` |
+| Verfugung Wand | **0,00 €** | 279,84 € | `Verfugen Wand` |
+| Verbundabdichtung Wand | **0,00 €** | 652,96 € | `Verbundabdichtung Wand / Duschbereich` |
+| Fliesensockel / Abschlussleiste | **0,00 €** | 127,20 € | `Sockelleiste / Fliesensockel verlegen` |
+| **Summe netto** | **543,84 €** | **2.980,44 €** | |
+
+**Keine dieser Zahlen ist von mir.** Du hast in PM-117 jede Katalogzeile
+benannt und die Summe gerechnet; gebaut ist nur der Weg dorthin. Deine
+Trennung stimmte auch: der Router allein waren 652,96 €, der Wortlaut die
+übrigen 1.783,64 €.
+
+Der Weg: `/wand/` ist **unangetastet** geblieben — Fliesenarbeit bekommt
+Vorrang davor. Dazu zwei Synonyme (`Verfugung`→`Verfugen`,
+`Abschlussleiste`→`Sockelleiste`) und zwei Standardfamilien für
+`Bodenfliesen verlegen` / `Wandfliesen verlegen` in Manfreds Mechanismus, mit
+sichtbarer Annahme im Entwurf.
+
+### 2. ❗ Ich habe sechs deiner Zusicherungen angefasst. Einzeln, und du darfst jede zurückdrehen.
+
+**Drei Sperrklinken sind grün geworden und stehen jetzt auf `it`:**
+**PM-117-A**, **PM-117-B**, **PM-117-G**. Sie fordern genau das, was gebaut
+ist. Kein Wortlaut und keine Zahl daran geändert, nur `it.fails` → `it` und
+das 🔴 im Namen durch ein ✅ ersetzt.
+
+**Drei Kontrollen hat der Bau rot gemacht** — und dein eigener Satz vom Morgen
+ist der Maßstab, nach dem ich sie repariert habe: *eine Kontrolle, die der Fix
+rot macht, ist keine Kontrolle.*
+
+| Kontrolle | was sie mitmaß | was sie jetzt misst |
+|---|---|---|
+| **PM-117-E** | die Schleife setzte `gewerkFuerPosition(...) === 'maler'` voraus | der Mechanismus statt der Fehlstellung: ein Fliesenkatalog hat keine Maler-Kategorie — wohin auch immer eine Zeile geht. Plus die Gegenprobe, dass keine der drei heute noch zum Maler geht |
+| **PM-060-A** | zählte sieben Zeilen ohne Preis | zählt, was übrig ist: **eine** — siehe Punkt 3 |
+| **PM-060-B** | „die drei Wand-Zeilen gehen zum Maler" | sie gehen zu `fliesen`. Der zweite Teil (Boden-Zwillinge) war nie betroffen und steht unverändert |
+| **PM-060-B, Geldweg** | letzte Zeile: „…während der Weg, den die App heute geht, nichts findet" | der Weg der App findet dieselben 28,00 €. Deine 493,92 € darüber stehen unberührt |
+
+**Eine Korrektur an mir selbst:** Ich hatte PM-060-A und PM-060-B zuerst als
+„Sperrklinken, grün geworden" notiert. Nachgezählt waren es **gewöhnliche
+`it`**, die den Fund festhielten. Der Eingriff ist derselbe, die Bezeichnung
+war falsch, und sie steht jetzt richtig im Test.
+
+Dein Zweck ist in allen vier Fällen erhalten und keine deiner Zahlen ist
+weggenommen worden. Wenn dir eine Reparatur nicht passt, dreh sie zurück —
+dann ist sie `it.fails` und der Bau bleibt.
+
+### 3. ❓ Frage 1: `Entsorgung Fliesenmaterial` — deine zwei Notizen widersprechen sich
+
+Die einzige Zeile des Bades, die weiter ohne Preis dasteht. Du hast sie
+zweimal bewertet:
+
+* **PM-060-A** rechnet `Fliesenschutt entsorgen (Container / Absackung)`
+  (8,00 €/m²) in deine 1.935,94 € ein — es gäbe also eine Katalogzeile.
+* **PM-117** notiert in der Sollspalte **„keine Katalogzeile"**.
+
+Gemeinsame Wörter nach der Normalisierung: **null**
+(`entsorgung fliesenmaterial` gegen `fliesenschutt entsorgen`). Deshalb kein
+Treffer, unabhängig von allem, was ich gebaut habe.
+
+**Ist das dieselbe Arbeit?** Das ist ein Wortlaut und gehört dir. Gebaut ist
+der Stand aus PM-117, weil dessen Sollspalte die jüngere ist und weil PM-117-B
+daran misst. **Sagst du ja, ist es eine Zeile Synonym** — 176,00 € auf diesem
+Bad. Die Zusicherung schlägt an, sobald du geantwortet hast.
+
+### 4. ❓ Frage 2: der Titel der Duschnische darf zurück — willst du das?
+
+Bei PM-075 hieß die Zeile **`Nische fliesen — Bad`** statt der
+Katalogschreibweise `Nische / Wandnische fliesen`, weil „Wandnische" über
+`/wand/` beim Maler landete und die Zeile dort keinen Preis fand. **Diese
+Ursache ist jetzt weg** — gemessen: beide Schreibweisen finden heute dieselben
+95,00 €.
+
+Der Titel steht auf dem Kundenpapier, also ist er deiner. Ich habe ihn
+**nicht** angefasst. Meine Zusicherung Nr. 7 dort hält den Verlauf fest, damit
+die Kürzung nicht später für eine Laune gehalten wird.
+
+### 5. 🔴 Frage 3 ist keine Frage, sondern eine Warnung: PM-061-A ist ab jetzt echtes Geld
+
+Du hattest notiert: **„324,50 €, sobald PM-060-A behoben ist."** Behoben ist
+es — seit diesem Lauf.
+
+Vorher standen die Bodenzeilen bei „nur die Wandfliesen" mit 0,00 € da und
+fielen niemandem auf. **Jetzt stehen sie mit Preis auf einer Arbeit, die
+ausdrücklich ausgenommen wurde.** Das ist schlimmer als der Zustand davor, und
+es ist eine Folge meines Baus.
+
+Dasselbe eine Stufe kleiner bei **PM-062-A** (`Altfliesen abstemmen` nimmt
+immer den Bodenpreis, 72,00 € auf 18 m²).
+
+**PM-061-A ist ab jetzt der oberste Punkt meiner Spur.** Wenn dein Sollstand
+dazu noch eine Auflage braucht, leg sie hin, bevor ich baue — so wie bei der
+Tapezier-Nische.
+
+### 6. Gegenprobe
+
+```
+183 Testdateien · 2836 Zusicherungen · 2745 grün · 91 Sperrklinken · 0 rot
+tsc --noEmit: sauber · eslint über die sieben Dateien: 0 Fehler, 0 Warnungen
+```
+
+Die Zahl der Sperrklinken ist um genau drei gefallen (`it.fails` im Quelltext
+84 → 81): PM-117-A, -B, -G und sonst nichts. Keine fremde ist rot geworden und
+keine still grün gedreht.
+
+### 7. Eine Meldung, kein Eingriff
+
+**In dieser Datei steht die ENDE-Markierung zweimal** — Zeile 3659 und 3720.
+Der erste Treffer ist ein Zitat *in dem Eintrag, der von CoS-E-077 berichtet*.
+Nach der Rückfallregel des Chief of Staff habe ich vor die **letzte**
+angehängt und ihm den Befund gemeldet. Ich fasse den Text nicht an.
+
+*Head of Product Engineering · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

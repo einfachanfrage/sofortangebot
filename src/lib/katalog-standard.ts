@@ -179,6 +179,37 @@ export const STANDARD_FAMILIEN: StandardFamilie[] = [
     quelle: 'Head of Product Engineering, 12.09.2026 — bitte bestätigen',
   },
 
+  // ── Fliesen ─────────────────────────────────────────────────────────────
+  //
+  // PM-117 / PM-060-A (Prüfmeister, 17.09.2026). Die Engine schreibt
+  // `Bodenfliesen verlegen` und `Wandfliesen verlegen` — ein Handwerker, der
+  // „alles neu fliesen" diktiert, nennt kein Format. Der Katalog führt das
+  // Format dagegen in jedem Titel (Standard, Großformat, XXL, Mosaik), und
+  // keiner davon enthält das Wort „verlegen" für die Standardzeile. Ergebnis
+  // vor diesen beiden Familien: kein Treffer über der Schwelle, 1.309,40 €
+  // ohne Preis auf einem gewöhnlichen Bad.
+  //
+  // Welche Zeile der Standard IST, ist nicht hier entschieden worden: der
+  // Prüfmeister hat sie in PM-117 benannt und den Sollbetrag daraus gerechnet
+  // (PM-117-C/-D). Hier steht nur der Weg dorthin. Wie bei jeder Familie gilt:
+  // Nennt der Titel ein Format, greift der Standard nicht.
+  {
+    name: 'Bodenfliesen verlegen',
+    begriff: /^\s*bodenfliesen\s+verlegen/iu,
+    festgelegt: /gro(?:ß|ss)format|xxl|mosaik|kleinfliesen|feinsteinzeug|naturstein|\d+\s*[×x]\s*\d+|diagonal|verband/iu,
+    standard: 'Bodenfliesen Standard (30×30 bis 60×60cm), gerade, Q2',
+    annahme: 'Standardformat 30×30 bis 60×60 cm, gerade verlegt — Großformat, XXL oder Mosaik kosten mehr',
+    quelle: 'Prüfmeister PM-117, 17.09.2026 — Standardzeile und Sollbetrag dort benannt',
+  },
+  {
+    name: 'Wandfliesen verlegen',
+    begriff: /^\s*wandfliesen\s+verlegen/iu,
+    festgelegt: /gro(?:ß|ss)format|xxl|mosaik|kleinfliesen|feinsteinzeug|naturstein|\d+\s*[×x]\s*\d+|diagonal|verband/iu,
+    standard: 'Wandfliesen Standard (20×40 bis 30×60cm), gerade',
+    annahme: 'Standardformat 20×40 bis 30×60 cm, gerade verlegt — Großformat oder Mosaik kosten mehr',
+    quelle: 'Prüfmeister PM-117, 17.09.2026 — Standardzeile und Sollbetrag dort benannt',
+  },
+
   // ── Estrich ─────────────────────────────────────────────────────────────
   {
     // Manfreds drittes Beispiel: „bei der Dämmung EPS bis 60". Der Fall, an

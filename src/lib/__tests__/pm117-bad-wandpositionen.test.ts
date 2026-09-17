@@ -97,7 +97,7 @@ describe('PM-117 — der Preisweg eines gewöhnlichen Badangebots', () => {
 
   // ── Die Antwort auf Engineerings Frage ──────────────────────────────────
 
-  it.fails('PM-117-A 🔴 Soll: keine der drei Wandzeilen steht mit 0,00 € im Angebot', () => {
+  it('PM-117-A ✅ Soll erfüllt: keine der drei Wandzeilen steht mit 0,00 € im Angebot', () => {
     // GEMESSEN 17.09.2026: alle drei stehen mit 0,00 € da. Das ist die
     // Antwort — es ist eine Null, und sie trifft jedes Bad.
     const nullzeilen = WANDZEILEN
@@ -107,7 +107,7 @@ describe('PM-117 — der Preisweg eines gewöhnlichen Badangebots', () => {
     expect(nullzeilen).toEqual([])
   })
 
-  it.fails('PM-117-B 🔴 Soll: das Bad ist so viel wert, wie der Katalog dafür hergibt', () => {
+  it('PM-117-B ✅ Soll erfüllt: das Bad ist so viel wert, wie der Katalog dafür hergibt', () => {
     // GEMESSEN: 543,84 € statt 2.980,44 €. Auf dem Kundenpapier steht ein
     // komplett neu gefliestes Bad für unter 550 € — das unterschreibt kein
     // Betrieb und es glaubt ihm kein Kunde.
@@ -142,10 +142,27 @@ describe('PM-117 — der Preisweg eines gewöhnlichen Badangebots', () => {
     const fliesenkatalog = standardpreiseFuerGewerke(['fliesen'])
     expect(fliesenkatalog.length).toBeGreaterThan(90)
     expect(fliesenkatalog.filter(p => /^Maler/i.test(p.category))).toEqual([])
+    // ── Engineering, 17.09.2026: repariert, nicht umgeschrieben ───────────
+    //
+    // Hier stand zusätzlich eine Schleife über die drei Wandzeilen, die
+    // `gewerkFuerPosition(...) === 'maler'` voraussetzte und daraus die
+    // leere Kandidatenliste ableitete. Sie hat damit die FEHLSTELLUNG
+    // mitgemessen und ist durch den Bau rot geworden — dieselbe Lage, die
+    // der Prüfmeister am Morgen bei PM-097-C selbst repariert hat, mit
+    // seinem Satz: *eine Kontrolle, die der Fix rot macht, ist keine
+    // Kontrolle.* Seine Korrektur ist hier angewandt.
+    //
+    // Der Zweck bleibt Wort für Wort derselbe und ist wiederhergestellt: zu
+    // belegen, WARUM es eine Null war und kein schlechter Treffer. Geprüft
+    // wird jetzt der Mechanismus statt der inzwischen behobenen
+    // Fehlstellung — wohin auch immer eine Zeile geroutet wird: landet sie
+    // beim Maler, sieht der Matcher im Katalog eines Fliesenlegers nichts.
+    // Kein Wortlaut der Welt hilft dann.
+    expect(FLIESENBETRIEB.filter(k => preisKategoriePasstZuGewerk(k.category, 'maler'))).toEqual([])
+    // Und die Gegenprobe zum Bau: keine der drei geht heute noch dorthin.
     for (const re of WANDZEILEN) {
       const z = finde(pos, re)
-      const gewerk = gewerkFuerPosition(z.beschreibung, 'fliesen')
-      expect(FLIESENBETRIEB.filter(k => preisKategoriePasstZuGewerk(k.category, gewerk)), z.beschreibung).toEqual([])
+      expect(gewerkFuerPosition(z.beschreibung, 'fliesen'), z.beschreibung).toBe('fliesen')
     }
   })
 
@@ -157,7 +174,7 @@ describe('PM-117 — der Preisweg eines gewöhnlichen Badangebots', () => {
     expect(summe(pos, VOLL, 'fliesen')).toBe(summe(pos, VOLL, 'allrounder'))
   })
 
-  it.fails('PM-117-G 🔴 Soll: der Router-Anteil allein sind 652,96 € — und er ist nur ein Drittel', () => {
+  it('PM-117-G ✅ Soll erfüllt: der Router-Anteil allein sind 652,96 € — und er ist nur ein Drittel', () => {
     // `Verbundabdichtung Wand` ist die EINZIGE der drei, die im
     // Fliesenkatalog einen Treffer findet (Score 0,94). Sie ist damit das,
     // was ein Router-Fix allein freimacht. Die Sperrklinke steht hier, damit

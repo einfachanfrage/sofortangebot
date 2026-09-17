@@ -2,13 +2,25 @@
 
 import { motion } from 'framer-motion'
 
+// Head of Marketing, 17.09.2026 — Finance-Korrektur 5 (Landingpage, Punkt 9.1):
+// DATEV stand unter dem gruenen Punkt „Bereits integriert", hat aber keine
+// Route unter src/app/api/integrations/ und traegt in accounting-options.ts
+// tier: 'csv'. Eine Tatsachenbehauptung ueber etwas, das es nicht gibt —
+// deshalb nach unten zu den Exporten, mit „(CSV)" im Namen, damit die Zeile
+// die beiden Sorten nicht wieder vermischt.
+// Ebenfalls hier: „Lexware" heisst als Produkt „Lexware Office"
+// (accounting-options.ts, DC-019).
+// NICHT geaendert, mit Absicht: FastBill, Billomat, Papierkram und Easybill
+// haben echte Direktverbindungen (je eigene route.ts, eigene Key-Spalte) und
+// gehoeren eigentlich nach oben. Sie bleiben unten, bis Sandys
+// Buchhaltungs-Testlauf einmal durchgeklickt ist — Punkt 11.5 in
+// launch-readiness.md steht auf 0 %, „nicht erhoben".
 const hauptIntegrationen = [
-  { name: 'Lexware' },
+  { name: 'Lexware Office' },
   { name: 'sevDesk' },
-  { name: 'DATEV' },
 ]
 
-const weitereIntegrationen = ['FastBill', 'Billomat', 'Papierkram', 'Easybill', 'PlanCraft', 'CSV-Export']
+const weitereIntegrationen = ['FastBill', 'Billomat', 'Papierkram', 'Easybill', 'DATEV (CSV)', 'Sage (CSV)', 'PlanCraft (CSV)']
 
 export function IntegrationenSection() {
   return (
@@ -48,7 +60,7 @@ export function IntegrationenSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4, delay: 0.15 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-12"
+          className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-12"
         >
           {hauptIntegrationen.map((integration) => (
             <div

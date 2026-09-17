@@ -7,13 +7,13 @@ const aktiv = [
     emoji: '🎨',
     gewerk: 'Maler & Lackierer',
     positionen: ['Innenanstrich', 'Lackierarbeiten', 'Spachteln', 'Tapeten', 'Fassaden'],
-    hinweis: 'Über 300 vorbereitete Positionen',
+    hinweis: 'Über 200 vorbereitete Positionen',
   },
   {
     emoji: '🏠',
     gewerk: 'Bodenbeläge & Parkett',
     positionen: ['Vinyl', 'Laminat', 'Parkett', 'Teppich', 'Sockelleisten'],
-    hinweis: 'Über 200 vorbereitete Positionen',
+    hinweis: 'Über 180 vorbereitete Positionen',
   },
 ]
 

@@ -26,7 +26,7 @@ const features = [
   {
     emoji: '🔗',
     name: 'Buchhaltung verbinden',
-    desc: 'Angebot und Rechnung landen direkt in Lexoffice oder sevDesk. Nie wieder Daten doppelt eingeben.',
+    desc: 'Das fertige Angebot landet direkt in Lexware Office oder sevDesk. Nie wieder Daten doppelt eingeben.',
   },
   {
     emoji: '💡',
@@ -41,7 +41,7 @@ const killer = [
   { label: 'Deine Firmenvorlagen', desc: 'Logo, Zahlungsziel, Angebotsnummern und Briefpapier automatisch.' },
   { label: 'Kleinmaterial & Anfahrt', desc: 'Pauschalen einmal einstellen — landen automatisch auf jedem Angebot.' },
   { label: 'Regionale Preisfaktoren', desc: 'Preise an deinen Standort angepasst — München rechnet anders als Dessau.' },
-  { label: 'E-Rechnung & GoBD', desc: 'ZUGFeRD, fortlaufende Nummernkreise, digitale Unterschrift — rechtssicher.' },
+  { label: 'Fortlaufende Angebotsnummern', desc: 'Jedes fertige Angebot bekommt seine Nummer — lückenlos, ohne dass du mitzählst.' },
 ]
 
 export function FeaturesSection() {

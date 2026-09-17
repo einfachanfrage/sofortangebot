@@ -4,6 +4,7 @@ import type { AngebotsFoto } from '@/lib/angebot-fotos'
 import type { Quote, QuoteItem, Company, Customer, Briefpapier } from './types'
 import { gruppiereNachStruktur } from './angebot-struktur'
 import { raeumeAusQuote, istAllgemeinPosition, ohneNullzeilen } from './angebot-gruppierung'
+import { idsOhnePreis, PREIS_FEHLT_KURZ, fehlendePreiseSatz } from './versandbereit'
 import {
   widerrufsbelehrungText, musterWiderrufsformular,
   WERTERSATZ_UEBERSCHRIFT, WERTERSATZ_ERKLAERUNG, WERTERSATZ_HINWEIS,
@@ -201,6 +202,12 @@ const S = StyleSheet.create({
   einheitText: { fontSize: 9, color: '#555555', textAlign: 'center' },
   einzelText: { fontSize: 9, color: '#333333', textAlign: 'right' },
   gesamtText: { fontSize: 9, color: '#111111', textAlign: 'right' },
+  // DC-125: Die Betragsspalte einer Position ohne Preis. Rot, weil sie auf
+  // diesem Blatt der einzige Hinweis ist, dass es noch keins ist — und weil
+  // ein graues „fehlt" neben lauter schwarzen Beträgen beim Überfliegen
+  // untergeht. Auf Schwarz-Weiß-Druck bleibt das Wort trotzdem lesbar; es
+  // trägt die Aussage, nicht die Farbe.
+  ohnePreis: { color: '#B00020' },
 
   // ── Spaltenbreiten ────────────────────────────────────────────────────────
   cPos:    { width: '5%' },
@@ -339,6 +346,15 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
   const positionen = ohneNullzeilen(fasseKleinbetraegeZusammen(
     quote.items, opt.kleinbetraegeZusammenfassen, istAllgemeinPosition,
   ))
+  // DC-125 (Chief of Staff, 17.09.2026): Welche der gedruckten Zeilen keinen
+  // Preis hat. Über die IDs, nicht über ein neues Feld im Gruppen-Typ —
+  // dieselbe Lösung wie bei `hinweisJeItem` und `rechenwegJeItem` weiter
+  // unten und aus demselben Grund. Warum überhaupt: dieses PDF entsteht auch
+  // über „PDF herunterladen", und dieser Weg geht nicht durch die
+  // Versandsperre aus `darfZumKunden`. Ohne die Regel hier landet die
+  // Katalog-Lücke als „0,00 €" beim Kunden — gemessen in PM-117.
+  const ohnePreisIds = idsOhnePreis(positionen)
+  const summeIstUnvollstaendig = ohnePreisIds.size > 0
   const dokTitel = DOKUMENT_TYP_LABEL[opt.dokumentTyp]
   const zahlungsTage = opt.zahlungszielTage
   // CoS-E-013/031/042: siehe gueltigBis() in angebot-optionen.ts.
@@ -526,8 +542,12 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
                 </View>
                 <Text style={{ ...S.mengeText, ...S.cMenge }}>{fmtMenge(item.quantity)}</Text>
                 <Text style={{ ...S.einheitText, ...S.cEinh }}>{item.unit}</Text>
-                <Text style={{ ...S.einzelText, ...S.cEinzel }}>{fmtEuro(item.unit_price)}</Text>
-                <Text style={{ ...S.gesamtText, ...S.cGes }}>{fmtEuro(item.total_price)}</Text>
+                <Text style={{ ...S.einzelText, ...S.cEinzel, ...(ohnePreisIds.has(item.id) ? S.ohnePreis : {}) }}>
+                  {ohnePreisIds.has(item.id) ? PREIS_FEHLT_KURZ : fmtEuro(item.unit_price)}
+                </Text>
+                <Text style={{ ...S.gesamtText, ...S.cGes, ...(ohnePreisIds.has(item.id) ? S.ohnePreis : {}) }}>
+                  {ohnePreisIds.has(item.id) ? PREIS_FEHLT_KURZ : fmtEuro(item.total_price)}
+                </Text>
               </View>
             ))
           }
@@ -561,15 +581,23 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
                   </View>
                   <Text style={{ ...S.mengeText, ...S.cMenge }}>{fmtMenge(gi.quantity)}</Text>
                   <Text style={{ ...S.einheitText, ...S.cEinh }}>{gi.unit}</Text>
-                  <Text style={{ ...S.einzelText, ...S.cEinzel }}>{fmtEuro(gi.unit_price)}</Text>
-                  <Text style={{ ...S.gesamtText, ...S.cGes }}>{fmtEuro(gi.total_price)}</Text>
+                  <Text style={{ ...S.einzelText, ...S.cEinzel, ...(ohnePreisIds.has(gi.id) ? S.ohnePreis : {}) }}>
+                    {ohnePreisIds.has(gi.id) ? PREIS_FEHLT_KURZ : fmtEuro(gi.unit_price)}
+                  </Text>
+                  <Text style={{ ...S.gesamtText, ...S.cGes, ...(ohnePreisIds.has(gi.id) ? S.ohnePreis : {}) }}>
+                    {ohnePreisIds.has(gi.id) ? PREIS_FEHLT_KURZ : fmtEuro(gi.total_price)}
+                  </Text>
                 </View>
               ))}
 
               {hatMehrereRaeume && sek.typ === 'raum' && (
                 <View style={S.raumSumme}>
                   <Text style={S.raumSummeLabel}>Summe {sek.raum!.raumName}</Text>
-                  <Text style={S.raumSummeWert}>{fmtEuro(sek.raum!.summe)}</Text>
+                  {/* DC-125: zu niedrig um genau den Betrag, den niemand
+                      kennt — dann lieber keine Zahl. */}
+                  <Text style={sek.raum!.items.some(i => ohnePreisIds.has(i.id)) ? { ...S.raumSummeWert, ...S.ohnePreis } : S.raumSummeWert}>
+                    {sek.raum!.items.some(i => ohnePreisIds.has(i.id)) ? PREIS_FEHLT_KURZ : fmtEuro(sek.raum!.summe)}
+                  </Text>
                 </View>
               )}
             </View>
@@ -596,6 +624,27 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
         )}
 
         {/* ── SUMMEN ─────────────────────────────────────────────────────── */}
+        {/* DC-125 (Chief of Staff, 17.09.2026): „Eine Zeile ohne Betrag darf
+            ein Kundenangebot nicht verlassen." Solange eine Position keinen
+            Preis hat, steht hier deshalb keine Zahl — auch keine
+            Zwischensumme und keine Umsatzsteuer, denn beide rechnen auf
+            derselben zu niedrigen Grundlage. Auf Sandys gemessenem Badangebot
+            wären das 543,84 € statt 2.980,44 €, unterschrieben und
+            verbindlich. Was stattdessen dasteht, nennt die Zahl der
+            betroffenen Zeilen: bei sechs von neun weiß der Handwerker
+            sofort, dass sein Katalog eine Lücke hat und er nicht eine
+            einzelne Zeile nachträgt. */}
+        {summeIstUnvollstaendig ? (
+          <View style={S.summenBlock} wrap={false}>
+            <View style={{ borderTop: `1 solid ${akzent}`, paddingTop: 10 }}>
+              <Text style={{ ...S.summenGesamtLabel, ...S.ohnePreis }}>Gesamtbetrag noch offen</Text>
+              <Text style={{ fontSize: 9, color: '#444444', lineHeight: 1.5, marginTop: 4 }}>
+                {fehlendePreiseSatz(ohnePreisIds.size, positionen.length)}
+                {' '}Dieses Angebot ist noch nicht vollständig.
+              </Text>
+            </View>
+          </View>
+        ) : (
         <View style={S.summenBlock}>
           <View style={{ borderTop: '0.5 solid #E5E5E5', paddingTop: 10 }}>
             <View style={S.summenZeile}>
@@ -619,6 +668,7 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
             <Text style={S.summenGesamtWert}>{fmtEuro(quote.total_gross)}</Text>
           </View>
         </View>
+        )}
 
         {/* Zahlungsbedingungen — bewusst als Bedingung formuliert, nicht als
             Fälligkeit: auf einem Angebot gibt es noch keine Rechnung, ab der

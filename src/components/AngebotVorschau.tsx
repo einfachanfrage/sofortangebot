@@ -10,6 +10,7 @@ import { effektiveOptionen, gueltigBis } from '@/lib/angebot-optionen'
 import { uebermessungsHinweiseJePosition, UEBERMESSUNG_ERKLAERUNG } from '@/lib/mengen/gewerke/vob-uebermessung'
 import { logoKopfVorschau } from '@/lib/briefpapier-logo'
 import { akzentLinie } from '@/lib/briefpapier-farbe'
+import { idsOhnePreis, PREIS_FEHLT_KURZ, fehlendePreiseSatz } from '@/lib/versandbereit'
 
 interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null }
@@ -60,7 +61,7 @@ function fmtMenge(n: number) {
 // Zeilen-Darstellung jetzt einmal extrahiert, damit sie im flachen UND im
 // gruppierten Pfad identisch aussieht.
 function PositionsZeile({
-  position, idx, title, description, berechnungsweg, uebermessungsHinweis, quantity, unit, unitPrice, totalPrice, zeigeRechenweg,
+  position, idx, title, description, berechnungsweg, uebermessungsHinweis, quantity, unit, unitPrice, totalPrice, zeigeRechenweg, ohnePreis,
 }: {
   position: number
   idx: number
@@ -75,6 +76,12 @@ function PositionsZeile({
   totalPrice: number
   // DC-050: siehe Props-Kommentar oben — hier nur durchgereicht.
   zeigeRechenweg: boolean
+  /**
+   * DC-125: Diese Position hat keinen Preis (kein Katalogeintrag UND
+   * 0,00 €). Dann steht in beiden Betragsspalten „fehlt" statt „0,00 €" —
+   * Begründung in src/lib/versandbereit.ts.
+   */
+  ohnePreis: boolean
 }) {
   return (
     <div className={`flex px-2.5 py-2 text-[9px] border-b border-[#F0F0EE] ${idx % 2 !== 0 ? 'bg-[#FAFAF8]' : ''}`}>
@@ -99,8 +106,15 @@ function PositionsZeile({
           Dieselbe Zahl, zwei Schreibweisen, je nachdem wo man hinsieht. */}
       <span style={{ width: '12%', textAlign: 'right' }}>{fmtMenge(quantity)}</span>
       <span style={{ width: '10%', textAlign: 'center' }}>{unit}</span>
-      <span style={{ width: '16%', textAlign: 'right' }}>{fmt(unitPrice)}</span>
-      <span style={{ width: '16%', textAlign: 'right' }} className="font-bold">{fmt(totalPrice)}</span>
+      {/* DC-125: „0,00 €" behauptet, diese Arbeit koste nichts. Hier steht
+          deshalb, was wahr ist. Bewusst in derselben Zeile und nicht als
+          Fußnote: der Blick fällt beim Überfliegen auf die Betragsspalte. */}
+      <span style={{ width: '16%', textAlign: 'right' }} className={ohnePreis ? 'text-[#B00020]' : undefined}>
+        {ohnePreis ? PREIS_FEHLT_KURZ : fmt(unitPrice)}
+      </span>
+      <span style={{ width: '16%', textAlign: 'right' }} className={ohnePreis ? 'font-bold text-[#B00020]' : 'font-bold'}>
+        {ohnePreis ? PREIS_FEHLT_KURZ : fmt(totalPrice)}
+      </span>
     </div>
   )
 }
@@ -204,6 +218,13 @@ export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRech
     quote.items, opt.kleinbetraegeZusammenfassen, istAllgemeinPosition,
   ))
   const gruppen = gruppiereNachStruktur(positionen, opt.struktur, raeumeAusQuote(quote))
+  // DC-125: Welche der angezeigten Zeilen keinen Preis hat. Über die IDs und
+  // nicht über ein neues Feld im Gruppen-Typ — dieselbe Lösung wie beim
+  // Übermessungs-Hinweis und beim Rechenweg weiter oben, aus demselben Grund
+  // (`GruppenItem` kennt `price_item_id` nicht und soll es nicht lernen
+  // müssen, nur damit eine Anzeige eine Farbe wählen kann).
+  const ohnePreisIds = idsOhnePreis(positionen)
+  const summeIstUnvollstaendig = ohnePreisIds.size > 0
 
   return (
     // DC-049 PDF-Schritt Nachtrag (2026-09-11, Sandy: "hier sieht das pdf so
@@ -327,6 +348,7 @@ export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRech
                 unitPrice={item.unit_price}
                 totalPrice={item.total_price}
                 zeigeRechenweg={rechenwegSichtbar}
+                ohnePreis={ohnePreisIds.has(item.id)}
               />
             ))
           ) : (() => {
@@ -356,12 +378,18 @@ export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRech
                     unitPrice={gi.unit_price}
                     totalPrice={gi.total_price}
                     zeigeRechenweg={rechenwegSichtbar}
+                    ohnePreis={ohnePreisIds.has(gi.id)}
                   />
                 ))}
                 {hatMehrereRaeume && sek.typ === 'raum' && (
                   <div className="flex justify-end px-2.5 py-1.5 text-[8px]">
                     <span className="text-[#999] mr-3">Summe {sek.raum!.raumName}</span>
-                    <span className="text-[#666] min-w-[60px] text-right">{fmt(sek.raum!.summe)}</span>
+                    {/* DC-125: Eine Raumsumme, in der eine Zeile ohne Preis
+                        steckt, ist zu niedrig — und zwar um genau den Betrag,
+                        den niemand kennt. Sie steht deshalb nicht da. */}
+                    <span className={`min-w-[60px] text-right ${sek.raum!.items.some(i => ohnePreisIds.has(i.id)) ? 'text-[#B00020]' : 'text-[#666]'}`}>
+                      {sek.raum!.items.some(i => ohnePreisIds.has(i.id)) ? PREIS_FEHLT_KURZ : fmt(sek.raum!.summe)}
+                    </span>
                   </div>
                 )}
               </div>
@@ -377,6 +405,31 @@ export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRech
         )}
 
         {/* SUMMENBLOCK */}
+        {/* DC-125 (Chief of Staff, 17.09.2026): Solange eine Position keinen
+            Preis hat, gibt es hier keine Zahl — auch keine Zwischensumme und
+            keine Steuer, denn beide rechnen auf derselben zu niedrigen Basis.
+            Der Prüfmeister hat es in PD-022 auf den Punkt gebracht: eine
+            offensichtlich falsche Summe ist schlimmer als gar keine. Was
+            stattdessen dasteht, sagt in einem Satz, woran es liegt und wie
+            viele Zeilen betroffen sind. */}
+        {summeIstUnvollstaendig ? (
+          <div className="flex justify-end mt-4">
+            {/* Formgleich mit lib/pdf.tsx: dieselbe Akzentlinie an derselben
+                Stelle, darunter dieselben zwei Zeilen. Diese Vorschau
+                behauptet „so sieht dein Angebot für den Kunden aus" — sie
+                muss das auch dann tun, wenn das Angebot noch keins ist
+                (DC-049/DC-055 sind genau daran auseinandergelaufen). Die
+                zweite Akzentlinie fällt hier weg, weil sie zur Gesamtsumme
+                gehörte, die es nicht mehr gibt. */}
+            <div className="w-[55%] text-[9px] pt-2.5" style={{ borderTop: `2px solid ${akzent}` }}>
+              <div className="font-black text-[11px] text-[#B00020]">Gesamtbetrag noch offen</div>
+              <div className="text-[#444] leading-relaxed mt-1">
+                {fehlendePreiseSatz(ohnePreisIds.size, positionen.length)} Dieses Angebot ist
+                noch nicht vollständig.
+              </div>
+            </div>
+          </div>
+        ) : (
         <div className="flex justify-end mt-4">
           <div className="bg-bg rounded-lg p-4 w-[45%] text-[9px]">
             <div className="flex justify-between mb-1">
@@ -414,6 +467,7 @@ export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRech
             </div>
           </div>
         </div>
+        )}
 
         {/* §19 UStG */}
         {isKleinunternehmer && (

@@ -34,6 +34,40 @@ export function gewerkFuerPosition(beschreibung: string, hauptgewerk?: string): 
   // das Wort „Boden" darin vorkommt.
   const istMalerVorbereitung = /boden\s*sch[üu]tz|bodenschutz|abdeckvlies|abdeckfolie|m[öo]bel\s*abdeck/i.test(text)
   if (istMalerVorbereitung) return 'maler'
+  // ── PM-117 / PM-060-B: Fliesenarbeit geht VOR der /wand/-Regel ───────────
+  //
+  // Der Prüfmeister hat den vollen Preisweg eines gewöhnlichen Badangebots
+  // gefahren (3,20 × 2,10 m, Wände bis 2,20 m): 543,84 € standen da, wo
+  // 2.980,44 € hingehören. Ursache ist die Zeile darunter — `istMaler`
+  // prüft `/wand/` vor allem anderen, und damit landen `Wandfliesen
+  // verlegen`, `Verfugung Wand` und `Verbundabdichtung Wand` beim Maler.
+  //
+  // Danach filtert der Endpunkt auf Kategorien, die mit „Maler" beginnen.
+  // Im Katalog eines Fliesenlegers gibt es davon **null von 95**: die
+  // Kandidatenliste ist LEER, der Matcher bekommt nichts zu sehen, und
+  // `unit_price ?? 0` macht daraus eine 0,00-€-Zeile auf dem Kundenpapier.
+  // Es ist also kein schlechter Treffer, den ein besserer Wortlaut heilen
+  // könnte, sondern eine leere Menge. Gegenprobe Allrounder mit vollem
+  // Katalog: dieselbe Summe — der Filter greift VOR dem Matcher.
+  //
+  // Die Regel steht bewusst HIER und nicht als Ausnahme innerhalb von
+  // `istMaler`: `/wand/` ist die tragende Zeile des Malers und bleibt
+  // unangetastet. Vorrang bekommt nur, was unmissverständlich Fliesenarbeit
+  // ist. Deshalb ist sie eng:
+  //
+  //  • `fliesen` steht erst NACH `istBoden` — Teppich-, Vinyl- und
+  //    Linoleumfliesen sind dort schon abgeholt und kommen hier nie an.
+  //  • `verbundabdichtung` gibt es im ganzen Katalog nur unter „Fliesen".
+  //  • `verfugen`/`verfugung` ist an `boden`/`wand` gebunden. Ohne diese
+  //    Bindung würden `Fugensand einbringen / verfugen` (Garten),
+  //    `Außentreppe Klinker neu verfugen` (Fassade) und `Fugen sanieren`
+  //    (Rohbau) mitgerissen — drei Gewerke, die hier nichts zu suchen haben.
+  //  • Abdecken und Abkleben sind ausgenommen: „Fliesen abdecken" ist
+  //    Vorbereitung des Malers, dieselbe Lehre wie bei „Boden schützen".
+  const istFliesenarbeit =
+    /fliesen|verbundabdichtung|verfug(?:en|ung)\s+(?:boden|wand)/i.test(text)
+    && !/abdeck|abkleb|sch[üu]tz/i.test(text)
+  if (istFliesenarbeit) return 'fliesen'
   const istMaler = /wand|decke|streich|anstrich|tapete|raufaser|spachtel|schleifen|grundier|abdeck|abkleb/i.test(text)
   if (istMaler) return 'maler'
   // Dieselbe Falle wie bei „Boden schützen": „Erschwerniszuschlag Raumhöhe

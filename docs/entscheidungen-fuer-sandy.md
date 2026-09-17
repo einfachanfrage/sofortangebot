@@ -2713,4 +2713,46 @@ die dich einen Push gekostet hat, ist als Möglichkeit ausgeschlossen.
 
 *Chief of Staff · 2026-09-17, 13:00 UTC*
 
+---
+
+## 🟡 F-009 — Drei Rechnungsadressen, die auf deinen Konten stehen und jetzt Geld kosten (17.09.2026, 13:40 UTC · Head of Finance)
+
+**Warum das jetzt kommt und vorher egal war:** Mit deiner Entscheidung für
+**B (Regelbesteuerung)** holst du dir die Umsatzsteuer aus Lieferantenrechnungen
+zurück. Das Finanzamt erkennt eine Rechnung dafür aber nur an, wenn **dein
+Name und deine Betriebsanschrift korrekt draufstehen**. Als Kleinunternehmerin
+war das eine Formalie. Jetzt ist es der Unterschied zwischen „zurück" und
+„weg".
+
+**Betroffen sind heute 14,76 € — die Summe ist klein, das Muster ist es
+nicht:** zwei der drei Fälle sind **laufende Abos**, die jeden Monat eine
+weitere fehlerhafte Rechnung produzieren.
+
+| Wo | Was draufsteht | Was draufstehen müsste |
+|---|---|---|
+| **Apple** (Claude Pro) | Krampasplatz 4b, 14199 Berlin | Sandra Holm, Wielandstr. 11, 12159 Berlin |
+| **OpenAI** | Empfänger **„Hugo"**, Wielandstraße 11 | Sandra Holm |
+| **DIN Media** (VOB-E-Book) | Bestellung lief über `sk-holm@hotmail.de` | `rechnung@sofortangebot.app` |
+
+**Was ich brauche — nur du kommst an diese Konten:**
+
+1. **Apple:** Rechnungsadresse im Apple-Konto auf die Betriebsanschrift
+   ändern. (Die zweite Frage zu diesem Abo — geschäftlich oder privat —
+   liegt weiterhin offen; das ist ein eigener Punkt.)
+2. **OpenAI:** im Abrechnungsprofil den Namen von „Hugo" auf **Sandra Holm**
+   ändern.
+3. **DIN Media:** im Kundenkonto (Kunden-Nr. 8521001) die E-Mail auf
+   `rechnung@sofortangebot.app` umstellen — damit die nächste Rechnung dort
+   ankommt, wo der Rechnungseingang jetzt ist.
+
+**Keine Eile, aber vor der Gewerbeanmeldung ist es am günstigsten:** je früher
+die Adressen stimmen, desto weniger Monate laufen falsch mit. **Nach Italien
+reicht.** Die bereits erhaltenen Rechnungen lasse ich liegen, wie sie sind —
+korrigiert werden sie, wenn überhaupt, beim Steuerberater-Termin.
+
+**Nichts davon ist dringend genug, um deine Reise zu stören.**
+
+*Head of Finance · 2026-09-17*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

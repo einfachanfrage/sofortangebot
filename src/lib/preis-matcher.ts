@@ -39,6 +39,21 @@ const SYNONYME: Array<[RegExp, string]> = [
   [/wandflachen?/g, 'wand'], [/deckenflachen?/g, 'decke'], [/bodenflachen?/g, 'boden'],
   [/schutzen|abdecken|abdeckvlies/g, 'abdecken'], [/aufziehen|tapezieren|kleben/g, 'tapezieren'],
   [/ablosen|entfernung|demontieren|aufnehmen/g, 'entfernen'],
+  // PM-060-A / PM-117 (Prüfmeister 17.09.2026): Die Fliesen-Engine schreibt
+  // `Verfugung Boden` und `Verfugung Wand`, der Katalog führt `Verfugen
+  // Boden` und `Verfugen Wand`. Gemeinsam bleibt nach der Normalisierung nur
+  // das Bauteil — 0,5 Punkte, unter der Schwelle von 0,62, also gar kein
+  // Treffer. Auf einem gewöhnlichen Bad sind das 347,04 € in zwei Zeilen.
+  // Substantiv und Verb sind hier dieselbe Arbeit; dasselbe Muster wie
+  // `herstellen`/`anlegen`/`setzen` eine Zeile tiefer.
+  [/verfugung/g, 'verfugen'],
+  // Dieselbe Familie, dieselbe Zeile im Bad: Die Engine schreibt
+  // `Fliesensockel / Abschlussleiste`, der Katalog `Sockelleiste /
+  // Fliesensockel verlegen` (12,00 €/lfdm). Kein Katalogtitel im ganzen
+  // Bestand trägt das Wort „Abschlussleiste" — es ist der Alltagsname der
+  // Sockelleiste, nicht eine zweite Sache. Ohne diese Zeile: 0,4 Punkte und
+  // 127,20 € ohne Preis.
+  [/abschlussleisten?/g, 'sockelleiste'],
   [/sockelleisten|fussleisten/g, 'sockelleiste'], [/laufende?n? meter|lfdm|lfm/g, 'lfdm'],
   [/stuck|stk/g, 'stuck'], [/pauschal(e)?/g, 'pauschale'],
   [/fertigparkett/g, 'parkett'], [/korkboden/g, 'kork'],

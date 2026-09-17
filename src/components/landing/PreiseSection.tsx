@@ -14,8 +14,8 @@ const proFeatures = [
   'Unbegrenzte Angebote',
   'PDF mit deinem Logo',
   'Digitale Unterschrift',
-  'Lexoffice & sevDesk Export',
-  'ZUGFeRD E-Rechnung',
+  'Lexware Office & sevDesk Export',
+  'Fortlaufende Angebotsnummern',
   'Kundendatenbank',
 ]
 

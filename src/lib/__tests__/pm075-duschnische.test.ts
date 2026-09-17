@@ -91,10 +91,37 @@ describe('PM-075 — die gesagte Duschnische steht im Angebot', () => {
     expect(treffer?.position.unit_price).toBe(95)
   })
 
-  it('7 · der Beleg für Punkt 6: die Katalogschreibweise selbst wäre preislos', () => {
-    // Nicht Kosmetik, sondern der Grund für den kürzeren Titel.
-    for (const titel of ['Nische / Wandnische fliesen', 'Wandnische fliesen — Bad']) {
-      expect(gewerkFuerPosition(titel, 'fliesen'), titel).toBe('maler')
+  it('7 · die Ursache, die den kürzeren Titel nötig machte, ist seit CoS-E-078 weg', () => {
+    // ── Was hier bis zum 17.09.2026 stand ─────────────────────────────────
+    //
+    // Diese Zusicherung war der BELEG für Punkt 6: Sie hielt fest, dass
+    // `Nische / Wandnische fliesen` (die Katalogschreibweise) und
+    // `Wandnische fliesen — Bad` über `/wand/` beim Maler landen und dort
+    // preislos bleiben. Genau deshalb hieß die Zeile `Nische fliesen — Bad`
+    // — der kürzere Titel war die Folge einer Messung, nicht Kosmetik.
+    //
+    // ── Warum sie umgeschrieben ist und nicht gelöscht ────────────────────
+    //
+    // Der Prüfmeister hat den Fund in PM-117 nachgemessen (er traf jedes
+    // Bad, 1.961,38 € auf drei Zeilen), und in CoS-E-078 ist die Ursache
+    // gebaut: Fliesenarbeit geht jetzt VOR der `/wand/`-Regel. Damit misst
+    // die alte Fassung eine Fehlstellung, die es nicht mehr gibt — sie wäre
+    // rot geworden, und eine Zusicherung, die der Fix rot macht, ist keine.
+    //
+    // Sie prüft deshalb ab jetzt die Gegenrichtung, auf demselben Gegenstand:
+    // Beide Schreibweisen finden ihren Preis. Der Verlauf steht hier statt
+    // im Verlauf der Versionsverwaltung, damit niemand die Kürzung des
+    // Titels für eine Laune hält.
+    //
+    // ❓ Offen und NICHT meine Entscheidung: Der Titel könnte jetzt auf die
+    // Katalogschreibweise zurück. Wortlaute gehören dem Prüfmeister; die
+    // Frage liegt in seiner Datei. Bis dahin bleibt `Nische fliesen — Bad`.
+    for (const titel of ['Nische / Wandnische fliesen', 'Wandnische fliesen — Bad', 'Nische fliesen — Bad']) {
+      expect(gewerkFuerPosition(titel, 'fliesen'), titel).toBe('fliesen')
+      const treffer = findePreisposition(titel, 'Stück',
+        KATALOG.filter(k => preisKategoriePasstZuGewerk(k.category, 'fliesen')))
+      expect(treffer?.position.title, titel).toBe('Nische / Wandnische fliesen')
+      expect(treffer?.position.unit_price, titel).toBe(95)
     }
   })
 

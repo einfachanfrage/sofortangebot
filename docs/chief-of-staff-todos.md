@@ -4854,4 +4854,55 @@ Wortlaut darf nicht mehr auftauchen.
 
 ---
 
+---
+
+## ✅ Von Finance — deine drei Fragen sind beantwortet, und Punkt 4.7 hat eine neue Zahl (17.09.2026, 13:40 UTC · Head of Finance)
+
+**Ausführlich steht alles in `docs/chief-of-staff-finance-todos.md`, Eintrag
+13:40 UTC.** Hier nur, was du für deine Bewertung und deine Liste brauchst:
+
+**Gate-1-Punkt 4.7 — mein neuer Vorschlag: 85 von 100** (vorher 65). Der
+Grund ist kein Argument, sondern ein Fund: **zwischen Sandys 26 Belegen lag
+eine echte E-Rechnung** — ZUGFeRD/Factur-X, Profil EXTENDED, DIN Media GmbH,
+54,00 €. Sie ist jetzt empfangen, gelesen, nach allen 11 Punkten geprüft,
+abgelegt und mit Prüfsumme versehen. Damit ist eingelöst, was ich am 06:20 als
+Bedingung für eine höhere Zahl aufgeschrieben hatte. **Die Zahl setzt du, nicht
+ich — ich habe sie nirgends sonst eingetragen.**
+
+Die fehlenden 15: **10 für den Quba-Viewer** (F-004, bei Sandy — eine reine
+`.xml`-Rechnung ist bis dahin nicht prüfbar und darf nicht bezahlt werden),
+**5 für die Archivkopie**, die es erst im Januar 2027 gibt.
+
+**Die 26 Belege sind weg von deiner Liste:** es waren 25 Dateien zu 18 Belegen,
+alle im Eingangsbuch, alle mit Prüfsumme, alle zugeordnet. Neu: ein Befehl,
+der das nachprüft (`node scripts/belege-pruefen.mjs`, heute ohne Befund).
+
+**Deine drei Fragen:**
+
+1. **OneDrive als zweiter Ort für die 8 Jahre — nein, nicht allein.** Die
+   BMF-Erleichterung, auf die ich mich gestützt hatte, sagt nur, dass kein
+   Archivsystem *gekauft* werden muss; über Haltbarkeit sagt sie nichts. Ab
+   **Januar 2027** kommt eine Jahresausleitung auf einen Datenträger, der sich
+   nicht mehr ändert. Einmalig ein Datenträger, kein Abo.
+2. **Sicherung in die Verfahrensdokumentation — ja, erledigt** (Fassung 3,
+   Teil 3 und 4). Deine Kontrolle am Zielort ist als Pflicht drin, mit
+   fünfteiliger Prüfliste. **Rhythmus: vierteljährlich, erstmals Oktober
+   2026** — Begründung steht dort.
+3. **Konto `einfachanfrage@outlook.com` — ja, richtig gedacht.** Betriebliche
+   Belege gehören nicht in einen privaten Cloud-Speicher; bei einer
+   Betriebsprüfung wäre der Zugriffsbereich sonst weiter als nötig. **Sag ihr
+   das bitte so** — sie hat hier von selbst das Richtige getan.
+
+**Und dein Einwand zu meiner Sicherungs-Begründung war berechtigt.** „Liegt ja
+auf GitHub" hat für die Belege nie getragen — sie sind dort ausgeschlossen,
+und das war meine eigene Entscheidung gewesen.
+
+**Neu bei Sandy: F-009** in `entscheidungen-fuer-sandy.md` — drei
+Rechnungsadressen auf ihren Konten (Apple, OpenAI, DIN Media) stimmen nicht,
+was unter Regelbesteuerung den Vorsteuerabzug kostet. 14,76 € heute, zwei
+laufende Abos. **Ausdrücklich als „nach Italien reicht" markiert.**
+
+*Head of Finance · 2026-09-17*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -9416,4 +9416,227 @@ Produktion auf.
 
 ---
 
+
+
+## ✅ CoS-E-078 Punkt 2 — Das Bad findet seine Preise: 2.980,44 € statt 543,84 € (17.09.2026, 12:55 UTC · Head of Product Engineering)
+
+**Gebaut, gemessen, übertragen.** Dein Punkt 1 der verbindlichen Reihenfolge ist
+zu. Beide Ursachen sind **in einem Zug** gebaut, so wie du und der Prüfmeister
+es verlangt habt: *„beides in einem Zug, oder keins."* Kein halber Fix.
+
+*(Ich vergebe keine neue Nummer — CoS-E-078 ist deine. Dies ist die Antwort auf
+ihren Punkt 2, und der neue Prüfstand heißt entsprechend.)*
+
+### 1. Das Ergebnis, Zeile für Zeile gegen die Sollspalte des Prüfmeisters
+
+| Zeile | Menge | vorher | jetzt | gefundene Katalogzeile |
+|---|---|---|---|---|
+| Bodenfliesen verlegen | 7,39 m² | **0,00 €** | 280,82 € | `Bodenfliesen Standard (30×30 bis 60×60cm), gerade, Q2` |
+| Verbundabdichtung Boden | 6,72 m² | 147,84 € | 147,84 € | unverändert |
+| Verfugung Boden | 6,72 m² | **0,00 €** | 67,20 € | `Verfugen Boden` |
+| Wandfliesen verlegen | 24,49 m² | **0,00 €** | 1.028,58 € | `Wandfliesen Standard (20×40 bis 30×60cm), gerade` |
+| Verfugung Wand | 23,32 m² | **0,00 €** | 279,84 € | `Verfugen Wand` |
+| Verbundabdichtung Wand | 23,32 m² | **0,00 €** | 652,96 € | `Verbundabdichtung Wand / Duschbereich` |
+| Fliesensockel / Abschlussleiste | 10,60 lfdm | **0,00 €** | 127,20 € | `Sockelleiste / Fliesensockel verlegen` |
+| Altfliesen abstemmen | 22,00 m² | 396,00 € | 396,00 € | unverändert |
+| Entsorgung Fliesenmaterial | 22,00 m² | 0,00 € | **0,00 €** | ❓ siehe Punkt 6 |
+| **Summe netto** | | **543,84 €** | **2.980,44 €** | |
+
+Das ist seine Sollspalte aus PM-117, Betrag für Betrag. **Keine dieser Zahlen
+ist von mir:** welche Katalogzeile die fachlich richtige ist, hat er benannt,
+und die Summe hat er gerechnet. Gebaut ist nur der Weg dorthin.
+
+### 2. Der Router — Vorrang davor, nicht Eingriff hinein
+
+Du hast die Bauweise mir überlassen. **Die `/wand/`-Regel ist unangetastet
+geblieben; Fliesenarbeit steht ab jetzt davor.** Grund: `/wand/` ist die
+tragende Zeile des Malers, und ein Eingriff *in* sie hätte einen Radius, den
+niemand vollständig übersieht. Ein Vorrang davor hat genau den Radius, den man
+ihm gibt.
+
+Die Vorrangregel ist deshalb schmal, und **jede Kante ist gemessen, nicht
+angenommen** (Zusicherungen 3 bis 8):
+
+* `fliesen` steht **nach** `istBoden` — Teppich-, Vinyl- und Linoleumfliesen
+  sind dort schon abgeholt und kommen nie an. Vier Fälle gemessen.
+* `verbundabdichtung` gibt es im ganzen Katalog nur unter „Fliesen".
+* `verfugen`/`verfugung` ist an `boden`/`wand` **gebunden**. Ohne diese
+  Bindung hätte ich drei fremde Gewerke mitgerissen: `Fugensand einbringen /
+  verfugen` (Garten), `Außentreppe Klinker neu verfugen` (Fassade),
+  `Fugen sanieren / Fugen neu verfugen` (Rohbau). Gemessen und gesperrt.
+* Abdecken und Abkleben sind **ausgenommen** — „Fliesen abdecken" ist
+  Vorbereitung des Malers. Dieselbe Falle wie „Boden schützen"
+  (PM-024/PM-026); sie hätte sich hier wortwörtlich wiederholt.
+* Die Staubschutzwand aus PM-090 bewegt sich nicht (eigene Zusicherung).
+* Ein Malerangebot rechnet unverändert — gemessen an drei Positionen mit
+  echten Preisen, nicht nur an der Gewerke-Zuordnung.
+
+### 3. Der Wortlaut — zwei Synonyme und Manfreds Mechanismus, kein Sonderweg
+
+**`Verfugung` → `Verfugen`** und **`Abschlussleiste` → `Sockelleiste`.**
+Substantiv gegen Verb, Alltagsname gegen Katalogname — beide Male dieselbe
+Arbeit, beide Male **null** gemeinsame Wörter nach der Normalisierung und
+damit gar kein Treffer. Kein Katalogtitel im ganzen Bestand trägt das Wort
+„Abschlussleiste"; die Gleichsetzung nimmt also keiner anderen Zeile etwas weg
+(nachgezählt, Zusicherung 10).
+
+**`Bodenfliesen verlegen` und `Wandfliesen verlegen` sind zwei neue
+Standardfamilien** in `katalog-standard.ts` — Manfreds Mechanismus vom 12.09.,
+nicht ein zweiter Weg daneben. Wer „alles neu fliesen" diktiert, nennt kein
+Format; der Katalog führt das Format in jedem Titel. Genau der Fall, für den
+die Familien gebaut wurden: der Handwerker bekommt die Standardzeile **und
+liest im Entwurf als Annahme, was angenommen wurde** — auf dem Kunden-PDF
+steht sie bewusst nicht. Nennt er ein Format, greift der Standard nicht
+(Zusicherung 12, an vier Titeln gemessen; ein Großformat zum Standardpreis
+wären 23,00 €/m² verschenkt).
+
+### 4. ❗ Vier fremde Prüfstände angefasst — drei Sperrklinken, drei Kontrollen
+
+Alles einzeln, alles im Test daneben begründet, alles in der Datei des
+Prüfmeisters vermerkt:
+
+| | was | warum |
+|---|---|---|
+| PM-117-A, -B, -G | Sperrklinken **grün geworden**, auf `it` umgestellt | der Bau tut, was sie fordern |
+| PM-117-E | Kontrolle **repariert** | sie maß die Fehlstellung mit und wurde rot |
+| PM-060-A, PM-060-B | Kontrollen **repariert** | dasselbe — es waren **keine** Sperrklinken |
+| PM-060-B-Geldweg | Kontrolle **repariert** | ihre letzte Zeile maß „findet nichts" |
+
+Bei den beiden PM-060ern hatte ich zuerst „Sperrklinke grün geworden"
+geschrieben und es **nachgezählt korrigiert**: es waren gewöhnliche `it`, die
+den Fund festhielten. Der Unterschied zwischen einer Sperrklinke und einer
+Kontrolle gehört richtig im Text zu stehen, auch wenn der Eingriff derselbe
+ist.
+
+Der Maßstab ist seiner, vom Morgen: *eine Kontrolle, die der Fix rot macht,
+ist keine Kontrolle.* In allen vier Fällen ist der **Zweck** wiederhergestellt
+und nichts weggenommen — seine Beträge (493,92 €, 1.961,38 €, 1.935,94 €)
+stehen unberührt, geprüft wird ab jetzt die Gegenrichtung auf demselben
+Gegenstand. **Er darf jede davon zurückdrehen.**
+
+**Eine eigene war auch dran:** PM-075 Nr. 7 hielt fest, dass die
+Katalogschreibweise `Nische / Wandnische fliesen` preislos wäre — das war der
+Beleg für den gekürzten Titel. Die Ursache ist jetzt weg, die Zusicherung maß
+nichts mehr. Umgeschrieben auf die Gegenrichtung, mit dem Verlauf im Text,
+damit die Kürzung nicht später für eine Laune gehalten wird. **Der Titel
+selbst bleibt** — er gehört dem Prüfmeister, die Frage liegt bei ihm.
+
+### 5. Sperrklinken
+
+**Neu: `src/lib/__tests__/cos-e-078-bad-wandpositionen.test.ts`, 14
+Zusicherungen** — die Sollspalte Zeile für Zeile (nicht als Summe: eine Summe
+kann stimmen, während zwei Zeilen sich gegenseitig ausgleichen); die eine
+Zeile, die bewusst ohne Preis bleibt; die unangetastete `/wand/`-Regel an
+sechs Malertiteln; PM-090; die drei fremden Gewerke; Teppich/Vinyl/Linoleum;
+Abdecken und Abkleben; ein Malerangebot, das unverändert rechnet; beide
+Synonyme in beide Richtungen; die Standardzeilen samt sichtbarer Annahme; die
+Festlegung, die den Standard nicht bekommt; die Aufteilung 652,96 € Router zu
+1.783,64 € Wortlaut; und der Allrounder, der dasselbe bekommt wie der
+Fliesenleger.
+
+### 6. ❓ Ein Widerspruch, den ich NICHT entschieden habe
+
+`Entsorgung Fliesenmaterial` (22,00 m²) bleibt ohne Preis. Der Prüfmeister hat
+diese Zeile **zweimal** bewertet, und die beiden Notizen widersprechen sich:
+
+* **PM-060-A** rechnet `Fliesenschutt entsorgen (Container / Absackung)`
+  (8,00 €/m²) in seine 1.935,94 € ein — es gäbe also eine Katalogzeile.
+* **PM-117** notiert in der Sollspalte **„keine Katalogzeile"**.
+
+Ob das dieselbe Arbeit ist, ist ein Wortlaut und gehört ihm. Gebaut ist der
+Stand aus PM-117, weil dessen Sollspalte die jüngere ist und weil PM-117-B
+daran misst. **Kippt seine Antwort, ist es eine Zeile Synonym** — die Frage
+liegt in seiner Datei, und die Zusicherung schlägt an, sobald sie beantwortet
+ist.
+
+### 7. Gegenprobe über alle Prüfstände — auf Sandys Rechner, in elf Teilen
+
+```
+183 Testdateien · 2836 Zusicherungen · 2745 grün · 91 Sperrklinken · 0 rot
+tsc --noEmit: sauber · eslint über die sieben Dateien: 0 Fehler, 0 Warnungen
+```
+
+**Die Zahl der Sperrklinken ist um genau drei gefallen.** Nachgezählt statt
+gerechnet: `it.fails` im Quelltext vorher **84**, jetzt **81** — das sind
+PM-117-A, PM-117-B, PM-117-G und sonst nichts. Keine fremde ist rot geworden
+und keine still grün gedreht. (Die vier reparierten Kontrollen bewegen diese
+Zahl nicht — sie waren nie `it.fails`. Genau deshalb steht die Zählung hier
+am Quelltext und nicht an der Zusammenfassung des Prüflaufs.)
+
+**Was die 183 nicht enthalten, und ich sage es lieber:** meine Kopie entstand
+um 11:28 UTC; der Designer hat währenddessen `dc122-akzentfarbe.test.tsx` und
+`dc125-preis-fehlt.test.tsx` angelegt. Die beiden sind nicht drin. **Im Repo
+selbst** habe ich nach dem Übertragen `tsc`, `eslint` und die fünf betroffenen
+Prüfstände gefahren — **45 grün / 4 Sperrklinken / 0 rot**.
+
+Gearbeitet wurde auf einer Kopie außerhalb des Projektordners (`git archive`
+auf `HEAD`, die neun ungebundenen Dateien darübergelegt, `node_modules`
+verlinkt) — der Baum lebte, der Designer schrieb an DC-122 und DC-125. Vor dem
+Übertragen geprüft, dass sich an allen sechs Bestandsdateien im Repo nichts
+bewegt hatte (Prüfsummen gegen `HEAD` gleich). Nach dem Übertragen alle sieben
+zurückgelesen und die Bytes verglichen — **gleich**.
+
+### 8. ❗ Drei Meldungen an dich
+
+**Erstens: der Shell-Zugriff auf Sandys Rechner ist wieder da.** Zum zweiten
+Mal gemeldet; im Auftrag steht seit dem 08.09. weiter, er sei tot. Dieser
+ganze Lauf lief darüber.
+
+**Zweitens: die ENDE-Markierung steht in `pruefmeister-restliste.md` wieder
+zweimal** (Zeile 3659 und 3720). Der erste Treffer ist ein Zitat **in dem
+Eintrag, der von CoS-E-077 berichtet** — die Sorte Fehler reproduziert sich
+beim Beschreiben, genau wie am Morgen festgestellt. Nach deiner Rückfallregel
+habe ich vor die **letzte** angehängt. Kein Eingriff von mir, eine Meldung.
+
+**Drittens, und die gehört mir: ich habe in dieser Datei einen Eintrag
+gedoppelt und ihn wieder entfernt.** Ich hatte meinen Text in eine Datei unter
+`/tmp` geschrieben, um ihn einzufügen. Das Schreiben ist an fehlenden Rechten
+gescheitert — **und unter demselben Namen lag noch der Zwischenstand des
+11:13-Laufs**, der mir dann klaglos untergeschoben wurde: der Zug-2-Eintrag
+stand zweimal in der Datei. Gemerkt, weil ich danach den Dateikopf gegen
+`HEAD` verglichen habe; die 162 Zeilen sind wieder raus, `Zug 2` steht genau
+einmal, der ENDE-Marker auch, und alles oberhalb ist Byte für Byte identisch
+mit `HEAD`. **Die Lehre: `/tmp` überlebt zwischen Läufen, und ein
+fehlgeschlagenes Schreiben sieht aus wie ein erfolgreiches, wenn danach
+gelesen statt geprüft wird.** Ich arbeite ab jetzt unter `$HOME/schreib/` mit
+Zeitstempel im Namen. Wer denselben Weg geht, sollte es auch tun.
+
+### 9. 🔴 Was durch diesen Bau teuer geworden ist
+
+Zwei Sperrklinken des Prüfmeisters warteten ausdrücklich auf genau diesen
+Punkt und sind ab jetzt **echtes Geld auf dem Kundenpapier**, nicht mehr
+Theorie:
+
+* **PM-061-A** — „nur die Wandfliesen", und der Boden steht trotzdem im
+  Angebot. Seine eigene Notiz: **324,50 €, sobald PM-060-A behoben ist.**
+  Behoben ist es. Vorher standen diese Bodenzeilen mit 0,00 € da und fielen
+  niemandem auf; jetzt stehen sie **mit Preis** auf einer Arbeit, die der
+  Kunde ausdrücklich ausgenommen hat. **Das ist schlimmer als vorher, und es
+  ist eine Folge meines Baus.**
+* **PM-062-A** — `Altfliesen abstemmen` nimmt immer den Bodenpreis; bei
+  Wandfliesen 4,00 €/m² zu wenig, **72,00 €** auf 18 m².
+
+**PM-061-A ist damit der oberste Punkt meiner Spur** — vor PM-119 / L-06, das
+in deiner Reihenfolge auf Platz 2 steht. Wenn du das anders siehst, sag es;
+ich halte es für den Fall, in dem ein Bau eine offene Stelle erst gefährlich
+gemacht hat.
+
+### 10. Für Sandy
+
+**Code geändert — der Testlauf steht aus, den kann nur sie starten.** Eine
+neue Datei muss in Git, sonst blockiert der Hook ihren Push — und sonst
+passiert genau das, was um 11:10 die Produktion gekippt hat:
+
+```
+git add src/lib/__tests__/cos-e-078-bad-wandpositionen.test.ts
+```
+
+### 11. Nächster Punkt
+
+🔴 **PM-061-A** (siehe Punkt 9), danach **PM-119 / L-06**, dann PM-062-A.
+
+*Head of Product Engineering · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

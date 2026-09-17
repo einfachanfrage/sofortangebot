@@ -2605,5 +2605,114 @@ ist es die billigste Verbesserung darin.
 
 ---
 
+
+## Punkt 9.1 — die Seite hinter dem Schalter: acht falsche Sätze gefunden, acht korrigiert (Head of Marketing, 2026-09-17)
+
+**Anlass war der eine offene Punkt auf meiner Spur** („die Seite bewirbt drei
+Buchhaltungs-Anbindungen, es sind sieben"). Beim Hinsehen war das nicht der
+einzige Satz im Code, der nicht stimmt.
+
+### 0. Zuerst die Entwarnung — gemessen, nicht angenommen
+
+**Öffentlich steht nichts davon.** Ich habe `sofortangebot.app` im Browser
+aufgerufen: dort liegt die Wartelisten-Seite, nicht die Landingpage. Die elf
+Sektionen hängen weiter hinter `NEXT_PUBLIC_COMING_SOON`
+(`src/app/page.tsx:16`). **Kein falscher Satz war je für jemanden sichtbar.**
+
+**Nebenbefund, weil ich schon dort war:** Sandys zweiter Satz ist live. Auf der
+Wartelisten-Seite steht jetzt „Für Maler und Bodenleger." — mit dem Push von
+12:19 UTC mitgegangen. Der Chief of Staff hatte ihn zuletzt als „noch nicht
+live" geführt; das ist erledigt.
+
+### 1. Was im Code stand — und was stimmt
+
+| Live-Code | Belegter Stand | Beleg |
+|---|---|---|
+| „Über **300** vorbereitete Positionen" (Maler) | **216** | `default-prices.ts`, heute gezählt |
+| „Über **200** vorbereitete Positionen" (Boden) | **188** | dito |
+| Hero-Badge „🖌 Für **Malerbetriebe**" | Maler **und Bodenleger** | FAQ, Gewerke-Sektion und die Wartelisten-Seite sagen alle drei etwas anderes |
+| Grüner Punkt „Bereits integriert" über **DATEV** | DATEV hat **keine** Route; `tier: 'csv'` | `ls src/app/api/integrations/` (sieben Ordner, kein `datev`), `accounting-options.ts` |
+| „**Angebot und Rechnung** landen direkt in Lexoffice oder sevDesk" | Das Produkt überträgt **Angebote**. Rechnungen stellt es nicht | `lexware/route.ts` → `api.lexoffice.io/v1/quotations`; Finance-Stopper 4 |
+| „E-Rechnung & GoBD — ZUGFeRD … **rechtssicher**" | Der ZUGFeRD-Export deklariert das **Angebot als Rechnung** | `zugferd/generateXML.ts:212` (`TypeCode 380`), `einbettung.ts:6` — **EX-003, offen bei Platform** |
+| Pro-Merkmal „ZUGFeRD E-Rechnung" | dieselbe Sache, zweite Stelle | dito |
+| „**Lexoffice** & sevDesk Export" | Das Produkt heißt **Lexware Office** | `accounting-options.ts`, DC-019 |
+
+### 2. Was ich geändert habe — vier Dateien, acht Stellen
+
+| Datei | Alt | Neu |
+|---|---|---|
+| `TestimonialSection.tsx` | Über 300 / Über 200 | **Über 200 / Über 180** |
+| `HeroSection.tsx` | 🖌 Für Malerbetriebe | **🖌 Für Maler und Bodenleger** |
+| `IntegrationenSection.tsx` | Lexware · sevDesk · **DATEV** unter „Bereits integriert" | **Lexware Office · sevDesk**; DATEV steht unten als **„DATEV (CSV)"**, dazu **Sage (CSV)** und **PlanCraft (CSV)** |
+| `FeaturesSection.tsx` | „Angebot und Rechnung landen direkt in Lexoffice…" | **„Das fertige Angebot landet direkt in Lexware Office oder sevDesk."** |
+| `FeaturesSection.tsx` | „E-Rechnung & GoBD … rechtssicher" | **„Fortlaufende Angebotsnummern — lückenlos, ohne dass du mitzählst."** |
+| `PreiseSection.tsx` | „Lexoffice & sevDesk Export" · „ZUGFeRD E-Rechnung" | **„Lexware Office & sevDesk Export"** · **„Fortlaufende Angebotsnummern"** |
+
+**Der Ersatz für die E-Rechnungs-Zeile ist keine Verlegenheitslösung, sondern
+das stärkere Versprechen:** die Angebotsnummern sind gebaut, fortlaufend und
+lückenlos — eine Nummer zieht nur, was der Handwerker wirklich fertigstellt
+(`api/quotes/[id]/nummer/route.ts`, DC-033). Das ist belegbar. „GoBD" und
+„rechtssicher" waren es nicht: GoBD ist eine Aussage über revisionssichere
+Archivierung über acht Jahre, und die macht nicht das Angebotswerkzeug.
+
+**Was der Ersatz kostet:** nichts, solange EX-003 offen ist. Ist der TypeCode
+repariert, kommt die E-Rechnung als Merkmal zurück — dann aber mit Beleg.
+
+### 3. Was ich mit Absicht **nicht** geändert habe
+
+**a) Die vier echten Direktverbindungen bleiben unten.** FastBill, Billomat,
+Papierkram und Easybill haben je eine eigene Route, eine eigene Key-Spalte und
+einen echten Endpunkt beim Anbieter — sie gehören fachlich nach oben zu
+Lexware Office und sevDesk. **Ich habe sie trotzdem unten gelassen**, weil das
+meine eigene Auflage aus dem Vormittagslauf ist: Punkt 11.5 in
+`launch-readiness.md` steht auf **0 %, „nicht erhoben"**, in
+`staging-checklist.md` ist der Export-Test **nicht abgehakt**, und eine
+Anbindung zu bewerben, die noch kein Mensch einmal durchgeklickt hat, ist
+dieselbe Sorte Fehler wie die acht oben. **Sandys Buchhaltungs-Testlauf legt
+die Aufwertung frei — Fassung A liegt fertig in meinem Eintrag vom Vormittag.**
+Der Umbau ist dann eine Zeile im Code.
+
+**b) Die Preis-Sektion und die drei Gratis-Versprechen.** `pricing.ts` steht
+heute unverändert auf **22 € / 17 € / 3 Angebote** (Zeilen 15–17) — das ist
+**CoS-038 bei Engineering**, nicht meine Datei. Solange die Zahlen dort alt
+sind, wäre jede Textkorrektur in der Preis-Sektion eine Korrektur auf ein
+falsches Modell. Dazu gehören:
+
+* Hero: „Die ersten **5** Angebote kostenlos" · Preise: „**3** neu angelegte
+  Angebote pro Monat" · CTA: „**Erstes** Angebot kostenlos erstellen" — drei
+  Versprechen, ein Produkt.
+* „**30 Tage** gratis testen" (`PreiseSection.tsx:104`) — in **beiden**
+  Modellen falsch. Im neuen sind es 14 Tage.
+
+**c) Der Rechenweg-Beispielsatz** („43,71 m² — 18 lfm × 2,60 m, Fenster und Tür
+abgezogen"). Sieht nach Finance-Korrektur 6 aus, ist aber keine: 46,80 − 43,71
+= **3,09 m²**, also eine Öffnung **über** 2,5 m². Nach VOB wird die abgezogen.
+**Der Satz stimmt — ich lasse ihn stehen.**
+
+### 4. Was daraus für Sandy folgt — eine Auflage an den Schalter
+
+Die 🔴-Frage „Wann geht die Website online?" liegt bei ihr, und die Bedingungen
+dort sind bisher **Impressum, Rechtstexte, Gewerbe, Preisumstellung**. Was
+fehlte: **die Seite selbst.** Die acht Sätze oben sind jetzt raus, die
+Preis-Sektion ist es nicht. **Ich habe die Auflage in
+`entscheidungen-fuer-sandy.md` eingetragen** — kurz, mit genau einer Bedingung:
+**der Schalter darf erst nach CoS-038 umgelegt werden.**
+
+### 5. Stand meiner Spur
+
+| | Stand |
+|---|---|
+| M-1 · M-2 · M-3/M-4 · M-5 · M-6 · Positionstitel · Finance-Korrekturen 5–8 | ✅ Text fertig bzw. entschieden |
+| Drei-statt-sieben-Anbindungen | ✅ **so weit zu, wie es ohne Testlauf geht** — DATEV korrigiert, Aufwertung liegt bereit |
+| Preis-Sektion · drei Gratis-Versprechen · „30 Tage" | ⛔ **CoS-038, Engineering** — der einzige Rest von 9.1, der noch hängt |
+| Buchhaltungs-Testlauf | ⏸ Sandy, nicht eilig |
+| ZUGFeRD/GoBD (EX-003) | ⏸ Platform — bis dahin steht die E-Rechnung nicht mehr auf der Seite |
+
+**Es wartet weiterhin nichts auf mich.**
+
+*Head of Marketing · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
