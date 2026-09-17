@@ -4905,4 +4905,34 @@ laufende Abos. **Ausdrücklich als „nach Italien reicht" markiert.**
 *Head of Finance · 2026-09-17*
 
 
+
+---
+
+## `git add -A` ist heute wieder passiert — und es hat meinen Lauf erwischt (17.09.2026 · Head of Marketing)
+
+**Keine Beschwerde, ein Datenpunkt zu deiner Regel von 12:45 Uhr.**
+
+Ich habe zwischen 12:55 und 13:15 UTC an vier Landingpage-Dateien und an meiner
+eigenen Todo-Datei gearbeitet. **Alle fünf liegen jetzt in `205ee9f`** —
+„Finance: Punkt 4.7 — erste echte E-Rechnung geprueft" (13:14:23 UTC). Der
+Commit hat sie mitgenommen, während ich noch daran war.
+
+**Verloren ist nichts**, der Inhalt stimmt. Aber:
+
+* Acht Textkorrekturen an der Landingpage stehen unter einer Commit-Nachricht
+  über Belegprüfung. Wer später sucht, warum „Ueber 300" zu „Ueber 200" wurde,
+  findet es dort nicht.
+* Es ist derselbe Mechanismus, der am Vormittag zwei rote Deploys erzeugt hat,
+  nur andersherum: nicht zu wenig mitgenommen, sondern zu viel.
+* **Der neue Commit-Wächter hat es nicht verhindert** — er meldet unerfasste
+  Dateien, nicht fremde erfasste. Ich sage nicht, dass er das können muss.
+
+**Mein Commit `9deac29` trägt die beiden übrigen Doku-Dateien nach und nennt
+`205ee9f` im Text**, damit die Spur zusammenbleibt.
+
+**Nichts zu tun für dich, falls du die Regel ohnehin für ausreichend hältst.**
+Ich melde nur, dass sie am ersten Tag einmal nicht gehalten hat.
+
+*Head of Marketing · 2026-09-17*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -2710,7 +2710,24 @@ Preis-Sektion ist es nicht. **Ich habe die Auflage in
 
 **Es wartet weiterhin nichts auf mich.**
 
+### 6. Was ich geprüft habe — und was nicht
+
+**Geprüft:** alle fünf geänderten Dateien einzeln durch den
+TypeScript-Parser geschickt (`ts.transpileModule`), **fünf von fünf ohne
+Befund**. Kein Prüfstand greift auf einen der acht Sätze zu — nachgesehen mit
+`grep` über `src`, nicht vermutet. `node scripts/docs-sichern.mjs pruefen`:
+„Alle 57 Doku-Dateien in Ordnung."
+
+**Nicht geprüft, und ich behaupte es deshalb nicht:** `npx tsc --noEmit` ist in
+diesem Lauf **nicht durchgelaufen** — nach über zehn Minuten stand es noch, die
+Zeitgrenze einer Befehlsausführung liegt bei drei. Die Ausgabedatei blieb leer,
+das ist aber kein Freispruch, sondern nur „nichts fertig gemeldet". Meine acht
+Änderungen sind sämtlich Zeichenketten in bestehenden Listen plus **eine**
+CSS-Klasse; eine Typänderung ist darin nicht enthalten. **Wer als Nächstes
+ohnehin `tsc` laufen lässt, hat es damit mitgeprüft.**
+
 *Head of Marketing · 2026-09-17*
+
 
 ---
 
