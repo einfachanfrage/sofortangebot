@@ -172,7 +172,7 @@ läuft bis dahin auf `980c271` (11:04 UTC, grün).
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | 🔴 **Pushen — und diesmal repariert es die Produktion.** **Drei** Commits (`da4d9a3`, `4eb06f1`, `6414065`), einer davon ist der Fix für die beiden roten Deploys. Der Fix ist auf genau dem Stand nachgemessen, der gepusht wird. | ein Befehl |
+| 1 | 🔴 **Pushen — und diesmal repariert es die Produktion.** Ein Befehl, alle offenen Commits auf einmal (12:05 UTC waren es fünf, es kommen laufend welche dazu — die Zahl ist egal, `git push` nimmt alle). Darunter der Fix für die beiden roten Deploys, auf genau dem Stand nachgemessen, der bei Vercel ankommt. | ein Befehl |
 | 2 | 🔴 **Preis bei § 19 (A/B), F-006** — tendiert zu **B** (Regelbesteuerung). **Die Landingpage darf vorher nicht live gehen.** | ein Satz |
 | 3 | 🔴 **Sicherung einschalten.** OneDrive mit `einfachanfrage@outlook.com` anmelden, dann `scripts\sicherung-onedrive.ps1` einmal starten und als tägliche Aufgabe einrichten. Anleitung liegt bereit | einmal 10 Minuten |
 | 4 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
