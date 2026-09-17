@@ -1,6 +1,6 @@
 'use client'
 
-import type { Quote, QuoteItem, Company, Customer } from '@/lib/types'
+import type { Quote, QuoteItem, Company, Customer, Briefpapier } from '@/lib/types'
 import { mitDeutschenZahlen } from '@/lib/zahlen-text'
 import { kundenRechenweg } from '@/lib/rechenweg-kundentext'
 import { fasseKleinbetraegeZusammen } from '@/lib/kleinbetraege'
@@ -8,6 +8,7 @@ import { gruppiereNachStruktur } from '@/lib/angebot-struktur'
 import { raeumeAusQuote, istAllgemeinPosition, ohneNullzeilen } from '@/lib/angebot-gruppierung'
 import { effektiveOptionen, gueltigBis } from '@/lib/angebot-optionen'
 import { uebermessungsHinweiseJePosition, UEBERMESSUNG_ERKLAERUNG } from '@/lib/mengen/gewerke/vob-uebermessung'
+import { logoKopfVorschau } from '@/lib/briefpapier-logo'
 
 interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null }
@@ -22,6 +23,21 @@ interface Props {
    * ohne die Prop verhält sich diese Vorschau also identisch zum PDF.
    */
   zeigeRechenweg?: boolean
+  /**
+   * DC-123 (2026-09-17): Das Briefpapier des Angebots — dieselbe Zeile, die
+   * `lib/pdf.tsx` bekommt (`quotes.briefpapier_id` → Tabelle `briefpapiere`).
+   *
+   * Bis heute bekam diese Vorschau es nicht. Sie hat das Logo deshalb immer
+   * links und immer in der Vorgabegröße gezeigt, egal was unter
+   * Einstellungen → Briefpapier & Design eingestellt war — und behauptet
+   * dabei „so sieht dein Angebot für den Kunden aus". Wer „Groß / rechts"
+   * gewählt hatte, sah den Unterschied erst im fertigen PDF.
+   *
+   * `undefined`/`null` heißt „kein Briefpapier am Angebot" und ergibt exakt
+   * das, was vorher zu sehen war: links, mittel. Kein Aufrufer muss also
+   * etwas mitgeben, um den alten Stand zu behalten.
+   */
+  briefpapier?: Briefpapier | null
 }
 
 function fmt(n: number) { return n.toFixed(2).replace('.', ',') + ' €' }
@@ -88,7 +104,7 @@ function PositionsZeile({
   )
 }
 
-export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRechenweg }: Props) {
+export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRechenweg, briefpapier }: Props) {
   const isKleinunternehmer = company.vat_rate === 0
   // DC-050: siehe Props-Kommentar oben — gleiche Rangfolge wie lib/pdf.tsx.
   const rechenwegSichtbar = zeigeRechenweg ?? quote.zeige_rechenweg_auf_pdf ?? true
@@ -123,6 +139,32 @@ export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRech
   const totalGross = netWithSurcharge + totalVat
 
   const co = company as Company & { ust_id?: string }
+
+  // ── DC-123 (2026-09-17): Kopflogo wie im PDF ────────────────────────────
+  //
+  // Beides eins zu eins aus `lib/pdf.tsx` (dort `logoSrc` und `logoKopf`),
+  // damit diese Ansicht ihr Versprechen hält.
+  //
+  // 1. WELCHES Bild: Das PDF nimmt `briefpapier.logo_url` und fällt erst
+  //    dann auf `companies.logo_url` zurück. Diese Vorschau kannte nur die
+  //    zweite Spalte — wer sein Logo im Briefpapier gewechselt hatte, sah
+  //    hier weiter das alte und auf dem Papier das neue.
+  //    (Dass es diese zwei Spalten überhaupt gibt, ist der offene Punkt
+  //    DC-124. Hier wird nichts entschieden, nur dieselbe Rangfolge gezeigt,
+  //    nach der das Dokument heute schon druckt.)
+  // 2. WIE GROSS und WO: aus den Briefpapier-Schaltern „Größe" und
+  //    „Position", in Pixeln — siehe `lib/briefpapier-logo.ts`.
+  const logoSrc = briefpapier?.logo_url || company.logo_url
+  const logo = logoKopfVorschau(briefpapier)
+  const logoBild = logoSrc ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={logoSrc}
+      alt={company.name}
+      className="object-contain mb-2"
+      style={{ height: logo.hoehePx, maxWidth: logo.maxBreitePx }}
+    />
+  ) : null
 
   // Gleiches Muster wie lib/pdf.tsx: Der Rechenweg steht an den Rohdaten
   // (quote.items), gruppiereNachStruktur reicht ihn an den gruppierten
@@ -169,6 +211,13 @@ export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRech
       <div className="px-12 py-10">
 
         {/* HEADER */}
+        {/* DC-123 (2026-09-17): Position „mitte" — eigene, mittige Zeile ÜBER
+            dem Kopf, genau wie im PDF (lib/pdf.tsx, S.logoZeileMitte).
+            Bewusst nicht innerhalb der linken Spalte zentriert: das sähe nach
+            Versehen aus, nicht nach Absicht. */}
+        {logoBild && logo.position === 'mitte' && (
+          <div className="flex justify-center mb-3">{logoBild}</div>
+        )}
         <div className="flex justify-between items-start mb-10">
           <div className="max-w-[55%]">
             {/* DC-121 (2026-09-17): Zwei Abweichungen zum echten PDF, beide hier
@@ -176,24 +225,23 @@ export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRech
                 Firmennamens — lib/pdf.tsx zeigt beides untereinander, und wer
                 ein Logo hochlädt, verliert auf dem Kundenpapier seinen Namen
                 nicht. (2) Die Höhe war mit `max-h-16` größer als der Kopf im
-                PDF. Sie folgt jetzt der Vorgabestufe „mittel" (42 pt ≈ 48 px
-                bei der Textgröße dieser Vorschau, siehe LOGO_HOEHE_PT).
-                Bewusst NICHT nachgebaut: die drei Stufen und die Position aus
-                dem Briefpapier — diese Vorschau bekommt kein Briefpapier
-                übergeben, sie zeigt deshalb immer die Vorgabe (mittel/links).
-                Wer eine andere Stufe wählt, sieht den Unterschied erst im
-                PDF. Steht als offener Punkt im DC-121-Ticket. */}
-            {company.logo_url && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={company.logo_url} alt={company.name} className="max-h-12 max-w-[200px] object-contain mb-2" />
-            )}
+                PDF.
+                DC-123 (2026-09-17): Der Rest der DC-121-Lücke ist damit zu —
+                Größe und Position kommen jetzt aus dem Briefpapier (siehe
+                `logoBild`/`logo` oben), nicht mehr fest aus dieser Datei. */}
+            {logo.position === 'links' && logoBild}
             <div className="font-syne text-[20px] font-black text-anthracite leading-tight mb-1">{company.name}</div>
             <div className="text-[#666] text-[9px] leading-relaxed whitespace-pre-line">{company.address}</div>
             {co.ust_id && <div className="text-[#666] text-[9px] mt-1">USt-IdNr.: {co.ust_id}</div>}
             {!co.ust_id && company.tax_number && <div className="text-[#666] text-[9px] mt-1">Steuernummer: {company.tax_number}</div>}
             {company.iban && <div className="text-[#666] text-[9px]">IBAN: {company.iban}</div>}
           </div>
-          <div>
+          {/* DC-123: Bei Position „rechts" steht das Logo über „ANGEBOT" —
+              dieselbe Reihenfolge wie im PDF, wo Nr./Datum darunter rutschen.
+              `items-end`, damit es an der rechten Kante bündig bleibt, auch
+              wenn das Bild schmaler ist als die Beschriftung. */}
+          <div className="flex flex-col items-end">
+            {logo.position === 'rechts' && logoBild}
             {/* DC-049 PDF-Schritt Nachtrag (2026-09-11): war ein gelber Pill —
                 das echte Kunden-PDF (lib/pdf.tsx, S.angebotLabel) ist auf
                 Sandys Entscheidung hin bewusst neutral/grau, kein Gelb-Akzent.

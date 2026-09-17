@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-import type { Quote, QuoteItem, Company, Customer, Baustelle, EntwurfAufnahme } from '@/lib/types'
+import type { Quote, QuoteItem, Company, Customer, Baustelle, EntwurfAufnahme, Briefpapier } from '@/lib/types'
 import { DRAFT_STATUSES, SENT_STATUSES, waehlbareStatus, getStatusInfo } from '@/lib/status'
 import { statusPatch, type AblehnungsGrund } from '@/lib/status-uebergang'
 import { aktualisiereProzentZuschlaege, istProzentZuschlag } from '@/lib/zuschlag-basis'
@@ -794,7 +794,10 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
   const [optSkontoTage, setOptSkontoTage] = useState<string>(quote.skonto_tage != null ? String(quote.skonto_tage) : '')
   const [optWiderruf, setOptWiderruf] = useState<'' | 'ja' | 'nein'>(quote.widerruf_beilegen == null ? '' : (quote.widerruf_beilegen ? 'ja' : 'nein'))
   const [optPreis, setOptPreis] = useState<'' | 'netto' | 'brutto'>((quote.preis_darstellung ?? '') as '')
-  const [briefpapiere, setBriefpapiere] = useState<{ id: string; name: string }[]>([])
+  // DC-123 (2026-09-17): war `{ id, name }` — für die Auswahlliste reichte
+  // das, für die Vorschau nicht: die braucht `logo_url`, `logo_groesse` und
+  // `logo_position` derselben Zeile, die auch das PDF liest.
+  const [briefpapiere, setBriefpapiere] = useState<Briefpapier[]>([])
   const [optSaving, setOptSaving] = useState(false)
   const [currentCustomer, setCurrentCustomer] = useState(quote.customer ?? null)
   const [showKundenSuche, setShowKundenSuche] = useState(false)
@@ -887,8 +890,19 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
     if (!user) return
     const { data: co } = await supabase.from('companies').select('id').eq('user_id', user.id).single()
     if (!co) return
-    const { data } = await supabase.from('briefpapier').select('id, name').eq('betrieb_id', co.id)
-    if (data) setBriefpapiere(data as { id: string; name: string }[])
+    // DC-123 (2026-09-17), beim Bauen gefunden und mitbehoben: hier stand
+    // `from('briefpapier')` — die Tabelle heißt `briefpapiere` (Migration
+    // 20260614132752_create_briefpapiere.sql; alle anderen dreizehn
+    // Fundstellen im Projekt schreiben sie richtig). Die Abfrage lief damit
+    // immer ins Leere, `briefpapiere` blieb leer, und die Zeile
+    // „Briefpapier" im Zahnrad-Sheet wurde nie angezeigt (`length > 0`).
+    // Ein Betrieb konnte sein Briefpapier am einzelnen Angebot also gar
+    // nicht wechseln — es kam nur über das Standard-Briefpapier ans Angebot
+    // (api/quotes/create). Kein stiller Fehler mehr: der Fehlerfall wird
+    // gemeldet, statt als „keine Briefpapiere" gelesen zu werden.
+    const { data, error } = await supabase.from('briefpapiere').select('*').eq('betrieb_id', co.id)
+    if (error) { console.error('Briefpapiere konnten nicht geladen werden', error); return }
+    if (data) setBriefpapiere(data as Briefpapier[])
   }
 
   async function loadPriceItems() {
@@ -3131,6 +3145,11 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
           }}
           onZeigeRechenwegChange={setZeigeRechenwegAufPdf}
           onExported={(provider) => trackVia(provider)}
+          // DC-123: dieselbe Zeile, die api/pdf/route.ts über
+          // `quotes.briefpapier_id` nachlädt — hier aus der bereits
+          // geladenen Liste, damit ein Wechsel im Zahnrad-Sheet sofort in
+          // der Vorschau steht und nicht erst nach dem Speichern.
+          briefpapier={briefpapiere.find(b => b.id === optBriefpapierId) ?? null}
         />
       )}
 

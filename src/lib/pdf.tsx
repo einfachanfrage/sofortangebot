@@ -13,6 +13,7 @@ import { uebermessungsHinweiseJePosition, UEBERMESSUNG_ERKLAERUNG } from './meng
 import { mitDeutschenZahlen } from './zahlen-text'
 import { kundenRechenweg } from './rechenweg-kundentext'
 import { fasseKleinbetraegeZusammen } from './kleinbetraege'
+import { logoKopf, LOGO_MAX_BREITE_PT } from './briefpapier-logo'
 
 // ── Marken-Schriften (CI-Handbuch, DC-049 "PDF-Schritt", 2026-09-10) ────────
 // react-pdf kennt von Haus aus nur die PDF-Standardschriften (Helvetica,
@@ -66,31 +67,13 @@ function fmtDatum(d: string) {
   return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
 
-// ── DC-121: Logo im Angebotskopf ───────────────────────────────────────────
-//
-// Die Regel: **Ein Logo wird über seine Höhe ausgerichtet, nie über seine
-// Breite.** So machen es Briefköpfe seit es Briefköpfe gibt — nebeneinander
-// gestellte Marken wirken nur dann gleich gewichtet, wenn sie gleich hoch
-// sind. Die Breite ergibt sich aus dem Bild. Ein Betrieb hat das Logo, das er
-// hat: rund, quadratisch oder breit. Keine dieser Formen darf dadurch
-// benachteiligt sein, dass unser Kopf ein bestimmtes Seitenverhältnis erwartet.
-//
-// Die drei Stufen sind die, die unter Einstellungen → Briefpapier & Design
-// bereits als „Klein / Mittel / Groß" angeboten werden. Sie hingen bis heute
-// an nichts — der Schalter stand da und bewirkte nichts.
-export const LOGO_HOEHE_PT = { klein: 28, mittel: 42, gross: 60 } as const
-
-// Notbremse gegen ein sehr breites Banner-Logo: der Block rechts (Nr., Datum,
-// Gültig bis) braucht rund 150 pt, die Textspalte darf nicht zusammenfallen.
-export const LOGO_MAX_BREITE_PT = 200
-
-/** Höhe + Position des Kopflogos aus dem Briefpapier, mit den Vorgabewerten. */
-export function logoKopf(briefpapier?: Briefpapier | null) {
-  return {
-    hoehe: LOGO_HOEHE_PT[briefpapier?.logo_groesse ?? 'mittel'] ?? LOGO_HOEHE_PT.mittel,
-    position: briefpapier?.logo_position ?? 'links',
-  }
-}
+// ── DC-121/DC-123: Logo im Angebotskopf ───────────────────────────────────
+// Die Maße und die Regel dahinter stehen jetzt in `lib/briefpapier-logo.ts`
+// — die Live-Vorschau (Client-Komponente) braucht dieselben Werte und darf
+// diese Datei nicht importieren (`@react-pdf/renderer` gehört nicht ins
+// Browser-Bündel). Re-Export, damit bestehende Importe aus `@/lib/pdf`
+// (u. a. `dc121-logo-kopf.test.ts`) unverändert weiterlaufen.
+export { LOGO_HOEHE_PT, LOGO_MAX_BREITE_PT, logoKopf } from './briefpapier-logo'
 
 // ── Styles ─────────────────────────────────────────────────────────────────
 const S = StyleSheet.create({

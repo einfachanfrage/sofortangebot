@@ -6,7 +6,7 @@ import AngebotVorschau from './AngebotVorschau'
 import { createClient } from '@/lib/supabase/client'
 import { anredeZeile } from '@/lib/anrede'
 import { getActiveIntegrations } from '@/lib/integrations'
-import type { Quote, QuoteItem, Company, Customer } from '@/lib/types'
+import type { Quote, QuoteItem, Company, Customer, Briefpapier } from '@/lib/types'
 import { nutzerFehler } from '@/lib/fehlertexte'
 
 interface Props {
@@ -39,6 +39,10 @@ interface Props {
   // AngebotDetail hängt hier nur `trackVia` ein (Analyse-Tracking, kein
   // Status-Wechsel).
   onExported?: (provider: string, label: string) => void
+  // DC-123 (2026-09-17): nur durchgereicht — das Briefpapier des Angebots,
+  // damit die Vorschau Größe und Position des Logos so zeigt, wie das PDF
+  // sie druckt. Ohne die Prop bleibt alles wie vorher (links, mittel).
+  briefpapier?: Briefpapier | null
 }
 
 type SendTab = 'email' | 'whatsapp' | 'link' | 'buchhaltung'
@@ -61,7 +65,7 @@ Mit freundlichen Grüßen
 ${company.name}`
 }
 
-export default function VorschauUndVersand({ quote, company, quoteNumber, onClose, onSent, initialTab = 'vorschau', versandHindernisse = [], onZeigeRechenwegChange, onExported }: Props) {
+export default function VorschauUndVersand({ quote, company, quoteNumber, onClose, onSent, initialTab = 'vorschau', versandHindernisse = [], onZeigeRechenwegChange, onExported, briefpapier }: Props) {
   const supabase = createClient()
   const [mainTab, setMainTab] = useState<'vorschau' | 'senden'>(initialTab)
   const [sendTab, setSendTab] = useState<SendTab>('email')
@@ -364,7 +368,7 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
             <div className="px-2 py-3">
               <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
                 <div style={{ transform: 'scale(0.75)', transformOrigin: 'top left', width: '133%' }}>
-                  <AngebotVorschau quote={quote} company={company} quoteNumber={quoteNumber} zeigeRechenweg={zeigeRechenweg} />
+                  <AngebotVorschau quote={quote} company={company} quoteNumber={quoteNumber} zeigeRechenweg={zeigeRechenweg} briefpapier={briefpapier} />
                 </div>
               </div>
             </div>

@@ -11549,4 +11549,245 @@ bereits so.
 
 ---
 
+## Von Engineering — der Erkenner steht. Deine DC-116-Karte ist ab jetzt baubar (Head of Product Engineering, 17.09.2026)
+
+**Alle drei Teile, die du uns in DC-116 zugeordnet hast, sind gebaut und
+gemessen** (CoS-E-074, ausführlich in `chief-of-staff-engineering-todos.md`):
+
+| # | Teil | Stand |
+|---|---|---|
+| 1 | Zeit-Ausschluss erkennen und dem Raum zuordnen, **ohne** `hatKeinerleiArbeit` | ✅ `src/lib/zeit-ausschluss.ts` |
+| 2 | Den Raum aus den Positionen halten, **Maße erhalten** | ✅ `extraktion.raeume` wird nicht angefasst |
+| 3 | Hinweiszeile mit Raumname **und** Beleg-Satz | ✅ landet in `bewertung.fehlende_angaben` |
+
+**Punkt 2 ist als eigene Zusicherung festgehalten**, nicht als Vorsatz: Wer die
+Räume später am falschen Ort filtert, macht deine Tippfläche „Als eigenes
+Angebot anlegen" unbaubar — und würde es sonst erst dort merken. Der Prüfstand
+misst nach dem Lauf Länge, Breite und Arbeiten des ausgenommenen Raums.
+
+**Die Hinweiszeile sieht heute so aus** (PM-116, wörtlich aus dem Lauf):
+
+```
+⚠ „Küche" steht nicht in diesem Angebot — gesagt: „Zweiter Bauabschnitt Küche
+   3 mal 3, das kommt später und wird extra angeboten"
+```
+
+Sie kommt in `bewertung.fehlende_angaben` an, also in der Liste, die
+`KalkulationsBewertungCard.tsx` schon rendert — **kein neues Bauteil**, so wie
+du es wolltest. Das Warnzeichen setzt `berechneBewertung` selbst; in der Liste
+steht es genau einmal, auch wenn Maler und Boden beide laufen.
+
+**Was du davon weiterverwenden kannst:** Raumname und Beleg-Satz stehen in der
+Zeile, aber als ein Stück Text. Brauchst du sie für die Karte **getrennt**
+(Überschrift „„Küche" steht nicht in diesem Angebot", darunter *„Gesagt: …"*),
+sag Bescheid — `zeitlichAusgenommeneRaeume()` gibt beides einzeln zurück
+(`Map<Raumname, Beleg-Satz>`), es muss nur bis zur Karte durchgereicht werden.
+**Das ist eine Frage an dich, keine Ansage von mir:** ob die Karte den Text
+zerlegt oder die Daten bekommt, entscheidest du, und danach richtet sich, wo
+der Weg hinführt.
+
+**Eine Sache, die du beim Entwerfen wissen solltest, weil sie deine Karte
+betrifft:** Sagt ein Handwerker über seinen **einzigen** Raum „das kommt
+später", bleibt nichts zu rechnen — das Angebot ist leer, und es steht nur der
+Hinweis da. Das ist die richtige Lesart des Satzes, und es passiert nie stumm
+(als Zusicherung festgehalten). Wie eine leere Positionsliste mit einer
+Hinweis-Karte darüber aussehen soll, ist Oberfläche und damit deine
+Entscheidung, nicht meine.
+
+**Deine abgelehnte zweite Gruppierungsebene habe ich nicht gebaut** — der
+Prüfmeister hat PM-097-B entsprechend umformuliert, ich halte mich daran.
+
+*Head of Product Engineering · 2026-09-17*
+
+---
+
+## DC-123 ✅ — Die Live-Vorschau kennt jetzt das Briefpapier. Und der Schalter, mit dem man es am Angebot wechselt, war nie sichtbar (Product Designer, 17.09.2026)
+
+**Bezug:** Offener Punkt 2 aus DC-121, vom Chief of Staff am 17.09. um 09:45
+UTC als DC-123 nummeriert und als erster Schritt empfohlen („klein,
+abgeschlossen, macht die Vorschau ehrlich"). Er hatte recht, dass es klein
+ist — aber beim Hinsehen lag darunter ein zweiter Befund, der größer ist als
+das Ticket selbst. Der steht weiter unten und ist mitbehoben.
+
+---
+
+### Der Befund, in einem Satz
+
+`AngebotVorschau.tsx` sagt „so sieht dein Angebot für den Kunden aus", bekam
+aber nie das Briefpapier des Angebots übergeben. Sie zeigte das Kopflogo
+deshalb **immer links und immer in der Vorgabegröße** — seit DC-121 wirken
+diese beiden Schalter im PDF, in der Vorschau wirkten sie weiter nicht. Wer
+„Groß / rechts" gewählt hatte, sah den Unterschied erst im fertigen PDF.
+
+Das ist dieselbe Fehlerform wie DC-109, DC-106 und DC-121: **nicht ein
+hässlicher Bildschirm, sondern ein Satz, der nicht stimmt.** Seit DC-121 ist
+sie sogar schlimmer geworden, nicht besser — vorher waren PDF und Vorschau
+gemeinsam blind, seitdem widersprechen sie sich.
+
+---
+
+### Was ab jetzt in der Vorschau steht
+
+Eins zu eins dieselbe Rechnung wie im PDF, aus derselben Datei:
+
+| Briefpapier-Schalter | PDF (seit DC-121) | Vorschau (vorher) | Vorschau (jetzt) |
+|---|---|---|---|
+| Größe Klein / Mittel / Groß | 28 / 42 / 60 pt | immer 48 px | **32 / 48 / 69 px** |
+| Position links | über dem Firmennamen | immer so | ✅ |
+| Position mitte | eigene mittige Zeile über dem Kopf | ❌ zeigte links | ✅ |
+| Position rechts | über „ANGEBOT", Nr./Datum darunter | ❌ zeigte links | ✅ |
+| welches Bild | `briefpapier.logo_url`, sonst `companies.logo_url` | ❌ nur `companies.logo_url` | ✅ dieselbe Rangfolge |
+
+**Zur letzten Zeile:** Das PDF druckt seit jeher das Briefpapier-Logo und
+fällt erst dann auf das Firmenlogo zurück. Die Vorschau kannte nur die zweite
+Spalte — wer sein Logo im Briefpapier gewechselt hatte, sah hier weiter das
+alte und auf dem Papier das neue. **Das ist nicht DC-124 und entscheidet dort
+nichts:** DC-124 fragt, *welche der beiden Spalten die Wahrheit sein soll*.
+Hier wird nur gezeigt, wonach das Dokument heute schon druckt. Die Frage
+bleibt offen, sie ist jetzt nur nicht mehr an zwei Stellen verschieden
+beantwortet.
+
+---
+
+### Die eine Entscheidung, die hier zu treffen war: der Maßstab
+
+Die Live-Vorschau ist **kein maßstäbliches A4**, sondern eine CSS-Nachbildung,
+die in der Breite mitläuft. Es gibt deshalb keinen „richtigen" pt→px-Faktor,
+den man ausrechnen könnte — nur einen gesetzten Bezugspunkt.
+
+Der war in DC-121 schon gefallen, ohne dass es dort so benannt wurde: die
+Vorgabestufe „mittel" (42 pt) steht in der Vorschau als `max-h-12` = 48 px.
+**Genau dieser eine Wert ist jetzt festgehalten**, und die anderen beiden
+Stufen leiten sich daraus ab, statt frei gewählt zu werden:
+
+| Stufe | PDF | Vorschau |
+|---|---|---|
+| Klein | 28 pt | 32 px |
+| **Mittel (Vorgabe)** | **42 pt** | **48 px** ← der gesetzte Bezugspunkt |
+| Groß | 60 pt | 69 px |
+
+Warum das wichtig genug für einen eigenen Absatz ist: Vorschau und PDF sind in
+diesem Projekt schon zweimal auseinandergelaufen (DC-049, DC-055), beide Male
+dadurch, dass eine der beiden Seiten einen Wert abgeschrieben hatte. Ein Test
+hält die Verhältnisse jetzt aneinander fest — wer `LOGO_HOEHE_PT` ändert und
+die Vorschau vergisst, wird rot, **bevor** die beiden auseinanderlaufen.
+
+---
+
+### 🔴 Der zweite Befund, beim Bauen gefunden: die Briefpapier-Auswahl am Angebot war nie zu sehen
+
+Um der Vorschau ein Briefpapier geben zu können, musste ich sehen, wo
+`AngebotDetail.tsx` es herholt. Dort stand:
+
+```ts
+supabase.from('briefpapier').select('id, name')   // ← Einzahl
+```
+
+**Die Tabelle heißt `briefpapiere`.** Nachgesehen, nicht vermutet: Migration
+`20260614132752_create_briefpapiere.sql` legt sie so an, und **alle dreizehn
+anderen Fundstellen im Projekt** schreiben sie richtig (`api/pdf/route.ts`,
+`api/quotes/create`, `api/quotes/[id]/send`, `public-pdf`, die beiden
+Einstellungsseiten). Genau diese eine schreibt sie falsch.
+
+Folge: Die Abfrage lief immer ins Leere, die Liste blieb leer — und weil die
+Zeile im Zahnrad-Sheet an `briefpapiere.length > 0` hängt, **wurde die
+Auswahl „Briefpapier" nie angezeigt.** Nicht ausgegraut, nicht leer: gar
+nicht da. Ein Betrieb mit zwei Briefpapieren konnte am einzelnen Angebot
+keins davon wählen; es kam nur über das Standard-Briefpapier ans Angebot
+(`api/quotes/create` setzt es beim Anlegen).
+
+Das erklärt auch, warum der Befund so lange keinem aufgefallen ist: **es sah
+nie kaputt aus.** Es sah aus, als gäbe es die Einstellung an dieser Stelle
+einfach nicht.
+
+Mitbehoben, drei Zeilen: richtiger Tabellenname, `select('*')` statt
+`id, name` (die Vorschau braucht `logo_url`, `logo_groesse`, `logo_position`
+derselben Zeile), und der Fehlerfall wird jetzt gemeldet statt still als
+„keine Briefpapiere" gelesen zu werden — genau daran lag es ja.
+
+**Was ich dabei ausdrücklich NICHT geändert habe:** dass die Zeile bei genau
+einem Briefpapier weiterhin verborgen bleibt (`length > 0` ist erfüllt, die
+Liste hat dann einen Eintrag — sie erscheint also). Bei **null**
+Briefpapieren bleibt sie verborgen, und das ist richtig: es gäbe nichts zu
+wählen.
+
+---
+
+### Gebaut
+
+| Datei | Was |
+|---|---|
+| `src/lib/briefpapier-logo.ts` | **neu** — `LOGO_HOEHE_PT`, `LOGO_MAX_BREITE_PT`, `logoKopf()` hierher gezogen, dazu `LOGO_PT_ZU_PX` und `logoKopfVorschau()` |
+| `src/lib/pdf.tsx` | importiert und re-exportiert von dort — bestehende Importe aus `@/lib/pdf` laufen unverändert weiter |
+| `src/components/AngebotVorschau.tsx` | Prop `briefpapier`; Logo-Quelle und -Maß aus dem Briefpapier; drei Positionen |
+| `src/components/VorschauUndVersand.tsx` | reicht die Prop durch |
+| `src/app/(app)/angebot/[id]/AngebotDetail.tsx` | Tabellenname korrigiert, vollständige Zeile geladen, Briefpapier an die Vorschau |
+| `src/lib/__tests__/dc123-vorschau-briefpapier.test.tsx` | **neu**, 12 Tests |
+
+**Warum eine neue Datei und nicht einfach ein Import aus `lib/pdf.tsx`:** Die
+Vorschau ist eine Client-Komponente. Ein Import aus `lib/pdf.tsx` hätte
+`@react-pdf/renderer` samt der drei TTF-Schriftdateien ins Browser-Bündel
+gezogen — für zwei Zahlen und ein Wort. Die Alternative (die Werte in der
+Vorschau abschreiben) ist genau der Fehler, der DC-049 und DC-055 verursacht
+hat. Eine Quelle, zwei Leser.
+
+**Kein Datenbank-Eingriff.** `logo_position` und `logo_groesse` gibt es seit
+jeher. Ein Angebot ohne Briefpapier bekommt exakt das, was es vorher hatte —
+links, mittel, Firmenlogo; das sind drei der zwölf Tests.
+
+### Verifikation — auf Sandys Rechner, am echten Projekt
+
+| Prüfung | Ergebnis |
+|---|---|
+| `npx tsc --noEmit -p tsconfig.json` | **in `src/` fehlerfrei** (siehe Nebenbefund unten) |
+| `dc123-vorschau-briefpapier.test.tsx` | **12 grün** |
+| die 7 Testdateien, die `lib/pdf`, `AngebotVorschau` oder `briefpapier-logo` einlesen | **61 grün** (`dc121-logo-kopf`, `pdf-rechenweg-render`, `pdf-uebermessung-render`, `dc050-rechenweg-pdf`, `cos-e-batch1-kundenpapier`, `wertersatz-g6`, neu) |
+| `eslint` über die sechs geänderten/neuen Dateien | **0 Fehler**; die 14 Warnungen sind Bestand, keine in einer von mir berührten Zeile |
+
+**Die zwölf Tests prüfen die Ansicht selbst, nicht nur die Rechnung** — sie
+rendern `AngebotVorschau` mit `renderToStaticMarkup` und sehen nach, wo das
+`<img>` im Dokument steht. Das ist im Projekt neu (es gibt keine
+Testing-Library), aber nötig: eine reine Zahlenprüfung wäre grün geblieben,
+wenn die Ansicht die Werte zwar kennt, aber nicht benutzt — und genau das war
+der Befund.
+
+*(Beim Schreiben der Tests eine Falle gefunden und im Test vermerkt: React
+stellt dem Dokument ein `<link rel="preload" as="image">` mit derselben
+Adresse voran. Wer nach der Logo-URL sucht, findet immer diese Zeile, ganz
+vorne, egal wo das Bild steht — die Prüfung wäre grün und würde nichts
+messen.)*
+
+**Nicht geprüft, also behaupte ich es nicht:** wie die drei Stufen mit einem
+echten Logo im Browser aussehen. Die 32/48/69 px sind aus dem Bezugspunkt
+abgeleitet, nicht an Sandys Logo abgelesen. Wenn Sandy das nächste Mal ohnehin
+auf „Vorschau" tippt, sieht sie es — eine eigene Aufgabe daraus zu machen wäre
+es mir nicht wert.
+
+---
+
+### Nebenbefund, nicht angefasst: `tsc` ist lokal rot, aber nicht im CI
+
+`npx tsc --noEmit` meldet **33 Fehler — alle 33 in
+`_to_delete/pruefmeister-tmp-2026-09-17/`**, keiner in `src/`. Die Datei
+`tsconfig.json` zieht mit `**/*.ts` auch `_to_delete/` ein; `.gitignore`
+schließt `/_to_delete/` aus, im CI liegen die Dateien also gar nicht. **Kein
+Produktionsproblem, aber ein blinder Fleck:** Wer hier von Hand `tsc` laufen
+lässt, bekommt ab jetzt eine rote Ausgabe, in der ein echter Fehler in `src/`
+untergehen würde. Gehört dem Chief of Staff (eine Zeile `exclude`), nicht mir.
+
+---
+
+### Offen — gehört ausdrücklich nicht zu diesem Ticket
+
+1. **DC-122** — Schrift, Akzentfarbe und die drei Fußzeilen wirken weiter
+   nicht, die Mini-Vorschau auf der Briefpapier-Seite behauptet sie trotzdem.
+   Schrift und Akzentfarbe hängen nicht an Legal und sind als Nächstes dran;
+   die Fußzeile wartet auf CoS-L-011.
+2. **DC-124** — welche der beiden Logo-Spalten die Wahrheit ist, ist
+   unverändert offen. Hier wurde nur beide Male dieselbe Rangfolge gezeigt.
+
+*Product Designer · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
