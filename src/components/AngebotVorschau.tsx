@@ -9,6 +9,7 @@ import { raeumeAusQuote, istAllgemeinPosition, ohneNullzeilen } from '@/lib/ange
 import { effektiveOptionen, gueltigBis } from '@/lib/angebot-optionen'
 import { uebermessungsHinweiseJePosition, UEBERMESSUNG_ERKLAERUNG } from '@/lib/mengen/gewerke/vob-uebermessung'
 import { logoKopfVorschau } from '@/lib/briefpapier-logo'
+import { akzentLinie } from '@/lib/briefpapier-farbe'
 
 interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null }
@@ -156,6 +157,11 @@ export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRech
   //    „Position", in Pixeln — siehe `lib/briefpapier-logo.ts`.
   const logoSrc = briefpapier?.logo_url || company.logo_url
   const logo = logoKopfVorschau(briefpapier)
+  // DC-122: Die Akzentfarbe aus demselben Briefpapier. Sie zieht auf dem
+  // Papier genau zwei Linien — die unter dem Briefkopf und die über der
+  // Gesamtsumme. Hier dieselben zwei, aus derselben Datei gerechnet, damit
+  // die Vorschau ihr Versprechen hält (Regel: `lib/briefpapier-farbe.ts`).
+  const akzent = akzentLinie(briefpapier)
   const logoBild = logoSrc ? (
     // eslint-disable-next-line @next/next/no-img-element
     <img
@@ -288,8 +294,8 @@ export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRech
           </div>
         </div>
 
-        {/* Trennlinie */}
-        <div className="border-t border-[#E0E0DE] mb-6" />
+        {/* Trennlinie — DC-122: erste der zwei Akzentlinien */}
+        <div className="mb-6" style={{ borderTop: `1px solid ${akzent}` }} />
 
         {/* POSITIONEN-TABELLE */}
         <div>
@@ -401,7 +407,8 @@ export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRech
                 <span>{fmt(totalVat)}</span>
               </div>
             )}
-            <div className="flex justify-between border-t-2 border-anthracite mt-1.5 pt-1.5 font-black text-[12px]">
+            {/* DC-122: zweite und letzte Akzentlinie */}
+            <div className="flex justify-between mt-1.5 pt-1.5 font-black text-[12px]" style={{ borderTop: `2px solid ${akzent}` }}>
               <span>Gesamtbetrag</span>
               <span>{fmt(totalGross)}</span>
             </div>

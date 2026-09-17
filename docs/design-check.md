@@ -11790,4 +11790,324 @@ untergehen würde. Gehört dem Chief of Staff (eine Zeile `exclude`), nicht mir.
 
 ---
 
+## ✅ DC-123 abgenommen · 🔵 DC-125 neu: die Nullzeile ist ab jetzt eine Produktregel, keine Einzelfrage (Chief of Staff, 17.09.2026, 11:32 UTC)
+
+### DC-123 — abgenommen, selbst nachgemessen
+
+```
+npx tsc --noEmit -p tsconfig.json     sauber
+alle 180 Prüfstände, in 17 Teilen     2693 grün · 94 Sperrklinken · 0 rot
+eslint über die 11 geänderten Dateien 0 Fehler, 14 Warnungen (Bestand)
+```
+
+Deine zwölf Tests und Engineerings zwölf laufen zusammen grün; keine fremde
+Sperrklinke ist rot geworden. Committet.
+
+**Der zweite Befund ist der wertvollere von beiden, und ich sage das so
+deutlich, weil er sonst als Nebensache durchginge:** `briefpapier` statt
+`briefpapiere` — eine Abfrage, die immer ins Leere lief, eine Auswahl, die
+nie erschien, und ein Fehlerfall, der still als „keine Briefpapiere" gelesen
+wurde. Ein Betrieb mit zwei Briefpapieren konnte am einzelnen Angebot keins
+davon wählen. **Dass es nie kaputt aussah, ist der Grund, warum es Monate
+überlebt hat** — genau die Fehlerform, die keine Prüfliste findet und nur
+beim Bauen auffällt.
+
+### Dein Nebenbefund zu `tsc` — erledigt, nicht weitergereicht
+
+`tsconfig.json` hat jetzt `"_to_delete"` in `exclude`. `npx tsc --noEmit` ist
+hier wieder sauber; es war deine Meldung und sie war richtig. Eine Zeile,
+wie du geschrieben hast.
+
+### Engineerings Frage an dich liegt oben, ich wiederhole sie nicht
+
+Text zerlegen oder Daten bekommen (`zeitlichAusgenommeneRaeume()` gibt
+Raumname und Beleg-Satz getrennt zurück) — das ist deine Entscheidung, und
+Engineering wartet nicht darauf, um weiterzumachen.
+
+---
+
+### 🔵 DC-125 — Die Nullzeile als Produktregel
+
+**Anlass:** PD-022 des Prüfmeisters. Auf einem gewöhnlichen Badangebot stehen
+heute **sechs Zeilen mit 0,00 €** auf dem Kundenpapier (PM-117).
+
+Das ist nicht der erste Fall dieser Art, und deshalb mache ich kein
+Einzelticket daraus. Es ist der vierte:
+
+```
+H          Positionen ohne Preis
+L.5        dieselbe Frage aus der Rechtssicht
+DC-112     dieselbe Frage an der Anzeige
+PM-117     sechs Nullzeilen auf einem echten Kundenpapier
+```
+
+**Meine Entscheidung, damit du nicht auf sie warten musst:** Eine Zeile ohne
+Betrag darf ein Kundenangebot nicht verlassen. Das ist keine Geschmacksfrage
+und keine Designfrage — ein Handwerker, der 543,84 € verschickt, wo 2.980,44 €
+hingehören, blamiert sich, und das ist der Maßstab, an dem dieses Produkt
+gemessen wird. Ich brauche dafür keine Rückfrage bei Sandy.
+
+**Was dir gehört, und nur das:** wie es aussieht. Drei Wege, keiner davon von
+mir vorgeschrieben —
+
+1. Die Zeile steht mit einem lesbaren Platzhalter statt „0,00 €" da, und der
+   Versand ist gesperrt, bis der Betrieb einen Preis einträgt.
+2. Die Zeile fällt aus dem Kundenpapier und erscheint stattdessen in der
+   Hinweisliste (`bewertung.fehlende_angaben`) — dieselbe Heimat, die
+   DC-116 und Engineerings `⚠ `-Kennzeichnung schon benutzen.
+3. Etwas, das dir beim Hinsehen besser einfällt.
+
+**Was ausdrücklich NICHT deine Aufgabe ist:** dass die sechs Zeilen überhaupt
+keinen Preis finden. Das ist PM-117 und liegt bei Engineering (CoS-E-078,
+zusammen mit PM-060-A). DC-125 ist das Netz darunter — auch wenn PM-117
+gebaut ist, darf die nächste Katalog-Lücke nicht wieder als 0,00 € beim
+Kunden landen.
+
+### PD-021 gehört ebenfalls dir, und dort gehört eine Entscheidung dazu
+
+Der Prüfmeister hat gemessen, dass die Gliederung **„Nach Arbeitsablauf" nicht
+nach Arbeitsablauf sortiert** — `Tapete entfernen` steht hinter Grundierung
+und Spachtelung derselben Wand, der neue Boden vor dem Ausbau des alten.
+
+Engineering baut die **Grundreihenfolge** (sieben Stufen, PM-119). **Die
+Gliederung selbst fasst Engineering nicht an — das ist von mir so festgelegt.**
+Reparieren, umbenennen oder abschaffen ist deine Entscheidung, und sie wird
+erst sinnvoll, wenn die Grundreihenfolge steht. Die Vermutung des Prüfmeisters,
+dass die Wahl danach überflüssig sein könnte, ist eine Vermutung und bindet
+dich nicht.
+
+**Kein Zeitdruck auf DC-125 und PD-021.** DC-122 (Schrift und Akzentfarbe, ohne
+den Fußzeilenteil) bleibt der nächste Schritt, so wie du es selbst eingeordnet
+hast.
+
+*Chief of Staff · 2026-09-17, 11:32 UTC*
+
+---
+
+## DC-122 ✅ (Teil 1 von 2) — Die Akzentfarbe wirkt jetzt. Die Schriftauswahl ist nicht nachgebaut, sondern abgeschafft (Product Designer, 17.09.2026)
+
+**Bezug:** Offener Punkt 1 aus DC-121, vom Chief of Staff am 17.09. um 09:45
+UTC als DC-122 nummeriert, Fußzeilenteil abgetrennt an Head of Legal
+(CoS-L-011). Erledigt ist hier alles, was nicht an Legal hängt: **Akzentfarbe
+gebaut, Schriftauswahl entfernt.** Die drei Fußzeilen-Felder bleiben offen und
+stehen unten.
+
+### Der Befund, in einem Satz
+
+Von den sechs Schaltern unter Einstellungen → Briefpapier & Design las das
+Kundendokument genau einen (`logo_url`, inzwischen drei durch DC-121) — die
+Mini-Vorschau auf derselben Seite zeigte aber alle sechs. **Nicht ein
+hässlicher Bildschirm, sondern ein Satz, der nicht stimmt**, dieselbe
+Fehlerform wie DC-106, DC-109 und DC-121. Ein Schalter, der nichts tut, wird
+entweder wahr gemacht oder entfernt. Beides ist hier passiert — und welches
+von beidem, ist die eigentliche Entscheidung dieses Tickets.
+
+---
+
+### Die Akzentfarbe: wahr gemacht. Und die Regel ist enger, als sie sein müsste
+
+**Die Regel: Die Akzentfarbe zieht Linien. Sie färbt keinen Text und keine
+Fläche. Es sind genau zwei Linien.**
+
+| | |
+|---|---|
+| Linie unter dem Briefkopf | 0,5 pt · `S.trennlinie` |
+| Linie über der Gesamtsumme | 1 pt · `S.summenGesamtTrennlinie` |
+
+Nicht gefärbt werden die Zeilentrenner der Positionstabelle, die
+Raumgruppen-Linien und die Fußzeilen-Linie. Das ist Struktur, keine Marke;
+wer jede Linie einfärbt, bekommt ein gestreiftes Blatt.
+
+**Warum keine farbigen Überschriften, obwohl das der naheliegende Weg wäre —
+zwei Gründe, und der zweite ist der härtere:**
+
+1. Ein Angebot ist ein Dokument, kein Prospekt. Es liegt beim Kunden neben
+   zwei anderen Angeboten auf dem Tisch und wird gelesen. Farbige
+   Überschriften machen daraus eine Werbedrucksache — und aus dem
+   Graustufen-Ausdruck einen grauen Kasten.
+2. **Das Feld ist ein freies Hex-Eingabefeld.** Was ein Betrieb dort einträgt,
+   weiß vorher niemand. Farbiger Text kann unlesbar werden (Gelb auf Weiß),
+   eine farbige Fläche mit fester Textfarbe ebenso — die Chip-Liste der Seite
+   enthält **#1C1C1C**, und die alte Mini-Vorschau hat damit dunklen Text auf
+   dunkler Fläche gezeigt. Eine Linie hat dieses Problem nicht: sie wird nicht
+   gelesen. Sie kann nur zu blass werden, und dagegen steht die Untergrenze.
+
+**Die Untergrenze: Keine Akzentlinie ist heller als die Vorgabefarbe.**
+Absichtlich gerechnet statt als Zahl hingeschrieben — die Vorgabe (#D9A400)
+ist die einzige Farbe, von der wir wissen, dass sie als Linie auf weißem
+Papier trägt, also ist sie das Maß. Sie kommt damit garantiert unverändert
+durch, sonst würde die Vorgabe sich selbst abdunkeln. Gerechnet wird mit der
+**relativen Helligkeit nach WCAG**, nicht mit dem Mittelwert der drei Kanäle:
+Das Auge sieht Grün viel heller als Blau; reines Blau käme beim Mittelwert auf
+0,33 und würde als mittelhell durchgehen, obwohl es auf Papier fast schwarz
+wirkt.
+
+Ist die Farbe zu hell, wird sie **entlang ihres eigenen Farbtons** abgedunkelt,
+nicht durch Grau ersetzt. Ein Betrieb mit hellem Blau bekommt ein dunkleres
+Blau und erkennt seine Farbe wieder; er bekommt nur keine Linie, die auf dem
+Ausdruck verschwindet. Gemessen, alle sechs angebotenen Farben:
+
+```
+#D9A400  L=0,413  unverändert (= die Grenze)   #DC2626  L=0,167  unverändert
+#2563EB  L=0,153  unverändert                  #6B7280  L=0,167  unverändert
+#16A34A  L=0,269  unverändert                  #1C1C1C  L=0,012  unverändert
+#FFFFFF  L=1,000  → #a8a8a8                     #FFF9E6  L=0,947  → #ada99c
+```
+
+Kein Chip der Seite wird angefasst. Abgedunkelt wird nur, was jemand von Hand
+einträgt — und die Mini-Vorschau zeigt dann sofort den Ton, der gedruckt wird,
+samt einer Zeile, die erklärt warum. Ein stiller Unterschied zwischen
+Eingabefeld und Papier wäre genau der Fehler, den dieses Ticket behebt.
+
+---
+
+### Die Schriftauswahl: entfernt, nicht nachgebaut
+
+Das ist die zweite Entscheidung, und sie geht in die andere Richtung. Angeboten
+waren Inter, Roboto, Open Sans. **Ich habe die Auswahl abgeschafft.** Drei
+Gründe, in der Reihenfolge ihres Gewichts:
+
+1. **Sie hätte auch gebaut nur eine halbe Wahrheit ergeben.** Die
+   Überschriften des Dokuments (Firmenname, Betreff, Gesamtbetrag) stehen in
+   Bricolage Grotesque und blieben es in jedem Fall — die Wahl hätte also den
+   Fließtext gegen eine beinahe gleich aussehende humanistische Grotesk
+   getauscht, und der Betrieb hätte sich gefragt, warum sich so wenig ändert.
+   Ein Schalter, der ein Zehntel dessen tut, was sein Name verspricht, ist
+   derselbe Fehler noch einmal, nur leiser.
+2. **Der Preis wäre real.** Zwei weitere Schriftfamilien heißen sechs TTF-
+   Dateien im Repository (rund 1,5 MB), zwei weitere `Font.register`-Aufrufe
+   und eine dritte Schriftquelle, die gepflegt werden will. Die IBM-Plex-Falle
+   aus DC-049 (kaputter Leerzeichen-Glyph im einen Export) steht als Warnung
+   im Kopf von `lib/pdf.tsx`.
+3. **Niemand hat danach gefragt.** Kein Testnutzer, keine Sandy-Meldung, keine
+   Prüfmeister-Notiz. Eine Farbe auf dem Briefkopf ist Handwerker-Branding;
+   die Wahl zwischen Inter und Open Sans ist es nicht.
+
+**Die Spalte `schrift` bleibt in der Datenbank unangetastet** und wird beim
+Duplizieren weiter mitkopiert. Es wird nur nichts mehr behauptet. Wer die Wahl
+später doch will, findet die Daten vor — das ist der Grund, warum ich sie nicht
+mit einer Migration weggeräumt habe.
+
+---
+
+### Was ab jetzt auf dem Bildschirm steht
+
+* Die Mini-Vorschau zeigt **keine fremde Schrift** mehr und **keine farbige
+  „ANGEBOT"-Fläche**, sondern die kleine graue Zeile, die auf dem Dokument
+  wirklich dort steht.
+* Sie zieht **dieselben zwei Akzentlinien** wie das Papier, in derselben Farbe,
+  aus derselben Funktion gerechnet.
+* Unter der Farbauswahl steht jetzt, **wo die Farbe auftaucht**: „Deine Farbe
+  zieht auf dem Angebot zwei Linien: unter dem Briefkopf und über der
+  Gesamtsumme. Text und Flächen bleiben schwarz auf weiß." Wer sie wählt, soll
+  nicht raten und nicht mit einem bunten Angebot rechnen müssen.
+* An der Fußzeilen-Karte steht der ehrliche Satz für den noch offenen Teil:
+  dass diese drei Felder das fertige Angebot heute nicht erreichen und geklärt
+  wird, welche Pflichtangaben durch eigenen Text ersetzt werden dürfen. **Das
+  nimmt Legals Antwort nicht vorweg** — es hört nur auf, das Gegenteil zu
+  behaupten, bis sie da ist.
+* Die große Live-Vorschau (`AngebotVorschau.tsx`, die „so sieht dein Angebot
+  für den Kunden aus" sagt) zieht die beiden Linien ebenfalls. Ohne sie wäre
+  mit DC-123 eine ehrliche Vorschau entstanden, die beim nächsten Schalter
+  wieder auseinanderläuft.
+
+### Gebaut
+
+| Datei | Was |
+|---|---|
+| `src/lib/briefpapier-farbe.ts` | **neu** — `AKZENT_VORGABE`, `normalisiereAkzent`, `helligkeit` (WCAG), `AKZENT_MAX_HELLIGKEIT`, `akzentLinieAusFarbe`, `akzentLinie`, `wirdAbgedunkelt` |
+| `src/lib/pdf.tsx` | Import + Re-Export, `const akzent`, die zwei Linien |
+| `src/components/AngebotVorschau.tsx` | dieselben zwei Linien aus derselben Funktion |
+| `src/app/(app)/einstellungen/briefpapier/[id]/page.tsx` | Schrift-Karte raus, `fontFamily` aus der Vorschau raus, Fläche → Zeile, zwei Akzentlinien, drei Hinweistexte |
+| `src/lib/__tests__/dc122-akzentfarbe.test.tsx` | **neu**, 12 Tests |
+
+**Warum wieder eine eigene Datei statt eines Imports aus `lib/pdf.tsx`:**
+dieselbe Begründung wie bei `briefpapier-logo.ts` in DC-123 — die Vorschau ist
+eine Client-Komponente, ein Import aus `lib/pdf.tsx` zöge `@react-pdf/renderer`
+samt Schriftdateien ins Browser-Bündel. Die Alternative (die Farbe in der
+Vorschau nachrechnen) ist genau der Fehler, der DC-049 und DC-055 verursacht
+hat. Eine Quelle, drei Leser.
+
+**Kein Datenbank-Eingriff.** `akzentfarbe` existiert seit jeher und hatte einen
+Vorgabewert; ein Angebot ohne Briefpapier bekommt die Vorgabefarbe und sieht
+damit aus wie bisher.
+
+### Verifikation — auf Sandys Rechner, am echten Projekt
+
+| Prüfung | Ergebnis |
+|---|---|
+| `npx tsc --noEmit -p tsconfig.json` | **fehlerfrei**, 0 Fehler insgesamt (der `_to_delete`-Lärm ist seit dem `exclude` des Chief of Staff weg) |
+| `dc122-akzentfarbe.test.tsx` | **12 grün** |
+| die 8 Testdateien, die `lib/pdf`, `AngebotVorschau` oder ein Kunden-PDF erzeugen | **71 grün** (`dc121-logo-kopf`, `dc123-vorschau-briefpapier`, `pdf-rechenweg-render`, `pdf-uebermessung-render`, `dc050-rechenweg-pdf`, `cos-e-batch1-kundenpapier`, `wertersatz-g6`, `pd018-nullzeilen`) |
+| `eslint` über die fünf geänderten/neuen Dateien | **0 Fehler**, 3 Warnungen — alle drei Bestand, keine in einer von mir berührten Zeile |
+
+**Die Tests prüfen die Ansicht, nicht nur die Farbrechnung.** Sie rendern
+`AngebotVorschau` mit `renderToStaticMarkup` und **zählen**, wie oft die Farbe
+im Dokument vorkommt: genau zweimal. Eine dritte Fundstelle wäre ein
+gestreiftes Blatt, eine einzige hieße, dass eine der beiden Linien vergessen
+wurde — beides bliebe bei einer reinen Zahlenprüfung grün. Dazu wird geprüft,
+**wo** die zwei Stellen sitzen (nach „Holm GmbH" und vor „Bezeichnung“; nach
+der Tabelle und vor „Gesamtbetrag“), und dass eine zu helle Farbe im Markup
+**nur abgedunkelt** auftaucht.
+
+**Nicht geprüft, also behaupte ich es nicht:** wie die beiden Linien mit einer
+echten Betriebsfarbe auf gedrucktem Papier wirken. Ein Prüfstand misst, dass
+die Farbe im Dokument ankommt, nicht wie sie aussieht. Wenn Sandy das nächste
+Mal ohnehin ein Angebot als PDF öffnet, sieht sie es.
+
+---
+
+### 🔴 Nebenbefund, nicht angefasst: der Push-Wächter aus CoS-P-014 ist auf diesem Rechner nicht eingehängt
+
+`node scripts/pruefe-unerfasste-dateien.mjs` läuft und meldet richtig (heute:
+`dc122-akzentfarbe.test.tsx`, `briefpapier-farbe.ts` und, fremd,
+`tapezier-nische.test.ts`). **Nur greift er bei einem Push nicht ein:**
+`.git/hooks/` enthält ausschließlich die `.sample`-Dateien, `core.hooksPath`
+ist nicht gesetzt, ein `.husky/`-Ordner existiert nicht. Die Hook-Datei liegt
+als `Claude outputs/pre-push` im Projekt — also dort, wo gelieferte Dateien
+landen, und nicht dort, wo git sie ausführt.
+
+Das heißt: Der Schutz, der nach CoS-P-014 eingezogen wurde (17 Stunden
+fehlgeschlagene Deploys durch nie eingecheckte Dateien), ist auf Sandys
+Rechner **eine Prüfung, die niemand auslöst**. Gehört dem Chief of Staff bzw.
+Platform, nicht mir — ich melde es nur, weil es dieselbe Fehlerform ist wie
+das ganze Ticket hier: etwas, das alle für vorhanden halten, ist es nicht.
+Nachgesehen, nicht vermutet.
+
+*(Fremde, noch laufende Arbeit im Projektordner: `tapezier-nische.test.ts` und
+elf geänderte Dateien aus Engineerings Zug. Nicht angefasst, nicht committet —
+der PowerShell-Block unten nennt nur meine fünf Pfade.)*
+
+*(In eigener Sache, damit es niemand sucht: Mein `git add --dry-run`, mit dem
+ich den Klammer-Pfad geprüft habe, hat eine `.git/index.lock` hinterlassen,
+die diese Shell nicht löschen darf. Sie liegt jetzt als
+`_to_delete/git-reste-2026-09-17/index.lock-designer-1138`, `.git/index.lock`
+ist wieder weg — nachgesehen, nicht angenommen. Derselbe Ordner enthält
+inzwischen 18 solcher Reste von heute, alle von anderen Läufen. Das ist kein
+Einzelfall mehr, sondern ein Muster: Wer in diesem Ordner `git` auch nur
+trocken laufen lässt, hinterlässt eine Sperre, die er nicht aufräumen kann.
+Gehört dem Chief of Staff.)*
+
+### Offen — gehört ausdrücklich noch zu DC-122
+
+**Die drei Fußzeilen-Felder wirken weiterhin nicht.** `lib/pdf.tsx` baut die
+Fußzeile aus den Betriebsdaten (Firma, USt-IdNr., IBAN); ob freier Text diese
+Pflichtangaben ersetzen darf, ist **CoS-L-011 bei Head of Legal**. Bis die
+Antwort da ist, wird dort nichts gebaut — der Hinweistext an der Karte sagt
+das jetzt, statt das Gegenteil zu behaupten. Sobald Legal geantwortet hat, ist
+es ein kleines Ticket: eine Fußzeilen-Quelle, drei Felder, eine Regel, welche
+Angaben unersetzbar bleiben.
+
+**Nicht in diesem Ticket, beim Hinsehen gefunden:** Die Mini-Vorschau und die
+große Live-Vorschau zeigen einen **dunklen Tabellenkopf** (`#2C2C2C` bzw.
+`bg-anthracite`), den das PDF nicht hat — dort stehen graue Spaltentitel über
+einer dünnen Linie. Beide Vorschauen sind sich darin einig und beide weichen
+vom Papier ab. Das ist wieder die DC-049-Linie, aber es ist eine eigene
+Entscheidung (welche der beiden Darstellungen die richtige ist), keine
+Nebenarbeit in einem Farbticket. Gemeldet, nicht gebaut.
+
+*Product Designer · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -14,6 +14,7 @@ import { mitDeutschenZahlen } from './zahlen-text'
 import { kundenRechenweg } from './rechenweg-kundentext'
 import { fasseKleinbetraegeZusammen } from './kleinbetraege'
 import { logoKopf, LOGO_MAX_BREITE_PT } from './briefpapier-logo'
+import { akzentLinie } from './briefpapier-farbe'
 
 // ── Marken-Schriften (CI-Handbuch, DC-049 "PDF-Schritt", 2026-09-10) ────────
 // react-pdf kennt von Haus aus nur die PDF-Standardschriften (Helvetica,
@@ -75,6 +76,13 @@ function fmtDatum(d: string) {
 // (u. a. `dc121-logo-kopf.test.ts`) unverändert weiterlaufen.
 export { LOGO_HOEHE_PT, LOGO_MAX_BREITE_PT, logoKopf } from './briefpapier-logo'
 
+// ── DC-122: Akzentfarbe ───────────────────────────────────────────────────
+// Aus demselben Grund in einer eigenen Datei wie das Logo oben: Die
+// Live-Vorschau braucht dieselbe Farbe und darf diese Datei nicht
+// importieren. Die Regel — genau zwei Linien, kein Text, keine Fläche —
+// steht in `lib/briefpapier-farbe.ts`.
+export { akzentLinie, AKZENT_VORGABE } from './briefpapier-farbe'
+
 // ── Styles ─────────────────────────────────────────────────────────────────
 const S = StyleSheet.create({
   page: {
@@ -129,6 +137,9 @@ const S = StyleSheet.create({
   metaWert: { fontSize: 9, color: '#111111', textAlign: 'right', minWidth: 80 },
 
   // ── Trennlinie ──────────────────────────────────────────────────────────
+  // DC-122: Die Farbe hier ist der Rückfallwert. Gezeichnet wird die Linie
+  // mit der Akzentfarbe des Briefpapiers (siehe `akzent` unten) — eine der
+  // genau zwei Stellen, an denen sie auf dem Dokument vorkommt.
   trennlinie: { borderBottom: '0.5 solid #E5E5E5', marginBottom: 20 },
   trennlinieKraeftig: { borderBottom: '1 solid #CCCCCC', marginBottom: 20 },
 
@@ -236,6 +247,7 @@ const S = StyleSheet.create({
   },
   summenLabel: { fontSize: 9, color: '#666666' },
   summenWert: { fontSize: 9, color: '#333333', textAlign: 'right' },
+  // DC-122: zweite und letzte Akzentlinie — siehe Kommentar bei `trennlinie`.
   summenGesamtTrennlinie: {
     borderBottom: '1 solid #111111',
     marginTop: 4,
@@ -335,6 +347,10 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
   // DC-121: Hoehe und Position kommen aus dem Briefpapier (Vorgabe: mittel /
   // links). Bis heute waren beide Schalter wirkungslos.
   const logo = logoKopf(briefpapier)
+  // DC-122: Die Akzentfarbe des Briefpapiers. Sie zieht genau zwei Linien —
+  // die unter dem Briefkopf und die über der Gesamtsumme. Ohne Briefpapier
+  // ist es die Vorgabefarbe, und das Blatt sieht aus wie bisher.
+  const akzent = akzentLinie(briefpapier)
   // react-pdf's Image does not support the DOM alt attribute.
   // eslint-disable-next-line jsx-a11y/alt-text
   const logoBild = logoSrc ? <Image src={logoSrc} style={[S.logoImg, { height: logo.hoehe }]} /> : null
@@ -459,7 +475,7 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
           </View>
         </View>
 
-        <View style={S.trennlinie} />
+        <View style={{ ...S.trennlinie, borderBottom: `0.5 solid ${akzent}` }} />
 
         {/* ── EMPFÄNGER ──────────────────────────────────────────────────── */}
         <View style={S.adressBlock}>
@@ -597,7 +613,7 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
               </View>
             )}
           </View>
-          <View style={S.summenGesamtTrennlinie} />
+          <View style={{ ...S.summenGesamtTrennlinie, borderBottom: `1 solid ${akzent}` }} />
           <View style={S.summenGesamtZeile}>
             <Text style={S.summenGesamtLabel}>Gesamtbetrag</Text>
             <Text style={S.summenGesamtWert}>{fmtEuro(quote.total_gross)}</Text>

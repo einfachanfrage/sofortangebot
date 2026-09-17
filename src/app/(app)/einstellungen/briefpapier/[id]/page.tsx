@@ -7,20 +7,31 @@ import Link from 'next/link'
 import type { Briefpapier, Company } from '@/lib/types'
 import { Upload } from 'lucide-react'
 import { Input } from '@/components/Input'
+import { akzentLinieAusFarbe, wirdAbgedunkelt } from '@/lib/briefpapier-farbe'
 
 const FARB_CHIPS = ['#D9A400', '#2563EB', '#16A34A', '#DC2626', '#6B7280', '#1C1C1C']
-const SCHRIFTEN = [
-  { value: 'inter', label: 'Inter' },
-  { value: 'roboto', label: 'Roboto' },
-  { value: 'opensans', label: 'Open Sans' },
-]
+// DC-122 (17.09.2026): Hier stand eine Auswahl aus drei Schriften (Inter,
+// Roboto, Open Sans). Sie hat nie etwas bewirkt — das Kundendokument setzt
+// `lib/pdf.tsx` fest in Inter, und nur diese Vorschau hat so getan, als
+// könnte man das ändern. Warum die Auswahl nicht nachgebaut, sondern
+// abgeschafft wurde, steht ausführlich in `docs/design-check.md` unter
+// DC-122. Kurz: Die Überschriften des Dokuments bleiben in jedem Fall
+// Bricolage Grotesque, die Wahl hätte also nur den Fließtext gegen eine
+// beinahe gleich aussehende Schrift getauscht — für zwei zusätzliche
+// Schriftfamilien im Dokument. Die Spalte `schrift` bleibt in der Datenbank
+// unangetastet; es wird nur nichts mehr behauptet.
 const FUSSZEILE_CHIPS = ['Steuernummer', 'IBAN', 'Handwerkskammer', 'USt-IdNr.', 'Geschäftsführer']
 
 // ── Mini Live-Vorschau ─────────────────────────────────────────────────────
 function BriefpapierVorschau({ bp, company }: { bp: Partial<Briefpapier>; company: Company | null }) {
   // Firmeninfo kommt aus dem Betrieb (companies), nicht mehr aus dem Briefpapier.
   const firmenname = company?.name || 'Musterfirma'
-  const akzent = bp.akzentfarbe || '#D9A400'
+  // DC-122: NICHT mehr die roh eingegebene Farbe, sondern die, mit der das
+  // Dokument die Linie wirklich zieht (sehr helle Farben werden dort
+  // abgedunkelt, damit die Linie nicht verschwindet). Dieselbe Funktion, die
+  // `lib/pdf.tsx` und die große Vorschau benutzen — sonst zeigt diese Seite
+  // wieder etwas anderes als das Papier, und genau das war der Befund.
+  const akzent = akzentLinieAusFarbe(bp.akzentfarbe)
   const adresse = company?.address || ''
 
   const dummyItems = [
@@ -29,8 +40,11 @@ function BriefpapierVorschau({ bp, company }: { bp: Partial<Briefpapier>; compan
     { pos: 3, title: 'Abschlussarbeiten', qty: 1, unit: 'pauschal', price: 250, total: 250 },
   ]
 
+  // DC-122: Hier stand ein `fontFamily` aus `bp.schrift`. Das Dokument kennt
+  // nur Inter — die Vorschau hat also eine Schrift gezeigt, die das Angebot
+  // nie annimmt.
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden text-[7px] leading-tight" style={{ fontFamily: bp.schrift === 'roboto' ? 'Roboto, sans-serif' : bp.schrift === 'opensans' ? '"Open Sans", sans-serif' : 'Inter, sans-serif' }}>
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden text-[7px] leading-tight">
       <div className="px-5 py-4">
         {/* Header */}
         <div className="flex justify-between items-start mb-4">
@@ -43,8 +57,15 @@ function BriefpapierVorschau({ bp, company }: { bp: Partial<Briefpapier>; compan
             )}
             {adresse && <div className="text-[6px] text-gray-400 whitespace-pre-line">{adresse}</div>}
           </div>
-          <span className="text-[8px] font-black px-2 py-0.5 rounded" style={{ background: akzent, color: '#2C2C2C' }}>ANGEBOT</span>
+          {/* DC-122: Das war eine farbige Fläche mit „ANGEBOT" darin. Auf dem
+              Dokument steht dort eine kleine graue Zeile, keine Fläche — und
+              bei einer dunklen Akzentfarbe (die Chip-Liste enthält #1C1C1C)
+              stand hier dunkler Text auf dunklem Grund. */}
+          <span className="text-[7px] font-bold tracking-widest text-gray-400">ANGEBOT</span>
         </div>
+
+        {/* DC-122: erste der zwei Akzentlinien, genau wie auf dem Dokument */}
+        <div className="mb-3" style={{ borderTop: `1px solid ${akzent}` }} />
 
         {/* Tabelle */}
         <div className="rounded overflow-hidden">
@@ -73,13 +94,18 @@ function BriefpapierVorschau({ bp, company }: { bp: Partial<Briefpapier>; compan
           <div className="rounded px-2 py-1.5 text-[6px] w-[45%]" style={{ background: '#F7F7F5' }}>
             <div className="flex justify-between mb-0.5"><span className="text-gray-500">Netto</span><span>1.130,00 €</span></div>
             <div className="flex justify-between mb-0.5"><span className="text-gray-500">MwSt. 19%</span><span>214,70 €</span></div>
-            <div className="flex justify-between font-black border-t border-gray-300 pt-0.5 text-[7px]"><span>Gesamt</span><span>1.344,70 €</span></div>
+            {/* DC-122: zweite und letzte Akzentlinie */}
+            <div className="flex justify-between font-black pt-0.5 text-[7px]" style={{ borderTop: `1px solid ${akzent}` }}><span>Gesamt</span><span>1.344,70 €</span></div>
           </div>
         </div>
 
-        {/* Footer */}
+        {/* Footer — DC-122: Die Fußzeilen-Linie ist auf dem Dokument grau,
+            nicht farbig; die Akzentfarbe zieht genau zwei Linien. Dass der
+            Text dieser drei Felder das Angebot bis heute gar nicht erreicht,
+            ist der noch offene Teil von DC-122 (Rechtsfrage bei Legal,
+            CoS-L-011) — der Hinweis dazu steht unten an der Fußzeilen-Karte. */}
         {(bp.fusszeile_links || bp.fusszeile_mitte || bp.fusszeile_rechts) && (
-          <div className="flex justify-between mt-3 pt-1.5 border-t text-[5px] text-gray-400" style={{ borderColor: akzent }}>
+          <div className="flex justify-between mt-3 pt-1.5 border-t border-gray-200 text-[5px] text-gray-400">
             <span>{bp.fusszeile_links}</span>
             <span>{bp.fusszeile_mitte}</span>
             <span>{bp.fusszeile_rechts}</span>
@@ -303,6 +329,22 @@ function BriefpapierEditorInner() {
               />
               <div className="w-8 h-8 rounded-lg border border-anthracite/10" style={{ background: bp.akzentfarbe }} />
             </div>
+            {/* DC-122: Wo die Farbe auftaucht, stand nirgends. Wer sie wählt,
+                soll nicht raten müssen — und nicht damit rechnen, dass das
+                Angebot bunt wird. */}
+            <p className="text-[11px] text-anthracite/30 font-semibold leading-relaxed">
+              Deine Farbe zieht auf dem Angebot zwei Linien: unter dem Briefkopf und über der
+              Gesamtsumme. Text und Flächen bleiben schwarz auf weiß — ein Angebot wird gelesen,
+              auch in Graustufen ausgedruckt.
+            </p>
+            {wirdAbgedunkelt(bp.akzentfarbe) && (
+              <p className="text-[11px] text-anthracite/40 font-semibold leading-relaxed flex items-center gap-2">
+                <span className="inline-block w-3 h-3 rounded-sm shrink-0" style={{ background: akzentLinieAusFarbe(bp.akzentfarbe) }} />
+                Diese Farbe ist sehr hell. Auf dem Angebot wird sie etwas abgedunkelt, sonst wäre
+                die Linie auf Papier nicht zu sehen. Die Vorschau oben zeigt schon den Ton, der
+                gedruckt wird.
+              </p>
+            )}
           </div>
 
           {/* Fußzeile */}
@@ -323,6 +365,18 @@ function BriefpapierEditorInner() {
                 </button>
               ))}
             </div>
+            {/* DC-122, noch offener Teil: Diese drei Felder erreichen das
+                Kundendokument bis heute nicht — dort baut `lib/pdf.tsx` die
+                Fußzeile aus den Betriebsdaten (Firma, USt-IdNr., IBAN). Ob
+                freier Text diese Pflichtangaben ersetzen darf, liegt als
+                Rechtsfrage bei Head of Legal (CoS-L-011). Bis die Antwort da
+                ist, wird hier nichts gebaut — aber auch nichts behauptet. */}
+            <p className="text-[11px] text-anthracite/40 font-semibold leading-relaxed bg-bg rounded-xl px-3 py-2">
+              Diese drei Felder stehen noch nicht auf dem fertigen Angebot. Dort steht heute die
+              Fußzeile aus deinen Betriebsdaten (Firma, Steuer- und Bankangaben). Wir klären
+              gerade, welche davon durch eigenen Text ersetzt werden dürfen — bis dahin kannst du
+              hier eintragen, was später erscheinen soll.
+            </p>
             {[
               { label: 'Links', field: 'fusszeile_links' as const },
               { label: 'Mitte', field: 'fusszeile_mitte' as const },
@@ -339,22 +393,8 @@ function BriefpapierEditorInner() {
             ))}
           </div>
 
-          {/* Schrift */}
-          <div className="bg-white rounded-2xl shadow-sm border border-anthracite/5 px-5 py-4 space-y-3">
-            <div className="text-xs font-black text-anthracite/50 uppercase tracking-wider">Schrift</div>
-            <div className="flex gap-2">
-              {SCHRIFTEN.map(s => (
-                <button
-                  key={s.value}
-                  onClick={() => setField('schrift', s.value as Briefpapier['schrift'])}
-                  style={{ fontFamily: s.value === 'inter' ? 'Inter' : s.value === 'roboto' ? 'Roboto' : 'Open Sans' }}
-                  className={`flex-1 py-2.5 rounded-xl text-sm font-bold border-2 transition-colors ${bp.schrift === s.value ? 'border-yellow bg-[#FFF9E6] text-anthracite' : 'border-anthracite/10 text-anthracite/40'}`}
-                >
-                  {s.label}
-                </button>
-              ))}
-            </div>
-          </div>
+          {/* DC-122: Hier stand die Schriftauswahl. Siehe Kommentar ganz oben
+              an FARB_CHIPS — abgeschafft statt nachgebaut. */}
 
           {/* Speichern */}
           <button
