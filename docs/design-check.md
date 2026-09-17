@@ -12188,4 +12188,227 @@ hier ist der alte Code hinter dem Schalter, nicht deine Fassung.
 
 *Head of Marketing · 2026-09-17*
 
+## DC-125 ✅ — Eine Position ohne Preis zeigt keinen Betrag. Und eine Summe, in der sie steckt, ist kein Gesamtbetrag (Product Designer, 17.09.2026)
+
+**Bezug:** Entscheidung des Chief of Staff vom 17.09., 11:32 UTC (oben in
+dieser Datei) · Messung PD-022/PM-117 des Prüfmeisters · vierte Ausprägung
+derselben Frage nach H, L.5 und DC-112, und direkter Nachbar von DC-113.
+
+**Die Regel war schon entschieden, ich hatte nur die Form zu wählen.** Der
+Chief of Staff hat drei Wege angeboten und keinen vorgeschrieben. Ich habe
+den ersten genommen — lesbarer Platzhalter statt „0,00 €", Versand gesperrt —
+und den zweiten ausdrücklich verworfen. Die Begründung dafür steht unten und
+ist der eigentliche Inhalt dieses Tickets.
+
+### Der Befund, in einem Satz
+
+Auf dem gemessenen Badangebot standen sechs von neun Zeilen mit **„0,00 €"**
+und darunter eine Summe von **543,84 €**, wo 2.980,44 € hingehören — und
+beide Zahlen sahen aus wie Zahlen. Nichts an diesem Blatt verriet, dass es
+kein Angebot ist.
+
+### Was ab jetzt dasteht — zwei Sätze, die zusammengehören
+
+**1. Eine Position ohne Preis zeigt keinen Betrag, sondern „fehlt".**
+
+„0,00 €" ist keine fehlende Angabe, sondern eine Behauptung: *diese Arbeit
+kostet nichts.* Und es ist genau die Behauptung, die der Handwerker am Ende
+einlösen müsste — er hat sie unterschrieben verschickt. „fehlt" ist die
+Wahrheit, passt in die schmale Betragsspalte und ist mit keiner Zahl
+verwechselbar. Es steht in **beiden** Preisspalten der Zeile (Einzelpreis und
+Gesamtpreis), nicht nur in einer: eine Zeile, in der der Einzelpreis fehlt und
+der Gesamtpreis 0,00 € behauptet, wäre wieder halb falsch.
+
+**2. Eine Summe, in der eine solche Position steckt, ist kein Gesamtbetrag.**
+
+Der Satz des Prüfmeisters ist der Maßstab: *„Eine Liste mit sechs Nullen und
+einer Summe, die offensichtlich falsch ist, ist schlimmer als gar keine
+Summe."* Auf dem Kundenpapier steht deshalb **keine Zahl** — und zwar auch
+keine Zwischensumme und keine Umsatzsteuer, denn beide rechnen auf derselben
+zu niedrigen Grundlage und wären genauso falsch, nur unauffälliger. An ihre
+Stelle tritt ein Satz:
+
+```
+Gesamtbetrag noch offen
+Bei 6 von 9 Positionen fehlt noch der Preis. Dieses Angebot ist noch nicht
+vollständig.
+```
+
+**Die Zahl steht bewusst im Satz.** „Bei einigen Positionen fehlt der Preis"
+wäre höflich und wertlos. Bei *sechs von neun* weiß der Handwerker sofort,
+dass er nicht eine Zeile nachträgt, sondern dass sein Katalog eine Lücke hat —
+und das ist die Arbeit, die tatsächlich vor ihm liegt.
+
+Dieselbe Regel gilt für die **Raum-Zwischensummen**: Eine Raumsumme, in der
+eine Zeile ohne Preis steckt, ist zu niedrig, und zwar um genau den Betrag,
+den niemand kennt. Sie steht deshalb ebenfalls nicht da.
+
+### Warum nicht Weg 2 — die Zeile aus dem Kundenpapier nehmen
+
+Weg 2 des Chief of Staff (Zeile fällt raus, erscheint in
+`bewertung.fehlende_angaben`) ist verlockend, weil die Hinweisliste schon
+existiert und DC-116 sie ohnehin benutzt. Er scheitert an einer Regel, die in
+`src/lib/versandbereit.ts` seit Manfreds Testlauf schwarz auf weiß steht:
+
+> *„Was hier bewusst NICHT passiert: die unbepreiste Position stillschweigend
+> weglassen. Dann verschwände die Arbeit aus dem Angebot und der Handwerker
+> führte sie aus, ohne sie berechnet zu haben."*
+
+Das ist dieselbe Grenze, die ich in DC-113 gezogen habe, als ich die
+Nullzeilen-Regel absichtlich eng gehalten habe: Entfernt wird nur, was
+nachweislich **keine Arbeit** enthält (Menge 0, Zuschlag auf 0,00 €). Eine
+unbepreiste Position ist das Gegenteil — sie ist echte Arbeit, deren Preis
+fehlt. Weg 2 hätte die DC-113-Grenze von der anderen Seite eingerissen, ein
+halbes Jahr nachdem sie gezogen wurde.
+
+**Deshalb bleibt die Zeile stehen.** Sie sagt nur nicht mehr „0,00 €". Das ist
+per Test festgehalten, nicht als Vorsatz: drei der sechs Badezimmer-Titel
+werden im fertigen Markup nachgewiesen.
+
+### Der Unterschied zwischen Arbeitsansicht und Kundenpapier — und warum er Absicht ist
+
+| | Betragsspalte | Summe |
+|---|---|---|
+| Kundenpapier (PDF, Vorschau) | „fehlt" | **keine Zahl**, stattdessen der Satz oben |
+| Arbeitsansicht (Angebot ansehen/bearbeiten) | „fehlt" | Zahl bleibt, heißt aber **„ZWISCHENSTAND"** |
+
+Die Zahl in der Arbeitsansicht wegzunehmen wäre die bequeme, konsequente und
+falsche Lösung. CoS-026 steht im Code an genau dieser Stelle: *„der Handwerker
+soll die Summe wandern sehen, während er tippt, nicht erst hinterher."* Wer
+eine Position korrigiert, arbeitet gegen diese Zahl. Sie darf nur nicht
+behaupten, sie sei fertig — deshalb heißt sie „Zwischenstand" statt „GESAMT",
+und darunter steht derselbe Satz mit der Anzahl, plus „So kann das Angebot
+nicht zum Kunden." Dieselbe Zeile steht unter der großen gelben Summe im
+Kopf, weil die oft die einzige ist, die jemand liest.
+
+### Warum das Kundenpapier überhaupt betroffen ist, obwohl der Versand gesperrt ist
+
+Das ist der Punkt, an dem dieses Ticket sonst zu klein geworden wäre. Der
+Versand-Wächter (`darfZumKunden`, CoS-E-004/012/023/035) sperrt E-Mail,
+WhatsApp und Link — er ist seit Manfreds Testlauf da und funktioniert. **Aber
+er ist nicht der einzige Weg zum Kunden.** „PDF herunterladen" im
+Aktionen-Sheet ruft `/api/pdf?id=…` auf, und diese Route geht **nicht** durch
+`darfZumKunden`. Das erzeugte Blatt ist Zeichen für Zeichen dasselbe, das die
+Versandroute verweigert — und der Handwerker verschickt es danach selbst über
+sein eigenes Mailprogramm.
+
+Eine Sperre an der Route wäre die naheliegende Antwort und wäre ein
+Rückschritt: Dann könnte er seinen Entwurf nicht mehr ausdrucken, um ihn in
+Ruhe durchzugehen. Die Anzeige löst beides — er bekommt sein Blatt, und das
+Blatt sagt von selbst, dass es keins ist.
+
+### Wo die Regel greift
+
+| Weg | Datei | Betrag | Summe |
+|---|---|---|---|
+| Kunden-PDF (Versand **und** Download) | `src/lib/pdf.tsx` | „fehlt" | keine |
+| Vorschau („so sieht es der Kunde") | `src/components/AngebotVorschau.tsx` | „fehlt" | keine |
+| Angebot ansehen | `AngebotDetail.tsx`, Ansicht-Zweig | „fehlt" | Zwischenstand |
+| Angebot bearbeiten | `AngebotDetail.tsx`, Edit-Zweig | „Preis fehlt" | Zwischenstand |
+
+Im Edit-Zweig steht der längere Wortlaut, weil dort Platz ist und weil
+unmittelbar darunter der rote Kasten mit dem Knopf **„Preis anlegen"** sitzt —
+der Weg aus dem Zustand heraus war schon da (DC-069/TN-058), er stand nur
+neben einer Zahl, die das Problem verharmloste.
+
+### Eine Bedingung, drei Leser — statt dreimal abgeschrieben
+
+`!price_item_id && unit_price <= 0` stand an zwei Stellen im Code und
+sinngemäß im Kopf jedes Lesers. Sie heißt jetzt `preisFehlt()` und liegt in
+`src/lib/versandbereit.ts` — in der Datei, die die Regel ohnehin besitzt, statt
+in einer neuen. Wer sie ändert, ändert sie überall; dass Versand-Sperre und
+Anzeige dieselbe Zeile meinen, ist ab jetzt eine Eigenschaft des Codes und
+nicht eine Verabredung. Ein eigener Test hält es fest.
+
+**Die Grenze der Bedingung ist wichtig und bleibt unverändert:** Eine bewusst
+mit 0,00 € angebotene Leistung („Boden schützen, mache ich mit") hängt an
+einem echten Preisdatenbank-Eintrag. Sie ist eine Entscheidung des
+Handwerkers, kein Loch — und druckt weiterhin 0,00 €, mit vollständiger Summe
+darunter. Auch das ist per Gegenprobe festgehalten.
+
+### Gebaut
+
+| Datei | Was |
+|---|---|
+| `src/lib/versandbereit.ts` | **neu darin:** `preisFehlt()`, `idsOhnePreis()`, `fehlendePreiseSatz()`, `PREIS_FEHLT_KURZ`; `unbepreistePositionen()` benutzt jetzt `preisFehlt()` |
+| `src/lib/pdf.tsx` | beide Renderpfade (flach und gruppiert), Raum-Zwischensumme, Summenblock, neuer Stil `ohnePreis` |
+| `src/components/AngebotVorschau.tsx` | dieselben vier Stellen, formgleich — inkl. Akzentlinie an derselben Position wie im PDF |
+| `src/app/(app)/angebot/[id]/AngebotDetail.tsx` | Edit-Zweig, Ansicht-Zweig, beide Raumsummen, Kopfsumme, Summenblock |
+| `src/lib/__tests__/dc125-preis-fehlt.test.tsx` | **neu**, 17 Zusicherungen |
+
+**Kein Datenbank-Eingriff, keine Änderung an irgendeiner Rechnung.** Es bewegt
+sich kein Cent: `total_net`, `total_vat` und `total_gross` werden nicht
+angefasst, nur an einer Stelle nicht mehr gedruckt.
+
+**Warum die Markierung über die IDs läuft und nicht über ein Feld im
+Gruppen-Typ:** `GruppenItem` kennt `price_item_id` nicht. Es dafür zu
+erweitern hieße, den Gruppierungs-Typ und seine Tests anzufassen, damit eine
+Anzeige eine Farbe wählen kann. Dieselbe Stelle löst das für den
+Übermessungs-Hinweis und den Rechenweg längst über eine `Map`/`Set` nach `id` —
+ich habe das Muster übernommen, nicht ein zweites daneben gestellt.
+
+### Verifikation — auf Sandys Rechner, am echten Projekt
+
+| Prüfung | Ergebnis |
+|---|---|
+| `npx tsc --noEmit -p tsconfig.json` | **fehlerfrei** |
+| `dc125-preis-fehlt.test.tsx` | **17 grün** |
+| die 10 Testdateien, die `versandbereit`, `AngebotVorschau`, `lib/pdf` oder ein Kundenpapier anfassen | **100 grün** (`cos-e-batch1-kundenpapier`, `cos-e-batch3-versandbereit`, `dc050-rechenweg-pdf`, `dc121-logo-kopf`, `dc122-akzentfarbe`, `dc123-vorschau-briefpapier`, `pd018-nullzeilen`, `pdf-rechenweg-render`, `pdf-uebermessung-render`, `wertersatz-g6`) |
+| `eslint` über die fünf geänderten/neuen Dateien | **0 Fehler**, 11 Warnungen — alle Bestand (`Date.now` in `addHintItem`, das ungenutzte `kundeIstUnternehmen`, zwei `<img>`-Hinweise), keine in einer von mir berührten Zeile |
+| `node scripts/docs-sichern.mjs pruefen` | alle 57 Doku-Dateien in Ordnung |
+
+**Die Tests prüfen das gerenderte Blatt, nicht nur die Bedingung.** Das
+Badangebot aus PM-117 (neun Positionen, sechs ohne Preis, die echten Titel)
+läuft durch `AngebotVorschau` und `renderToStaticMarkup`, und danach wird
+**gezählt**: „fehlt" steht genau zwölfmal da (sechs Zeilen × zwei
+Betragsspalten), „0,00 €" kein einziges Mal, „543,84" kein einziges Mal,
+`>Gesamtbetrag<` null Mal. Eine reine Zahlenprüfung wäre bei jeder dieser
+Abweichungen grün geblieben — das ist die Lehre aus DC-121/DC-122.
+
+**Nicht geprüft, also behaupte ich es nicht:** wie das Wort „fehlt" in Rot auf
+einem schwarz-weiß gedruckten Blatt wirkt. Es trägt die Aussage im Wort und
+nicht in der Farbe, aber gesehen hat das niemand. Ebenfalls nicht geprüft: der
+Weg am Handy mit echten Fingern — die Arbeitsansicht ist hier nur über Code
+und Tests gemessen, nicht durchgeklickt.
+
+### 📌 Für den Prüfmeister — PD-022 ist beantwortet, PM-117 bleibt rot
+
+Deine Frage war: *„Was zeigt der Entwurf, wenn die Mehrheit der Zeilen keinen
+Preis hat?"* Antwort: keine Summe, und „fehlt" statt jeder Null. Deine
+Messung dazu wird sich **nicht** ändern — `unit_price` bleibt 0, und
+`hat_fehlende_preise` bleibt true. Das ist richtig so: DC-125 ist das Netz,
+nicht der Fix. Solange PM-117/PM-060-A offen sind, findet das Bad weiterhin
+keine Preise; es sagt das jetzt nur, statt sich zu verrechnen.
+
+### Offen — gehört ausdrücklich nicht zu diesem Ticket
+
+* **PM-117 / PM-060-A (Engineering, CoS-E-078)** — dass die sechs Zeilen
+  überhaupt keinen Preis finden. Die Ursache, und sie bleibt dort.
+* **`/api/pdf` ist nicht durch `darfZumKunden` gesperrt.** Gemeldet, bewusst
+  nicht gebaut: eine Sperre wäre eine Produktentscheidung (darf ein Entwurf
+  ausgedruckt werden?) und keine Anzeigefrage. Mit DC-125 ist der Weg
+  ungefährlich, aber er ist weiterhin ein Weg zum Kunden, der an einer
+  Sicherung vorbeiführt. Gehört dem Chief of Staff.
+* **PD-021 („Nach Arbeitsablauf" sortiert nicht nach Arbeitsablauf)** — bleibt
+  bei mir, wird aber erst sinnvoll, wenn Engineerings Grundreihenfolge
+  (PM-119) steht. Nicht angefasst.
+* **Der dunkle Tabellenkopf** aus DC-122 (beide Vorschauen zeigen ihn, das
+  Papier nicht) — unverändert offen, eigene Entscheidung.
+* **DC-122 Fußzeilen-Teil** — weiterhin bei Head of Legal (CoS-L-011).
+* **DC-124** — unverändert, laut Chief of Staff nach DC-122/DC-123.
+
+*(Fremde, noch laufende Arbeit im Projektordner:
+`src/lib/__tests__/pruefmeister-batch-121-128.test.ts` ist für git komplett
+unbekannt und würde einen Push nach der alten CoS-P-014-Regel blockieren. Das
+ist die Arbeit des Prüfmeisters, nicht meine — ich habe sie nicht angefasst
+und nicht committet, der PowerShell-Block nennt nur meine sechs Pfade. Der
+Wächter blockiert inzwischen ohnehin nichts mehr: `.git/hooks/pre-commit`
+existiert seit heute (CoS-P-031, Sandys „ja, einbauen"), warnt beim Commit und
+endet mit `exit 0`. Der in DC-122 gemeldete Zustand „eine Prüfung, die niemand
+auslöst" ist damit behoben — nachgesehen, nicht angenommen.)*
+
+*Product Designer · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

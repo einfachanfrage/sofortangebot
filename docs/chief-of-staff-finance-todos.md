@@ -2762,6 +2762,82 @@ eigene Auswertung des eingebetteten `factur-x.xml` von Beleg 2026-018
 
 *Head of Finance · 17.09.2026*
 
+---
+
+## 🔴 Korrektur meines eigenen Eintrags von 13:40 — ich habe § 33 UStDV übersehen und Sandy drei Korrekturen aufgetragen, von denen keine nötig war (17.09.2026, 15:20 UTC · Head of Finance)
+
+**Sandy hat widersprochen, und sie hatte in beiden Punkten recht.** Ihre
+Worte: *„bei din media steht doch die richtige anschrift hä??"* und *„kann
+rückwirkend keine anschrift ändern"*. Beides hat gesessen.
+
+### 1. Der handwerkliche Fehler: zwei Dinge in einer Tabellenspalte
+
+In F-009 stand eine Tabelle mit der Überschrift „Was draufsteht / Was
+draufstehen müsste". In den ersten beiden Zeilen ging es um die
+**Postanschrift**, in der dritten um die **E-Mail-Adresse der Bestellung**.
+Auf der DIN-Media-Rechnung steht *Sandra Holm, Wielandstr. 11, 12159 Berlin* —
+**korrekt**, und ich hatte sie selbst so ins Rechnungsjournal übernommen.
+Meine eigene Tabelle hat also dem widersprochen, was zwei Stunden vorher in
+meiner eigenen Datei stand. Sandy hat es in Sekunden gesehen.
+
+### 2. Der fachliche Fehler, und der ist der größere: § 33 UStDV
+
+Ihr zweiter Satz hat mich die Regel nachschlagen lassen, die vor der
+Meldung gehört hätte:
+
+> **Kleinbetragsrechnung bis 250 € brutto — § 33 UStDV.** Erforderlich sind
+> nur fünf Angaben: Lieferant mit Anschrift, Ausstellungsdatum, Menge und
+> Bezeichnung der Leistung, Bruttobetrag, Steuersatz. **Name und Anschrift des
+> Leistungsempfängers sind ausdrücklich NICHT erforderlich** — und der
+> Vorsteuerabzug ist trotzdem in voller Höhe möglich.
+
+**Von 18 Belegen dieses Betriebs liegen 17 unter 250 €.** Damit löst sich der
+größte Teil meines „strittig"-Befundes auf:
+
+| Beleg | mein Befund 13:40 | tatsächlich |
+|---|---|---|
+| 2026-004 OpenAI (15,50 €) | Empfängername „Hugo" → Abzug gefährdet | **kein Mangel** — Empfängername gar nicht verlangt. Voll abziehbar |
+| 2026-001 / -009 Apple (je 22,00 €) | falsche Anschrift → Abzug gefährdet | **Anschrift unschädlich.** Offen bleibt allein die betriebliche Veranlassung — eine andere Frage, die seit 02.09. vermerkt ist |
+| 2026-012 IONOS (5,27 €) | drei fremde Domains | **bleibt offen** — das war nie eine Formfrage |
+
+**Die eine Ausnahme, die ich mitnehme, weil sie hier greift:** Bei
+**Reverse-Charge-Umsätzen nach § 13b** gilt die Erleichterung **nicht**. Für
+die Supabase-Belege bleibt § 14 Abs. 4 UStG in vollem Umfang anwendbar. Das
+ändert an ihrer Behandlung (durchlaufend, Saldo null) nichts, gehört aber in
+die Prüfung.
+
+### 3. Was ich geändert habe
+
+| Datei | Änderung |
+|---|---|
+| `docs/finance-001-verfahrensdokumentation-rechnungseingang.md` | **Schritt 2b neu: Kleinbetragsrechnungen.** Steht bewusst **vor** der 11-Punkte-Liste, mit den fünf Pflichtangaben, den vier Ausnahmefällen und dem Satz, dass die Erleichterung nur die Form betrifft, nicht die betriebliche Veranlassung |
+| `docs/kostenuebersicht-finance.xlsx`, `Rechnungsjournal` | Zeile „strittig" → **„noch offen"**, jetzt **12,29 €** statt 14,76 €; „unstrittig abziehbar" **29,97 €** statt 27,50 €. Erläuterung darunter komplett neu geschrieben, mit der Korrektur benannt |
+| `docs/entscheidungen-fuer-sandy.md` | **F-009 zurückgezogen**, alter Wortlaut durchgestrichen stehen gelassen, Korrektur mit Begründung darunter |
+
+**Die Bewertung von Punkt 4.7 bleibt bei 85.** Dieser Fehler betrifft die
+Vorsteuer-Auswertung, nicht die Empfangsstrecke.
+
+### 4. Was ich daraus mitnehme, und es steht hier, damit es nicht nur eine Floskel ist
+
+**Ich habe eine Verschärfung gemeldet, ohne die dazugehörige Erleichterung zu
+prüfen.** Die Reihenfolge war falsch herum: Erst kam die richtige Erkenntnis
+(unter Regelbesteuerung werden Pflichtangaben zur Geldfrage), dann habe ich
+drei Belege dagegen gehalten — und nicht gefragt, ob für genau diese Belege
+eine Ausnahme gilt. Bei einem Betrieb, dessen Rechnungen fast alle zweistellig
+sind, war die 250-€-Grenze die naheliegendste Frage überhaupt.
+
+**Der Schaden war nicht der falsche Betrag, sondern der Arbeitsauftrag.** Ich
+hatte Sandy drei Konten-Änderungen aufgeschrieben, kurz vor ihrer Reise. Genau
+das soll ich ihr abnehmen, nicht erzeugen. Die neue Reihenfolge in Schritt 2b
+— **erst Betragsgrenze, dann Pflichtangaben** — ist der Teil der Korrektur,
+der nicht nur heute wirkt.
+
+**Quellen:** [§ 33 UStDV — Rechnungen über Kleinbeträge (gesetze-im-internet.de)](https://www.gesetze-im-internet.de/ustdv_1980/__33.html) ·
+[onlinebilanz.de — Kleinbetragsrechnung nach § 33 UStDV: Pflichtangaben, Vorsteuerabzug, Ausnahmen](https://onlinebilanz.de/kleinbetragsrechnung-pflichtangaben-ustdv/) ·
+[sevdesk — Kleinbetragsrechnung 2026: Grenze, Pflichtangaben & Vorsteuer](https://sevdesk.de/ratgeber/buchhaltung-finanzen/rechnungen/art/kleinbetragsrechnung/)
+
+*Head of Finance · 17.09.2026*
+
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

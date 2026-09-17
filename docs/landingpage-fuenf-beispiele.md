@@ -22,15 +22,15 @@ nicht, wenn was fehlt."
 
 | Position | Menge | | Betrag |
 |---|---|---|---|
-| Wände zweimal streichen | 46,80 m² | | 444,60 € |
-| Decke zweimal streichen | 20,00 m² | | 220,00 € |
-| Boden abdecken | 20,00 m² | Vorschlag | 24,00 € |
-| Sockelleisten abkleben | 18,00 lfm | Vorschlag | 14,40 € |
-| Kleinmaterial | 1 pauschal | Vorschlag | 25,00 € |
+| Wand streichen 2x | 46,80 m² | | 444,60 € |
+| Decke streichen 2x | 20,00 m² | | 220,00 € |
+| Boden schützen | 20,00 m² | Vorschlag | 24,00 € |
+| Sockelleisten abkleben | 18,00 lfdm | Vorschlag | 14,40 € |
+| Kleinmaterial und Verbrauchsmaterial | 1 Pauschale | Vorschlag | 25,00 € |
 | **Summe netto** | | | **728,00 €** |
 
-**Beleg unter „Wände zweimal streichen":**
-`18,00 lfm Umfang × 2,60 m · Fenster und Tür unter 2,5 m² nach VOB nicht abgezogen`
+**Beleg unter „Wand streichen 2x":**
+`18,00 lfdm Umfang × 2,60 m · Fenster und Tür unter 2,5 m² nach VOB nicht abgezogen`
 
 Das ist die wichtigste Zeile der ganzen Sektion. Sie beweist in einem Halbsatz,
 dass hier nach Norm gerechnet wird. **Nicht kürzen, auch nicht auf dem Handy.**
@@ -82,32 +82,32 @@ gesehen hat, der 5 % auf alles draufschlägt, weiß, was das wert ist.
 
 | Position | Menge | Betrag |
 |---|---|---|
-| Wände zweimal streichen | 45,00 m² | 427,50 € |
-| Decke zweimal streichen | 20,00 m² | 220,00 € |
-| Boden abdecken | 20,00 m² | 24,00 € |
-| Sockelleisten abkleben | 18,00 lfm | 14,40 € |
+| Wand streichen 2x | 45,00 m² | 427,50 € |
+| Decke streichen 2x | 20,00 m² | 220,00 € |
+| Boden schützen | 20,00 m² | 24,00 € |
+| Sockelleisten abkleben | 18,00 lfdm | 14,40 € |
 
 **Schlafzimmer** · 3,50 × 4 m · 2,50 m
 
 | Position | Menge | Betrag |
 |---|---|---|
-| Wände zweimal streichen | 37,50 m² | 356,25 € |
-| Decke zweimal streichen | 14,00 m² | 154,00 € |
-| Boden abdecken | 14,00 m² | 16,80 € |
-| Sockelleisten abkleben | 15,00 lfm | 12,00 € |
+| Wand streichen 2x | 37,50 m² | 356,25 € |
+| Decke streichen 2x | 14,00 m² | 154,00 € |
+| Boden schützen | 14,00 m² | 16,80 € |
+| Sockelleisten abkleben | 15,00 lfdm | 12,00 € |
 
 **Flur** · 1,20 × 6 m · 2,50 m
 
 | Position | Menge | Betrag |
 |---|---|---|
-| Wände zweimal streichen | 36,00 m² | 342,00 € |
-| Decke zweimal streichen | 7,20 m² | 79,20 € |
-| Boden abdecken | 7,20 m² | 8,64 € |
-| Sockelleisten abkleben | 14,40 lfm | 11,52 € |
+| Wand streichen 2x | 36,00 m² | 342,00 € |
+| Decke streichen 2x | 7,20 m² | 79,20 € |
+| Boden schützen | 7,20 m² | 8,64 € |
+| Sockelleisten abkleben | 14,40 lfdm | 11,52 € |
 
 | | | |
 |---|---|---|
-| Kleinmaterial | 1 pauschal | 25,00 € |
+| Kleinmaterial und Verbrauchsmaterial | 1 Pauschale | 25,00 € |
 | **Summe netto** | | **1.691,31 €** |
 
 Zwölf Zeilen sind für eine Webseite viel. **Vorschlag:** die drei Raumblöcke
@@ -133,13 +133,13 @@ Und der Flur mit drei Türen zeigt nebenbei, dass Türen den Umfang nicht kürze
 |---|---|---|
 | Spachtelarbeiten Q3 | 46,80 m² | 655,20 € |
 | Voranstrich / Grundierung | 46,80 m² | 210,60 € |
-| Wände zweimal streichen | 46,80 m² | 444,60 € |
+| Wand streichen 2x | 46,80 m² | 444,60 € |
 | Heizkörper abschleifen | 2 Stück | 40,00 € |
 | Heizkörper grundieren | 2 Stück | 50,00 € |
-| Heizkörper lackieren | 2 Stück | 80,00 € |
-| Boden abdecken | 20,00 m² | 24,00 € |
-| Sockelleisten abkleben | 18,00 lfm | 14,40 € |
-| Kleinmaterial | 1 pauschal | 25,00 € |
+| Heizkörper lackieren (2× Anstrich) | 2 Stück | 80,00 € |
+| Boden schützen | 20,00 m² | 24,00 € |
+| Sockelleisten abkleben | 18,00 lfdm | 14,40 € |
+| Kleinmaterial und Verbrauchsmaterial | 1 Pauschale | 25,00 € |
 | **Summe netto** | | **1.543,80 €** |
 
 Drei Dinge passieren hier auf einmal, und alle drei sind Fachargumente:

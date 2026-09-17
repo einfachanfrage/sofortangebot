@@ -2715,7 +2715,9 @@ die dich einen Push gekostet hat, ist als Möglichkeit ausgeschlossen.
 
 ---
 
-## 🟡 F-009 — Drei Rechnungsadressen, die auf deinen Konten stehen und jetzt Geld kosten (17.09.2026, 13:40 UTC · Head of Finance)
+## 🚫 F-009 — ZURÜCKGEZOGEN (17.09.2026, 15:20 UTC). Der Eintrag war falsch; die Korrektur steht weiter unten. **Bitte nichts davon umsetzen.** Alter Wortlaut bleibt nur stehen, damit die Korrektur nachvollziehbar ist.
+
+<del>
 
 **Warum das jetzt kommt und vorher egal war:** Mit deiner Entscheidung für
 **B (Regelbesteuerung)** holst du dir die Umsatzsteuer aus Lieferantenrechnungen
@@ -2753,6 +2755,7 @@ korrigiert werden sie, wenn überhaupt, beim Steuerberater-Termin.
 **Nichts davon ist dringend genug, um deine Reise zu stören.**
 
 *Head of Finance · 2026-09-17*
+</del>
 
 
 
@@ -2788,5 +2791,66 @@ Seite aus meiner Sicht bereit.
 von heute Mittag mitgegangen.
 
 *Head of Marketing · 2026-09-17*
+
+---
+
+## ✅ F-009 ZURÜCKGEZOGEN — du hattest recht, und der Fehler war größer als der, den du gemeldet hast (17.09.2026, 15:20 UTC · Head of Finance)
+
+**Mach nichts von dem, was in F-009 stand.** Ich habe den Punkt zurückgezogen,
+nicht abgeschwächt.
+
+### 1. DIN Media — du hast recht, da ist überhaupt nichts falsch
+
+Auf der Rechnung steht **Sandra Holm, Wielandstr. 11, 12159 Berlin**. Genau
+richtig. Ich hatte DIN Media in eine Tabelle gesetzt, die „falsche
+Rechnungsadressen" überschrieben war, und dort die **E-Mail-Adresse** der
+Bestellung hineingeschrieben. Zwei völlig verschiedene Dinge in einer Spalte —
+das musste so aussehen, als stimme die Anschrift nicht. **Mein Fehler, nicht
+deiner.**
+
+Was von DIN Media übrig bleibt, ist eine Bequemlichkeit ohne jeden
+Geldbetrag: Wenn du dort irgendwann wieder etwas kaufst, kannst du die
+hinterlegte E-Mail auf `rechnung@sofortangebot.app` stellen, damit die Rechnung
+im neuen Rechnungseingang landet statt im privaten Postfach. **Kein
+Steuerthema, keine Frist, kein Muss.**
+
+### 2. Apple und OpenAI — auch da war nichts zu tun, und das ist mein eigentlicher Fehler
+
+Dein Satz *„kann rückwirkend keine Anschrift ändern"* hat mich die Regel
+nachschlagen lassen, die ich vorher hätte nachschlagen müssen:
+
+> **Bei Rechnungen bis 250 € brutto braucht es weder Namen noch Anschrift des
+> Empfängers** — § 33 UStDV, Kleinbetragsrechnung. Es reichen: Lieferant,
+> Datum, was geliefert wurde, Bruttobetrag, Steuersatz. **Der volle
+> Vorsteuerabzug bleibt trotzdem.**
+
+**Von deinen 18 Belegen liegen 17 unter 250 €.** Damit ist die falsche Apple-
+Anschrift kein Mangel, und das „Hugo" auf der OpenAI-Rechnung auch nicht.
+**Die vorhandene OpenAI-Rechnung ist voll nutzbar — ich nehme sie nicht
+raus.** Deine Umstellung für künftige Rechnungen ist trotzdem gut und richtig,
+nur eben freiwillig.
+
+**Ich habe dich hinter drei Korrekturen hergeschickt, von denen keine nötig
+war.** Das ist genau die Sorte Arbeit, die ich dir abnehmen soll.
+
+### 3. Was tatsächlich offen bleibt — zwei Punkte, beide keine Formfehler
+
+| Beleg | Betrag | Worum es geht |
+|---|---|---|
+| **Claude Pro über Apple** (Mai + August) | 7,02 € | **Nutzt du das Abo geschäftlich oder privat?** Steht seit dem 02.09. offen. Das ist die einzige Apple-Frage, und sie hat mit der Anschrift nichts zu tun |
+| **IONOS-Rechnung vom 26.05.** | 5,27 € | Die Rechnung betrifft **drei fremde Domains**, mit Sofortangebot hat sie nichts zu tun — insoweit kein Betriebsausgabenabzug |
+
+**Nichts davon musst du jetzt beantworten**, und nichts davon eilt vor deiner
+Reise. Die Apple-Frage gehört ohnehin auf den Steuerberater-Termin.
+
+**Unstrittig zurückholbar sind damit 29,97 € Vorsteuer aus 2026** statt der
+27,50 €, die ich heute Mittag gerechnet hatte — die Korrektur geht also zu
+deinen Gunsten.
+
+**Quellen:** [§ 33 UStDV — Rechnungen über Kleinbeträge](https://www.gesetze-im-internet.de/ustdv_1980/__33.html) ·
+[Kleinbetragsrechnung nach § 33 UStDV — Pflichtangaben und Vorsteuerabzug](https://onlinebilanz.de/kleinbetragsrechnung-pflichtangaben-ustdv/)
+
+*Head of Finance · 2026-09-17*
+
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

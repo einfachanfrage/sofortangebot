@@ -32,6 +32,7 @@ import {
   fehlendePreiseSatz, PREIS_FEHLT_KURZ, versandHindernisse,
 } from '@/lib/versandbereit'
 import type { Company, Quote, QuoteItem } from '@/lib/types'
+import { AKZENT_VORGABE } from '@/lib/briefpapier-farbe'
 
 // ── Die Regel selbst ──────────────────────────────────────────────────────
 
@@ -202,6 +203,16 @@ describe('DC-125 — die Gegenproben', () => {
     expect(html).toContain('0,00 €')
     expect(html).toContain('>Gesamtbetrag<')
     expect(wieOft(html, `>${PREIS_FEHLT_KURZ}<`)).toBe(0)
+  })
+
+  it('auf dem unvollständigen Blatt bleibt genau EINE Akzentlinie — die zweite gehörte zur Summe', () => {
+    // DC-122 nagelt fest, dass ein fertiges Angebot genau zwei Linien in der
+    // Akzentfarbe trägt: unter dem Briefkopf und über der Gesamtsumme. Gibt
+    // es keine Gesamtsumme, gibt es auch die zweite Linie nicht — aber der
+    // Abschluss-Block trägt sie an derselben Stelle wie im PDF, sonst liefe
+    // die Vorschau wieder vom Papier weg (DC-049/DC-055).
+    expect(wieOft(markup(VOLLSTAENDIG), AKZENT_VORGABE)).toBe(2)
+    expect(wieOft(markup(BAD), AKZENT_VORGABE)).toBe(2)
   })
 
   it('eine einzige Lücke reicht schon — die Summe ist dann keine Summe mehr', () => {

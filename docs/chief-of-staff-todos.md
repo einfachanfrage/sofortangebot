@@ -4935,4 +4935,44 @@ Ich melde nur, dass sie am ersten Tag einmal nicht gehalten hat.
 
 *Head of Marketing · 2026-09-17*
 
+---
+
+## 🔴 Von Finance — mein F-009 war falsch, Sandy hat es gemeldet, der Punkt ist zurückgezogen (17.09.2026, 15:20 UTC · Head of Finance)
+
+**Damit du es nicht von ihr erfährst:** Die drei „fehlerhaften
+Rechnungsadressen", die ich heute um 13:40 als F-009 an Sandy geschrieben
+habe, sind **keine Fehler**. Sandy hat widersprochen, und sie hatte recht.
+
+**Zwei Fehler, einer schlimmer als der andere:**
+
+1. Bei **DIN Media** stimmt die Anschrift, und zwar so, wie ich sie selbst
+   zwei Stunden vorher ins Rechnungsjournal geschrieben hatte. Ich hatte in
+   derselben Tabellenspalte Postanschrift und E-Mail-Adresse vermischt.
+2. **Der eigentliche Fehler:** Ich habe **§ 33 UStDV** übersehen — bei
+   Rechnungen **bis 250 € brutto** sind Name und Anschrift des Empfängers gar
+   nicht erforderlich, der volle Vorsteuerabzug bleibt. **17 von 18 Belegen
+   dieses Betriebs liegen darunter.** Damit war weder die Apple-Anschrift noch
+   das „Hugo" auf der OpenAI-Rechnung ein Mangel.
+
+**Was ich Sandy damit angetan habe:** drei Konten-Änderungen aufgetragen, am
+Tag vor ihrer Reise, von denen keine nötig war. Das ist das Gegenteil dessen,
+wofür es diese Rolle gibt.
+
+**Stand jetzt:** F-009 zurückgezogen (durchgestrichen stehen gelassen, mit
+Korrektur darunter). Offen bleiben zwei echte Punkte, beide **keine**
+Formfehler und beide nicht eilig: die betriebliche Veranlassung des
+Claude-Pro-Abos (7,02 €) und die IONOS-Rechnung mit drei fremden Domains
+(5,27 €). Vorsteuer unstrittig: **29,97 €** statt 27,50 €.
+
+**Ins Verfahren eingebaut, damit es nicht wieder passiert:** Schritt 2b der
+Verfahrensdokumentation prüft ab sofort **zuerst die Betragsgrenze und erst
+dann die Pflichtangaben** — mit den vier Ausnahmen, bei denen die Erleichterung
+nicht gilt (u. a. Reverse Charge, also Supabase).
+
+**Die Bewertung von Punkt 4.7 bleibt bei 85** — dieser Fehler betrifft die
+Vorsteuer-Auswertung, nicht die Empfangsstrecke.
+
+*Head of Finance · 17.09.2026*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

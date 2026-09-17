@@ -140,6 +140,48 @@ vermerkt.** Und: **eine Rechnung ohne vollstaendige Pflichtangaben nach § 14
 UStG kostet den Vorsteuerabzug** — unter § 19 war die Pruefliste oben eine
 Ordnungsfrage, unter Regelbesteuerung ist sie eine Geldfrage.
 
+### Schritt 2b — Zuerst pruefen: ist es eine Kleinbetragsrechnung?
+
+**Diese Frage steht vor der Pruefliste, nicht dahinter** (neu in Fassung 3,
+nach einem berechtigten Einwand von Sandy am 17.09.2026 — ich hatte drei
+Belege als fehlerhaft gemeldet, die keine sind).
+
+**Bis 250 € Gesamtbetrag (brutto) gilt § 33 UStDV.** Dann reichen **fuenf**
+Angaben, und die Pruefliste oben schrumpft entsprechend:
+
+| # | Pflichtangabe bei Kleinbetragsrechnungen |
+|---|---|
+| 1 | Vollstaendiger Name und Anschrift des **leistenden Unternehmers** |
+| 2 | Ausstellungsdatum |
+| 3 | Menge und handelsuebliche Bezeichnung der Leistung |
+| 4 | **Bruttobetrag** (Entgelt und Steuer in einer Summe) |
+| 5 | Steuersatz — oder bei Steuerbefreiung der Hinweis darauf |
+
+**Was ausdruecklich NICHT verlangt wird: Name und Anschrift des
+Leistungsempfaengers.** Auch keine Rechnungsnummer, keine Steuernummer des
+Lieferanten, kein getrennt ausgewiesener Steuerbetrag. **Der Vorsteuerabzug
+ist trotzdem in voller Hoehe moeglich**, wenn die uebrigen Voraussetzungen des
+§ 15 UStG vorliegen.
+
+**Warum das hier so wichtig ist:** Von 18 Belegen dieses Betriebs liegen
+**17 unter 250 €**. Eine abweichende oder fehlende Empfaengeranschrift ist bei
+ihnen also **kein Mangel** — und wer sie als Mangel meldet, schickt Sandy
+hinter Rechnungskorrekturen her, die niemand braucht.
+
+**Vier Faelle, in denen die Erleichterung NICHT gilt** und § 14 Abs. 4 UStG
+voll anzuwenden ist — hier relevant ist der zweite:
+
+* innergemeinschaftliche Lieferungen
+* **Reverse-Charge-Umsaetze nach § 13b UStG** → betrifft **Supabase**
+* Reiseleistungen
+* Differenzbesteuerung
+
+**Was die Erleichterung nicht heilt:** Sie betrifft nur die **Form** der
+Rechnung. Ob die Leistung **betrieblich veranlasst** ist, bleibt davon
+unberuehrt — ein privat genutztes Abo wird durch eine formell einwandfreie
+Kleinbetragsrechnung nicht abziehbar. Das ist die Frage, die bei den
+Apple-Belegen offen ist, und sie ist eine andere.
+
 **Lesbarkeit einer `.xml`-Rechnung:** ohne Viewer nicht moeglich. Empfehlung
 steht (Quba-Viewer, Open Source, 0 €), Installation liegt bei Sandy — F-004.
 **Bis dahin gilt: keine reine XML-Rechnung bezahlen.**
@@ -347,7 +389,7 @@ ohnehin im Plan steht.
 |---|---|---|---|
 | 1 | 17.09.2026 | Erstfassung im Rahmen von Gate-1-Punkt 4.7 | Head of Finance |
 | 2 | 17.09.2026 | Hinweis zu Pruefpunkt 9 korrigiert (nur Supabase ist Reverse Charge); **Schritt 2a Fremdwaehrungsumrechnung neu** (§ 16 Abs. 6 UStG, amtliche BMF-Monatskurse) | Head of Finance |
-| 3 | 17.09.2026 | Erster echter Durchgang mit 25 abgelegten Dateien. **Namensschema zurueckgenommen** (Schritt 1) — der Lieferantendateiname bleibt, die Ordnung macht das Eingangsbuch. **Kontrollbefehl `scripts/belege-pruefen.mjs`** neu (Schritt 3). **Datensicherung und Kontrolle am Zielort** in Teil 3 und 4 aufgenommen, mit vierteljaehrlichem Rhythmus und der Unterscheidung Sicherung/Archiv. **USt-Status auf Regelbesteuerung** umgestellt (Entscheidung F-006 = B, erklaert wird sie erst im Fragebogen) | Head of Finance |
+| 3 | 17.09.2026 | **Schritt 2b Kleinbetragsrechnungen neu** (§ 33 UStDV, 250-€-Grenze) — Korrektur nach Einwand von Sandy. Erster echter Durchgang mit 25 abgelegten Dateien. **Namensschema zurueckgenommen** (Schritt 1) — der Lieferantendateiname bleibt, die Ordnung macht das Eingangsbuch. **Kontrollbefehl `scripts/belege-pruefen.mjs`** neu (Schritt 3). **Datensicherung und Kontrolle am Zielort** in Teil 3 und 4 aufgenommen, mit vierteljaehrlichem Rhythmus und der Unterscheidung Sicherung/Archiv. **USt-Status auf Regelbesteuerung** umgestellt (Entscheidung F-006 = B, erklaert wird sie erst im Fragebogen) | Head of Finance |
 
 *Diese Dokumentation ist fortzuschreiben, sobald eine Buchhaltungsloesung
 eingefuehrt wird oder sich der Eingangsweg aendert. Alte Fassungen bleiben in
