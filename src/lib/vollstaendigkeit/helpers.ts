@@ -185,3 +185,20 @@ export function anzahlAus(lower: string, schluessel: string, fallback = 1): numb
 // ihn) und wohnt deshalb in `positions-titel.ts`. Hier nur weitergereicht,
 // damit die bestehenden Importe aus './helpers' unverändert bleiben.
 export { istWandStreichen, istDeckeStreichen, raumAusTitel } from '../positions-titel'
+
+/**
+ * ── PM-089 / PM-108 / PM-075 — „nische" ist ein Wort, kein Wortstamm ───────
+ *
+ * Wortgrenzen statt Wortstamm, dieselbe Falle wie PM-064 und PM-074:
+ * „nische" steckt in „technische", „mechanische", „elektronische",
+ * „hygienische", „spanische", „botanische". Ein blosses
+ * `lower.includes('nische')` hätte in jedem zweiten Diktat gefeuert. Die
+ * Umlaute stehen ausgeschrieben statt `\b`, weil `\b` in JavaScript ASCII
+ * ist und an „Fußnische" wieder eine falsche Grenze sähe.
+ *
+ * Steht hier und nicht im Gewerk, weil zwei Gewerke sie brauchen: der Maler
+ * (`maler-sonder.ts`, Fehlt-Eintrag) und der Fliesenleger
+ * (`fliesen-sonder.ts`, bepreiste Position). Eine Wahrheit pro Sache — sonst
+ * driften die beiden Wortgrenzen auseinander.
+ */
+export const NISCHE_WORT = /(?<![a-zäöüß])(?:regal|wand|mauer)?nischen?(?![a-zäöüß])/

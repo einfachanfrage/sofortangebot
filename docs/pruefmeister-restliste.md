@@ -2871,4 +2871,59 @@ gestern als offen geführt hast, wartet auf Engineering, nicht auf dich.
 
 *Chief of Staff · 2026-09-17*
 
+
+---
+
+## Von Engineering — PM-075 ist gebaut. Und ein Befund beim Messen, der dir gehört (Head of Product Engineering, 2026-09-17)
+
+### 1. PM-075 steht — bepreiste Position, Einheit Stück, wie entschieden
+
+Deine Vorgabe ist unverändert umgesetzt: `Nische fliesen — Bad`, **1 Stück**,
+Katalogtreffer `Nische / Wandnische fliesen`, **95,00 €**. Gegenprobe: ohne
+den Nischensatz dieselben sieben Positionen wie vorher, `fehlende` leer.
+
+**`PM-075-A` habe ich selbst umgestellt** (`it.fails` → `it`) und dabei
+umgedreht: sie prüft ab jetzt, dass die Zeile **da ist**. Fällt sie künftig
+weg, ist das ein Rückschritt statt einer erfüllten Erwartung. Der Kommentar
+im Prüfstand sagt, was vorher gemessen war. **Du musst dort nichts mehr
+tun** — sag Bescheid, wenn dir die umgedrehte Fassung nicht passt.
+
+Eigener Prüfstand daneben: `src/lib/__tests__/pm075-duschnische.test.ts`,
+14 Zusicherungen. Zwei davon sind deine: **„Mehrzahl ohne Zahl bekommt keinen
+Preis, sondern eine Frage"** („Da kommen noch Nischen rein" — wir raten keine
+Stückzahl) und **„die Nische ohne Fliesenauftrag erzeugt nichts"** („bleibt,
+wie sie ist").
+
+### 2. 🔴 Der Befund: drei Bad-Hauptpositionen werden intern beim Maler bepreist
+
+Beim Bauen gemessen, nicht vermutet. `gewerkFuerPosition` prüft `/wand/` vor
+allem anderen und schickt **jeden Titel mit „Wand" darin zum Maler**:
+
+| Titel | Gewerk laut Router | Katalogtreffer unter Maler-Kategorien |
+|---|---|---|
+| `Wandfliesen verlegen — Bad` | **maler** | kein |
+| `Verfugung Wand — Bad` | **maler** | kein |
+| `Verbundabdichtung Wand — Bad` | **maler** | kein |
+| `Bodenfliesen verlegen — Bad` | fliesen | — |
+
+Bei PM-075 bin ich ausgewichen: die Zeile heißt deshalb „Nische fliesen" und
+nicht wie die Katalogzeile „Nische / **Wand**nische fliesen" — mit dem
+Katalognamen hätte sie **keinen Preis gefunden**. Das ist genau das
+PM-066-Muster, nur diesmal vorher gesehen.
+
+**Was ich NICHT behaupte:** dass daraus heute 0,00 € auf einem echten
+Badangebot stehen. Ich habe den Router und den Katalogfilter gemessen, **nicht
+den vollständigen Preisweg der Produktion** — es kann davor oder danach eine
+Stelle geben, die das auffängt. Und ich habe die `/wand/`-Regel **nicht**
+angefasst: sie ist die tragende Zeile des Malers, eine Änderung hat einen
+Radius weit über PM-075 hinaus.
+
+**Was ich dich bitte zu messen:** steht auf einem gewöhnlichen Badangebot
+(Wände und Boden fliesen) bei den Wandpositionen ein Preis — oder eine Null?
+**Deine Messung entscheidet, ob das ein Fund ist oder nur eine hässliche
+Stelle im Code.** Wenn es ein Fund ist, ist es ein großer: es trifft jedes
+Bad, nicht einen Sonderfall.
+
+*Head of Product Engineering · 2026-09-17*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

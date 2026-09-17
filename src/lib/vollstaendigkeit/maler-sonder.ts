@@ -1,5 +1,5 @@
 import type { BerechnetePosition } from '../mengen/types'
-import { hat, add, filtereArray, istWandStreichen, istDeckeStreichen } from './helpers'
+import { hat, add, filtereArray, istWandStreichen, istDeckeStreichen, NISCHE_WORT } from './helpers'
 import { saetze } from '../satz-raum'
 import { mitTitelZusatz } from '../positions-titel'
 
@@ -327,18 +327,16 @@ export function pruefeDachschraege(ergaenzt: BerechnetePosition[], fehlende: str
 // (Aufpreis)`, 6,00 €/lfdm), fürs STREICHEN gibt es keine Zeile — gemessen
 // über alle Maler-Kategorien, null Treffer (PM-089-D, PM-108-C). Im Bad gibt
 // es sie (`Nische / Wandnische fliesen`, 95,00 €/Stück), das ist aber ein
-// anderes Gewerk und bleibt hier unberührt (PM-075, weiter offen).
+// anderes Gewerk — seit PM-075 als bepreiste Position in `fliesen-sonder.ts`
+// gebaut und hier weiterhin unberührt.
 //
 // Solange die Katalogzeile fehlt, ist die richtige Antwort ein Fehlt-Eintrag
 // — keine erfundene bepreiste Position (K.5) und keine Nullzeile (PM-066).
 //
-// Wortgrenzen statt Wortstamm, dieselbe Falle wie PM-064 und PM-074:
-// „nische" steckt in „technische", „mechanische", „elektronische",
-// „hygienische", „spanische", „botanische". Ein blosses
-// `lower.includes('nische')` hätte in jedem zweiten Diktat gefeuert. Die
-// Umlaute stehen ausgeschrieben statt `\b`, weil `\b` in JavaScript ASCII
-// ist und an „Fußnische" wieder eine falsche Grenze sähe.
-const NISCHE_WORT = /(?<![a-zäöüß])(?:regal|wand|mauer)?nischen?(?![a-zäöüß])/
+// Die Wortgrenze steht seit PM-075 in `helpers.ts` — der Fliesenleger
+// braucht dieselbe (dort als bepreiste Position, hier als Fehlt-Eintrag).
+// Zwei Kopien wären zwei Wahrheiten; die Begründung zur Wortgrenze steht
+// jetzt dort.
 
 export function pruefeNische(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {
   if (!NISCHE_WORT.test(lower)) return

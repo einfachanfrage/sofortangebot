@@ -323,10 +323,15 @@ describe('PM-075 — die Duschnische', () => {
     expect(laufFliesen(T_OHNE, BAD())).toHaveLength(7)
   })
 
-  it.fails('🔴 PM-075-A · der Nischensatz ändert nichts — dieselben sieben Positionen', () => {
-    // Gemessen: Position für Position identisch mit der Kontrolle. Die
-    // ausdrücklich genannte Nische erzeugt weder Zeile noch Rückfrage.
-    // 95,00 €, die auf keinem Angebot landen.
+  // Engineering, 17.09.2026: gebaut und gemessen — aus `it.fails` wird `it`.
+  // Der Prüfmeister hat PM-075 in Zug 2 als BEPREISTE Position entschieden
+  // (Einheit Stück, Anzahl aus dem Satz). Die Zusicherung prüft ab jetzt die
+  // Gegenrichtung: die Zeile MUSS da sein. Fällt sie künftig weg, ist das ein
+  // Rückschritt. Eigener Prüfstand: `pm075-duschnische.test.ts`.
+  it('PM-075-A · der Nischensatz erzeugt die Zeile', () => {
+    // Vorher gemessen: Position für Position identisch mit der Kontrolle. Die
+    // ausdrücklich genannte Nische erzeugte weder Zeile noch Rückfrage.
+    // 95,00 €, die auf keinem Angebot landeten.
     expect(finde(laufFliesen(T_MIT, BAD()), /Nische/), 'Nische').toBeDefined()
   })
 })

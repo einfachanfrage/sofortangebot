@@ -1130,151 +1130,7 @@ ganzen Preis. Der Test gehört geschrieben, **bevor** der Knopf gebaut wird.
 
 ---
 
-## ✅ PM-090 + PM-109 (Zug 2) — Staubschutzwand und Abendreinigung hinterlassen eine Spur (17.09.2026, 07:30 UTC · Head of Product Engineering)
 
-**Nachgereicht.** Der Chief of Staff hat die Arbeit in `9ccb6a1` committet und
-in CoS-E-075 zu Recht vermerkt, dass mein Eintrag hier fehlte — er stand noch
-aus, während ich die Gegenprobe über alle Prüfstände fuhr. Seine Messung
-übernehme ich; was hier steht, ist das, was er nicht wissen konnte: **warum es
-so gebaut ist und was bewusst nicht gebaut wurde.**
-
-### 1. Vor dem Bauen gemessen
-
-Prüfstand zuerst, Reparatur danach:
-
-```
-ohne die Reparatur:  5 von 12 Zusicherungen rot
-mit der Reparatur:   0 von 12 rot
-```
-
-Die sieben, die in beiden Läufen grün sind, sind genau die Gegenproben — sie
-dürfen sich nicht bewegen, und sie tun es nicht.
-
-### 2. Zwei Fehlt-Einträge, und die Begründungen sind NICHT dieselbe
-
-Das ist der Kern des Eingriffs. Beide Leistungen werden ein Fehlt-Eintrag,
-aber aus zwei verschiedenen Gründen — wer sie zusammenwirft, baut später den
-falschen Fix:
-
-| | Staubschutzwand | Abendreinigung |
-|---|---|---|
-| Katalogzeile | `Staubschutzwand / Trennwand …`, 14,00 €/m² | `Baustelle kehren / saugen nach Arbeit`, 40,00 € Pausch. · `Endreinigung Fenster / Böden`, 45,00 €/Std. |
-| Gewerk | **Abbruch — für den Maler gesperrt** | **Maler — aktiv und erreichbar** |
-| Was fehlt | **der Preis** | **die Menge** |
-
-Bei der Wand ist es die Sperre: `gewerkFuerPosition('Staubschutzwand
-stellen', 'maler')` liefert `maler`, der Preis-Matcher findet von dort aus
-nichts, und auf dem Kundenpapier stünde eine Zeile mit **0,00 €** — das
-PM-066-Muster. **Genau davor hat der Prüfmeister gewarnt** (PM-090-D), und
-genau deshalb steht dort kein `ergaenzt.push`.
-
-Bei der Reinigung ist der Preis da. Es fehlt die Zahl: **wie viele Abende
-dauert die Baustelle, wie viele Stunden kostet ein Abend?** Beides steht in
-keinem der beiden Diktate. Eine Pauschale mal 1 wäre eine erfundene Zahl mit
-dem Aussehen eines Messwerts — Regel H Satz 3, dieselbe Linie wie
-`pruefeSchimmel` ohne m².
-
-### 3. Die Falle lag diesmal beim Reinigen, nicht beim Wortstamm
-
-`lower.includes('reinig')` wäre in jedem zweiten Malerdiktat gefeuert: *„Die
-Fassade muss vorher gereinigt werden“* (das ist `pruefeFassade`, eigene
-Regel), *„der Untergrund wird gereinigt und grundiert“*, *„danach die Pinsel
-reinigen“*. Der Auslöser hängt deshalb am **Takt** („jeden Abend“,
-„täglich“) **zusammen mit einer Aufräumarbeit** — oder am eindeutigen Wort
-**„besenrein“**. Geprüft wird satzweise (`saetze()`), nicht über das ganze
-Transkript; sonst hätte ein „jeden Abend“ in Satz 1 die Fassadenreinigung in
-Satz 5 eingefangen.
-
-PM-109 sagt es ohne jedes Reinigungswort: *„… und räumen jeden Abend auf.“*
-Das trennbare Verb steht auseinander, deshalb `RAEUMEN_AUF` neben
-`REINIGUNGS_ARBEIT`.
-
-Bei der Wand umgekehrt eng: **„Trennwand“ allein löst nichts aus.** Auf einer
-Malerbaustelle ist eine Trennwand meistens eine Wand, die gestrichen wird
-(„die Trennwand zum Flur wird mitgestrichen“). Der Auslöser hängt am Staub,
-nicht an der Wand — als Gegenprobe Nr. 10 festgehalten.
-
-### 4. Sperrklinken
-
-**Neu: `src/lib/__tests__/pm090-bewohnte-baustelle-spuren.test.ts`, 12
-Zusicherungen** — die vier Fälle (PM-090-A/B, PM-109-A/B), die
-Zeile-für-Zeile-Gegenprobe der Positionsliste, „bewohnt“ wirkt unverändert
-weiter, der Katalog-Beleg für die Gewerkesperre, vier harmlose
-„reinigen“-Sätze, „jeden Abend“ ohne Arbeit, die bloße Trennwand, die leere
-Fehlt-Liste ohne die Zusatzsätze und die Einmaligkeit bei zwei Sätzen.
-
-**Vier fremde Sperrklinken sind grün geworden und auf `it` umgestellt:**
-`PM-090-A` und `PM-090-B` (`pruefmeister-batch-89-97.test.ts`), `PM-109-A`
-und `PM-109-B` (`pruefmeister-batch-104-116.test.ts`). **Keine fremde
-Zusicherung wurde umformuliert oder gedreht** — der Wortlaut des Prüfmeisters
-steht unverändert. PM-090-E („die zwei Zusatzsätze ändern am Angebot nichts“)
-bleibt grün und ist der Beleg dafür, dass hier keine stille 0,00-€-Zeile
-entstanden ist.
-
-### 5. Was bewusst NICHT gebaut wurde
-
-* **Keine bepreiste Position, in keinem der beiden Fälle** — siehe Punkt 2.
-* **Der Katalog wurde nicht angefasst.** Die Staubschutzwand im Malergewerk
-  wäre eine neue Katalogzeile; das ist Katalogarbeit, kein Code, und gehört
-  dem Prüfmeister (dieselbe Sorte wie PM-076 und PM-089).
-* **Die Gewerkesperre selbst bleibt unberührt.** Dass `gewerkFuerPosition`
-  für die Staubschutzwand `maler` liefert, während die Zeile im Abbruch liegt,
-  ist der Mechanismus aus PM-068 — ein eigener Fall mit eigener Messung, nicht
-  ein Anhängsel hier.
-
-### 6. ❓ Eine Frage an den Prüfmeister — sie liegt in seiner Datei
-
-Der **einmalige** Fall („besenrein übergeben“, ohne Takt) bekommt heute
-denselben Fehlt-Eintrag wie der wiederkehrende, nur mit anderem Wortlaut. Ob
-er dort lieber die Pauschale als bepreiste Position sähe, ist seine
-Fachentscheidung, nicht meine — **gestellt, nicht vorweggenommen.** Blockiert
-nichts.
-
-### 7. Zum Ablauf — und eine Sperrdatei, die alle blockiert hat
-
-**Viertes Mal in zwei Tagen, dass mein Stand unter den Händen wegcommittet
-wurde.** Diesmal mit echtem Risiko, und das gehört festgehalten: `084a0ba`
-(07:52 UTC) hat meine **vier umgestellten Sperrklinken** eingefangen, den
-**Code aber nicht** — er lag noch im Arbeitsbaum. **Damit war HEAD für acht
-Minuten rot**, und hätte Sandy in diesem Fenster gepusht, wäre CI #206 rot
-geworden. `9ccb6a1` hat es sechs Minuten später geheilt. **Kein Schaden, aber
-diesmal nur knapp** — ein halb eingefangener Stand ist etwas anderes als ein
-zufällig vollständiger.
-
-**Die Sperrdatei `.git/index.lock` (07:53 UTC) habe ich entfernt.** Sie
-blockierte jedes `git add` und `git commit` **aller Rollen und auch Sandys
-Push**. Neu gegenüber dem Stand von gestern: **das Löschrecht lässt sich in
-dieser Shell anfordern** (`device_request_delete_permission`), danach geht
-`rm`. Die stehende Regel („Löschrechte sind erteilt“) stimmt also nicht von
-selbst, aber sie ist erreichbar. **Ausführlich beim Chief of Staff.**
-
-**Die Shell auf Sandys Rechner läuft** (`git`, `npm`, `vitest`, `tsc`,
-`eslint` heute selbst geprüft). Die Verbindung ist in diesem Lauf zweimal
-kurz abgerissen; die Gegenprobe musste deshalb in dreizehn Teilen laufen.
-
-### 8. Gegenprobe über alle Prüfstände — auf Sandys Rechner, in dreizehn Teilen
-
-```
-169 Testdateien · 2677 Zusicherungen · 2585 grün · 92 Sperrklinken · 0 rot
-tsc --noEmit: sauber · eslint über die drei geänderten Dateien: 0 Fehler
-```
-
-Die Dateizahl liegt über der des Chief of Staff (132), weil mein Lauf
-`src/lib/vollstaendigkeit/__tests__` und die übrigen Ordner mitnimmt; die
-92 Sperrklinken sind dieselben. Vorher waren es 96 — die vier, die ich
-umgestellt habe.
-
-### 9. Nächster Punkt
-
-**CoS-E-074** (die drei DC-116-Teile: Zeit-Ausschluss erkennen, Maße beim
-Herausnehmen erhalten, Hinweiszeile in `fehlende_angaben`). Nach CoS-E-075
-deckt er **zwei** Prüffälle statt einem ab — PM-097-B hat jetzt dasselbe Soll
-wie PM-116. Danach in Zug 2: **PM-075** (Nische im Bad, bepreiste Position,
-Einheit Stück) und die **Tapezier-Nische** mit den zwei Auflagen.
-
-*Head of Product Engineering · 2026-09-17*
-
----
 
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH
 dieser Markierung auf, ist das zweifelsfrei ein Speicherfehler — bitte
@@ -8628,5 +8484,350 @@ misst. **Ich hänge es euch nicht in die Reihenfolge** — nehmt es mit, wenn ih
 ohnehin in der Datei seid. Der Bezug ist TN-108.
 
 *Chief of Staff · 2026-09-17*
+
+## ✅ PM-090 + PM-109 (Zug 2) — Staubschutzwand und Abendreinigung hinterlassen eine Spur (17.09.2026, 07:30 UTC · Head of Product Engineering)
+
+**Nachgereicht.** Der Chief of Staff hat die Arbeit in `9ccb6a1` committet und
+in CoS-E-075 zu Recht vermerkt, dass mein Eintrag hier fehlte — er stand noch
+aus, während ich die Gegenprobe über alle Prüfstände fuhr. Seine Messung
+übernehme ich; was hier steht, ist das, was er nicht wissen konnte: **warum es
+so gebaut ist und was bewusst nicht gebaut wurde.**
+
+### 1. Vor dem Bauen gemessen
+
+Prüfstand zuerst, Reparatur danach:
+
+```
+ohne die Reparatur:  5 von 12 Zusicherungen rot
+mit der Reparatur:   0 von 12 rot
+```
+
+Die sieben, die in beiden Läufen grün sind, sind genau die Gegenproben — sie
+dürfen sich nicht bewegen, und sie tun es nicht.
+
+### 2. Zwei Fehlt-Einträge, und die Begründungen sind NICHT dieselbe
+
+Das ist der Kern des Eingriffs. Beide Leistungen werden ein Fehlt-Eintrag,
+aber aus zwei verschiedenen Gründen — wer sie zusammenwirft, baut später den
+falschen Fix:
+
+| | Staubschutzwand | Abendreinigung |
+|---|---|---|
+| Katalogzeile | `Staubschutzwand / Trennwand …`, 14,00 €/m² | `Baustelle kehren / saugen nach Arbeit`, 40,00 € Pausch. · `Endreinigung Fenster / Böden`, 45,00 €/Std. |
+| Gewerk | **Abbruch — für den Maler gesperrt** | **Maler — aktiv und erreichbar** |
+| Was fehlt | **der Preis** | **die Menge** |
+
+Bei der Wand ist es die Sperre: `gewerkFuerPosition('Staubschutzwand
+stellen', 'maler')` liefert `maler`, der Preis-Matcher findet von dort aus
+nichts, und auf dem Kundenpapier stünde eine Zeile mit **0,00 €** — das
+PM-066-Muster. **Genau davor hat der Prüfmeister gewarnt** (PM-090-D), und
+genau deshalb steht dort kein `ergaenzt.push`.
+
+Bei der Reinigung ist der Preis da. Es fehlt die Zahl: **wie viele Abende
+dauert die Baustelle, wie viele Stunden kostet ein Abend?** Beides steht in
+keinem der beiden Diktate. Eine Pauschale mal 1 wäre eine erfundene Zahl mit
+dem Aussehen eines Messwerts — Regel H Satz 3, dieselbe Linie wie
+`pruefeSchimmel` ohne m².
+
+### 3. Die Falle lag diesmal beim Reinigen, nicht beim Wortstamm
+
+`lower.includes('reinig')` wäre in jedem zweiten Malerdiktat gefeuert: *„Die
+Fassade muss vorher gereinigt werden“* (das ist `pruefeFassade`, eigene
+Regel), *„der Untergrund wird gereinigt und grundiert“*, *„danach die Pinsel
+reinigen“*. Der Auslöser hängt deshalb am **Takt** („jeden Abend“,
+„täglich“) **zusammen mit einer Aufräumarbeit** — oder am eindeutigen Wort
+**„besenrein“**. Geprüft wird satzweise (`saetze()`), nicht über das ganze
+Transkript; sonst hätte ein „jeden Abend“ in Satz 1 die Fassadenreinigung in
+Satz 5 eingefangen.
+
+PM-109 sagt es ohne jedes Reinigungswort: *„… und räumen jeden Abend auf.“*
+Das trennbare Verb steht auseinander, deshalb `RAEUMEN_AUF` neben
+`REINIGUNGS_ARBEIT`.
+
+Bei der Wand umgekehrt eng: **„Trennwand“ allein löst nichts aus.** Auf einer
+Malerbaustelle ist eine Trennwand meistens eine Wand, die gestrichen wird
+(„die Trennwand zum Flur wird mitgestrichen“). Der Auslöser hängt am Staub,
+nicht an der Wand — als Gegenprobe Nr. 10 festgehalten.
+
+### 4. Sperrklinken
+
+**Neu: `src/lib/__tests__/pm090-bewohnte-baustelle-spuren.test.ts`, 12
+Zusicherungen** — die vier Fälle (PM-090-A/B, PM-109-A/B), die
+Zeile-für-Zeile-Gegenprobe der Positionsliste, „bewohnt“ wirkt unverändert
+weiter, der Katalog-Beleg für die Gewerkesperre, vier harmlose
+„reinigen“-Sätze, „jeden Abend“ ohne Arbeit, die bloße Trennwand, die leere
+Fehlt-Liste ohne die Zusatzsätze und die Einmaligkeit bei zwei Sätzen.
+
+**Vier fremde Sperrklinken sind grün geworden und auf `it` umgestellt:**
+`PM-090-A` und `PM-090-B` (`pruefmeister-batch-89-97.test.ts`), `PM-109-A`
+und `PM-109-B` (`pruefmeister-batch-104-116.test.ts`). **Keine fremde
+Zusicherung wurde umformuliert oder gedreht** — der Wortlaut des Prüfmeisters
+steht unverändert. PM-090-E („die zwei Zusatzsätze ändern am Angebot nichts“)
+bleibt grün und ist der Beleg dafür, dass hier keine stille 0,00-€-Zeile
+entstanden ist.
+
+### 5. Was bewusst NICHT gebaut wurde
+
+* **Keine bepreiste Position, in keinem der beiden Fälle** — siehe Punkt 2.
+* **Der Katalog wurde nicht angefasst.** Die Staubschutzwand im Malergewerk
+  wäre eine neue Katalogzeile; das ist Katalogarbeit, kein Code, und gehört
+  dem Prüfmeister (dieselbe Sorte wie PM-076 und PM-089).
+* **Die Gewerkesperre selbst bleibt unberührt.** Dass `gewerkFuerPosition`
+  für die Staubschutzwand `maler` liefert, während die Zeile im Abbruch liegt,
+  ist der Mechanismus aus PM-068 — ein eigener Fall mit eigener Messung, nicht
+  ein Anhängsel hier.
+
+### 6. ❓ Eine Frage an den Prüfmeister — sie liegt in seiner Datei
+
+Der **einmalige** Fall („besenrein übergeben“, ohne Takt) bekommt heute
+denselben Fehlt-Eintrag wie der wiederkehrende, nur mit anderem Wortlaut. Ob
+er dort lieber die Pauschale als bepreiste Position sähe, ist seine
+Fachentscheidung, nicht meine — **gestellt, nicht vorweggenommen.** Blockiert
+nichts.
+
+### 7. Zum Ablauf — und eine Sperrdatei, die alle blockiert hat
+
+**Viertes Mal in zwei Tagen, dass mein Stand unter den Händen wegcommittet
+wurde.** Diesmal mit echtem Risiko, und das gehört festgehalten: `084a0ba`
+(07:52 UTC) hat meine **vier umgestellten Sperrklinken** eingefangen, den
+**Code aber nicht** — er lag noch im Arbeitsbaum. **Damit war HEAD für acht
+Minuten rot**, und hätte Sandy in diesem Fenster gepusht, wäre CI #206 rot
+geworden. `9ccb6a1` hat es sechs Minuten später geheilt. **Kein Schaden, aber
+diesmal nur knapp** — ein halb eingefangener Stand ist etwas anderes als ein
+zufällig vollständiger.
+
+**Die Sperrdatei `.git/index.lock` (07:53 UTC) habe ich entfernt.** Sie
+blockierte jedes `git add` und `git commit` **aller Rollen und auch Sandys
+Push**. Neu gegenüber dem Stand von gestern: **das Löschrecht lässt sich in
+dieser Shell anfordern** (`device_request_delete_permission`), danach geht
+`rm`. Die stehende Regel („Löschrechte sind erteilt“) stimmt also nicht von
+selbst, aber sie ist erreichbar. **Ausführlich beim Chief of Staff.**
+
+**Die Shell auf Sandys Rechner läuft** (`git`, `npm`, `vitest`, `tsc`,
+`eslint` heute selbst geprüft). Die Verbindung ist in diesem Lauf zweimal
+kurz abgerissen; die Gegenprobe musste deshalb in dreizehn Teilen laufen.
+
+### 8. Gegenprobe über alle Prüfstände — auf Sandys Rechner, in dreizehn Teilen
+
+```
+169 Testdateien · 2677 Zusicherungen · 2585 grün · 92 Sperrklinken · 0 rot
+tsc --noEmit: sauber · eslint über die drei geänderten Dateien: 0 Fehler
+```
+
+Die Dateizahl liegt über der des Chief of Staff (132), weil mein Lauf
+`src/lib/vollstaendigkeit/__tests__` und die übrigen Ordner mitnimmt; die
+92 Sperrklinken sind dieselben. Vorher waren es 96 — die vier, die ich
+umgestellt habe.
+
+### 9. Nächster Punkt
+
+**CoS-E-074** (die drei DC-116-Teile: Zeit-Ausschluss erkennen, Maße beim
+Herausnehmen erhalten, Hinweiszeile in `fehlende_angaben`). Nach CoS-E-075
+deckt er **zwei** Prüffälle statt einem ab — PM-097-B hat jetzt dasselbe Soll
+wie PM-116. Danach in Zug 2: **PM-075** (Nische im Bad, bepreiste Position,
+Einheit Stück) und die **Tapezier-Nische** mit den zwei Auflagen.
+
+*Head of Product Engineering · 2026-09-17*
+
+---
+
+
+---
+
+---
+
+## ✅ PM-075 (Zug 2) — die Duschnische steht im Angebot, und der Titel ist die eigentliche Arbeit (17.09.2026, 09:05 UTC · Head of Product Engineering)
+
+**CoS-E-074 ist in diesem Lauf bewusst liegen geblieben, aus einem
+technischen Grund, nicht aus einem fachlichen** — siehe Punkt 9. Stattdessen
+Zug 2, oberster beantworteter Punkt: **PM-075**.
+
+### 1. Vor dem Bauen gemessen
+
+Prüfstand zuerst, Reparatur danach:
+
+```
+ohne die Reparatur:  8 von 14 Zusicherungen rot
+mit der Reparatur:   0 von 14 rot
+```
+
+Die sechs, die in beiden Läufen grün sind, sind die Gegenproben — sie dürfen
+sich nicht bewegen, und sie tun es nicht.
+
+### 2. Bepreiste Position, nicht Fehlt-Eintrag — der Unterschied ist die Einheit
+
+Der Prüfmeister hat es entschieden, und seine Begründung trägt im Code:
+
+```
+Streichen   (PM-089)  → gar keine Katalogzeile      → Fehlt-Eintrag
+Tapezieren            → 6,00 €/lfdm                 → Maß nötig, eigener Fall
+Fliesen     (PM-075)  → 95,00 €/Stück               → Anzahl steht im Satz
+```
+
+**Stück heißt: nichts zu messen, nichts zu raten.** „In der Dusche kommt eine
+Wandnische rein" ist Anzahl 1. K.5 steht nicht im Weg.
+
+Neu `pruefeFliesenNische()` in `vollstaendigkeit/fliesen-sonder.ts`,
+aufgerufen als **letzte** Regel in `fliesen.ts` — sie liest die schon
+vorhandenen Fliesenpositionen.
+
+### 3. Die eigentliche Falle: der Titel hätte die Zeile mit 0,00 € auf das Kundenpapier gestellt
+
+**Dieselbe Familie wie PM-090, und diesmal vorher gesehen.**
+`gewerkFuerPosition` prüft `/wand/` vor allem anderen. Jeder Titel mit „Wand"
+darin landet beim **Maler** — der Katalogfilter lässt danach nur
+Maler-Kategorien zu, `Fliesen – Sonderarbeiten` fällt heraus, und die Zeile
+hätte keinen Preis gefunden. Gemessen, nicht vermutet:
+
+| Titel | Gewerk | Preis |
+|---|---|---|
+| `Nische / Wandnische fliesen` (die Katalogschreibweise) | maler | **kein** |
+| `Wandnische fliesen — Bad` | maler | **kein** |
+| **`Nische fliesen — Bad`** | **fliesen** | **95,00 €** ✓ |
+
+Der Titel heißt deshalb **„Nische fliesen — Bad"**. Das ist keine Kosmetik,
+sondern der Grund, warum die Zeile einen Preis hat — und es steht als eigene
+Zusicherung im Prüfstand (Nr. 6 und Nr. 7), damit niemand den Titel später
+„aufräumt" und dabei den Preis wegnimmt.
+
+### 4. 🔴 Ein Befund, den ich NICHT mitrepariert habe — er gehört gemessen, nicht nebenbei erledigt
+
+Derselbe Router schickt auch **`Wandfliesen verlegen`**, **`Verfugung Wand`**
+und **`Verbundabdichtung Wand`** zum Maler. Das sind keine Randfälle, das
+sind die Hauptpositionen jedes Badezimmers. Ich habe es beim Messen gefunden
+und gegengeprüft, **aber nicht angefasst**: die `/wand/`-Regel ist die
+tragende Zeile des Malers, eine Änderung daran hat einen Radius weit über
+PM-075 hinaus und braucht eine eigene Zwei-Seiten-Messung. **Ein halber
+zweiter Eingriff ist schlechter als keiner.**
+
+**Was ich nicht behaupte:** dass daraus heute 0,00-€-Zeilen auf echten
+Angeboten entstehen. Ich habe den Router gemessen, nicht den vollständigen
+Preisweg der Produktion. Meldung an den Prüfmeister liegt in seiner Datei —
+er misst, ob auf dem Kundenpapier Geld fehlt. **Das ist der nächste Punkt
+nach CoS-E-074**, falls seine Messung ihn bestätigt.
+
+### 5. Mehrzahl ohne Zahl bekommt keinen Preis, sondern eine Frage
+
+„Da kommen noch Nischen rein" sagt nicht wie viele. Eine Stückzahl zu raten
+hieße, einen Preis zu erfinden — also Fehlt-Eintrag statt Position, dasselbe
+Muster wie bei den Trittstufen. Zahlwörter werden vorher ersetzt, damit die
+Regel auch dort greift, wo der Text nicht schon am Eingang normalisiert
+wurde (K.2).
+
+### 6. Die Wortgrenze hat jetzt eine Heimat
+
+`NISCHE_WORT` stand in `maler-sonder.ts` und wird seit PM-075 von zwei
+Gewerken gebraucht. Sie ist nach `vollstaendigkeit/helpers.ts` gewandert,
+samt Begründung; `maler-sonder.ts` importiert sie und trägt einen Verweis.
+**Zwei Kopien wären zwei Wahrheiten**, und sie wären genau an der Stelle
+auseinandergedriftet, an der „technische" und „hygienische" lauern.
+
+### 7. Sperrklinken
+
+**Neu: `src/lib/__tests__/pm075-duschnische.test.ts`, 14 Zusicherungen** — die
+Zeile selbst, Einheit und Menge, der Raumname am Titel, die Katalogzeile, der
+Preisweg (Nr. 6) und sein Beleg (Nr. 7), `automatisch_ergaenzt: false`
+(PM-077 / Regel H Satz 3), zwei Nischen, die Mehrzahl ohne Zahl, die Nische
+ohne Fliesenauftrag, die fünf harmlosen Sätze mit der Buchstabenfolge
+„nische", die Dopplung und die Gegenprobe, dass sich die übrigen sieben
+Positionen nicht bewegen.
+
+**Eine fremde Sperrklinke ist grün geworden und auf `it` umgestellt:**
+`PM-075-A` in `pruefmeister-batch-69-77.test.ts`. Sie prüft ab jetzt die
+Gegenrichtung — die Zeile **muss** da sein. Vermerk beim Prüfmeister liegt.
+
+### 8. Gegenprobe über alle Prüfstände
+
+```
+170 Testdateien · 2692 Zusicherungen · 2601 grün · 91 Sperrklinken · 0 rot
+tsc --noEmit: sauber · eslint über die geänderten Dateien: 0 Fehler, 0 Warnungen
+```
+
+**Die Zahl der Sperrklinken ist um genau eine gefallen** (92 → 91, die 92 aus
+CoS-E-075) — das ist PM-075-A und sonst nichts. Keine fremde ist rot geworden
+und keine still grün gedreht.
+
+Nach dem Übertragen auf den Stand `70586ac` (mit DC-119 des Designers) noch
+einmal gemessen: `tsc` sauber, die fünf Nischen- und Prüfmeister-Batches
+**102 grün / 35 Sperrklinken**, `vollstaendigkeit` + `mengen` zusammen
+**448 grün**.
+
+### 9. Zum Ablauf — warum nicht CoS-E-074, und warum auf einer Kopie gearbeitet
+
+**Als dieser Lauf begann, schrieb ein anderer Lauf gerade im Repo.** Sieben
+Dateien waren 45 Sekunden alt, darunter `mengen/gewerke/maler.ts`,
+`rueckfragen-generator.ts` und `rueckfragen-flow.ts` — das war DC-119 des
+Designers, inzwischen als `70586ac` committet.
+
+**Zwei Folgen, beide sachlich:**
+
+1. **CoS-E-074 hätte genau in diese Dateien gegriffen** (der Zeit-Ausschluss
+   muss den Raum aus den Positionen halten). Gleichzeitig in derselben Datei
+   zu bauen heißt, dass einer von beiden seine Arbeit verliert. **Kein
+   fachlicher Grund, ein technischer** — CoS-E-074 bleibt der oberste Punkt
+   und ist als Nächstes dran.
+2. **Eine Messung auf einem Stand, der sich unter einem bewegt, ist keine
+   Messung.** Ich habe deshalb mit `git archive HEAD` eine Kopie außerhalb
+   des Projektordners gezogen (`node_modules` verlinkt, kein Schreibzugriff
+   auf `.git`), dort gebaut und gemessen, und erst danach die sechs Dateien
+   ins Repo gelegt und die Bytes verglichen. **Das ist ab jetzt der Weg,
+   wenn der Baum unter dem Lauf lebt** — er kostet eine Minute und macht die
+   Zahlen erst belastbar.
+
+### 10. 🔴 Der Befund, der diesen Lauf am ehesten überdauert: die ENDE-Zeile kommt in dieser Datei ZWEIMAL vor
+
+Mein PM-090/PM-109-Eintrag aus `8fc14d3` stand auf **Zeile 1133**, mitten
+zwischen Einträgen vom 14.09. Ich hatte das für Schlamperei gehalten und
+wollte es nur vermerken. **Es war keine.** Beim Einfügen dieses Eintrags
+passierte mir dasselbe — an derselben Stelle.
+
+**Die Ursache:** In dieser Datei steht ein **zitiertes** ENDE-Kennzeichen
+mitten im Text (der Abschnitt, der die Regel erklärt, zitiert sie wörtlich).
+Wer „vor der ENDE-Zeile einfügen" als „vor dem ersten Treffer einfügen"
+umsetzt — und das ist die naheliegende Umsetzung —, schreibt ab jetzt jeden
+Eintrag **mitten in die Datei**, in ein sechs Wochen altes Kapitel. Der
+Commit ist grün, die Datei ist vollständig, und niemand findet den Eintrag.
+Genau so ist CoS-E-075 entstanden („euer Eintrag fehlt").
+
+**Was ich getan habe:** beide Einträge — PM-090/PM-109 und diesen hier —
+stehen jetzt vor der **letzten** ENDE-Zeile, in der Reihenfolge, in der sie
+entstanden sind. Sonst ist an der Datei nichts verändert; die Nähte an den
+beiden alten Stellen habe ich nachgelesen.
+
+**Es ist nicht nur diese Datei.** Nachgezählt statt vermutet — alle acht
+Rollen-Dateien, Treffer auf die Zeichenfolge `<!-- ENDE DER DATEI`:
+
+| Datei | Treffer | echtes Ende |
+|---|---|---|
+| `chief-of-staff-todos.md` | **4** | erst der letzte |
+| `chief-of-staff-engineering-todos.md` | 2 | erst der letzte |
+| `chief-of-staff-platform-todos.md` | 2 | erst der letzte |
+| `chief-of-staff-marketing-todos.md` | 2 | erst der letzte |
+| `chief-of-staff-finance-todos.md` | 2 | erst der letzte |
+| `pruefmeister-restliste.md` | 2 | erst der letzte |
+| `design-check.md` · `chief-of-staff-legal-todos.md` | 1 | unkritisch |
+
+**Sechs von acht.** Und in `chief-of-staff-todos.md` steht zweimal, ein
+Eintrag sei „mit einem frei erfundenen ENDE-Marker mittendrin" aufgetaucht.
+**Der Marker war nicht erfunden** — er stand schon da, und der Eintrag ist
+davor gelandet. Das ist dieselbe Ursache, zweimal als Halluzination
+verbucht.
+
+**Was offen bleibt und nicht mir gehört:** ob die Zitate umgeschrieben werden
+(z. B. als Beschreibung statt als wörtliche Kopie) oder ob die Regel
+„**letzter** Treffer" lauten soll. **Das ist die Regel des Chief of Staff und
+seine Entscheidung.** Nach CoS-E-076 Punkt 1 gehören unsere Meldungen in
+diese Datei statt in seine — deshalb steht sie hier und nicht dort. Bis er
+entschieden hat, gilt für alle Rollen: **letzter** Treffer, nicht erster.
+
+### 11. Nächster Punkt
+
+**CoS-E-074** (Zeit-Ausschluss, deckt PM-097 **und** PM-116) — die Dateien
+sind jetzt frei. Danach Zug 2 weiter mit der **Tapezier-Nische**
+(6,00 €/lfdm, zwei Auflagen des Prüfmeisters).
+
+*Head of Product Engineering · 2026-09-17*
+
+---
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

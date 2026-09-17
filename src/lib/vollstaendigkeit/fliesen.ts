@@ -1,7 +1,7 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { erkenneFliesenBereich, pruefeVerfugungPflicht, pruefeEntsorgung, pruefeFugenersatz } from './fliesen-basis'
 import { pruefeAbdichtung, pruefeBodengleicheDusche } from './fliesen-nassbereich'
-import { pruefeDiagonalFliesen, pruefeMosaik, pruefeNaturstein } from './fliesen-sonder'
+import { pruefeDiagonalFliesen, pruefeMosaik, pruefeNaturstein, pruefeFliesenNische } from './fliesen-sonder'
 
 export function pruefeFliesen(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): void {
   const bereich = erkenneFliesenBereich(ergaenzt, lower)
@@ -14,4 +14,6 @@ export function pruefeFliesen(ergaenzt: BerechnetePosition[], fehlende: string[]
   pruefeDiagonalFliesen(ergaenzt, fehlende, lower)
   pruefeMosaik(ergaenzt, fehlende, lower)
   pruefeNaturstein(ergaenzt, fehlende, lower)
+  // Zuletzt: die Nische liest die schon vorhandenen Fliesenpositionen (PM-075).
+  pruefeFliesenNische(ergaenzt, fehlende, lower)
 }
