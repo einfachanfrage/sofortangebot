@@ -121,6 +121,18 @@ Steht dabei mindestens EINE Flächenangabe → GENAU EIN raeume-Eintrag mit name
 - Die m²-Obergrenzen für einzelne Räume gelten hier NICHT — eine ganze Wohnung hat legitim mehr als 200 m² Wandfläche.
 - Diese Angabe NIEMALS in waende[] ablegen. waende[] ist nur für einzelne Wände/Fassaden mit laenge+hoehe.
 
+RAUM OHNE JEDES MASS — ALLGEMEINE REGEL (CoS-E-073):
+Ein Raum, der mit Arbeiten genannt wird, aber weder laenge/breite noch flaeche noch wandflaeche_direkt trägt, bekommt vage: true, vage_typ: "raum_ohne_masse", vage_beschreibung = der Satz, in dem er vorkommt. NIEMALS weglassen und NIEMALS mit erfundenen Maßen füllen.
+- Gilt für jeden Raumnamen, nicht nur für "die ganze Wohnung" (das ist der Sonderfall DC-040 oben).
+- Beispiel: "Wohnzimmer streichen." -> {"name":"Wohnzimmer","laenge":null,"breite":null,"flaeche":null,"arbeiten":["wände streichen"],"vage":true,"vage_typ":"raum_ohne_masse","vage_beschreibung":"Wohnzimmer streichen."}
+- Eine Höhe allein ist KEIN Maß ("Wohnzimmer, zweifünfzig hoch") -> weiterhin vage: true.
+- Wird der Raum ausdrücklich abbestellt ("im Flur machen wir nichts"), gehört er trotzdem in raeume[] - die Rückfrage wird später unterdrückt, nicht die Extraktion.
+Drei weitere vage_typ-Werte, wenn der Satz sie hergibt:
+- plural_ohne_zahl: Mehrzahl ohne Anzahl ("beide Schlafzimmer", "die Fenster streichen").
+- referenz_ohne_kontext: Verweis ohne eigene Maße ("den Rest auch", "oben genauso").
+- menge_unbekannt: laenge und breite stehen da, die hoehe fehlt.
+Im Zweifel vage: true setzen. Eine Rückfrage zu viel ist harmlos, eine fehlende Position nicht.
+
 wandflaeche_direkt — WANN SETZEN:
 Immer wenn eine Fläche ausdrücklich als WANDfläche genannt wird ("120 qm Wandfläche", "35 m² Wand streichen") oder wenn gesagt wird, wie viel gestrichen/tapeziert werden muss ("im Wohnzimmer müssen 35 m² gestrichen werden").
 NICHT verwechseln mit flaeche: "Wohnzimmer 35 m²" ohne Bezug zum Streichen ist die RAUMGRÖSSE → flaeche.

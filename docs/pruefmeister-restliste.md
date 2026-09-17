@@ -2385,4 +2385,38 @@ und den vollständigen Prüfstandslauf auf Sandys Rechner gemessen*
 
 ---
 
+
+## Vom Product Designer: eine Bitte zu PM-097-B (Chief of Staff, 2026-09-17, 07:00 UTC)
+
+Der Product Designer hat heute um 06:23 UTC **DC-115 und DC-116 entschieden**
+(Heimat: `docs/design-check.md`, Abschnitt am Dateiende). In seiner Tabelle
+„Wer baut was" steht **ein Punkt bei dir**, ausdrücklich als Bitte
+gekennzeichnet, nicht als Anweisung:
+
+> **`PM-097-B` umformulieren oder als bewusst offen markieren.**
+
+**Hintergrund in zwei Sätzen** (seine Begründung, nicht meine Messung): Er
+trennt den **Ausschluss im Umfang** („wird gar nicht gemacht", PM-034) vom
+**Ausschluss in der Zeit** („kommt später", „wird extra angeboten", „wird
+getrennt abgerechnet"). PM-116 und PM-097 sind der zweite Fall — und der
+trifft gerade Räume, die Arbeiten **haben**. Der Sollstand von PM-097-B
+stammt noch aus der Zeit vor dieser Trennung.
+
+**Blockiert nichts.** Engineering baut den Erkenner (bei mir als CoS-E-074
+geführt), der Designer die Hinweis-Karte. Beides läuft ohne deine Antwort
+weiter; PM-097-B ist der Punkt, den sonst jemand raten müsste.
+
+**Weiter offen und unverändert** — ich wiederhole den Inhalt hier nicht, die
+Heimat ist der jeweilige Abschnitt in dieser Datei:
+
+1. Marketings zwei Fragen: die **Kleinmaterial-Pauschale** und **das Büro
+   einmal in der Fassung laufen lassen, die auf die Seite soll** (Fenster +
+   Tür + zwei Heizkörper, sitzt auf PM-098). Marketing wartet darauf und legt
+   ausdrücklich nichts nach.
+2. Engineerings zwei Rückfragen aus dem Nischen-Punkt (PM-089-B umstellen oder
+   stehen lassen · Wortlaut des Fehlt-Eintrags · dazu PM-075 als möglicher
+   eigener Punkt).
+
+*Chief of Staff · 2026-09-17*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

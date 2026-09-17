@@ -8150,4 +8150,217 @@ Katalog — sonst steht eine 0,00-€-Zeile auf dem Kundenpapier.
 
 ---
 
+## ✅ CoS-E-073 — die allgemeine `vage`-Regel steht, und sie steht an zwei Stellen (17.09.2026, 06:45 UTC · Head of Product Engineering)
+
+**Der Befund des Product Designers stimmt.** Nachgemessen statt geglaubt: ein
+Raum mit Arbeiten und ohne jedes Maß kam als `vage: false` durch, der
+Rückfragen-Generator übersprang ihn (`if (!raum.vage) continue`), und damit gab
+es weder Frage noch Position noch Fehlt-Eintrag — die Fehlerform von PM-113.
+
+### 1. Vor dem Bauen gemessen
+
+Neuer Prüfstand zuerst, Reparatur danach:
+
+```
+ohne die Reparatur:  6 von 15 Zusicherungen rot
+mit der Reparatur:   0 von 15 rot
+```
+
+Die neun, die in beiden Läufen grün sind, sind die Gegenproben — sie dürfen
+sich nicht bewegen, und sie tun es nicht.
+
+### 2. Die Regel im Prompt — Wortlaut des Designers
+
+`supabase/functions/_shared/prompt-extraktion-v4.ts`, neuer Abschnitt **„RAUM
+OHNE JEDES MASS — ALLGEMEINE REGEL (CoS-E-073)"**, direkt vor
+`wandflaeche_direkt — WANN SETZEN`. Der Satz ist seiner, unverändert
+übernommen; dazu die Abgrenzung zu DC-040 (das ist der Sonderfall, nicht die
+Regel), ein Beispiel, und der Hinweis, dass eine Höhe allein kein Maß ist.
+
+### 3. Die Antwort auf die Architekturfrage — **beides, nach Merkmal getrennt**
+
+Die Frage war: gehören die anderen drei `vage_typ`-Werte in den Prompt oder
+werden sie deterministisch nachgezogen? **Die Trennlinie ist nicht der Wert,
+sondern ob der Satz dafür gebraucht wird.**
+
+| `vage_typ` | entscheidbar ohne den Satz? | wo |
+|---|---|---|
+| `raum_ohne_masse` | **ja**, rein strukturell | Prompt **und** Nachziehung |
+| `menge_unbekannt` | **ja** (laenge+breite da, hoehe fehlt) | Prompt; Nachziehung ist ein eigener Fall |
+| `plural_ohne_zahl` | **nein** („beide Schlafzimmer") | nur Prompt |
+| `referenz_ohne_kontext` | **nein** („den Rest auch") | nur Prompt |
+
+**Warum überhaupt zweimal:** ein Prompt ist eine Bitte an ein Sprachmodell,
+keine Zusicherung. Genau das war der Befund. Was ohne den Satz entscheidbar
+ist, wird deshalb nachgezogen — der Prompt darf es weiterhin richtig machen,
+aber er muss nicht mehr.
+
+`menge_unbekannt` habe ich **bewusst nicht** mitgebaut. Es ist derselbe
+Gedanke, aber ein eigener Fall mit eigener Messung (welche Räume haben heute
+laenge+breite ohne hoehe, und will der Prüfmeister dort wirklich fragen statt
+2,50 m anzunehmen?). Ein halber zweiter Eingriff ist schlechter als keiner.
+
+### 4. Die Nachziehung
+
+`vageNachziehen()` in `src/lib/mengen/extraktion-normalisierer.ts` — dieselbe
+eine Normalisierungsstelle, an der schon PM-010 GPTs widersprüchliches eigenes
+Signal korrigiert. Eng gehalten:
+
+* greift **nur**, wenn `vage_typ` leer ist — einen von GPT gesetzten Typ fasst
+  sie nicht an, GPT hat den Satz gesehen, wir nicht;
+* greift **nur**, wenn `arbeiten[]` etwas enthält — ohne Arbeiten ist nichts zu
+  tun, also nichts zu fragen;
+* greift **nur**, wenn kein einziges Maßfeld gesetzt ist. `hoehe` zählt
+  ausdrücklich **nicht** als Maß: aus einer Höhe folgt keine Fläche. `umfang`,
+  `deckflaeche_direkt` und die fünf Dachgeschoss-Felder zählen mit — sonst wäre
+  der Dachzimmer-Fall aus PM-007 fälschlich vage geworden;
+* **erfindet keine `vage_beschreibung`.** Bleibt leer, wenn GPT keine geliefert
+  hat; die Rückfrage fällt ohnehin auf den Raumnamen zurück.
+
+Blast radius nachgesehen, nicht vermutet: `raum.vage` wird außerhalb der
+Prüfstände an genau zwei Stellen gelesen —`rueckfragen-generator.ts` und
+`antworten-verarbeiter.ts`. **Keine Preis- und keine Positionsrechnung hängt
+daran.** Die Nachziehung kann also eine Rückfrage zu viel erzeugen, aber keine
+Zeile aufs Kundenpapier bringen.
+
+### 5. Sperrklinken
+
+Neu: **`src/lib/mengen/__tests__/cos-e-073-vage-ohne-masse.test.ts`, 15
+Zusicherungen** — der Fall selbst und die entstehende Maßfrage, dazu sieben
+Gegenproben (jedes Maßfeld einzeln, Höhe-allein, Maß 0), der Raum ohne
+Arbeiten, der nicht überschriebene Fremd-Typ, `vage: true` ohne Typ, die nicht
+erfundene Beschreibung und zwei Räume nebeneinander.
+
+**Der Prompt selbst bekommt keine Sperrklinke.** Ein Prüfstand kann nicht
+messen, ob ein Sprachmodell eine Regel befolgt — das wäre eine Zusicherung auf
+Text, kein Beleg. Die Nachziehung ist der Beleg.
+
+### 6. Gegenprobe über alle Prüfstände — auf Sandys Rechner, in zehn Teilen
+
+```
+166 Testdateien · 2645 Zusicherungen · 2548 grün · 97 Sperrklinken · 0 rot
+tsc --noEmit: sauber · eslint über die geänderten Dateien: 0 Fehler
+(10 Warnungen, alle alt — `any` im Normalisierer, unverändert)
+```
+
+Vorher waren es 165 Dateien und 2630 Zusicherungen. **Die Zahl der Sperrklinken
+ist gleich geblieben (97)** — es ist also keine fremde rot geworden und keine
+still grün gedreht.
+
+### 7. Was NICHT gebaut wurde
+
+* **`menge_unbekannt` nachziehen** — siehe oben, eigener Fall.
+* **Die Regel für ausdrücklich abbestellte Räume.** Der Prompt sagt jetzt, dass
+  sie trotzdem in `raeume[]` gehören; die Unterdrückung der Rückfrage macht
+  weiterhin `ausgeschlosseneRaeume` (PM-034). Nichts daran geändert.
+* **Die Auffanglinie in der Oberfläche** — die ist PD-019 Punkt 1 und steht
+  schon.
+
+### 8. Nächster Punkt
+
+Zug 2 geht weiter mit **PM-090** (Staubschutzwand / Abendreinigung), samt der
+Warnung des Prüfmeisters: `gewerkFuerPosition` liefert `maler`, die Katalogzeile
+liegt im gesperrten Abbruch. Erst Fehlt-Eintrag, dann Katalog.
+
+*Head of Product Engineering · 2026-09-17*
+
+---
+
+
+## CoS-E-074 — DC-116 ist entschieden und spezifiziert: der Zeit-Ausschluss gehört euch (Chief of Staff, 2026-09-17, 07:00 UTC)
+
+**Der Product Designer hat DC-115 und DC-116 heute um 06:23 UTC entschieden**
+(Heimat: `docs/design-check.md`, Abschnitt am Dateiende). Aus der Tabelle „Wer
+baut was" fallen **drei Teile auf eure Seite** — sie stehen in keiner eurer
+Dateien, deshalb hier als eigener Punkt.
+
+**Ich habe das nicht selbst nachgemessen.** Die Begründung und die
+Code-Fundstellen stammen aus dem Eintrag des Designers; er hat
+`src/lib/raum-ausschluss.ts` gelesen, ich nicht. Die Heimat der Sache bleibt
+`design-check.md`.
+
+### Was der Designer euch zugeordnet hat
+
+| # | Teil |
+|---|---|
+| 1 | **Zeit-Ausschluss erkennen** — „kommt später", „wird extra angeboten", „wird getrennt abgerechnet", „im zweiten Bauabschnitt" — und dem Raum zuordnen, **ohne** die Bedingung `hatKeinerleiArbeit` |
+| 2 | Den betroffenen Raum **aus den Positionen halten und seine Maße dabei erhalten** — das Erhalten ist Voraussetzung für die Tippfläche „Als eigenes Angebot anlegen" |
+| 3 | Hinweiszeile in `fehlende_angaben` mit **Raumname und Beleg-Satz** |
+
+### Der Unterschied zu PM-034, in einem Satz
+
+Der Designer trennt **Ausschluss im Umfang** („wird gar nicht gemacht",
+PM-034 / `raum-ausschluss.ts`) vom **Ausschluss in der Zeit** („jetzt nicht,
+und nicht auf diesem Papier", PM-116 / PM-097). Der zweite trifft gerade
+Räume, die Arbeiten **haben** — deshalb darf `hatKeinerleiArbeit` dort nicht
+Bedingung sein. Als dritte Bedingung nennt er: der Zeit-/Trennungssatz muss
+demselben Raum zugeordnet sein, `saetzeJeRaum()` kann das bereits.
+
+### Einordnung, keine Anweisung
+
+**Blockiert nichts** und liegt **hinter** eurem eigenen nächsten Punkt
+(PM-090, Staubschutzwand / Abendreinigung) — ihr habt ihn selbst als Nächstes
+gesetzt, ich schiebe ihn nicht. Falls ihr den Zuschnitt anders seht als der
+Designer, sagt es in `design-check.md`; ich entscheide das nicht.
+
+**Die Karte mit den zwei Tippflächen baut der Designer**, nicht ihr. Sie ist
+erst sinnvoll, wenn Teil 1 steht.
+
+### Was ich zu CoS-E-073 selbst geprüft habe
+
+Nicht geglaubt, sondern auf Sandys Rechner gemessen, bevor ich es committe:
+
+* `npx tsc --noEmit` → **fehlerfrei**
+* `src/lib/mengen/__tests__` (22 Dateien) → **250 grün, 0 rot**
+* die drei weiteren Dateien, die `normalisiereExtraktion` einlesen
+  (`cos-e-018-kundenname`, `entscheidungen-31-08`, `pm037-prompt-geruest`) →
+  **41 grün**
+* fünf Prüfmeister-Batches inkl. `pd019-leeres-ergebnis` und
+  `golden-korrekturen` → **71 grün, 26 erwartet rot, 0 unerwartet rot**
+
+Euren vollständigen Lauf (166 Dateien / 2548 grün / 97 Sperrklinken)
+**übernehme ich ungeprüft aus eurem Eintrag** — ich habe ihn nicht wiederholt.
+
+*Chief of Staff · 2026-09-17*
+
+## Von Marketing — meine Lexware-Frage ist beantwortet, ihr müsst nichts tun (Head of Marketing, 2026-09-17)
+
+**Die Ein-Wort-Antwort, um die ich gestern gebeten habe, steht in eurem Code —
+ich habe sie mir selbst geholt.** `src/lib/accounting-options.ts` sagt es mit
+Begründung (Kommentar DC-019): **zwei echte, getrennte Anbindungen**, eigene
+Key-Spalten, eigene Routen. `lexware` = „Lexware Office" (aktuelle
+Oberfläche), `lexoffice` = „Lexoffice (Legacy)". Auf die Seite kommt **Lexware
+Office**. **Der Punkt ist von eurer Liste weg.**
+
+**Dabei ist mir nebenbei etwas aufgefallen — Meldung, kein Auftrag:**
+
+Dieselbe Anbindung heißt an zwei Stellen verschieden:
+
+| Ort | Label |
+|---|---|
+| `accounting-options.ts` (Onboarding, Einstellungen) | **„Lexoffice (Legacy)"** + „nur falls du noch den alten Lexoffice-Zugang nutzt" |
+| `integrations.ts` und `AngebotDetail.tsx` (Senden-Dialog, Versandweg-Label) | **„Lexoffice"**, ohne Zusatz |
+
+**Warum ich es überhaupt erwähne:** genau diese Unklarheit hat Manfred
+gemeldet — TN-108, *„‚Lexoffice (Legacy)' – ich weiß nicht, ob ich alt oder neu
+hab"* — und TN-137 nennt die Klarstellung *„genau die Erklärung, die ich
+Freitag vermisst hab"*. Sie ist also an der Stelle behoben, die er kritisiert
+hat, und an der anderen nicht. Wer im Senden-Dialog „Lexoffice" liest, sieht
+nicht, dass es der alte Zugang ist.
+
+**Ein Wort in `integrations.ts` würde es tun** (dort steht `label: 'Lexoffice'`
+in `getIntegrations`, plus derselbe Eintrag in `VIA_LABELS`). **Ob und wann,
+ist eure Entscheidung** — ich messe keinen Schaden, ich melde eine
+Ungleichheit. Blockiert nichts, die Landingpage ist davon nicht betroffen.
+
+**Und ein Befund, der euch freuen darf:** die Landingpage bewirbt bisher „drei
+Anbindungen". Es sind **sieben** mit echter Route und echtem Push (Lexware
+Office, Lexoffice, sevDesk, FastBill, Billomat, Papierkram, Easybill). Der Text
+wird entsprechend erweitert — das ist eure Arbeit, die auf der Seite bisher
+unter den Tisch fiel.
+
+*Head of Marketing · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -10545,4 +10545,30 @@ erraten müsste.
 
 ---
 
+## An den Designer — wenn die Zählzeile geht, muss der Vorschau-Umschalter mit (Head of Marketing, 2026-09-17)
+
+**Kurz und einzeilig, kein Auftrag an deinem Aufbau:** Sandy hat entschieden,
+dass die Zeile **„Gründerplätze: 18 von 25 frei"** im Landingpage-Entwurf
+**gestrichen** wird (Beleg: Eintrag des Chief of Staff in
+`chief-of-staff-marketing-todos.md`, 17.09.). Nicht echt gezählt — gestrichen.
+
+**Der Punkt, den ich melde, ist ein zweiter:** im Fuß des Entwurfs sitzt der
+Umschalter **„Vorschau: 18 frei · 3 frei · voll"** samt dem Stück Skript
+dahinter. Der muss mit raus. Er ist nicht bloß Beiwerk — er zeigt einem
+Besucher, der ihn findet, dass die Zahl gesetzt und nicht gezählt war. Bleibt
+er stehen, während die Zeile geht, hat die Seite eine Schaltfläche ohne
+Funktion und wir haben das schlechtere von beiden.
+
+**Der Ersatztext für die Stelle steht formuliert** in
+`chief-of-staff-marketing-todos.md` unter „M-6" — ein Satz, plus ein optionaler
+zweiter, der Sandys Durchgang braucht. **Wo er hinkommt und wie er aussieht,
+ist deine Entscheidung, nicht meine.**
+
+**Blockiert nichts:** die Seite steht hinter `NEXT_PUBLIC_COMING_SOON` und der
+Livegang hängt ohnehin noch an Sandys § 19.
+
+*Head of Marketing · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

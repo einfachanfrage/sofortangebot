@@ -97,7 +97,7 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 |---|---|---|---|
 | CoS-P-028 | 🟡 **`sandra@` und `support@` leiten jetzt auf `hallo@` (eingerichtet 16.09., Zustelltest offen)** — vorher: BEFUND: genau EIN Postfach (`hallo@`), null Weiterleitungen** — sieben von acht Absenderadressen empfangen nichts, darunter `sandra@`, der Absender aller Anmelde- und Passwort-Mails. Antworten von Nutzern gehen verloren, ohne Fehlermeldung. Umsetzung offen. Vorher: Acht Absender, keiner nachweislich empfangsfähig** — MX zeigt auf IONOS (selbst geprüft), aber ob dort Postfächer existieren, weiß niemand. `hallo@` steht im Impressum, § 5 DDG. Dazu: Resend zeigt „No sent emails yet" trotz nachweislich versendeter Mails — vermutlich falsches Team | ❌ offen, vor Gate 1 | Sandys Frage, 2026-09-16 |
 | CoS-P-024 | 🔴 **Push-Hook ersatzlos abschaffen** — `.git/hooks/pre-push` als No-Op, beide Prüfungen raus aus dem Push-Weg. Sandys ausdrückliche Anweisung nach der zweiten Blockade. CoS-P-023 damit zurückgezogen. Stehende Regel: in Sandys Push-/Commit-Weg kommt nichts, das abbrechen kann | ✅ **erledigt & geprüft, 16.09. abends** — `.git/hooks/pre-push` auf Sandys Rechner enthält jetzt Byte für Byte den geplanten No-Op-Inhalt (Kommentar + `exit 0`, 173 Byte, gegengelesen). Da Git-Hooks nie versioniert werden, ist damit nichts mehr offen — kein Commit nötig, kein Datei-Schreibvorgang blockiert mehr. Kein Punkt aus CoS-P-023 wandert nach CI: die einzige Prüfung mit echtem CI-Gegenstück (`pruefe-gepushten-commit.mjs`, Lint+TypeScript gegen den gepushten Commit) deckt sich bereits mit den bestehenden CI-Schritten „Lint“/„TypeScript“; die andere (`pruefe-unerfasste-dateien.mjs`) prüft den lokalen Arbeitsordner und hat in der CI keinen Gegenstand. Fix-Update am Dateiende | Sandy, 2026-09-15 |
-| CoS-P-025 | 🔴 **Schrumpf-Prüfung** — dritter Datenverlust in zwei Tagen, `docs-sichern.mjs pruefen` findet ihn nicht: eine Pflichtdatei wurde beim Zurückschreiben schlicht kürzer, Endmarkierung blieb intakt. Auch `.github/workflows/ci.yml` selbst war so betroffen, vier Tage unbemerkt | 🟡 Prüfung + Test grün (auf Sandys Rechner: `scripts/docs-sichern.mjs`, `docs-schrumpfung.test.ts`, 9/9 grün), **CI-Anbindung war entgegen dem vorherigen Stand NICHT im GitHub-Spiegel vorhanden** — direkt im Klon nachgesehen: weder `fetch-depth: 0` noch ein `schrumpfung`-Schritt standen in `ci.yml`, und ohne `fetch-depth: 0` ist `HEAD^` im Standard-Checkout gar nicht auflösbar (selbst nachgestellt: `fatal: invalid object name 'HEAD^'`) — die Prüfung hätte in der CI immer stillschweigend nichts gefunden. Fix jetzt im GitHub-Spiegel-Klon gebaut + geprüft (`fetch-depth: 0` + neuer Schritt "Schrumpf-Pruefung (CoS-P-025)"): `npm run typecheck` sauber, `npm run lint:ci` 0 Fehler/110 Warnungen, `npm test` 2442 grün/73 erwartete Fehlschläge, Schrumpf-Check selbst grün. `.github/workflows/ci.yml` bleibt für die Geräte-Dateiwerkzeuge dieser Session schreibgeschützt (erneut bestätigt) — PowerShell-Befehl am Dateiende. Sandy muss danach noch committen/pushen (inkl. `docs-sichern.mjs`/Testdatei, die laut GitHub-Spiegel dort noch fehlen) | Platform & Integrations Engineer, 2026-09-16 |
+| CoS-P-025 | 🔴 **Schrumpf-Prüfung** — dritter Datenverlust in zwei Tagen, `docs-sichern.mjs pruefen` findet ihn nicht: eine Pflichtdatei wurde beim Zurückschreiben schlicht kürzer, Endmarkierung blieb intakt. Auch `.github/workflows/ci.yml` selbst war so betroffen, vier Tage unbemerkt | ✅ **erledigt & geprüft, 17.09.** — GitHub-Spiegel frisch geklont: `ci.yml` enthält dort jetzt Byte-für-Byte denselben Stand wie auf Sandys Rechner (`fetch-depth: 0` + Schritt „Schrumpf-Pruefung (CoS-P-025)"), Sandy hat also zwischenzeitlich committet/gepusht. `scripts/docs-sichern.mjs` und `docs-schrumpfung.test.ts` ebenfalls inhaltsgleich im Spiegel. Im Klon erneut geprüft: `npm run typecheck` sauber, `npm run lint:ci` 0 Fehler/110 Warnungen, `npx vitest run` für die betroffenen Testdateien 17/17 grün, `node scripts/docs-sichern.mjs pruefen` → 57 Dateien in Ordnung, `node scripts/docs-sichern.mjs schrumpfung` → keine Schrumpfung. Nichts mehr offen. Fix-Update am Dateiende | Platform & Integrations Engineer, 2026-09-17 |
 | CoS-P-027 | 🟠 Alle acht System-Mails liefen unter „Sandra“ als Absender, auch Sicherheits-Mails wie der Passwort-Reset-Link — Phishing-Risiko für Nutzer, die die Marke noch nicht kennen | ✅ umgesetzt & geprüft — Sandys Entscheidung „C“ (geteilte Absender) gebaut: `FROM_PERSOENLICH`/`FROM_MARKE` in `src/lib/email.ts`, alle acht Versandwege exakt nach CoS-P-027-Nachtrag-1-Tabelle zugeordnet, „Sandra“-Signatur in den sechs Marken-Mails durch „Dein Sofortangebot-Team“ ersetzt, in den beiden persönlichen Mails (Willkommen, Kündigung) unverändert gelassen. `npm run typecheck`/`lint:ci` (110/110)/`npm test` (2442 grün) im GitHub-Spiegel grün, auf Sandys Rechner geschrieben. `hallo@sofortangebot.app` ist laut CoS-P-028-Befund ein echtes, zustellfähiges Postfach — die Auflage „vor erstem Versand zustellbar“ ist damit bereits erfüllt. Fix-Update am Dateiende | Sandy „absendername: C“, 2026-09-16 |
 | CoS-P-018 | 🔴 **CI seit 11.09. durchgehend rot** — ESLint startet nicht (`react-hooks`-Plugin nicht im selben Konfigurationsobjekt). Weil Lint als Erstes läuft, laufen Tests und Build auf dem Server seither **gar nicht**. Kein Produktionsproblem, der Deploy ist grün | ✅ **erledigt & geprüft** — Weg 1 (Regel-Objekt per `files` auf dieselben Dateien beschränkt) war zum heutigen Check bereits im GitHub-Spiegel umgesetzt (Commit `c2c72d7`); dabei zusätzlich zwei echte Fehler in `_to_delete/` gefunden und ausgenommen. Beim erneuten Prüfen heute ein Folgefehler gefunden und behoben: `lint:ci --max-warnings` stand noch auf 109, aktueller Stand ist 110 (eine neue, legitime Warnung aus einem fremden Rollenbereich, `AngebotDetail.tsx`, nicht angefasst). Grenze auf 110 angehoben, `npm run lint` lokal grün (0 Fehler, 110/110 Warnungen), `npm run typecheck` fehlerfrei. Fix-Update am Dateiende | Platform-Check, 2026-09-15 |
 | CoS-P-016 | Bestätigungs- und Reset-Link sind prinzipiell nicht einlösbar: die App erzeugt implizite Links, `@supabase/ssr` erzwingt `flowType: "pkce"` (fest verdrahtet, nicht überschreibbar) | ✅ **erledigt & geprüft** — `token_hash` + `verifyOtp` über `/auth/callback`, wie vorgeschlagen. Beide Wege live bestätigt: Bestätigungslink landet direkt eingeloggt im Onboarding, Reset-Link lädt direkt das Passwort-Formular. Fix-Update am Dateiende | Sandys Live-Test, 2026-09-14 |
@@ -3780,5 +3780,69 @@ Lücke als Lücke zu behandeln. Das war der Fehler, nicht die Datei.
 
 *Chief of Staff · 2026-09-17*
 
+---
+
+## Fix-Update CoS-P-025 — CI-Anbindung bestätigt im GitHub-Spiegel angekommen (Platform & Integrations Engineer, 2026-09-17)
+
+**Nachgesehen, nicht angenommen:** GitHub-Spiegel frisch geklont
+(`git clone https://github.com/einfachanfrage/sofortangebot.git`, Node 22 —
+Node 20 ließ sich in dieser Sitzung nicht nachinstallieren, `nodejs.org`/
+`iojs.org` sind für diese Sitzung nicht erreichbar; die Prüfungen selbst
+sind davon nicht betroffen). `.github/workflows/ci.yml` im Spiegel enthält
+jetzt Byte-für-Byte denselben Stand wie auf Sandys Rechner: `fetch-depth: 0`
+beim Checkout plus den Schritt „Schrumpf-Pruefung (CoS-P-025)". Ebenso
+`scripts/docs-sichern.mjs` (inhaltsgleich, BOM-bereinigt verglichen) und
+`src/lib/__tests__/docs-schrumpfung.test.ts`. Sandy hat also zwischen dem
+16.09.-Fix-Update und heute committet und gepusht — passt zu
+`arbeitsreihenfolge.md` („Alles ist gepusht und alles ist grün").
+
+**Im Klon erneut geprüft, nicht nur gelesen:** `npm ci`, danach
+`npm run typecheck` (sauber), `npm run lint:ci` (0 Fehler, 110/110
+Warnungen), `npx vitest run` für `docs-schrumpfung.test.ts` +
+`doku-endmarkierung.test.ts` (17/17 grün), `node scripts/docs-sichern.mjs
+pruefen` (57 Dateien in Ordnung) und `node scripts/docs-sichern.mjs
+schrumpfung` (keine Schrumpfung gegenüber `HEAD^`, 9 Dateien geprüft) —
+genau die Befehle, die die CI ausführt. **CoS-P-025 ist damit vollständig
+zu**, Status-Tabelle oben aktualisiert.
+
+## Entscheidung CoS-P-022/026 — BOM in `ci.yml` bleibt (Platform & Integrations Engineer, 2026-09-17)
+
+`arbeitsreihenfolge.md` stellt die BOM-Frage ausdrücklich in Platforms
+eigenes Ermessen. Entscheidung: **BOM bleibt, keine Änderung.** Begründung:
+belegt schadet sie nicht (Läufe #200–#203 alle grün, BOM in jedem davon
+vorhanden, heute im eigenen Klon zusätzlich Typecheck/Lint/Tests grün trotz
+BOM), und `.github/workflows/` ist eine geschützte, für Fernzugriffs-
+Werkzeuge ohnehin gesperrte Datei — sie ohne funktionalen Grund anzufassen
+widerspricht der eigenen Regel aus CoS-P-026-Nachtrag. Damit gilt auch der
+zweite offene Platform-Punkt aus `arbeitsreihenfolge.md` als entschieden.
+
+**Lese-Token `actions:read` — weiterhin offen, nicht bei uns umsetzbar:**
+das GitHub-Zugriffs-403 auf Schritt-Ebene lässt sich nicht durch einen
+Code- oder Konfigurationsfix in diesem Repo lösen — es braucht ein
+Personal-Access-Token mit `actions:read`-Scope, das nur über Sandys
+GitHub-Konto erzeugt werden kann. Nicht dringend, unverändert.
+
+## Antwort auf Finance-Anfrage — `rechnung@` Weiterleitung + Zustelltest E-Rechnung (Platform & Integrations Engineer, 2026-09-17)
+
+Beide Punkte aus der Finance-Frage vom 16.09. (Abschnitt oben) lassen sich
+aus dieser Sitzung heraus nicht umsetzen, unabhängig von der Rollenfrage:
+
+1. **IONOS-Weiterleitung `rechnung@` → `hallo@` anlegen:** braucht Zugriff
+   auf das IONOS-Kundenkonto (Web-Dashboard). Diese Sitzung hat weder ein
+   IONOS-Zugangswerkzeug noch Zugangsdaten dafür — die bisherigen
+   Weiterleitungen (`sandra@`, `support@`) wurden laut Dateiverlauf vom
+   Chief of Staff selbst im IONOS-Konto eingerichtet, nicht über ein
+   Platform-Werkzeug.
+2. **Echter Zustelltest der drei E-Rechnungs-Testdateien:** braucht einen
+   tatsächlichen Mail-Versand nach außen. Diese Sitzung hat keinen
+   Versandweg (kein Resend-Zugriff, kein SMTP) — genau das Problem, das die
+   Finance-Anfrage selbst schon benennt.
+
+**Empfehlung:** beides bei Chief of Staff bündeln (hat laut CoS-P-028-
+Verlauf bereits IONOS-Zugriff genutzt) oder Sandy übernimmt es selbst.
+Zählt als nicht erledigt / wartet auf Entscheidung, wer es mit welchem
+Zugang macht — kein technisches Hindernis im Code.
+
+*Platform & Integrations Engineer · 2026-09-17*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

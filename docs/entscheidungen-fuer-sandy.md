@@ -2196,4 +2196,78 @@ F-006-Abschnitt.
 *Chief of Staff · 2026-09-17*
 
 
+## 🟡 Zwei kleine Dinge, die Platform zurückgegeben hat — wer macht sie? (17.09.2026, 07:00 UTC · Chief of Staff)
+
+**Das ist die einzige neue Frage von heute Morgen.** Sie kostet dich einen
+Satz, nicht mehr.
+
+Der Platform-Engineer hat um 06:44 UTC zwei Punkte aus der Finance-Anfrage
+zurückgegeben. Beide sind **kein technisches Problem** — es fehlt in seiner
+Sitzung schlicht der Zugang:
+
+| # | Was | Warum nicht bei ihm |
+|---|---|---|
+| 1 | Weiterleitung **`rechnung@` → `hallo@`** im IONOS-Konto anlegen | Braucht das IONOS-Web-Dashboard; seine Sitzung hat weder Werkzeug noch Zugang |
+| 2 | Die drei E-Rechnungs-Testdateien **einmal wirklich zustellen** | Braucht echten Mailversand nach außen; seine Sitzung hat keinen Versandweg |
+
+**Meine Empfehlung: mach Punkt 1 selbst, Punkt 2 fällt damit von allein weg.**
+Die Weiterleitung ist im IONOS-Dashboard ein Formular mit zwei Feldern und
+zwei Minuten Arbeit — und sobald sie steht, kannst du die drei Testdateien
+einfach aus deinem eigenen Postfach an `rechnung@` schicken; das **ist** der
+Zustelltest, Punkt 2 erledigt sich mit derselben Mail. Der Umweg über eine
+Rolle, die den Zugang erst bekommen müsste, dauert länger als die Sache.
+
+**Ich habe es bewusst nicht selbst gemacht.** Eine Änderung an deinem
+Mail-Hosting fasse ich ohne dein Ja nicht an — auch dann nicht, wenn ein
+früherer Lauf dort schon einmal etwas eingerichtet hat. **Sag „mach du", dann
+nehme ich es beim nächsten Lauf auf meine Liste**, wenn dir das lieber ist.
+
+**Nicht eilig.** Es blockiert weder Gate 1 noch die Landingpage — es hängt an
+F-004 (E-Rechnungs-Empfang) und wartet dort geduldig.
+
+*Chief of Staff · 2026-09-17*
+
+## Von Marketing — eine Kleinigkeit, fünf Minuten: ein Testlauf in deine Buchhaltung (17.09.2026)
+
+**Keine Entscheidung, eine Handlung auf deinem Konto — deshalb liegt sie bei
+dir und nicht bei uns.**
+
+**Worum es geht:** Der Landingpage-Entwurf verspricht, dass fertige Angebote
+direkt in der Buchhaltung landen. Im Code stimmt das — **sieben Anbindungen mit
+echter Schnittstelle** (Lexware Office, Lexoffice, sevDesk, FastBill, Billomat,
+Papierkram, Easybill), nachgesehen und nicht vermutet. **Was fehlt, ist der
+Beweis, dass es einmal durchgelaufen ist:** Punkt 11.5 in
+`launch-readiness.md` steht auf 0 %, „nicht erhoben", und in der
+`staging-checklist.md` ist „Lexoffice Export getestet" nicht abgehakt.
+
+**Was zu tun wäre** (nur du kannst es, es braucht deinen API-Key, und
+Zugangsdaten gehören nicht in unsere Hände — du nutzt lexoffice ohnehin
+selbst):
+
+1. In Sofortangebot: Einstellungen → Integrationen → **Lexware Office** (oder
+   „Lexoffice (Legacy)", falls du noch den alten Zugang hast), API-Key
+   eintragen.
+2. Ein beliebiges Testangebot öffnen → Senden-Dialog → Tab **„Buchhaltung"** →
+   übertragen.
+3. **Ein Satz zurück: ist es in deiner Buchhaltung angekommen, ja oder nein?**
+
+**Warum es sich lohnt:** wenn ja, darf die Seite den stärksten Satz sagen, den
+sie zu bieten hat — *„Lexware Office, sevDesk, FastBill, Billomat, Papierkram
+und Easybill sind direkt verbunden — das fertige Angebot liegt mit einem Tap in
+deiner Buchhaltung."* Das ist genau das Argument, mit dem du Sofortangebot
+positionieren willst, und laut Manfred (TN-137) der beste Verkaufssatz der
+ganzen App.
+
+**Wenn nein oder wenn du nicht dazu kommst, ist auch nichts verloren:** dann
+steht dort der schmalere, unstrittige Satz über PDF-, CSV- und DATEV-Export.
+**Beide Fassungen sind geschrieben** (`chief-of-staff-marketing-todos.md`,
+Abschnitt „Finance-Korrektur 5").
+
+**Das blockiert nichts** — nicht den Text, nicht den Livegang. Der Livegang
+hängt weiter nur an deiner § 19-Antwort (F-006).
+
+*Head of Marketing · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

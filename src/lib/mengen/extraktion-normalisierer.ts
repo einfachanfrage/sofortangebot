@@ -45,6 +45,70 @@ function normalisiereGewerk(raw: string): string {
   return raw // unbekanntes Gewerk unverändert lassen
 }
 
+// CoS-E-073 (Befund des Product Designers, PD-019 Punkt 1): der Extraktions-
+// Prompt kannte keine allgemeine Regel, wann `vage: true` zu setzen ist — die
+// einzige Fundstelle für `raum_ohne_masse` stand im Zweig „Wohnung/Haus als
+// Ganzes" (DC-040). Für einen normal benannten Raum ohne jedes Maß
+// („Wohnzimmer streichen.") gab es keine. Fehlt `vage`, entsteht keine
+// Rückfrage; ohne Rückfrage keine Position und kein Fehlt-Eintrag — die
+// Fehlerform von PM-113.
+//
+// Die Regel steht jetzt im Prompt (prompt-extraktion-v4.ts, Abschnitt „RAUM
+// OHNE JEDES MASS"). Ein Prompt ist aber eine Bitte an ein Sprachmodell, keine
+// Zusicherung. Deshalb hier zusätzlich deterministisch nachgezogen — an
+// derselben einen Normalisierungsstelle, an der schon PM-010 GPTs eigenes
+// widersprüchliches Signal korrigiert.
+//
+// ARCHITEKTUR-ENTSCHEIDUNG zu den vier `vage_typ`-Werten (Head of Product
+// Engineering, 17.09.2026 — die Frage aus CoS-E-073):
+//   `raum_ohne_masse`  → strukturell. Prompt + Nachziehung hier.
+//   `menge_unbekannt`  → strukturell (laenge+breite gesetzt, hoehe fehlt).
+//                        Eigener Fall, eigene Messung — hier NICHT gebaut.
+//   `plural_ohne_zahl` → hängt am Wortlaut („beide Schlafzimmer"). Nur der
+//                        Prompt kann das sehen. Keine Nachziehung möglich.
+//   `referenz_ohne_kontext` → dito.
+// Deterministisch nachgezogen wird also nur, was ohne den Satz entscheidbar
+// ist. Alles andere bleibt Sache des Prompts.
+
+// Aus welchen Feldern lässt sich eine Fläche rechnen? `hoehe` steht bewusst
+// NICHT dabei: aus einer Höhe allein folgt keine Fläche.
+const MASS_FELDER = [
+  'laenge', 'breite', 'flaeche', 'umfang',
+  'wandflaeche_direkt', 'deckflaeche_direkt',
+  'dachschraege_flaeche_m2', 'dachschraege_links_m2', 'dachschraege_rechts_m2',
+  'dachschraege_je_seite_m2', 'deckenspiegel_m2', 'kniestockhoehe',
+] as const
+
+function hatIrgendeinMass(r: Record<string, unknown>): boolean {
+  return MASS_FELDER.some(f => {
+    const v = r[f]
+    return typeof v === 'number' && isFinite(v) && v > 0
+  })
+}
+
+function vageNachziehen(r: Record<string, unknown>): {
+  vage: boolean
+  vage_typ: string | null
+  vage_beschreibung: string | null
+} {
+  const vage = bool(r.vage)
+  const vage_typ = (r.vage_typ as string | null) ?? null
+  const vage_beschreibung = (r.vage_beschreibung as string | null) ?? null
+
+  // Ein bereits gesetzter Typ bleibt unangetastet — GPT hat den Satz gesehen,
+  // wir nicht. Nur der leere Typ wird ergänzt.
+  if (vage_typ) return { vage, vage_typ, vage_beschreibung }
+
+  const arbeiten = arr<string>(r.arbeiten).filter(a => typeof a === 'string' && a.trim() !== '')
+  // Ohne Arbeiten ist nichts zu tun, also nichts zu fragen.
+  if (arbeiten.length === 0) return { vage, vage_typ, vage_beschreibung }
+  if (hatIrgendeinMass(r)) return { vage, vage_typ, vage_beschreibung }
+
+  // Keine erfundene Beschreibung: die Rückfrage fällt ohnehin auf den
+  // Raumnamen zurück (rueckfragen-generator.ts).
+  return { vage: true, vage_typ: 'raum_ohne_masse', vage_beschreibung }
+}
+
 /**
  * Normalisiert die rohe GPT-Extraktion: alle Array-Felder werden zu echten Arrays,
  * alle Zahlen/Booleans auf korrekte Typen gebracht.
@@ -101,9 +165,7 @@ export function normalisiereExtraktion(raw: Record<string, unknown>): Extrahiert
     ausgleich: bool(r.ausgleich),
     feuchtigkeitssperre: bool(r.feuchtigkeitssperre),
     parkett_schleifen: bool(r.parkett_schleifen),
-    vage: bool(r.vage),
-    vage_typ: (r.vage_typ as string | null) ?? null,
-    vage_beschreibung: (r.vage_beschreibung as string | null) ?? null,
+    ...vageNachziehen(r),
   }))
 
   const bereiche = arr<Record<string, unknown>>(raw.bereiche).map(b => ({

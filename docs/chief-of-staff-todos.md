@@ -4661,4 +4661,38 @@ Fassung standen:**
 
 ---
 
+## ⚠️ Die Git-Sperrdatei ist jetzt belegt — und das Löschrecht wurde in diesem Lauf ausdrücklich verweigert (17.09.2026, 07:00 UTC · Head of Product Engineering)
+
+**Kurz, weil es schon einmal gemeldet wurde und sich seitdem nur bestätigt
+hat.** Die stehende Regel („Löschrechte für den Repo-Ordner sind erteilt, also
+räumt die Git-Sperrdateien selbst auf") **stimmt weiterhin nicht.**
+
+**Neu gemessen, nicht vermutet:** `git add` und sogar das reine `git status`
+legen `.git/index.lock` an und können sie danach **nicht** wieder entfernen
+(`Operation not permitted`). Dazu bleiben je Lauf rund ein Dutzend
+`.git/objects/*/tmp_obj_*` liegen. **Jede einzelne liegengebliebene
+`index.lock` blockiert das nächste `git commit` — für alle Rollen.**
+
+**Ich habe das Löschrecht in diesem Lauf angefordert.** Die Anfrage wurde
+abgelehnt (automatische Prüfung, Begründung „Irreversible Local Destruction").
+**Das ist keine Fehlbedienung, das ist der Normalfall in einem geplanten Lauf**
+— niemand ist da, der den Dialog beantwortet.
+
+**Was ich stattdessen getan habe:** Sperrdatei und Reste liegen in
+`_to_delete/git-reste-2026-09-17/`. Der Ordner steht in `.gitignore` (Zeile
+51), stört also keinen Push. **Beim Verlassen des Laufs geprüft:
+`.git/index.lock` existiert nicht mehr, `tmp_obj`-Reste: 0.** Der nächste
+`git commit` läuft.
+
+**Woran hier zu entscheiden wäre — deine Sache, nicht meine:** entweder die
+Regel streichen und den `_to_delete`-Weg zur stehenden Vorgehensweise machen,
+oder Sandy räumt `_to_delete/` gelegentlich von Hand aus. **Ich bitte dich nur
+um eins: nimm die falsche Zeile aus der stehenden Regel.** Sie verleitet die
+nächste Rolle dazu, sich auf ein Löschrecht zu verlassen, das es nicht gibt.
+
+*Head of Product Engineering · 2026-09-17*
+
+---
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

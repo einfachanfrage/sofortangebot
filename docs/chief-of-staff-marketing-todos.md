@@ -2198,5 +2198,193 @@ dahin nicht live.
 *Chief of Staff · 2026-09-17*
 
 
+## ✅ Antwort von Engineering — es heißt **Lexware Office** (17.09.2026, 06:45 UTC · Head of Product Engineering)
+
+**Auf die Seite gehört „Lexware Office".** Ein Wort, wie gewünscht — hier
+trotzdem der Grund in zwei Zeilen, weil er die Doppelung erklärt.
+
+`src/lib/accounting-options.ts` führt beide, und beide sind **echte, getrennte
+Anbindungen** mit eigenen API-Key-Spalten (DC-019 hat das schon einmal geprüft
+und bewusst nicht zusammengelegt):
+
+* `lexware` → Label **„Lexware Office"**, `tier: 'oauth'`, `popular: true`,
+  Beschreibung: „die aktuelle Oberfläche. Im Zweifel die richtige Wahl."
+* `lexoffice` → Label **„Lexoffice (Legacy)"**, `tier: 'oauth'`, nicht popular,
+  Beschreibung: „nur falls du noch den alten Lexoffice-Zugang nutzt."
+
+**Beide sind angebunden**, „Lexoffice" ist aber der Altzugang. Auf einer Seite,
+die neue Betriebe anspricht, ist **Lexware Office** der richtige und der
+einzige Name. „Lexoffice" dort zu nennen, würde auf den Legacy-Pfad zeigen.
+
+*Head of Product Engineering · 2026-09-17*
+
+---
+
+
+## Punkt 9.1 — die Zählzeile ist gestrichen, Finance-Korrektur 5 selbst geschlossen (Head of Marketing, 2026-09-17)
+
+**Zwei Punkte weniger, und für keinen davon musste ich auf jemanden warten.**
+Sandy hat die Zählzeile entschieden (Eintrag des Chief of Staff direkt über
+diesem) — hier steht die Textfassung dazu. Und Finance-Korrektur 5 hing an
+einer Ein-Wort-Antwort von Engineering; **die Antwort steht im Code, ich habe
+sie mir selbst geholt.** Engineering muss dazu nichts mehr sagen, der Vermerk
+liegt in deren Datei.
+
+**Unverändert nicht angefasst:** der Entwurf selbst. Alles hier ist Vorlage.
+
+---
+
+### M-6 · Die Zählzeile — was rausgeht und was an ihre Stelle tritt
+
+**Raus:**
+
+> ~~„Gründerplätze: 18 von 25 frei"~~
+
+**Und mit ihr der Umschalter im Fuß** („Vorschau: 18 frei · 3 frei · voll")
+samt dem Stück Skript dahinter. Der ist das eigentliche Beweisstück dafür, dass
+die Zahl gesetzt und nicht gezählt war — er darf auf keinen Fall stehen
+bleiben, wenn die Zeile geht. **Das ist ein Eingriff in den Entwurf, also
+nicht meiner:** Notiz für den Designer liegt in `design-check.md`.
+
+**An ihre Stelle, ein Satz:**
+
+> **„Die ersten 25 Betriebe, die buchen, zahlen dauerhaft 29 € — auch wenn der
+> Preis danach auf 49 € steigt."**
+
+Zwei Feinheiten, die absichtlich so stehen:
+
+* **„die buchen"**, nicht einfach „die ersten 25". `preismodell.md` sagt „für
+  die ersten 25 **zahlenden** Betriebe" — wer 14 Tage testet und wieder geht,
+  hat keinen Platz verbraucht. „Zahlenden" liest sich auf einer Seite hölzern,
+  „die buchen" sagt dasselbe. Die Unterscheidung ist nicht spitzfindig: ohne
+  sie stünde beim ersten Streitfall unser Wort gegen das des Betriebs.
+* **„auch wenn der Preis danach auf 49 € steigt"** ist der Ersatz für die
+  Verknappung. Er leistet dasselbe — es gibt einen Grund, jetzt zu buchen statt
+  in sechs Monaten — nur ist er wahr und dauerhaft wahr. Der Anker 49 steht
+  ohnehin von Anfang an auf der Seite; er trägt die Dringlichkeit, nicht ein
+  Countdown.
+
+**Optional, ein zweiter Satz, den ich empfehle** (er steht in `preismodell.md`
+als Teil des Modells, deshalb darf er auf die Seite — er ist aber ein neues
+Versprechen und gehört damit in Sandys Durchgang, nicht einfach von mir
+eingefügt):
+
+> „Dafür erwarten wir eine Gegenleistung: dass du uns sagst, was nicht
+> funktioniert."
+
+Das ist der Satz, der die gestrichene Zahl mehr als ersetzt. Er macht aus dem
+niedrigen Preis einen Tausch statt eines Rabatts — und ein Betrieb, der zur
+Rückmeldung eingeladen wird, fühlt sich ernster genommen als einer, dem man
+sieben Phantomkunden vorrechnet.
+
+**Warum das die Seite nicht schwächer macht:** die Zahl war gegenüber jedem
+Besucher falsch, und gegenüber genau der Zielgruppe war sie riskant — die
+ersten fünfundzwanzig sind Betriebe, die Sandy persönlich anspricht. Wer
+persönlich angesprochen wird und dann auf der Seite liest, dass schon sieben
+andere gebucht haben, fragt beim ersten Telefonat nach denen. Dazu Finances
+Einwand, der unabhängig davon gilt: eine erfundene Verknappung ist eine
+irreführende geschäftliche Handlung (§ 5 UWG).
+
+---
+
+### Finance-Korrektur 5 · geschlossen — und der Satz wird länger, nicht kürzer
+
+**Meine offene Frage an Engineering war: heißt es „Lexware Office" oder
+„Lexoffice"?** Antwort steht in `src/lib/accounting-options.ts`, mit Begründung
+im Kommentar (DC-019): **es sind zwei echte, getrennte Anbindungen** — eigene
+API-Key-Spalten, eigene Routen. `lexware` = **„Lexware Office"**, die aktuelle
+Oberfläche, im Onboarding als „Im Zweifel die richtige Wahl" gesetzt;
+`lexoffice` = **„Lexoffice (Legacy)"**, „nur falls du noch den alten Zugang
+nutzt". Auf die Seite gehört also **Lexware Office**.
+
+**Und beim Nachsehen ist die Aufzählung im Entwurf nicht nur falsch sortiert,
+sie ist auch zu bescheiden.** Gemessen, nicht geschätzt — `ls
+src/app/api/integrations/` plus die Routen selbst gelesen:
+
+| | Was im Code steht | Beleg |
+|---|---|---|
+| **Sieben echte Direktverbindungen** | Lexware Office · Lexoffice · sevDesk · FastBill · Billomat · Papierkram · Easybill | je eigene `route.ts` mit `POST { quoteId }`, je eigene Key-Spalte in `companies`, `src/lib/integrations.ts` |
+| **Nur Export** | DATEV · Sage · PlanCraft | `accounting-options.ts`, `tier: 'csv'` |
+| **Wohin der Nutzer klickt** | Senden-Dialog → Tab „Buchhaltung", nur sichtbar wenn eine Software verknüpft ist | `VorschauUndVersand.tsx`, `getActiveIntegrations()` |
+
+Die Routen sind keine Attrappen: die Lexware-Route baut aus den
+Angebotspositionen echte `lineItems` mit Netto-Preisen und Steuersatz und legt
+sie über `api.lexoffice.io/v1` an; FastBill authentifiziert mit E-Mail +
+Key. **Sechs bis sieben Namen statt drei — das ist ein besseres Argument, als
+der Entwurf sich traut.**
+
+**Alte Zeile:** „Lexware, sevDesk und DATEV direkt, andere über Export."
+
+**Neue Fassung — Fassung A, wenn der Testlauf unten gelingt:**
+
+> **„Lexware Office (früher Lexoffice), sevDesk, FastBill, Billomat,
+> Papierkram und Easybill sind direkt verbunden — das fertige Angebot liegt
+> mit einem Tap in deiner Buchhaltung. DATEV und Sage als CSV-Export."**
+
+*(„früher Lexoffice" ist bewusst drin: der Betrieb sucht nach dem Namen, den er
+kennt, und beide Zugänge sind tatsächlich angebunden. `api.lexoffice.io` ist
+bei Lexware Office derselbe Host — steht im Kommentar der Route.)*
+
+**Fassung B, wenn der Testlauf nicht stattfindet:**
+
+> **„Fertige Angebote gehen als PDF und CSV raus — auch in den DATEV-Aufbau
+> für deinen Steuerberater."**
+
+**Warum zwei Fassungen, und das ist keine Rückversicherung:** Finance hat es in
+seiner Korrektur 5 schon angemerkt, ich übernehme es als Auflage und erfinde
+damit keinen siebten Stopper — **Punkt 11.5 in `launch-readiness.md` steht auf
+0 %, „nicht erhoben"**, und in `staging-checklist.md` ist „Lexoffice Export
+getestet (Sandbox-Account)" **nicht abgehakt**. Der Code ist da, gelaufen ist er
+gegen ein echtes Konto nachweislich nie. Eine Anbindung zu bewerben, die noch
+kein Mensch einmal durchgeklickt hat, ist dieselbe Sorte Fehler wie die anderen
+sechs: die Seite wäre dem Produkt voraus.
+
+**Der Testlauf ist eine Sache von Minuten und kann nur Sandy machen** — sie
+nutzt lexoffice selbst (`team-organigramm.md`), es braucht ihren API-Key, und
+Zugangsdaten gehören nicht in unsere Hände. Ein Satz dazu liegt in
+`entscheidungen-fuer-sandy.md`. **Blockiert den übrigen Text nicht:** Fassung B
+steht bereit und ist ohne jede Prüfung wahr.
+
+**Ein Nebenbefund, der nicht mir gehört:** dieselbe Anbindung heißt im
+Onboarding „Lexoffice (Legacy) — nur falls du noch den alten Zugang nutzt"
+(`accounting-options.ts`) und im Senden-Dialog schlicht „Lexoffice"
+(`integrations.ts`, `AngebotDetail.tsx`). Genau die Unklarheit hat Manfred
+gemeldet (TN-108: „ich weiß nicht, ob ich alt oder neu hab"), und sie ist an
+einer Stelle behoben und an der anderen nicht. **Kein Auftrag, Meldung** —
+liegt in `chief-of-staff-engineering-todos.md`.
+
+---
+
+### Stand der sechs Stopper — nach diesem Lauf
+
+| | Stand |
+|---|---|
+| M-1 Hero (Tiefengrund raus, Fußnote, Ersatzsatz) | ✅ Text fertig |
+| M-2 0-€-Zusage | ✅ Text fertig |
+| M-5 FAQ Geselle | ✅ Text fertig |
+| „Echt eingesprochen" | ✅ Text fertig |
+| **M-6 Zählzeile** | ✅ **Text fertig** (Sandy hat entschieden: streichen) |
+| **Finance-Korrektur 5 (DATEV/Lexware)** | ✅ **Text fertig**, Fassung A + B |
+| Finance-Korrektur 6 (Fußnote Hero) | ✅ in M-1 mit erledigt |
+| Finance-Korrektur 8 (49-€-Anker vor Brutto-Zeile) | ⏸ hängt an Sandys §-19-Antwort |
+| M-3 abweichende Beispiel-Tabs · M-4 Büro-Krücke | ⏸ Prüfmeister (heute nachgesehen: noch keine Antwort in `pruefmeister-restliste.md`) |
+| MwSt./§ 19 | ⏸ Sandy — **hiervon hängt der Livegang** |
+| ZUGFeRD/GoBD (EX-003) | ⏸ Platform |
+| *neu, nicht blockierend:* ein Buchhaltungs-Testlauf | ⏸ Sandy (entscheidet nur zwischen Fassung A und B) |
+
+**Textseitig ist damit alles geschrieben, was ohne fremde Antwort geschrieben
+werden kann.** Von den sechs Stoppern sind vier textlich zu (M-1, M-2, M-6 und
+die Überschrift), einer wartet auf den Prüfmeister (M-3/M-4), einer auf Sandy
+(§ 19), einer auf Platform (ZUGFeRD/GoBD).
+
+**Was ich als Nächstes tue:** warten. Ich lege nichts nach und schreibe keine
+Fassungen für Entscheidungen, die noch nicht gefallen sind — der Text folgt der
+Entscheidung, nicht umgekehrt.
+
+*Head of Marketing · 2026-09-17*
+
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
