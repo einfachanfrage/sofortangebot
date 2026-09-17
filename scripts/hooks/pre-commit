@@ -1,0 +1,35 @@
+#!/bin/sh
+# CoS-P-031, 17.09.2026 - Sandys Entscheidung "ja, einbauen".
+#
+# Zwei Vorgaben von Sandy gelten gleichzeitig:
+#   15.09.2026: "Ein Push darf NIE mehr blockiert werden."
+#   17.09.2026: "ja, einbauen" - die Pruefung soll wieder greifen.
+#
+# Deshalb sitzt die Pruefung beim COMMIT, nicht beim PUSH, und sie blockiert
+# NICHTS. Sie schreibt nur eine Warnung in die Ausgabe der Rolle, die gerade
+# committet. Genau dort entsteht der Fehler: am 17.09. wurde zeit-ausschluss.ts
+# committet und satz-raum.ts blieb ungebunden liegen - 68 Minuten rote
+# Produktion. Am 13./14.09. dieselbe Form, 17 Stunden.
+#
+# exit 0 ist Absicht und darf nicht geaendert werden: weder Sandys Push noch
+# der Commit einer Rolle darf an dieser Datei haengenbleiben. Eine Rolle, die
+# ihre eigene Ausgabe liest, sieht die Warnung - und genau das reicht.
+#
+# Reines ASCII, LF-Zeilenenden, kein BOM (Fehlerklasse CoS-P-024/CoS-P-026).
+
+if command -v node >/dev/null 2>&1 && [ -f scripts/pruefe-unerfasste-dateien.mjs ]; then
+  ausgabe=$(node scripts/pruefe-unerfasste-dateien.mjs 2>/dev/null)
+  if [ -n "$ausgabe" ]; then
+    echo "[pre-commit] -------------------------------------------------------"
+    echo "[pre-commit] HINWEIS, KEINE SPERRE. Dieser Hook haelt nichts an."
+    echo "[pre-commit] Der Satz 'Push blockiert' unten stammt aus dem Skript"
+    echo "[pre-commit] und stimmt hier nicht: weder der Commit noch ein Push"
+    echo "[pre-commit] wird angehalten. Trotzdem lesen - steht unten eine"
+    echo "[pre-commit] Datei, die zu DIESER Arbeit gehoert, jetzt mitcommitten."
+    echo "[pre-commit] -------------------------------------------------------"
+    echo "$ausgabe" | sed 's/^/[pre-commit] /'
+    echo "[pre-commit] ------- Ende des Hinweises, Commit laeuft weiter -------"
+  fi
+fi
+
+exit 0

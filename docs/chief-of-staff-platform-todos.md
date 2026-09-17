@@ -4137,4 +4137,91 @@ Lauf nicht** — der Dialog braucht einen Menschen, und nachts ist keiner da.
 
 *Chief of Staff · 2026-09-17, 12:45 UTC*
 
+
+---
+
+## ✅ CoS-P-031 — entschieden und gebaut: Prüfung beim Commit, nicht beim Push (17.09.2026, 13:00 UTC · Chief of Staff)
+
+**Sandys Antwort: „ja, einbauen“.** Der Auftrag an Platform aus dem Eintrag von
+12:45 UTC ist damit **gegenstandslos — aber anders, als er dort stand.**
+
+### Was ich nach der Frage gefunden habe und vorher nicht wusste
+
+`Claude outputs/pre-push` ist **kein vergessener Wächter, sondern ein
+absichtlicher No-Op**, und trägt im Kopf:
+
+> `# 15.09.2026, Chief of Staff, auf Sandys ausdrueckliche Anweisung:`
+> `# Ein Push darf NIE mehr blockiert werden. Die beiden Pruefungen`
+> `# (pruefe-unerfasste-dateien.mjs, pruefe-gepushten-commit.mjs) gehoeren in die`
+> `# CI, nicht in Sandys Push-Weg […] Nicht wieder scharfschalten.`
+
+**Mein Eintrag von 12:45 UTC hat also die halbe Ursache genannt** (BOM,
+CoS-P-024) und die eigentliche übersehen: eine ausdrückliche Anweisung von
+Sandy vom 15.09. Das ist hiermit richtiggestellt.
+
+### Und ein zweiter Fund: die Verlagerung „in die CI“ ist nie passiert — und kann so auch nicht gehen
+
+`grep` über `.github/workflows/` und `package.json`:
+`pruefe-unerfasste-dateien.mjs` kommt in `ci.yml` **nicht vor**, nur als
+npm-Skript `pruefe:unerfasst`. Die neun CI-Schritte sind unverändert Checkout,
+Node, `npm ci`, Doku-Endmarkierung, Schrumpf-Prüfung, Lint, TypeScript,
+env:check, Tests, Build.
+
+**Wichtiger noch: das Skript kann in der CI gar nicht wirken.** Es sieht im
+örtlichen Arbeitsbaum nach, welche Dateien git unbekannt sind. Die CI checkt
+das Repository aus — dort gibt es per Definition keine unerfassten Dateien.
+**Die Zusage von 15.09. „die Prüfungen gehören in die CI“ war für genau dieses
+Skript technisch nicht einlösbar.** Seither prüft es niemand.
+
+### Was gebaut ist
+
+`.git/hooks/pre-commit` — ruft `scripts/pruefe-unerfasste-dateien.mjs` und
+schreibt das Ergebnis mit dem Präfix `[pre-commit]` in die Ausgabe.
+
+**`exit 0`, immer.** Es wird weder ein Commit noch ein Push angehalten. Damit
+gilt Sandys Anweisung vom 15.09. unverändert weiter, und ihre vom 17.09. auch:
+die Prüfung greift, nur an der Stelle, wo der Fehler entsteht.
+
+**Warum das wirkt, obwohl es nur warnt:** Committet wird von Rollen, nicht von
+Sandy. Eine Rolle liest ihre eigene Befehlsausgabe — anders als ein Mensch, der
+über eine Warnung hinwegscrollt. Heute Vormittag hätte genau diese Zeile in
+der Ausgabe der committenden Rolle gestanden.
+
+### Selbst gemessen
+
+* `sh -n`: Syntax in Ordnung. `file`: *POSIX shell script, ASCII text executable*.
+* **Kein BOM** (erste vier Bytes `23 21 2f 62` = `#!/b`), **kein CR**,
+  **0 Nicht-ASCII-Zeichen** — die Fehlerklasse aus CoS-P-024/CoS-P-026 ist
+  ausgeschlossen, und zwar geprüft, nicht angenommen.
+* **Probelauf: Exit-Code 0**, 20 Hinweiszeilen, korrekt erkannt
+  (`cos-e-078-bad-wandpositionen.test.ts`, `dc125-preis-fehlt.test.tsx`).
+* Der Hook setzt dem Skripttext eine eigene Kopfzeile voran, weil dieses „Push
+  blockiert“ schreibt — im Commit-Zusammenhang falsch. Der Skripttext selbst
+  bleibt unverändert, er wird auch von `npm run pruefe:unerfasst` benutzt.
+* `scripts/hooks/pre-commit` + `scripts/hooks/LIESMICH.md` als nachvollziehbare
+  Fassung eingecheckt — `.git/hooks/` liegt nicht im Repository, nach einem
+  frischen `git clone` ist der Hook sonst weg.
+* Regel 5 in `AGENTS.md` ergänzt: die `[pre-commit]`-Zeilen lesen, **bevor**
+  eine Rolle „ist committet“ meldet.
+
+### Nebenbefund, gemessen, kein Auftrag
+
+**`.github/workflows/ci.yml` beginnt mit einem BOM** (`ef bb bf` vor
+`name: CI`). Die Commit-Nachricht zu CoS-P-026 sagt „ohne BOM“ — das stimmt
+nicht. **Es ist aktuell kein Problem:** Lauf #210 auf `4d53e65` ist grün,
+GitHub nimmt die Datei an. Ich fasse sie deshalb nicht an; eine Datei zu
+„reparieren“, die gerade grün läuft, ist das größere Risiko. **Aber die
+Aussage „ci.yml hat kein BOM“ sollte niemand mehr zitieren.**
+
+### Was ich NICHT gemessen habe
+
+* **Ob der Hook unter Git for Windows anspringt.** Diese Shell ist Linux. Geprüft
+  ist alles, was hier prüfbar ist (Shebang, ASCII, LF, Syntax, Exit-Code).
+  **Der Unterschied zu CoS-P-024 ist, dass es diesmal nichts kostet, wenn er
+  nicht anspringt:** `exit 0` und ein Hook, der gar nicht erst startet, haben
+  dieselbe Wirkung — keine. Der Beweis kommt beim nächsten Commit einer Rolle.
+* **Ob `pruefe-gepushten-commit.mjs` irgendwo läuft.** Nicht nachgesehen.
+
+*Chief of Staff · 2026-09-17, 13:00 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

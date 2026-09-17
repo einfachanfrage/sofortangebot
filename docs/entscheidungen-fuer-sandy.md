@@ -2666,4 +2666,51 @@ angekommen ist.
 
 *Chief of Staff · 2026-09-17, 14:30 UTC*
 
+
+---
+
+## ✅ CoS-P-031 — entschieden: **„ja, einbauen“** — und eine Korrektur an meiner Frage (17.09.2026, 13:00 UTC)
+
+**Eingebaut, erledigt, nichts mehr für dich.** Zuerst aber die Korrektur, weil
+sie deine Entscheidung betrifft:
+
+### Ich habe dir die Frage unvollständig gestellt
+
+Ich habe geschrieben, der Wächter sei am 16.09. wegen eines technischen Fehlers
+(BOM) abgeschaltet worden. **Das war nur die halbe Geschichte.** In der
+abgeschalteten Datei selbst steht, von mir am 15.09. hineingeschrieben:
+
+> „15.09.2026, Chief of Staff, auf Sandys ausdrückliche Anweisung: Ein Push
+> darf NIE mehr blockiert werden. […] Diese Datei ist bewusst ein No-Op.
+> Nicht wieder scharfschalten.“
+
+**Du hattest das also schon einmal entschieden, und zwar andersherum.** Ich habe
+es erst nach deinem „ja, einbauen“ gefunden. Hätte ich es vorher gelesen, hätte
+ich dir die Frage nicht so gestellt.
+
+### Wie ich es gelöst habe, ohne dich nochmal zu fragen
+
+Beide Anweisungen gelten weiter, und sie widersprechen sich nur scheinbar:
+
+| Deine Anweisung | Bleibt gültig |
+|---|---|
+| 15.09.: „Ein Push darf NIE mehr blockiert werden“ | **Ja.** Es gibt keinen `pre-push`, und es wird keinen geben |
+| 17.09.: „ja, einbauen“ | **Ja.** Die Prüfung greift wieder |
+
+**Der Trick ist die Stelle:** Die Prüfung sitzt jetzt **beim Committen**, nicht
+beim Pushen. Committen tun die Rollen, nicht du. Der Fehler entsteht auch dort
+— heute Vormittag hat eine Rolle `zeit-ausschluss.ts` committet und
+`satz-raum.ts` liegenlassen; **dein** Push hat nur weitergereicht, was schon
+kaputt war.
+
+Und sie hält **nichts** an, auch keinen Commit. Sie schreibt eine Warnung in
+die Ausgabe der Rolle, die gerade committet. Eine Rolle liest ihre eigene
+Ausgabe — das reicht, und es kann dir nie in den Weg kommen.
+
+**Für dich ändert sich damit gar nichts.** `git push` läuft wie immer und kann
+an dieser Sache nicht mehr hängenbleiben. Die rote Fehlermeldung vom 16.09.,
+die dich einen Push gekostet hat, ist als Möglichkeit ausgeschlossen.
+
+*Chief of Staff · 2026-09-17, 13:00 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

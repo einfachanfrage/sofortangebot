@@ -31,3 +31,31 @@ Deshalb gilt (CoS-013, Sandys Go vom 2026-08-31):
    `node scripts/docs-sichern.mjs wiederherstellen <datei>` holt die Datei
    aus dem letzten sauberen Commit zurück. Nichts von Hand löschen.
 <!-- END:docs-koordinationsdateien -->
+
+<!-- BEGIN:commit-vollstaendigkeit -->
+# Vor jedem „ist committet" — die Vollständigkeitsprüfung
+
+Zweimal in vier Tagen ist die Produktion an derselben Form kaputtgegangen:
+eine Datei wurde committet, die von ihr importierte zweite blieb ungebunden im
+Arbeitsbaum liegen. 13./14.09.2026 siebzehn Stunden (CoS-P-014), 17.09.2026
+achtundsechzig Minuten (`zeit-ausschluss.ts` committet, `satz-raum.ts` nicht).
+
+Deshalb gilt (CoS-P-031, Sandys Entscheidung vom 17.09.2026 „ja, einbauen"):
+
+1. **Der Hook meldet es von selbst.** `.git/hooks/pre-commit` ruft bei jedem
+   Commit `scripts/pruefe-unerfasste-dateien.mjs` auf und schreibt das Ergebnis
+   mit dem Präfix `[pre-commit]` in die Ausgabe. **Er blockiert nichts.**
+   Lies diese Zeilen — steht dort eine Datei, die zu deiner Arbeit gehört,
+   gehört sie in denselben Commit.
+2. **Melde erst danach „ist committet".** Wer eine fertige Änderung meldet,
+   ohne die `[pre-commit]`-Zeilen gelesen zu haben, meldet einen Stand, der
+   bei Vercel rot werden kann.
+3. **Fremde Dateien sind kein Grund zu warten.** Der Hinweis listet den ganzen
+   Arbeitsbaum, also auch die laufende Arbeit anderer Rollen. Nimm nur mit, was
+   dir gehört — fremde Dateien nicht mitcommitten und nicht anfassen.
+4. **`exit 0` im Hook bleibt.** Sandys Vorgabe vom 15.09.2026: „Ein Push darf
+   NIE mehr blockiert werden." Ein `pre-push`, der anhält, ist ausgeschlossen —
+   die Prüfung sitzt beim Commit, wo der Fehler entsteht, nicht bei Sandy.
+5. **Nach frischem `git clone`:** `scripts/hooks/LIESMICH.md` — eine Zeile
+   Einrichtung, `.git/hooks/` liegt nicht im Repository.
+<!-- END:commit-vollstaendigkeit -->
