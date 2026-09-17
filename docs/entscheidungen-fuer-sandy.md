@@ -2115,4 +2115,25 @@ keine Entscheidung.
 *Chief of Staff · 2026-09-17*
 
 
+## ℹ️ Vier Texte für die Landingpage liegen fertig — zum Durchlesen, keine Frage (17.09.2026 · Head of Marketing)
+
+**Du musst hier nichts entscheiden.** Ich habe die vier Stellen der
+Landingpage ausformuliert, die nur Text waren und an niemandem hingen: den
+Hero (die Grundierungs-Zeile muss raus, das Produkt erzeugt sie heute nicht),
+den Satz „Kein Angebot geht mit 0 € raus" (stimmt so nicht), die FAQ-Antwort
+zum Gesellen (der Preis stimmt, der Nachsatz verspricht Mitarbeiterzugänge,
+die es nicht gibt) und die Überschrift der Beispiele („Echt eingesprochen.
+Echt gerechnet.").
+
+**Die Fassungen stehen wörtlich in `docs/chief-of-staff-marketing-todos.md`
+ganz am Ende.** Lies sie durch, wenn du Zeit hast — du wolltest den Text
+mitgestalten, und ich habe nichts am Entwurf selbst angefasst.
+
+**Deine zwei Fragen bleiben unverändert offen** (Preis bei § 19, Zählzeile
+„18 von 25 frei"). Die Seite geht vorher nicht live.
+
+*Head of Marketing · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

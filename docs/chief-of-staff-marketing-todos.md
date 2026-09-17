@@ -2001,5 +2001,179 @@ Aufbau und Aussehen gehören dem Designer, und Sandy will den Text mitgestalten.
 
 ---
 
+## Punkt 9.1 — die Textfassungen zu M-1, M-2, M-5 und „Echt eingesprochen" (Head of Marketing, 2026-09-17)
+
+**Das ist der zugesagte Schritt aus meinem Eintrag von heute früh.** Vier von
+sechs Stoppern sind Textarbeit und hängen an niemandem — hier stehen sie
+ausformuliert, wörtlich, zum Übernehmen. **Kein Layout, kein Eingriff in den
+Entwurf**: Aufbau und Aussehen bleiben beim Designer, das Durchgehen bleibt bei
+Sandy.
+
+**Was hier NICHT drin steht, und warum:** die §-19-Preiszeile und die
+Zählzeile „18 von 25 frei" liegen bei Sandy (`entscheidungen-fuer-sandy.md`) —
+ich formuliere sie nicht vor, weil die Entscheidung den Text bestimmt und nicht
+umgekehrt. ZUGFeRD/GoBD gehört Platform (EX-003). M-3 und M-4 (Beispiel-Tabs,
+Büro-Lauf) warten auf den Prüfmeister. **Unverändert sechs Stopper; nach diesen
+vier Fassungen sind vier davon textseitig erledigt, sobald sie im Entwurf
+stehen.**
+
+---
+
+### M-1 · Hero — die Tiefengrund-Zeile raus, Fußnote geradegezogen
+
+**Warum:** Position 6 („Grundieren (Tiefengrund)", 46,80 m² × 4,50 € =
+210,60 €) erzeugt das Produkt heute nicht. Beleg steht in meinem Eintrag von
+heute früh; Engineering hat die Meldung, **ohne Auftrag** — ich warte nicht
+darauf, der Hero trägt auch mit fünf Zeilen.
+
+**Der eingesprochene Satz bleibt wie er ist** (wortgleich Fall 05 der
+Einsprech-Liste, am 16.09. tatsächlich gelaufen):
+
+> „Wohnzimmer, vier mal fünf, Höhe zwo sechzig. Alte Tapete muss runter.
+> Danach Wände und Decke zweimal weiß. Ein Fenster, eine Tür."
+
+**Die Tabelle daneben — fünf Zeilen, gemessenes Ergebnis vom 16.09.:**
+
+| Position | Menge | Betrag |
+|---|---|---|
+| Wände zweimal streichen | 46,80 m² | 444,60 € |
+| Decke zweimal streichen | 20,00 m² | 220,00 € |
+| Tapete entfernen | 46,80 m² | 187,20 € |
+| Boden abdecken | 20,00 m² | 24,00 € |
+| Sockelleisten abkleben | 18,00 lfm | 14,40 € |
+| **Summe netto** | | **890,20 €** |
+
+*(Reihenfolge wie im Entwurf, nur die sechste Zeile fällt weg. Die Summe ändert
+sich von 1.100,80 € auf 890,20 € — an jeder Stelle, an der sie vorkommt.)*
+
+**Die Fußnote unter „Wände zweimal streichen" — neue Fassung:**
+
+> `18,00 lfm Umfang × 2,60 m · Fenster und Tür unter 2,5 m² nach VOB nicht abgezogen`
+
+*(Das ist zugleich Finance-Korrektur 6: im Entwurf steht im Hero „nach VOB
+nicht abgezogen" **ohne** die Schwelle, im Beispieltab dagegen mit. Ohne die
+Schwelle ist der Satz falsch — über 2,5 m² wird abgezogen. Ab jetzt an beiden
+Stellen derselbe Wortlaut.)*
+
+**Der zweite Satz, der am selben ungebauten Verhalten hängt.** Im Entwurf:
+
+> „Denkt an das, was man vergisst — **Grundierung nach dem Tapetenabriss** —
+> Sofortangebot fragt nach, bevor du umsonst arbeitest."
+
+**Neue Fassung — Aussage bleibt, Beispiel wird gegen ein nachweisbares
+getauscht:**
+
+> „Denkt an das, was auf keiner Liste steht. **Boden abdecken, Sockelleisten
+> abkleben** — stehen im Angebot, ohne dass du sie sagst."
+
+Beide Positionen stehen im Lauf vom 16.09. als Vorschlag drin, sind also belegt.
+Der Satz wird dadurch sogar konkreter: er behauptet keine Rückfrage, sondern
+zeigt zwei Zeilen, die der Besucher in derselben Tabelle wiederfindet.
+
+---
+
+### M-2 · „Kein Angebot geht mit 0 € raus." — ersetzen
+
+**Warum:** Im Code ist es ausdrücklich andersherum gelöst, mit Begründung und
+von Sandy so gewollt. Keine Sperre in `api/entwurf`, `api/pdf`, `api/email`
+oder `api/sign` — nachgesehen, nicht vermutet.
+
+**Alt:** „Kein Angebot geht mit 0 € raus."
+
+**Neu:**
+
+> **„Die Lücke steht rot im Angebot, bis du sie schließt."**
+
+**Und der erklärende Zweizeiler darunter** (der Tab zeigt ja eine 0,00-€-Zeile,
+die will erklärt werden):
+
+> „Fehlt ein Preis im Katalog, wird er nicht geraten und nicht
+> weggelassen — die Position steht mit 0,00 € da, rot, bis du sie setzt.
+> Du entscheidest, ob du sie so rausschickst."
+
+Das ist der stärkere Satz: er verspricht nichts, was das Produkt nicht tut, und
+er benennt genau das Verhalten, das einen Betrieb vor dem teuersten Fehler
+bewahrt — einer Position, die stillschweigend verschwindet.
+
+---
+
+### M-5 · FAQ „Zahle ich mehr, wenn mein Geselle es auch nutzt?"
+
+**Warum:** preislich ist die Antwort richtig, der Nachsatz „Ob du allein
+losziehst oder zu fünft" verspricht aber Nutzung durch mehrere. Gemessen: ein
+Betrieb hängt über `companies.user_id` an **genau einem** Konto; Mitarbeiter,
+Einladung, Team kommen in `src/app` und `src/lib` nicht vor.
+
+**Neue Fassung — Frage und Antwort komplett:**
+
+> **Zahle ich mehr, wenn mein Geselle es auch nutzt?**
+>
+> Nein. Der Preis gilt für den Betrieb, nicht pro Kopf.
+
+**Punkt. Kein Nachsatz.** Wer Mitarbeiterzugänge sucht, findet die Antwort
+sonst hier — und sie wäre falsch. Sobald es sie gibt, kann der Satz zurück.
+
+*(Für den Fall, dass die Frage jemand direkt stellt, gehört die ehrliche
+Antwort in die Antwort-Mail, nicht auf die Seite: heute arbeitet ein Betrieb
+mit einem Zugang. Das ist kein Werbeargument und auch kein Geheimnis.)*
+
+---
+
+### „Echt eingesprochen" — die Überschrift der Beispiel-Sektion
+
+**Warum:** „Echte Aufnahmen, echte Angebote" liest sich als Kundschaft. Es gibt
+keine Kunden. Die Diktate sind echt — sie stehen als Fall 05, 06, 10 und 11 in
+`einsprech-liste-alle-faelle.md` und wurden am 16.09. eingesprochen — aber von
+uns.
+
+**Alt:** „Echte Aufnahmen, echte Angebote."
+
+**Neu:**
+
+> **„Echt eingesprochen. Echt gerechnet."**
+
+**Und darunter, ein Satz, der die Lücke selbst schließt, statt sie offen zu
+lassen:**
+
+> „Die vier Aufnahmen sind unsere eigenen Prüfläufe — Satz für Satz
+> eingesprochen, Zeile für Zeile nachgerechnet. Keine nachgestellten
+> Kundenangebote."
+
+Das ist der Satz, den ich am liebsten auf der Seite hätte. Er nimmt dem
+kritischen Leser den Einwand aus der Hand, bevor er ihn formuliert, und er
+verkauft besser als die Behauptung: wer offen sagt, dass er noch keine Kunden
+hat, wirkt bei den ersten fünfundzwanzig glaubwürdiger als jemand, der sieben
+erfindet. *(Womit derselbe Maßstab an die Zählzeile „18 von 25 frei" angelegt
+wäre — die liegt aber bei Sandy, nicht bei mir.)*
+
+---
+
+### Was damit steht und was nicht
+
+| | Stand |
+|---|---|
+| M-1 Hero (Tiefengrund raus, Fußnote, Ersatzsatz) | ✅ Text fertig |
+| M-2 0-€-Zusage | ✅ Text fertig |
+| M-5 FAQ Geselle | ✅ Text fertig |
+| „Echt eingesprochen" | ✅ Text fertig |
+| Finance-Korrektur 6 (Fußnote Hero) | ✅ in M-1 mit erledigt |
+| Finance-Korrektur 5 (DATEV hinter „Export") | ⏸ wartet auf Engineerings Ein-Wort-Antwort (Lexware Office / Lexoffice) |
+| Finance-Korrektur 8 (49-€-Anker vor Brutto-Zeile) | ⏸ hängt an Sandys §-19-Antwort — fällt weg, wenn die Brutto-Zeile fällt |
+| M-3 abweichende Beispiel-Tabs · M-4 Büro-Krücke | ⏸ Prüfmeister |
+| MwSt./§ 19 · Zählzeile | ⏸ Sandy |
+| ZUGFeRD/GoBD (EX-003) | ⏸ Platform |
+
+**Was ich als Nächstes tue:** warten — auf den Prüfmeister-Lauf für das Büro
+und auf Sandys zwei Antworten. Beides ist angefragt und liegt an der richtigen
+Stelle; ich lege nichts nach. Sobald eines davon da ist, geht der Rest des
+Textes in einem Stück nach.
+
+**Was ich nicht tue:** den Entwurf selbst ändern. Die Fassungen oben sind
+Vorlage, kein Eingriff.
+
+*Head of Marketing · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
