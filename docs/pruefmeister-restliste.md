@@ -4394,10 +4394,18 @@ node scripts/docs-sichern.mjs pruefen alle 57 Doku-Dateien in Ordnung
 
 **Nicht gemessen, also behaupte ich es nicht:**
 
-* **Der volle Prüfstand.** Er lief in diesem Lauf nicht zu Ende — jeder
-  Aufruf auf diesem Rechner hat ein Zeitfenster, und der Lauf braucht mehr.
+* **Der volle Prüfstand.** Er lief in diesem Lauf **nicht zu Ende**, und
+  zwar nicht am Zeitfenster: `npx vitest run` über alle Dateien hat nach
+  gut vier Minuten **aufgehört, Ausgabe zu schreiben**, und lief danach
+  sechzehn Minuten ohne eine weitere Zeile weiter. Ich habe ihn abgebrochen.
   Der letzte belegte eigene Stand bleibt der von 11:58 UTC: **2693 grün ·
-  94 Sperrklinken · 0 rot.** Gemessen sind hier nur die zwei neuen Dateien.
+  94 Sperrklinken · 0 rot.**
+  Gemessen habe ich stattdessen meine Spur als Gruppe, und die ist grün:
+  `pm-landingpage-hero` · `pruefmeister-batch-131-133` ·
+  `pruefmeister-batch-121-128` · `pruefmeister-soll` ·
+  `pm-landingpage-buero` = **204 Zusicherungen, 187 grün, 17 Sperrklinken,
+  0 rot** (16:40 UTC). Dass PM-121…128 dabei grün bleibt, ist der Nachtest
+  zu Engineerings laufender Arbeit, nicht meine Annahme.
 * **Der Arbeitsbaum ist nicht `HEAD`.** Engineerings unfertiges CoS-E-078
   liegt uncommittet da. Für meine Messungen ist das geprüft und folgenlos:
   die Änderung in `vollstaendigkeit/index.ts` hängt an
@@ -4412,9 +4420,16 @@ node scripts/docs-sichern.mjs pruefen alle 57 Doku-Dateien in Ordnung
   Messung am laufenden Modell.
 * **Ob die App das alles genauso anzeigt.** Der Endpunkt braucht Next.js und
   lief nicht.
-* **Die laufende Arbeit von Finance** (`finance-001-*`,
-  `kostenuebersicht-finance.xlsx` stehen geändert im Arbeitsbaum). Nicht
-  angefasst, nicht mitcommittet.
+* **Die laufende Arbeit der anderen Rollen.** Während meines Laufs sind im
+  Arbeitsbaum dazugekommen: `design-check.md`, `AngebotVorschau.tsx`,
+  `einstellungen/briefpapier/[id]/page.tsx` (Designer, DC-127),
+  `landingpage-fuenf-beispiele.md` (Marketing) — und **zwei meiner eigenen
+  Testdateien**, `pruefmeister-batch-121-128.test.ts` und
+  `pruefmeister-batch-60-62.test.ts`, geändert von fremder Hand (der Form
+  nach Engineering an CoS-E-078). **Nichts davon angefasst, nichts davon
+  mitcommittet** — mein Commit `f345447` enthält genau sieben Dateien, die
+  zwei neuen Tests und die fünf Doku-Dateien. Er liegt **lokal**; gepusht
+  wird von Sandy.
 
 **Fallbasis: 133 Fälle.**
 
