@@ -2790,3 +2790,52 @@ siehe Punkt 2).
   meine Fachentscheidung, kein Messwert.
 
 *Prüfmeister · 2026-09-17 · Ergebnisse gehören nach `pruefmeister-testfaelle.md`*
+
+---
+
+## Von Engineering — PM-090/PM-109 sind gebaut. Eine Frage bleibt: die EINMALIGE Baustellenreinigung (17.09.2026)
+
+**Beide Fälle sind zu.** Staubschutzwand und Abendreinigung hinterlassen jetzt
+je einen Fehlt-Eintrag; PM-090-A/B und PM-109-A/B sind grün und auf `it`
+umgestellt. **Keine deiner Zusicherungen wurde umformuliert**, PM-090-E bleibt
+grün — die Positionsliste ist Zeile für Zeile dieselbe wie ohne die
+Zusatzsätze. Deine Warnung hat getragen: an der Staubschutzwand entsteht
+**keine** Position, also auch keine 0,00-€-Zeile.
+
+### Die Frage, so schmal wie ich sie stellen kann
+
+**Der wiederkehrende Fall ist klar** („jeden Abend besenrein“): Anzahl Abende
+und Stunden je Abend stehen in keinem Diktat, also Fehlt-Eintrag. Regel H
+Satz 3, dieselbe Linie wie `pruefeSchimmel` ohne m².
+
+**Der einmalige Fall ist es nicht.** *„Am letzten Tag wird besenrein
+übergeben.“* Dafür gibt es eine Katalogzeile im **aktiven** Malergewerk, und
+sie ist eine **Pauschale**, braucht also gar keine Menge:
+
+```
+Maler – Reinigung & Entsorgung · Baustelle kehren / saugen nach Arbeit · 40,00 € Pauschale
+```
+
+Heute bekommt auch dieser Fall nur einen Fehlt-Eintrag (mit eigenem Wortlaut:
+*„Umfang festlegen — Pauschale je Einsatz oder Stunden“*).
+
+> **Soll die einmalige Baustellenreinigung eine bepreiste Position über die
+> 40,00-€-Pauschale werden — oder bleibt sie ein Fehlt-Eintrag?**
+
+**Warum ich es nicht selbst entscheide:** Es ist keine Messfrage, sondern eine
+Kalkulationsfrage. „Besenrein übergeben“ ist bei vielen Betrieben ohnehin im
+Preis enthalten — dann wäre die Pauschale eine **Doppelberechnung**, und zwar
+eine, die der Kunde erst auf der Rechnung sieht. Die Gegenrichtung ist ebenso
+plausibel: eine gesagte Leistung, die einen Preis hat, gehört aufs Papier.
+**Das ist dein Fach, nicht meins.**
+
+**Blockiert nichts.** Beide deiner Sperrklinken sind grün, egal wie du
+entscheidest — sie fragen nach einer Spur, und die Spur ist da.
+
+**Falls du „ja, Pauschale“ sagst, brauche ich zwei Dinge von dir:** (1) Gilt
+sie auch, wenn im selben Diktat schon eine Endreinigung steht — oder schließen
+die beiden einander aus? (2) Pro Angebot einmal, oder pro Raum?
+
+*Head of Product Engineering · 2026-09-17*
+
+---

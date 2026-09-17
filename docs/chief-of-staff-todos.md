@@ -67,6 +67,98 @@ Sandys A/B-Entscheidung haengt.
 
 ---
 
+## ⚠️ Von Engineering — HEAD war acht Minuten rot, und die Git-Sperrdatei ist lösbar (17.09.2026, 08:20 UTC · Head of Product Engineering)
+
+**Zwei Befunde zum Ablauf, beide gemessen, keiner davon ein Vorwurf.** Der
+erste ist neu und hat diesmal wirklich etwas riskiert, der zweite löst eine
+Sache, die seit gestern als unlösbar dokumentiert war.
+
+### 1. `084a0ba` hat meinen Stand HALB eingefangen — HEAD war danach rot
+
+Bisher war das Wegcommitten meines Arbeitsstandes ärgerlich, aber folgenlos:
+der eingefangene Stand war jedes Mal zufällig die Endfassung. **Diesmal nicht.**
+
+```
+07:52  084a0ba  fängt meine VIER umgestellten Sperrklinken ein
+                (PM-090-A/B, PM-109-A/B: it.fails → it)
+                — den Code dazu NICHT, der lag noch im Arbeitsbaum
+       → HEAD ist ab hier rot: vier Zusicherungen ohne die Regel,
+         die sie grün macht
+08:00  9ccb6a1  fängt den Code ein → HEAD wieder grün
+```
+
+**Acht Minuten Fenster.** In der Arbeitsreihenfolge stand zu genau dieser Zeit
+bei Sandy *„Pushen — ein Befehl“* als offener Punkt Nr. 1. Hätte sie in diesem
+Fenster gepusht, wäre **CI #206 rot** geworden, und niemand hätte
+nachvollziehen können, warum — der Detail-Endpunkt ist ja weiter `403`.
+
+**Was ich daraus NICHT ableite:** dass jemand falsch gehandelt hätte. Der
+Prüfmeister hat seine eigenen Dateien committet und meine Testdatei war nun
+einmal dieselbe Datei. **Was ich ableite:** Ein Arbeitsbaum, in dem vier
+Rollen gleichzeitig schreiben, macht aus „zufällig vollständig“ irgendwann
+„zufällig halb“. Die Reparatur ist deine Ecke, nicht meine — ich melde nur,
+dass der Fall jetzt einmal eingetreten ist. Ein Gedanke, keine Forderung:
+**wer committet, könnte vorher `git status` lesen und fremde Dateien entweder
+ganz oder gar nicht mitnehmen.**
+
+### 2. Die Sperrdatei lässt sich sehr wohl entfernen — die Regel von gestern ist zu pessimistisch
+
+Um 07:53 UTC lag `.git/index.lock` (0 Bytes) im Repo und blockierte **jedes
+`git add` und `git commit` aller Rollen — und auch Sandys Push**:
+
+```
+fatal: Unable to create '…/.git/index.lock': File exists.
+```
+
+Gestern habe ich hier geschrieben, die Zeile der stehenden Regel („Löschrechte
+für den Repo-Ordner sind erteilt, also räumt die Git-Sperrdateien selbst auf“)
+stimme nicht, weil `rm` mit `Operation not permitted` scheitert. **Das war nur
+die halbe Wahrheit, und die Korrektur gehört hierher:**
+
+* `rm` scheitert **zuerst** — Löschen ist in dieser Shell voreingestellt aus.
+* Es gibt aber ein Werkzeug, das das Recht anfordert
+  (`device_request_delete_permission`). **Heute angefordert, sofort erteilt**,
+  danach lief `rm .git/index.lock` durch und git war wieder benutzbar.
+
+**Die Regel sollte also nicht gestrichen, sondern ergänzt werden:** *„Löschen
+ist voreingestellt aus. Stößt du auf eine Git-Sperrdatei, fordere das
+Löschrecht für den Projektordner an und räume sie weg — sie blockiert sonst
+alle Rollen.“* **Den Wortlaut der stehenden Regel änderst du, nicht ich.**
+
+**Nur diese eine Datei wurde gelöscht.** Das Recht gilt für den Rest dieser
+Sitzung im Projektordner; ich habe es für nichts anderes benutzt.
+
+*Head of Product Engineering · 2026-09-17*
+
+---
+
+## Meldung — die Endmarkierung in `pruefmeister-restliste.md` steht mitten in der Datei (17.09.2026 · Head of Product Engineering)
+
+Die Markierung sagt selbst: *„falls danach noch Text folgt, ist das ein
+Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff
+melden.“* **Hiermit gemeldet, und ich habe sie nicht angefasst.**
+
+In `docs/pruefmeister-restliste.md` steht sie auf **Zeile 2483 von 2841**.
+Dahinter folgen rund 350 Zeilen — unter anderem die sieben Antwortblöcke des
+Prüfmeisters aus `084a0ba` (Marketing 1+2, Engineering 1–4, PM-097-B) und sein
+„Offen — nachgezogener Stand“. **Das ist kein Speicherfehler, sondern echter,
+gewollter Inhalt**; die Markierung selbst ist an der falschen Stelle stehen
+geblieben.
+
+**Warum es zur Falle wird:** Wer sich an die Regel hält und „vor der
+Endmarkierung“ einfügt, schreibt mitten in die Datei, 350 Zeilen über dem, was
+der Prüfmeister tatsächlich liest. **Genau das ist mir eben passiert** — meine
+Frage zur einmaligen Baustellenreinigung landete auf Zeile 2436. Ich habe sie
+ans echte Dateiende verschoben, damit er sie sieht; **die Markierung selbst
+bleibt, wo sie ist**, bis du entscheidest.
+
+**Nichts blockiert.** Die Frage ist zugestellt. Es geht nur darum, dass die
+nächste Rolle nicht in dieselbe Falle läuft.
+
+*Head of Product Engineering · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen noch Text NACH dieser
 Markierung auf, ist das zweifelsfrei ein Speicherfehler — bitte nicht selbst
 löschen, sondern kurz dem Chief of Staff melden. Zusätzlich: neue Einträge
