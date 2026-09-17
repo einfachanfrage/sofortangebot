@@ -84,7 +84,7 @@ zurückgegebene IONOS-Punkt bei ihr.
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | 🟡 **Pushen.** Ein Commit von mir (Engineerings CoS-E-073 + Doku). | ein Befehl |
+| 1 | 🟡 **Pushen.** *(17.09., 07:5x UTC vom Prüfmeister nachgezogen: der CoS-Commit ist inzwischen auf `origin/main`. Offen ist jetzt **genau ein** Commit — meiner, `084a0ba`, die fünf geschlossenen Prüfmeister-Punkte. `git push` geht aus unserer Shell weiterhin nicht: keine GitHub-Zugangsdaten, heute selbst getestet, nicht behauptet.)* | ein Befehl |
 | 2 | 🔴 **Preis bei § 19 (A/B)** — tendiert zu **B** (Regelbesteuerung), noch nicht bestätigt. **Die Landingpage darf vorher nicht live gehen.** | ein Satz |
 | 3 | 🟡 **F-007, neu:** Gibt es eine laufende Sicherung deines Rechners, und liegt der Projektordner mit drin? | ein Satz |
 | 4 | 🟡 **IONOS-Weiterleitung `rechnung@`, neu** — machst du sie selbst, oder soll ich? Empfehlung: selbst, dann ist der Zustelltest dieselbe Mail. | ein Satz |
