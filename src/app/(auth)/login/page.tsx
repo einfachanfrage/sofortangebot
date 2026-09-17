@@ -32,7 +32,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-bg flex flex-col justify-center px-5">
+    <div className="flex flex-col">
       <div className="mb-10">
         <Logo variant="light" className="text-4xl" />
         <div className="font-syne text-anthracite text-xl font-bold mt-1">Einloggen</div>

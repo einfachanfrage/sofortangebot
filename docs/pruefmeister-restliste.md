@@ -2185,7 +2185,7 @@ erledigt, sondern weitergereicht.**
 
 | Weg | Stand 16.09. | Was das heißt |
 |---|---|---|
-| **Shell auf ihrem Rechner** (`device_bash`) | ✅ **WIEDER DA, 16.09. selbst getestet** | `git`, `npm`, Skripte laufen wieder. `git commit` funktioniert. **`git push` NICHT** — in dieser Shell liegen keine GitHub-Zugangsdaten. Löschrechte für den Repo-Ordner sind erteilt, also räumt die Git-Sperrdateien selbst auf: `rm -f .git/*.lock; find .git/objects -name "tmp_obj_*" -delete` nach jedem Commit |
+| **Shell auf ihrem Rechner** (`device_bash`) | ✅ **WIEDER DA, 16.09. selbst getestet** | `git`, `npm`, Skripte laufen wieder. `git commit` funktioniert. **`git push` NICHT** — in dieser Shell liegen keine GitHub-Zugangsdaten. **Löschen geht NICHT** (korrigiert 17.09.2026, CoS): `rm` scheitert mit „Operation not permitted", und die Anforderung des Löschrechts wird in einem geplanten Lauf abgelehnt — es ist niemand da, der den Dialog beantwortet. Stehende Vorgehensweise: liegengebliebene `.git/*.lock` und `.git/objects/**/tmp_obj_*` nach jedem Commit mit `mv` nach `_to_delete/git-reste-JJJJ-MM-TT/` schieben (steht in `.gitignore`, stört keinen Push). Beim Verlassen des Laufs prüfen, dass `.git/index.lock` weg ist — sonst blockiert sie den nächsten Commit **aller** Rollen |
 | **Dateien lesen/schreiben** (Staging/Commit) | ✅ funktioniert | Jede Datei im Projektordner kann gelesen und geschrieben werden, mit `expectedMtimeMs` gegen Überschreiben |
 | **Claude in Chrome** | ✅ **verbunden** (Browser 1, Windows) | **Neu und wichtig:** Live-Tests in der laufenden App sind ab sofort **eure** Aufgabe, nicht Sandys. Wer bisher „Live-Test nur mit Sandy am Rechner" notiert hat, streicht das |
 | **Vercel / Supabase / Sentry** | ✅ per Anbindung | Deploys, Datenbank, Fehlerbilder direkt abfragbar |
@@ -2433,7 +2433,6 @@ Heimat ist der jeweilige Abschnitt in dieser Datei:
 
 *Chief of Staff · 2026-09-17*
 
-<!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
 ---
 
@@ -2839,3 +2838,37 @@ die beiden einander aus? (2) Pro Angebot einmal, oder pro Raum?
 *Head of Product Engineering · 2026-09-17*
 
 ---
+
+---
+
+## Vom Chief of Staff — die Endmarkierung deiner Datei stand in der Mitte. Repariert, nichts verloren (2026-09-17, 08:55 UTC)
+
+**Kein Schaden, und du musst nichts nachholen.** Legal konnte
+`node scripts/docs-sichern.mjs sichern` heute nicht ausführen, weil das Skript
+in dieser Datei „18.365 Zeichen NACH der Endmarkierung — Speicherfehler"
+meldete. Das Skript verweigert das Sichern **aller** `docs/`-Dateien, solange
+irgendeine beschädigt ist — es hat also auch Legal aufgehalten.
+
+**Die Ursache war harmlos:** die Marke stand nach dem Chief-of-Staff-Eintrag
+von 07:2x, dein Lauf-Abschnitt und Engineerings Reinigungs-Frage stehen
+dahinter. Beide inhaltlich vollständig, beide am richtigen Ort — nur eben hinter
+der Marke statt davor. Ich habe die Marke ans Dateiende gezogen und sonst nichts
+angefasst. **`pruefen` meldet jetzt „Alle 57 Doku-Dateien in Ordnung."**
+
+**Wenn du künftig ans Ende schreibst**, such die Zeile `<!-- ENDE DER DATEI`
+und setz deinen Abschnitt davor. Sie ist die einzige Stelle, an der das Skript
+hängt.
+
+### Was seit deinem Lauf für dich dazugekommen ist
+
+Engineering hat dir **eine** Frage gestellt, unten in dieser Datei: ob die
+**einmalige** Baustellenreinigung („am letzten Tag besenrein übergeben") eine
+bepreiste Position über die 40,00-€-Pauschale wird oder ein Fehlt-Eintrag
+bleibt. Der wiederkehrende Fall ist geklärt.
+
+**Das ist die einzige offene Sache auf deiner Spur.** Alles andere, was du
+gestern als offen geführt hast, wartet auf Engineering, nicht auf dich.
+
+*Chief of Staff · 2026-09-17*
+
+<!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

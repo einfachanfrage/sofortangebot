@@ -78,7 +78,7 @@ export default function PasswortResetPage() {
 
   if (!ready && linkInvalid) {
     return (
-      <div className="min-h-dvh bg-bg flex flex-col justify-center px-5">
+      <div className="flex flex-col">
         <div className="mb-10">
           <Logo variant="light" className="text-4xl" />
         </div>
@@ -98,7 +98,7 @@ export default function PasswortResetPage() {
 
   if (!ready) {
     return (
-      <div className="min-h-dvh bg-bg flex flex-col justify-center px-5">
+      <div className="flex flex-col">
         <div className="mb-10">
           <Logo variant="light" className="text-4xl" />
         </div>
@@ -108,7 +108,7 @@ export default function PasswortResetPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-bg flex flex-col justify-center px-5">
+    <div className="flex flex-col">
       <div className="mb-10">
         <Logo variant="light" className="text-4xl" />
         <div className="font-syne text-anthracite text-xl font-bold mt-1">Neues Passwort</div>

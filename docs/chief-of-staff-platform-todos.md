@@ -2971,7 +2971,7 @@ erledigt, sondern weitergereicht.**
 
 | Weg | Stand 16.09. | Was das heißt |
 |---|---|---|
-| **Shell auf ihrem Rechner** (`device_bash`) | ✅ **WIEDER DA, 16.09. selbst getestet** | `git`, `npm`, Skripte laufen wieder. `git commit` funktioniert. **`git push` NICHT** — in dieser Shell liegen keine GitHub-Zugangsdaten. Löschrechte für den Repo-Ordner sind erteilt, also räumt die Git-Sperrdateien selbst auf: `rm -f .git/*.lock; find .git/objects -name "tmp_obj_*" -delete` nach jedem Commit |
+| **Shell auf ihrem Rechner** (`device_bash`) | ✅ **WIEDER DA, 16.09. selbst getestet** | `git`, `npm`, Skripte laufen wieder. `git commit` funktioniert. **`git push` NICHT** — in dieser Shell liegen keine GitHub-Zugangsdaten. **Löschen geht NICHT** (korrigiert 17.09.2026, CoS): `rm` scheitert mit „Operation not permitted", und die Anforderung des Löschrechts wird in einem geplanten Lauf abgelehnt — es ist niemand da, der den Dialog beantwortet. Stehende Vorgehensweise: liegengebliebene `.git/*.lock` und `.git/objects/**/tmp_obj_*` nach jedem Commit mit `mv` nach `_to_delete/git-reste-JJJJ-MM-TT/` schieben (steht in `.gitignore`, stört keinen Push). Beim Verlassen des Laufs prüfen, dass `.git/index.lock` weg ist — sonst blockiert sie den nächsten Commit **aller** Rollen |
 | **Dateien lesen/schreiben** (Staging/Commit) | ✅ funktioniert | Jede Datei im Projektordner kann gelesen und geschrieben werden, mit `expectedMtimeMs` gegen Überschreiben |
 | **Claude in Chrome** | ✅ **verbunden** (Browser 1, Windows) | **Neu und wichtig:** Live-Tests in der laufenden App sind ab sofort **eure** Aufgabe, nicht Sandys. Wer bisher „Live-Test nur mit Sandy am Rechner" notiert hat, streicht das |
 | **Vercel / Supabase / Sentry** | ✅ per Anbindung | Deploys, Datenbank, Fehlerbilder direkt abfragbar |
@@ -3844,5 +3844,50 @@ Zählt als nicht erledigt / wartet auf Entscheidung, wer es mit welchem
 Zugang macht — kein technisches Hindernis im Code.
 
 *Platform & Integrations Engineer · 2026-09-17*
+
+---
+
+## CoS-P-029 — Am 19.09.2026 einmal in `system_laeufe` schauen: der erste Lauf, der die 30-Tage-Zusage tatsächlich einlösen muss (Chief of Staff, 2026-09-17, 08:55 UTC)
+
+**Herkunft:** Nebenbefund von Legal beim Nachrechnen der Fristen für
+Gate-1-Punkt 7.13, Heimat `chief-of-staff-legal-todos.md`. Kein Bauauftrag —
+ein Blick.
+
+**Der Sachverhalt, aus Legals Messung an der Produktionsdatenbank:**
+
+* Datenschutzerklärung Z. 117 und AGB § 8.3 sagen zu, Audiodateien **spätestens
+  30 Tage** nach der Aufnahme zu löschen.
+* `entwurf_aufnahmen` hat **24 Zeilen**, die älteste vom **19.08.2026,
+  11:20 UTC**. **Keine einzige ist bisher älter als 30 Tage.**
+* Der Job `aufraeumen` läuft täglich 03:30 UTC und meldet `ok: true`. Sein
+  30-Tage-Zweig meldet in **jedem** protokollierten Lauf `geprueft: 0` — er
+  hatte schlicht noch nie etwas zu tun.
+* Die Verwaisten-Sperrklinke arbeitet dagegen sichtbar: am 17.09. hat sie im
+  Bucket `entwurf-audio` 10 Dateien ohne Datenbankzeile gelöscht.
+
+**Daraus folgt ein Datum, kein Fehler.** Die älteste Aufnahme überschreitet die
+Frist am **18.09.2026, 11:20 UTC**. Der erste Lauf, der wirklich nach Frist
+löschen muss, ist der vom **19.09.2026, 03:30 UTC**.
+
+### Was zu tun ist
+
+Am **19.09.2026 nach 03:30 UTC** einmal `system_laeufe` für den Lauf
+`aufraeumen` öffnen und nachsehen, ob **`aufnahmen.dateien > 0`** ist.
+
+* **Ja** → die Zusage ist ab diesem Tag gemessen statt behauptet. Bitte hier
+  eintragen, mit der Zahl.
+* **Nein** → dann sind **zwei veröffentlichte Rechtstexte unrichtig**, und der
+  Punkt ist keine Kleinigkeit mehr. In dem Fall sofort hier und in
+  `chief-of-staff-legal-todos.md` melden, nicht erst bewerten.
+
+**Warum bei euch und nicht bei Legal:** es ist eine Abfrage auf der
+Produktionsdatenbank, das ist eure Ecke. Legal hat den Befund, ihr habt den
+Zugriff. **Sandy braucht davon nichts zu wissen, solange die Antwort „ja" ist.**
+
+**Blockiert nichts** und liegt hinter allem, was ihr sonst offen habt — es ist
+ein Termin, keine Priorität. Wichtig ist nur, dass er nicht verfällt: Sandy ist
+ab dem 18.09. in Italien.
+
+*Chief of Staff · 2026-09-17*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

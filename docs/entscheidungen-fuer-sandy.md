@@ -2343,4 +2343,39 @@ niemand bis zum Ende gesehen hat.
 
 ---
 
+---
+
+## 🟡 Datenschutzerklärung — ein Halbsatz stimmt nicht. Fertig formuliert, braucht nur dein Ja (17.09.2026, 08:55 UTC · Chief of Staff, Fund von Legal)
+
+**Rechtstexte gehen nur mit deiner Freigabe raus** — deshalb liegt das hier und
+nicht bei Engineering.
+
+**Was heute in der Datenschutzerklärung steht** (`/datenschutz`, Zeile 45):
+
+> „Sie können jede Aufnahme in der App löschen; die Audiodatei wird dann
+> **unwiderruflich entfernt**."
+
+Der Satz steht direkt hinter dem Satz über die Übermittlung an OpenAI. Wer ihn
+liest, versteht: Löschen gedrückt, Aufnahme überall weg. **Das stimmt nicht** —
+OpenAI darf dieselbe Datei bis zu 30 Tage zur Missbrauchserkennung vorhalten.
+
+**Was stattdessen dort stehen soll** (Legal hat es fertig formuliert):
+
+> „… die Audiodatei wird dann unwiderruflich **von unseren Servern** entfernt;
+> eine bei OpenAI zur Missbrauchserkennung vorgehaltene Kopie wird dort
+> spätestens nach 30 Tagen gelöscht."
+
+**Wie schlimm ist es:** klein. Die Frist ist kurz, die Rechtsgrundlage sauber,
+die Datei liegt beim Auftragsverarbeiter und nicht offen. Legal stuft es als
+Severity 1 ein und hat **keinen** Risikoeintrag daraus gemacht. Es ist aber
+eine Tatsachenbehauptung in einem Pflichttext, und die muss stimmen.
+
+**Meine Empfehlung: ja, einbauen.** Es kostet nichts, der Wortlaut liegt fertig
+vor, und es ist der Satztyp, bei dem eine falsche Zusage teurer ist als die
+Korrektur.
+
+> **Ein Wort von dir — „ja" — und der Halbsatz geht rein.**
+
+*Chief of Staff · 2026-09-17*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

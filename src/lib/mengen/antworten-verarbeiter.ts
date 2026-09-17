@@ -1,4 +1,5 @@
 import type { ExtrahierteDaten } from './types'
+import { wandflaecheAusGeometrie } from './wandflaechen-konflikt'
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100
@@ -82,6 +83,31 @@ export function verarbeiteAntworten(
     if (bruttoM && typeof antwort.wert === 'number') {
       const raum = raumById(angereichert.raeume, bruttoM[1])
       if (raum) raum.wandflaeche_brutto = antwort.wert === 1
+      continue
+    }
+
+    // ── DC-119 / PD-018 Punkt 1 (PM-095) ────────────────────────────────
+    //
+    // Der Handwerker hat entschieden, welche der zwei widersprüchlichen
+    // Wandflächen gilt. Zwei Wege, und der Unterschied ist nicht kosmetisch:
+    //
+    //   * Er wählt die **gesagte** Zahl → sie bleibt in `wandflaeche_direkt`
+    //     stehen und überschreibt die Geometrie wie bisher.
+    //   * Er wählt die Zahl **aus den Maßen** → `wandflaeche_direkt` muss weg,
+    //     sonst rechnet maler.ts zwar dieselbe Zahl, aber über den Zweig für
+    //     genannte Flächen — und der zieht Türen und Fenster NICHT nach VOB
+    //     ab. Der Handwerker bekäme die Rohfläche statt der Wandfläche.
+    //
+    // Erkannt wird das an derselben Funktion, die die Frage erzeugt hat, statt
+    // an einem mitgeschickten Merker: ein Merker kann veralten, die Maße nicht.
+    const wandKonfliktM = id.match(/^wandflaeche_konflikt_(.+)$/)
+    if (wandKonfliktM && typeof antwort.wert === 'number') {
+      const raum = raumById(angereichert.raeume, wandKonfliktM[1])
+      if (raum) {
+        const geometrie = wandflaecheAusGeometrie(raum)
+        const ausDenMassen = geometrie != null && Math.abs(geometrie - antwort.wert) < 0.01
+        raum.wandflaeche_direkt = ausDenMassen ? null : antwort.wert
+      }
       continue
     }
 

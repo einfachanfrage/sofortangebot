@@ -4,6 +4,7 @@ import { baueVerstaendnis } from '../../auftrags-verstaendnis'
 import { berechneSockelleistenLaenge, sockelAbzug } from './sockelleisten'
 import { berechneOeffnungsabzugVob, vobHinweistext, abgezogeneOeffnungen, abzugsText, type OeffnungsabzugErgebnis } from './vob-uebermessung'
 import { nichtStreichbarerWerkstoff, nichtStreichbarHinweis, brauchtVorlack } from '../../lack-untergrund'
+import { findeWandflaechenKonflikt, geometrieBeleg, zahlDe } from '../wandflaechen-konflikt'
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100
@@ -242,6 +243,22 @@ export function malerEngine(daten: any): MengenErgebnis {
         // Ohne Höhe: Wandfläche bleibt null (Rückfrage kommt)
       }
     }
+
+    // ── DC-119 / PD-018 Punkt 1 (PM-095) ────────────────────────────────
+    //
+    // Zwei genannte Wandflächen, die nicht zusammenpassen. Die später
+    // genannte gewinnt gleich unten wie bisher — das ist fachlich richtig
+    // (Selbstkorrektur, PM-001). Falsch war nur, dass sie es wortlos tat:
+    // Der Rechenweg zeigte weiter „Umfang 18 lfm × 2,50 m = 45 m²" und
+    // daneben die Menge 30 — eine Rechnung, die nicht aufgeht, und keine
+    // Silbe dazu, dass es überhaupt zwei Zahlen gab.
+    //
+    // Im Dachgeschoss ausgenommen: dort trägt `wandflaeche_direkt` die
+    // Schrägenfläche (PM-007), also gar keine Wandfläche — ein Vergleich
+    // wäre kein Widerspruch, sondern ein Kategoriefehler.
+    const wandKonflikt = istDachgeschoss ? null : findeWandflaechenKonflikt({
+      laenge, breite, hoehe, wandflaeche_direkt: wandflaeche_direkt_raw as number | null,
+    })
 
     // Explizite Wandfläche/Deckfläche vom User überschreiben Engine-Berechnungen
     // (`!= null` statt `!== null`: GPT lässt Felder oft ganz weg → undefined, sonst NaN!)
@@ -685,14 +702,27 @@ export function malerEngine(daten: any): MengenErgebnis {
           const tuerMasseAnzeige = tuerMasse.length > 0 ? ` [${tuerMasse.join(', ')}]` : ''
           const vobHinweis = fensterAbzugVob && tuerAbzugVob ? vobHinweistext(fensterAbzugVob, tuerAbzugVob) : null
           positionen.push({
-            beschreibung: wandLabel, menge: wandflaecheNettoM2, einheit: 'm²', konfidenz: annahmenUmfang.length > 0 ? 'medium' : 'high',
-            berechnungsweg: istDachschraege
+            beschreibung: wandLabel, menge: wandflaecheNettoM2, einheit: 'm²', konfidenz: annahmenUmfang.length > 0 || wandKonflikt ? 'medium' : 'high',
+            berechnungsweg: wandKonflikt
+              // DC-119: Der Rechenweg nennt beide Zahlen und sagt, welche
+              // gewonnen hat. Die Geometrie-Gleichung darf hier NICHT stehen
+              // bleiben — gerechnet wurde nicht mit ihr.
+              ? `Gesagt: ${zahlDe(wandKonflikt.gesagt)} m² Wandfläche — damit gerechnet. Aus den Maßen (${geometrieBeleg({ laenge, breite, hoehe })}, Umfang ${zahlDe(wandKonflikt.umfang)} lfm) wären es ${zahlDe(wandKonflikt.geometrie)} m².`
+              : istDachschraege
               ? `Dachschrägenfläche ${wandflaecheNettoM2} m²`
               : `Umfang ${umfangM ?? '?'} lfm × ${hoehe} m = ${wandBrutto2} m²${abzugsText([
                   { label: 'Fenster', flaeche: fensterAbzugAnzeige },
                   { label: 'Türen', flaeche: tuerAbzugAnzeige, masse: tuerMasseAnzeige },
                 ])}`,
-            annahmen: [...annahmenFenster, ...annahmenUmfang, ...anstrichAnnahmen, ...(vobHinweis ? [vobHinweis] : [])],
+            annahmen: [
+              ...annahmenFenster, ...annahmenUmfang, ...anstrichAnnahmen,
+              ...(vobHinweis ? [vobHinweis] : []),
+              // DC-119: steht zusätzlich in den Annahmen, weil die Annahmen
+              // auch dort auftauchen, wo der Rechenweg eingeklappt ist.
+              ...(wandKonflikt
+                ? [`Zwei Angaben zur Wandfläche im Diktat (${zahlDe(wandKonflikt.geometrie)} m² aus den Maßen, ${zahlDe(wandKonflikt.gesagt)} m² gesagt) — bitte prüfen`]
+                : []),
+            ],
             ...(!istDachschraege && umfangM && hoehe ? {
               flaechen_parameter: {
                 brutto_m2: wandBrutto2,

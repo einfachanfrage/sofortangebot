@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Logo } from '@/components/Logo'
+import { MailCheck } from 'lucide-react'
 import { PasswortFeld } from '@/components/PasswortFeld'
 import { nutzerFehler } from '@/lib/fehlertexte'
 
@@ -65,9 +66,13 @@ export default function RegisterPage() {
 
   if (success) {
     return (
-      <div className="min-h-dvh bg-bg flex flex-col justify-center px-5">
+      <div className="flex flex-col">
         <div className="bg-white border-2 border-anthracite rounded-2xl p-8 text-center">
-          <div className="text-5xl mb-4">📧</div>
+          {/* DC-111: derselbe Emoji-Fall wie auf „Passwort vergessen" —
+              zusammen behoben, damit die zwei Seiten nicht auseinanderlaufen. */}
+          <div className="w-14 h-14 rounded-2xl bg-yellow flex items-center justify-center mb-4 mx-auto">
+            <MailCheck size={28} className="text-anthracite" strokeWidth={2.5} aria-hidden="true" />
+          </div>
           <div className="font-syne font-black text-2xl text-anthracite mb-2">Fast geschafft.</div>
           <div className="text-anthracite font-semibold">
             Wir haben dir eine Bestätigungs-E-Mail an <strong>{email}</strong> geschickt. Klick auf den Link darin.
@@ -78,7 +83,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-bg flex flex-col justify-center px-5">
+    <div className="flex flex-col">
       <div className="mb-10">
         <Logo variant="light" className="text-4xl" />
         <div className="font-syne text-anthracite text-xl font-bold mt-1">Konto erstellen</div>

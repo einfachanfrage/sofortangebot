@@ -8,6 +8,7 @@ const ANTWORTBARE_IDS = [
   /^masse_/, /^hoehe_/, /^raum_/, /^plural_/, /^belag_/, /^altbelag_/,
   /^dachschraege_flaeche_/,
   /^tueren_anzahl_/, /^fenster_anzahl_/, /^oeffnungen_brutto_/,
+  /^wandflaeche_konflikt_/,
   /^tapete_entfernen_/, /^altfliesen_/, /^flieshoehe_/, /^versiegelung_/,
   /^decke_masse$/, /^geruest$/, /^daemmung_staenderwand$/, /^brandschutz$/,
   /^dusche_typ$/, /^rohre_erneuern$/, /^bad_ausstattung$/, /^kabel_meter$/,
@@ -20,6 +21,9 @@ function istAntwortbar(id: string): boolean {
 
 function normalisiereTyp(typ: KIRueckfrageRaw['typ']): RueckfrageTyp {
   if (typ === 'meter') return 'laenge'
+  // DC-119: eine freie m²-Eingabe mit Schnellantworten — dieselbe Oberfläche
+  // wie eine Stückzahlfrage, aber mit der Einheit m² statt „Stück".
+  if (typ === 'flaeche') return 'flaeche_einzel'
   return typ
 }
 
@@ -38,7 +42,10 @@ function ausnahmeMasseFuer(id: string): RueckfrageItem['ausnahme_masse'] {
 function konvertiereKIRueckfrage(frage: KIRueckfrageRaw): RueckfrageItem {
   const typ = normalisiereTyp(frage.typ)
   // Flächen-Rückfragen (Dachschräge) sind freie m²-Eingaben, keine Stückzahl.
-  const istFlaeche = /_flaeche_/.test(frage.id)
+  // DC-119: `flaeche_einzel` deckt jetzt auch die Widerspruchsfrage ab, deren
+  // ID nicht dem `_flaeche_`-Muster folgt — der Typ ist das verlässlichere
+  // Merkmal, die ID-Prüfung bleibt für die KI-gelieferten Dachschrägenfragen.
+  const istFlaeche = typ === 'flaeche_einzel' || /_flaeche_/.test(frage.id)
   const einheit = typ === 'hoehe' || typ === 'laenge' ? 'm' : istFlaeche ? 'm²' : undefined
   return {
     id: frage.id,
@@ -46,13 +53,18 @@ function konvertiereKIRueckfrage(frage: KIRueckfrageRaw): RueckfrageItem {
     kontext: frage.betrifft ?? '',
     typ,
     einheit,
+    konsequenz: frage.konsequenz,
     ausnahme_masse: ausnahmeMasseFuer(frage.id),
     schnell_antworten: (frage.schnell_antworten ?? [])
       .filter(option => option.wert !== null)
       .map(option => ({
         label: option.label,
         wert: typeof option.wert === 'boolean' ? (option.wert ? 1 : 0) : option.wert as number,
-        einheit: typ === 'hoehe' || typ === 'laenge' ? 'm' : typ === 'ja_nein' ? 'bool' : 'Stück',
+        // DC-119: Bisher stand hier für alles außer Höhe/Länge/Ja-Nein fest
+        // „Stück". Eine angetippte Flächen-Schnellantwort wurde damit als
+        // „30 Stück" protokolliert und angezeigt. Die Einheit der Frage ist
+        // die Einheit ihrer Antworten.
+        einheit: typ === 'hoehe' || typ === 'laenge' ? 'm' : typ === 'ja_nein' ? 'bool' : (einheit ?? 'Stück'),
       })),
   }
 }

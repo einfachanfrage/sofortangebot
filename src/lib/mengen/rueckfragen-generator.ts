@@ -24,6 +24,14 @@ export interface RueckfrageItem {
   einheit?: string
   plural_count?: number
   /**
+   * DC-119: Eigener Satz für „Später ergänzen" — was passiert, wenn genau
+   * DIESE Frage offen bleibt. Fehlt das Feld, gilt der Standardsatz des
+   * Fragetyps. Gebraucht, sobald eine Frage die Folge ihres Typs nicht teilt:
+   * bei der Widerspruchsfrage aus PM-095 bleibt ohne Antwort nichts offen —
+   * es wird gerechnet, nur mit der zuletzt genannten Zahl.
+   */
+  konsequenz?: string
+  /**
    * DC-026: Der Wert steht bereits im Transkript, wurde aber nicht
    * strukturiert erkannt. Statt blind zu fragen, kann die Oberfläche ihn als
    * „Du hast gesagt: … — stimmt das?" anbieten (Design-Spec DC-025).

@@ -414,37 +414,55 @@ function AnzahlInput({
     )
   }
 
+  // DC-119: Das Vierer-Raster ist für Stückzahlen gebaut („0 1 2 3") — eine
+  // Zahl passt in ein Viertel der Breite. Eine Antwort wie „45 m² — aus
+  // 4 × 5 m bei 2,50 m Höhe" passt dort nicht und wäre auf dem Telefon
+  // dreizeilig und unlesbar. Zwei, drei erklärte Antworten stehen deshalb
+  // untereinander über die volle Breite, wie bei der Höhenfrage. Die Grenze
+  // liegt an der Beschriftung, nicht am Fragetyp: Stückzahlfragen bleiben
+  // unverändert im Raster.
+  const gestapelt =
+    frage.schnell_antworten.length <= 3
+    && frage.schnell_antworten.some(s => s.label.length > 6)
+  const einheitFuer = (s: SchnellAntwort) => s.einheit || frage.einheit || 'Stück'
+
   return (
     <div className="flex flex-col gap-3">
-      <div className="grid grid-cols-4 gap-2">
+      <div className={gestapelt ? 'flex flex-col gap-2' : 'grid grid-cols-4 gap-2'}>
       {frage.schnell_antworten.map(s => {
         const aktiv = !Array.isArray(antwort?.wert) && antwort?.wert === s.wert
         return (
           <button
             key={s.label}
-            onClick={() => onChange({ wert: s.wert as number, einheit: 'Stück' })}
-            className={`rounded-2xl py-5 font-black text-xl transition-colors border-2 ${aktiv ? 'bg-yellow border-yellow text-anthracite' : 'bg-white border-anthracite/8 text-anthracite'}`}
+            onClick={() => onChange({ wert: s.wert as number, einheit: einheitFuer(s) })}
+            className={`rounded-2xl transition-colors border-2 ${gestapelt ? 'w-full py-4 px-4 text-left font-extrabold text-base leading-snug' : 'py-5 font-black text-xl'} ${aktiv ? 'bg-yellow border-yellow text-anthracite' : 'bg-white border-anthracite/8 text-anthracite'}`}
           >
             {s.label}
           </button>
         )
       })}
         <button onClick={() => setZeigeFreieAnzahl(true)}
-          className={`rounded-2xl py-5 font-black text-base transition-colors border-2 ${zeigeFreieAnzahl ? 'bg-yellow border-yellow' : 'bg-white border-anthracite/8'}`}>
-          Mehr …
+          className={`rounded-2xl transition-colors border-2 ${gestapelt ? 'w-full py-4 px-4 text-left font-extrabold text-base text-anthracite/40' : 'py-5 font-black text-base'} ${zeigeFreieAnzahl ? 'bg-yellow border-yellow' : 'bg-white border-anthracite/8'}`}>
+          {gestapelt ? `Andere${frage.einheit === 'm²' ? ' Fläche' : 'r Wert'} eingeben` : 'Mehr …'}
         </button>
       </div>
       {zeigeFreieAnzahl && (
         <div className="flex items-center gap-2 bg-white border-2 border-yellow rounded-xl px-4 py-3">
-          <input type="number" inputMode="numeric" min="0" autoFocus placeholder="Beliebige Anzahl"
+          {/* DC-119: Eine Fläche ist keine Stückzahl — sie darf Nachkommastellen
+              haben (28,5 m²) und trägt ihre eigene Einheit. Für Stückzahlen
+              bleibt alles wie vorher: ganzzahlig, „Stück". */}
+          <input type="number" inputMode={frage.einheit === 'm²' ? 'decimal' : 'numeric'} min="0"
+            step={frage.einheit === 'm²' ? '0.01' : '1'} autoFocus
+            placeholder={frage.einheit === 'm²' ? 'Eigene Fläche' : 'Beliebige Anzahl'}
             value={freitext}
             onChange={e => {
               setFreitext(e.target.value)
-              const wert = Number(e.target.value)
-              if (Number.isInteger(wert) && wert >= 0) onChange({ wert, einheit: 'Stück' })
+              const wert = Number(e.target.value.replace(',', '.'))
+              const gueltig = frage.einheit === 'm²' ? wert > 0 : Number.isInteger(wert) && wert >= 0
+              if (gueltig) onChange({ wert, einheit: frage.einheit ?? 'Stück' })
             }}
             className="flex-1 font-bold text-anthracite text-lg bg-transparent focus:outline-none" />
-          <span className="text-anthracite/40 font-semibold">Stück</span>
+          <span className="text-anthracite/40 font-semibold">{frage.einheit ?? 'Stück'}</span>
         </div>
       )}
     </div>
@@ -943,7 +961,9 @@ export default function RueckfragenScreen({ fragen, onFertig, onUeberspringen, o
 
         {!geloest && zeigeKonsequenz && (
           <div className="mt-2 bg-[#DC2626]/6 border border-[#DC2626]/20 rounded-xl px-3 py-3">
-            <p className="text-[12px] font-semibold text-[#7A2020] leading-relaxed mb-2">{KONSEQUENZ_TEXT[frage.typ]}</p>
+            {/* DC-119: Der Satz je Fragetyp stimmt nicht für jede Frage dieses
+                Typs. Trägt die Frage einen eigenen, gilt der. */}
+            <p className="text-[12px] font-semibold text-[#7A2020] leading-relaxed mb-2">{frage.konsequenz ?? KONSEQUENZ_TEXT[frage.typ]}</p>
             <div className="flex gap-2">
               <button
                 onClick={() => setOffeneKonsequenz(null)}

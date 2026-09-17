@@ -2,6 +2,7 @@ import type { ExtrahierteDaten } from '@/lib/mengen/types'
 import { extrahiereStreichflaeche } from '@/lib/extraktion-masse'
 import { erkenneOeffnungen } from '@/lib/arbeiten-normalisierer'
 import { BODEN_VERLEGEN_SIGNAL } from '@/lib/mengen/gewerke/boden'
+import { findeWandflaechenKonflikt, geometrieBeleg, zahlDe } from '@/lib/mengen/wandflaechen-konflikt'
 
 export interface KontextAnalyse {
   hinweise: string[]
@@ -13,10 +14,19 @@ export interface KontextAnalyse {
 export interface KIRueckfrageRaw {
   id: string
   frage: string
-  typ: 'hoehe' | 'anzahl' | 'masse_einzel' | 'ja_nein' | 'meter'
+  typ: 'hoehe' | 'anzahl' | 'masse_einzel' | 'ja_nein' | 'meter' | 'flaeche'
   betrifft: string
   prioritaet: number
   schnell_antworten: Array<{ label: string; wert: number | boolean | null }>
+  /**
+   * DC-119: Eigener Satz für „Später ergänzen" — was passiert, wenn genau
+   * DIESE Frage offen bleibt. Ohne das Feld gilt weiterhin der
+   * Standardsatz je Fragetyp (`KONSEQUENZ_TEXT` in `RueckfragenScreen.tsx`).
+   * Nötig, weil der Standardsatz eines Typs nicht für jede Frage stimmt: bei
+   * der Widerspruchsfrage bleibt ohne Antwort nichts offen — es wird
+   * gerechnet, nur eben mit der zuletzt genannten Zahl.
+   */
+  konsequenz?: string
 }
 
 type ExtMitExtra = ExtrahierteDaten & { situation?: string; rueckfragen?: KIRueckfrageRaw[] }
@@ -205,7 +215,38 @@ function anreichernMaler(ext: ExtMitExtra, hinweise: string[], ergaenzungen: Kon
     // Dachzimmer-Fall: 12 m² Schräge landeten dort). Eine Schräge hat keine
     // Türen und Fenster — die Frage wäre nicht nur überflüssig, sie würde
     // nach einer Zahl fragen, die gar keine Wandfläche ist.
-    if (hatStreichen && raum.wandflaeche_direkt && !istDachgeschossRaum
+    // ── DC-119 / PD-018 Punkt 1 (PM-095) ────────────────────────────────
+    //
+    // Zwei Wandflächen im selben Diktat, die nicht zusammenpassen: die aus
+    // Länge × Breite × Höhe und eine später ausdrücklich genannte. Bis heute
+    // gewinnt die spätere wortlos. Das bleibt so — nur nicht mehr wortlos.
+    //
+    // Die Frage bringt beide Zahlen schon mit (Muster aus DC-112): Der
+    // Handwerker soll nicht rechnen müssen, um antworten zu können, er soll
+    // zwei fertige Zahlen nebeneinander sehen und eine antippen. Wer nichts
+    // antippt, bekommt weiterhin die zuletzt genannte Zahl — und sieht sie
+    // im Rechenweg der Position samt der anderen (`gewerke/maler.ts`).
+    //
+    // Schwelle und Begründung stehen in `mengen/wandflaechen-konflikt.ts`.
+    const konflikt = istDachgeschossRaum ? null : findeWandflaechenKonflikt(raum)
+    if (hatStreichen && konflikt) {
+      addRueckfrage(ext, {
+        id: `wandflaeche_konflikt_${raumId}`,
+        frage: `Zwei Angaben zur Wandfläche in "${raum.name}" — mit welcher soll ich rechnen?`,
+        typ: 'flaeche', betrifft: raum.name, prioritaet: 1,
+        konsequenz: `Ohne Antwort rechnen wir mit den zuletzt genannten ${zahlDe(konflikt.gesagt)} m² — das steht dann so im Rechenweg der Position und du kannst es dort ändern.`,
+        schnell_antworten: [
+          { label: `${zahlDe(konflikt.geometrie)} m² — aus ${geometrieBeleg(raum)}`, wert: konflikt.geometrie },
+          { label: `${zahlDe(konflikt.gesagt)} m² — so gesagt`, wert: konflikt.gesagt },
+        ],
+      })
+    }
+
+    // DC-119: Solange unklar ist, WELCHE der zwei Zahlen gilt, ist die
+    // Anschlussfrage („sind da Türen und Fenster drin?") sinnlos — sie fragt
+    // nach einer Zahl, die sich gleich noch ändern kann. Sie kommt in der
+    // nächsten Runde, sobald der Widerspruch aufgelöst ist.
+    if (hatStreichen && raum.wandflaeche_direkt && !istDachgeschossRaum && !konflikt
         && raum.wandflaeche_brutto == null && raum.wandflaeche_abzug_m2 == null) {
       const flaecheText = String(raum.wandflaeche_direkt).replace('.', ',')
       addRueckfrage(ext, {

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { MailCheck } from 'lucide-react'
 import { Logo } from '@/components/Logo'
 
 export default function PasswortVergessenPage() {
@@ -31,11 +32,20 @@ export default function PasswortVergessenPage() {
 
   if (sent) {
     return (
-      <div className="min-h-dvh bg-bg flex flex-col justify-center px-5">
+      <div className="flex flex-col">
         <div className="mb-10">
           <Logo variant="light" className="text-4xl" />
         </div>
-        <div className="text-5xl mb-5">📬</div>
+        {/* DC-111, zweiter Punkt: Hier stand das Emoji 📬 als Bildmarke. Ein
+            Emoji wird von jedem Betriebssystem anders gezeichnet — auf dem
+            einen Gerät ein flacher Briefkasten, auf dem anderen ein bunter
+            mit Fähnchen —, und in keinem CI-Dokument ist es gedeckt. DC-017
+            hat die Bildsprache des Produkts auf Lucide vereinheitlicht; die
+            Anmelde-Seiten waren nie nachgezogen worden. Gelb auf Anthrazit
+            ist dieselbe Erfolgs-Geste wie im Produkt. */}
+        <div className="w-14 h-14 rounded-2xl bg-yellow flex items-center justify-center mb-5">
+          <MailCheck size={28} className="text-anthracite" strokeWidth={2.5} aria-hidden="true" />
+        </div>
         <h1 className="font-syne text-2xl font-black text-anthracite mb-3">E-Mail gesendet!</h1>
         <p className="text-anthracite/60 font-semibold leading-relaxed mb-2">
           Wir haben einen Link zum Zurücksetzen deines Passworts an <strong>{email}</strong> geschickt.
@@ -51,7 +61,7 @@ export default function PasswortVergessenPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-bg flex flex-col justify-center px-5">
+    <div className="flex flex-col">
       <div className="mb-10">
         <Logo variant="light" className="text-4xl" />
         <div className="font-syne text-anthracite text-xl font-bold mt-1">Passwort vergessen</div>

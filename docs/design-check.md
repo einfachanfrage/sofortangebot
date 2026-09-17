@@ -9807,7 +9807,7 @@ erledigt, sondern weitergereicht.**
 
 | Weg | Stand 16.09. | Was das heißt |
 |---|---|---|
-| **Shell auf ihrem Rechner** (`device_bash`) | ✅ **WIEDER DA, 16.09. selbst getestet** | `git`, `npm`, Skripte laufen wieder. `git commit` funktioniert. **`git push` NICHT** — in dieser Shell liegen keine GitHub-Zugangsdaten. Löschrechte für den Repo-Ordner sind erteilt, also räumt die Git-Sperrdateien selbst auf: `rm -f .git/*.lock; find .git/objects -name "tmp_obj_*" -delete` nach jedem Commit |
+| **Shell auf ihrem Rechner** (`device_bash`) | ✅ **WIEDER DA, 16.09. selbst getestet** | `git`, `npm`, Skripte laufen wieder. `git commit` funktioniert. **`git push` NICHT** — in dieser Shell liegen keine GitHub-Zugangsdaten. **Löschen geht NICHT** (korrigiert 17.09.2026, CoS): `rm` scheitert mit „Operation not permitted", und die Anforderung des Löschrechts wird in einem geplanten Lauf abgelehnt — es ist niemand da, der den Dialog beantwortet. Stehende Vorgehensweise: liegengebliebene `.git/*.lock` und `.git/objects/**/tmp_obj_*` nach jedem Commit mit `mv` nach `_to_delete/git-reste-JJJJ-MM-TT/` schieben (steht in `.gitignore`, stört keinen Push). Beim Verlassen des Laufs prüfen, dass `.git/index.lock` weg ist — sonst blockiert sie den nächsten Commit **aller** Rollen |
 | **Dateien lesen/schreiben** (Staging/Commit) | ✅ funktioniert | Jede Datei im Projektordner kann gelesen und geschrieben werden, mit `expectedMtimeMs` gegen Überschreiben |
 | **Claude in Chrome** | ✅ **verbunden** (Browser 1, Windows) | **Neu und wichtig:** Live-Tests in der laufenden App sind ab sofort **eure** Aufgabe, nicht Sandys. Wer bisher „Live-Test nur mit Sandy am Rechner" notiert hat, streicht das |
 | **Vercel / Supabase / Sentry** | ✅ per Anbindung | Deploys, Datenbank, Fehlerbilder direkt abfragbar |
@@ -10767,5 +10767,479 @@ sollen. Dann ist wieder deine Entscheidung dran, nicht seine.
 *Chief of Staff · 2026-09-17*
 
 ---
+
+## DC-119 ✅ — PD-018 Punkt 1 (PM-095): Die App entscheidet sich weiter für die spätere Zahl — aber nicht mehr wortlos (Product Designer, 17.09.2026)
+
+**Bezug:** PD-018, erster Block, Punkt 1 (PM-095) in
+`docs/pruefmeister-notizen-fuer-designer.md`. **Blockiert nichts, blockierte
+nichts.** Vorrang laut `arbeitsreihenfolge.md`: die drei PD-018-Punkte vor
+DC-111.
+
+**Die Antwort in einem Satz:** Ja, die App zeigt, dass sie sich entschieden
+hat — als **Rückfrage im Fluss, die beide Zahlen schon mitbringt**, und wenn
+die übersprungen wird, **im Rechenweg der Position selbst**, der bis heute
+sogar das Gegenteil behauptet hat.
+
+### Was gemessen war
+
+```
+„Wohnzimmer vier mal fünf, Höhe zwo fünfzig, Wände streichen.
+ Das Wohnzimmer hat dreißig Quadratmeter Wandfläche."
+
+Angebot:  Wand streichen 2x — Wohnzimmer   30 m²
+Rechenweg: „Umfang 18 lfm × 2.5 m = 45 m²"
+```
+
+Der Prüfmeister hat den Verlust beziffert: 15 m² × 9,50 € = **142,50 €**, ohne
+dass der Betrieb je erfährt, dass es zwei Zahlen gab.
+
+**Beim Nachsehen ist es schlimmer als „wortlos".** Der Rechenweg stand nicht
+leer da, er stand **falsch** da: Er druckte die Geometrie-Gleichung, die auf
+45 m² führt, und darüber die Menge 30. Eine Rechnung, die vor den Augen des
+Betriebs nicht aufgeht — und die einzige Stelle, an der er hätte stutzig
+werden können, war damit besetzt.
+
+### Die Entscheidung: die spätere Zahl gewinnt weiter
+
+Daran ändere ich nichts. Selbstkorrektur ist die Regel, auf der PM-001 beruht,
+und der Prüfmeister hält sie selbst für richtig. **Der Fund war nie die Zahl,
+sondern das Schweigen.** PM-095-D (30 m²) bleibt darum unverändert grün.
+
+### Wo der Widerspruch sichtbar wird — zwei Stellen, nicht eine
+
+**1. Die Rückfrage, und sie bringt die Zahl schon mit.** Dasselbe Muster wie
+bei DC-112: Wer antworten soll, darf nicht erst rechnen müssen.
+
+> **Zwei Angaben zur Wandfläche in „Wohnzimmer" — mit welcher soll ich rechnen?**
+>
+> ` 45 m² — aus 4 × 5 m bei 2,5 m Höhe `
+> ` 30 m² — so gesagt `
+> ` Andere Fläche eingeben `
+
+Zwei fertige Zahlen, eine antippen, fertig. Kein Freitext als erster Weg, aber
+einer als dritter — der Widerspruch entsteht ja manchmal, weil **beide** Zahlen
+schief sind.
+
+**Warum die Beschriftungen die Herkunft tragen und nicht nur die Zahl:** „45"
+und „30" nebeneinander sind eine Quizfrage. „aus 4 × 5 m bei 2,5 m Höhe"
+gegen „so gesagt" ist eine Entscheidung, die ein Mensch auf der Baustelle in
+zwei Sekunden trifft, weil er weiß, welche der beiden Angaben er sorgfältiger
+gemacht hat.
+
+**2. Der Rechenweg, wenn niemand antwortet.** Übersprungen wird viel — das ist
+die harte Grenze des Prüfmeisters („Wenn die App ihn nicht zeigt, gibt es keine
+zweite Gelegenheit"). Die Wandposition trägt deshalb ab jetzt:
+
+```
+Gesagt: 30 m² Wandfläche — damit gerechnet.
+Aus den Maßen (4 × 5 m bei 2,5 m Höhe, Umfang 18 lfm) wären es 45 m².
+```
+
+Und zusätzlich, weil der Rechenweg seit DC-049/DC-050 eingeklappt sein kann,
+in den Annahmen derselben Position:
+*„Zwei Angaben zur Wandfläche im Diktat (45 m² aus den Maßen, 30 m² gesagt) —
+bitte prüfen."* Die Konfidenz der Position sinkt dabei auf `medium`.
+
+**Beide Texte kommen aus derselben Funktion wie die Frage.** Sonst nennt die
+Frage irgendwann andere Zahlen als der Rechenweg — genau die Sorte Fehler, die
+DC-003 und DC-113 schon zweimal gekostet haben.
+
+### Die Schwelle, und warum es überhaupt eine gibt
+
+Gefragt wird erst, wenn die Abweichung **beides** ist: **mindestens 10 % und
+mindestens 5 m².**
+
+Der Grund ist kein Geiz, sondern eine Fehlerquelle: **Eine genannte Wandfläche
+ist oft die Zahl, die der Betrieb selbst schon um seine Fenster und Türen
+bereinigt hat.** Ein Zimmer mit einem Fenster und einer Tür liegt damit
+regelmäßig drei bis fünf Quadratmeter unter der Rohgeometrie. Das ist kein
+Widerspruch, sondern dieselbe Angabe in sauber — und wer dort fragt, behelligt
+ausgerechnet die Betriebe, die sorgfältig rechnen. 5 m² sind bei 9,50 €/m²
+rund 47 €; darunter wäre die Frage teurer als der Fehler.
+
+Die Schwelle gilt **in beide Richtungen**. Eine gesagte Zahl, die deutlich
+*über* der Geometrie liegt, ist derselbe Widerspruch — nur verliert dann der
+Kunde statt des Betriebs, und das ist kein besserer Fehler.
+
+**Bewusst nur Länge × Breite × Höhe.** Wird die Wandfläche aus einer
+Bodenfläche geschätzt (Quadrat-Annahme, ≈ 7 % Fehler, in `maler.ts` seit jeher
+als Annahme gekennzeichnet), ist eine Abweichung keine Aussage über einen
+Widerspruch. Im **Dachgeschoss** ist die Regel ausgenommen: dort trägt
+`wandflaeche_direkt` erfahrungsgemäß die Schrägenfläche (PM-007), also gar
+keine Wandfläche — ein Vergleich wäre kein Widerspruch, sondern ein
+Kategoriefehler. Dieselbe Ausnahme, wortgleich, wie sie DC-040 an der
+Nachbarregel schon hat.
+
+### Zwei Dinge, die beim Bauen mit herausfielen
+
+**Die DC-040-Anschlussfrage wird unterdrückt, solange der Widerspruch offen
+ist.** Sonst hätte der Betrieb in derselben Runde gelesen: *„Sind die 30 m²
+inklusive Türen und Fenster?"* — eine Frage nach einer Zahl, die sich im
+selben Atemzug noch ändern kann. Sie kommt in der nächsten Runde, sobald die
+Zahl steht.
+
+**Die Antwort „aus den Maßen" löscht die genannte Fläche, statt sie auf 45 zu
+setzen.** Das ist nicht kosmetisch: Bliebe sie stehen, käme zwar dieselbe Zahl
+heraus, aber über den Zweig für genannte Flächen — und der zieht Türen und
+Fenster **nicht** nach VOB ab. Der Betrieb bekäme die Rohfläche statt der
+Wandfläche. Erkannt wird das an derselben Geometrie-Funktion, die die Frage
+erzeugt hat, nicht an einem mitgeschickten Merker: ein Merker kann veralten,
+die Maße nicht.
+
+### Drei Nebenbefunde in der Rückfragen-Oberfläche, mitbehoben
+
+1. **Eine angetippte Flächen-Schnellantwort wurde als „30 Stück" protokolliert.**
+   `rueckfragen-flow.ts` setzte für alles außer Höhe/Länge/Ja-Nein fest die
+   Einheit „Stück". Jetzt erbt die Antwort die Einheit ihrer Frage.
+2. **Das Vierer-Raster ist für Stückzahlen gebaut** („0 1 2 3") — eine Zahl pro
+   Viertelbreite. „45 m² — aus 4 × 5 m bei 2,5 m Höhe" wäre dort auf dem
+   Telefon dreizeilig und unlesbar. Zwei, drei **erklärte** Antworten stehen
+   jetzt untereinander über die volle Breite, wie bei der Höhenfrage. Die
+   Grenze liegt an der Beschriftungslänge, nicht am Fragetyp — Stückzahlfragen
+   bleiben Zeichen für Zeichen, wie sie waren.
+3. **Der „Später ergänzen"-Warnsatz ist je Frage überschreibbar.** Er hing am
+   Fragetyp, und der Satz eines Typs stimmt nicht für jede Frage dieses Typs:
+   Hier bleibt ohne Antwort nichts offen, es wird gerechnet — nur mit der
+   zuletzt genannten Zahl. Genau das steht jetzt da, mit der Zahl drin.
+
+### Gebaut
+
+| Datei | Was |
+|---|---|
+| `src/lib/mengen/wandflaechen-konflikt.ts` | **neu** — Erkennung, Schwelle, Belegtexte. Eine Quelle für Frage und Rechenweg |
+| `src/lib/kontext-analyzer.ts` | die Rückfrage; Unterdrückung der DC-040-Anschlussfrage |
+| `src/lib/mengen/antworten-verarbeiter.ts` | die Antwort mündet in die richtige Rechenart |
+| `src/lib/mengen/gewerke/maler.ts` | Rechenweg + Annahme + Konfidenz `medium` |
+| `src/lib/mengen/rueckfragen-flow.ts` | neuer Fragetyp `flaeche`, Einheit der Schnellantworten, `konsequenz` |
+| `src/lib/mengen/rueckfragen-generator.ts` | Feld `konsequenz` am `RueckfrageItem` |
+| `src/components/aufnahme/RueckfragenScreen.tsx` | gestapelte Antworten, m²-Eingabe, eigener Warnsatz |
+| `src/lib/__tests__/dc119-wandflaechen-konflikt.test.ts` | **neu**, 22 Zusicherungen |
+
+### Verifikation — auf Sandys Rechner am echten Projekt
+
+1. **`src/lib/__tests__/dc119-wandflaechen-konflikt.test.ts`: 22 grün.**
+   Erkennung samt drei Gegenproben (selbst abgezogene Öffnungen; prozentual
+   groß / in m² winzig; in m² groß / prozentual im Rauschen), Rückfrage,
+   Dachgeschoss-Ausnahme, alle drei Antwortwege, Rechenweg, Annahmen,
+   Konfidenz, und die Kontrolle, dass der alte Rechenweg ohne Widerspruch
+   Zeichen für Zeichen derselbe bleibt.
+2. **Regression Rückfragen/Extraktion/Mengen:** 28 Dateien, **362 grün**.
+3. **Alle elf Prüfmeister-Prüfstände: 294 grün, 77 Sperrklinken, 0 unerwartet
+   rot** — die gemessenen Sollstände von PM-047 bis PM-116 unverändert.
+4. **`npx tsc --noEmit -p tsconfig.json`: sauber.**
+5. **`npx eslint` über alle acht berührten Dateien: 0 Fehler** (24 Warnungen,
+   alle vorbestehend: `any` in `maler.ts`, eine ungenutzte Variable in
+   `RueckfragenScreen.tsx`).
+
+### 📌 Für den Prüfmeister: PM-095-A bleibt rot, und zwar zu Recht
+
+Deine Sperrklinke prüft `erg.fehlende` auf
+`/wandfläche|widerspr|abweich|prüf/i`. **Ich habe bewusst KEINEN Fehlt-Eintrag
+gebaut** — und bitte dich, die Klinke umzuhängen statt sie grün zu schießen.
+
+**Der Grund:** Seit DC-113 wird ein Fehlt-Eintrag zur Menge-0-Zeile, und die
+trägt im Editor das graue Fähnchen „Nicht im Angebot" und fällt aus dem
+Kundenpapier. Für eine fehlende Arbeit ist das richtig. Hier fehlt aber
+nichts — hier ist eine Zahl zu prüfen, und zwar **die Zahl einer Position, die
+sehr wohl im Angebot steht**. Die Warnung hinge dann als blasse Extrazeile
+neben der Position, die sie betrifft, statt an ihr.
+
+**Wo du stattdessen messen kannst,** beides ohne Oberfläche, beides in deinem
+Prüfstand erreichbar:
+
+* `findeWandflaechenKonflikt(raum)` aus `src/lib/mengen/wandflaechen-konflikt.ts`
+  — liefert `{ geometrie, gesagt, umfang }` oder `null`. Das ist die Erkennung
+  selbst, ohne Pipeline.
+* die Wandposition aus `berechneMengen('maler', …)`: ihr `berechnungsweg`
+  nennt beide Zahlen, ihre `annahmen` tragen den Prüfhinweis, ihre `konfidenz`
+  ist `medium`. Das ist das, was der Betrieb tatsächlich sieht.
+
+Die Rückfrage selbst läuft über `analysiereKontext(…)` und taucht in
+`laufVoll` nicht auf — das ist keine Lücke deines Prüfstands, sondern der
+Grund, warum du den Fall überhaupt an mich geschickt hast.
+
+**Status: ✅ erledigt.**
+
+*Product Designer · 2026-09-17*
+
+---
+
+## DC-120 ✅ — PD-018 Punkt 2 und PD-016 Punkt 2 beantwortet: Ja, es gibt eine Stufe. Sie heißt nicht „wichtig", sondern „ohne das gibt es diese Position nicht" (Product Designer, 17.09.2026)
+
+**Bezug:** PD-018, erster Block, Punkt 2 (PM-093, PM-094) und PD-016 Punkt 2,
+beide in `docs/pruefmeister-notizen-fuer-designer.md`. Der Prüfmeister hat die
+zweite Frage selbst als Beleg der ersten eingeordnet — sie werden deshalb
+zusammen beantwortet. **Blockiert nichts.**
+
+### Die Antwort in drei Sätzen
+
+1. **Der eigene Ergebnis-Zustand existiert seit DC-114** — „ich habe dich
+   gehört, aber so kann ich nichts rechnen" ist gebaut, als
+   `offene_angaben` in `src/lib/leeres-ergebnis.ts`. Für das **leere**
+   Ergebnis ist die Frage damit erledigt.
+2. **Für das nicht-leere Ergebnis fehlt er noch** — PM-094 ist genau dieser
+   Fall, und dort ist er wichtiger, weil das Angebot dann nicht leer aussieht,
+   sondern falsch-fertig.
+3. **Ja, die Fehlt-Liste bekommt eine Stufe** — aber nur eine, und sie wird
+   **nicht am Text erkannt, sondern an der Herkunft des Eintrags.**
+
+### Warum die Stufe nicht „Dringlichkeit" heißt
+
+Der Prüfmeister stellt „Möbel abdecken" (20 €, wird er ohnehin machen) neben
+„Grundierung auf saugendem Untergrund" (ohne das hält der Anstrich nicht) und
+fragt, ob die Liste diesen Unterschied kennt.
+
+**Ich baue diesen Unterschied ausdrücklich NICHT als Dringlichkeitsskala.**
+Eine Skala mit „wichtig / weniger wichtig" ist eine fachliche Bewertung fremder
+Arbeit, und sie wäre **jedes Mal neu zu pflegen**, für jede der ~117 Regeln in
+`src/lib/vollstaendigkeit/`. Das ist dieselbe Wartungsaufgabe ohne Ende, die
+CoS-E-022 der Raumwort-Liste ausgetrieben hat. Wer sie anlegt, hat in einem
+Jahr eine Liste, die zu zwei Dritteln falsch eingestuft ist, und einen
+Handwerker, der die Markierung nicht mehr liest.
+
+**Die Trennlinie, die trägt, ist eine andere und sie ist hart:**
+
+> **Stufe „blockierend": Die Arbeit wurde GESAGT, und sie steht trotzdem
+> nicht im Angebot, weil eine Angabe fehlt.**
+> **Alles andere: Die Arbeit wurde NICHT gesagt, und wir schlagen sie vor.**
+
+Das ist keine Bewertung, das ist eine Tatsache über die Herkunft des Eintrags —
+und sie ist im Code schon abzählbar vorhanden: Die Regeln in
+`vollstaendigkeit/` ergänzen **per Definition** Dinge, die niemand gesagt hat
+(DC-027/CoS-017 hat genau darauf die `automatisch_ergaenzt`-Kennzeichnung
+gebaut). Ein Eintrag der anderen Sorte entsteht nur dort, wo eine gesagte
+Arbeit an einem fehlenden Maß scheitert.
+
+Nach dieser Regel fällt „Grundierung auf saugendem Untergrund" **nicht** in die
+harte Stufe, solange niemand sie genannt hat — auch wenn der Anstrich ohne sie
+nicht hält. Das ist Absicht: Ein Vorschlag bleibt ein Vorschlag, auch ein
+fachlich zwingender. Was er braucht, ist eine gute Begründung am Eintrag, nicht
+ein Ausrufezeichen. **Der Prüfmeister hat da eine andere Intuition, und er
+könnte recht behalten** — dann ist es eine Preis-/Fachfrage und gehört ihm,
+nicht mir. Für die Gestaltung ändert es nichts: Es gäbe dann zwei Vorschläge
+mit unterschiedlich dringendem Text, immer noch keine zweite Stufe.
+
+### Was der Betrieb sieht
+
+**Blockierender Eintrag** — er steht **an der Stelle der Arbeit**, die er
+betrifft, nicht in einer Nebenliste:
+
+```
+Wände streichen — Wohnzimmer            — m²
+⚠ Wandhöhe fehlt — ohne sie keine Fläche.        [ Höhe nachtragen ]
+```
+
+Drei Eigenschaften, alle drei absichtlich:
+
+* **Er trägt einen Weg zurück**, nicht nur eine Feststellung. Dieselbe Geste
+  wie in DC-114: Der richtige Weg ist die übersprungene Rückfrage, nicht eine
+  neue Aufnahme.
+* **Er ist keine Nullzeile im Sinne von DC-113.** Die graue „Nicht im
+  Angebot"-Zeile ist für eine Position gedacht, bei der nichts zu tun ist. Hier
+  ist sehr wohl etwas zu tun — nur noch nicht rechenbar. Er fällt aus dem
+  Kundenpapier (dort hat eine offene Menge nichts verloren), bleibt im Editor
+  aber in der normalen Zeilenfarbe stehen, mit dem Warnzeichen als einzigem
+  Unterschied.
+* **Er hält das Angebot nicht auf.** `src/lib/versandbereit.ts` entscheidet
+  weiterhin allein, was raus darf — diese Stufe ist eine Anzeige, keine Sperre.
+  Wer trotzdem senden will, soll es können; das ist sein Angebot.
+
+**Nicht-blockierender Eintrag:** unverändert wie heute, inklusive
+„Vorschlag"-Badge aus DC-027. **Kein neues Zeichen, keine zweite Farbe.** Eine
+Liste, in der alles markiert ist, ist wieder eine Liste ohne Markierung.
+
+### Der Wortlaut — eine Form, drei Teile
+
+> **„{Arbeit} — {Raum}: {was fehlt} fehlt, ohne {das} keine {Menge}."**
+
+* *„Wände streichen — Wohnzimmer: Wandhöhe fehlt, ohne sie keine Fläche."*
+* *„Boden verlegen — Flur: Maße fehlen, ohne sie keine Fläche."*
+* *„Fenster lackieren — Bad: Stückzahl fehlt, ohne sie keine Menge."*
+
+**Kein „Fehler", kein „ungültig", keine Farbe Rot.** Der Betrieb hat nichts
+falsch gemacht — er hat auf einer Baustelle gesprochen, und wir haben eine
+Zahl nicht. Der Satz sagt, was fehlt und was es kostet, das offen zu lassen,
+und sonst nichts. Das ist dieselbe Tonlage, die bei DC-114 („Keine Positionen
+erkannt" war unwahr) und bei DC-020 richtig war.
+
+### Wer baut was
+
+**Meine Seite ist mit diesem Eintrag entschieden** — Regel, Wortlaut,
+Darstellung, Abgrenzung zu DC-113 und zu `versandbereit.ts`.
+
+**Die Erzeugung gehört Engineering**, und sie ist der ganze Rest:
+
+1. **Ein zweiter Kanal statt eines neuen Typs.** `fehlende: string[]` kommt aus
+   ~117 `push`-Stellen; den Elementtyp zu ändern, heißt sie alle anzufassen.
+   Additiv — ein zweites Feld `fehlende_blockierend: string[]` am
+   `CheckErgebnis` — kostet **null** Bestandsstellen. Bitte so, nicht anders.
+2. **Der Eintrag muss überhaupt erst entstehen.** Das ist die „harte Grenze",
+   die ich in DC-112 schon aufgeschrieben habe und die bis heute offen ist:
+   *Ein Raum, zu dem am Ende keine Fläche bekannt ist, erzeugt einen Eintrag —
+   nie null Positionen und null Einträge.* PM-094 („Wohnzimmer streichen,
+   zwanzig Quadrat") ist derselbe Fall eine Ebene tiefer: Bodenfläche bekannt,
+   Wandfläche nicht, gestrichen werden sollen die Wände.
+3. **PM-093 ist ausdrücklich NICHT dieser Fall.** „Sechs Stunden für den
+   Gesellen" scheitert nicht an einem fehlenden Maß, sondern daran, dass eine
+   Stundenangabe gar nicht erst als Menge ankommt. Das ist eine Extraktions-
+   und Katalogfrage (die Zeile „Regiearbeit Geselle", 65,00 €, gibt es) und
+   keine Anzeigefrage. **Bitte nicht in diesen Topf werfen** — sonst wird aus
+   einer fehlenden Position ein Hinweis, und der Betrieb hat statt 390,00 €
+   eine Warnung.
+
+**Was ich bewusst nicht entscheide:** ob eine fachlich zwingende, aber nicht
+gesagte Vorarbeit (der „Grundierung"-Fall des Prüfmeisters) einen eigenen,
+dringenderen Satz bekommt. Das ist seine Fachfrage, siehe oben.
+
+**Status: ✅ erledigt** — beide Fragen sind beantwortet, PD-016 Punkt 2 damit
+auch. Von unserer Seite ist nichts mehr offen; was offen bleibt, ist der Bau
+und der steht oben mit Namen.
+
+*Product Designer · 2026-09-17*
+
+---
+
+## DC-111 ✅ — Alle fünf Anmelde-Seiten teilen sich jetzt einen Rahmen, nicht nur die zwei gemeldeten (Product Designer, 17.09.2026)
+
+**Bezug:** DC-111 (Chief of Staff, 16.09.2026, aus Sandys Klick-Durchlauf
+„Passwort vergessen", drei Bildschirmfotos). Vorrang laut demselben Eintrag:
+hinter den PD-018-Punkten — die sind in diesem Lauf mit DC-119 und DC-120 zu.
+
+### Der Verdacht des Chief of Staff war zu vorsichtig
+
+Er schrieb: *„Was ich nicht behaupte: dass `login`, `register` und
+`bestaetigt` es besser machen. Die drei Dateien haben diese Klassen gar
+nicht."* — **Sie haben sie doch.** Wortgleich, alle drei:
+
+```
+min-h-dvh bg-bg flex flex-col justify-center px-5
+```
+
+**Zehnmal**, verteilt auf fünf Dateien (mehrere Seiten haben mehrere
+Zustände: Formular, Erfolg, ungültiger Link). **Keine einzige mit einer
+Maximalbreite.** Aufgefallen ist es nur auf `/passwort-vergessen` und
+`/passwort-reset`, weil dort ein Formular steht, dessen Knopf dann fast einen
+Meter breit ist. Auf `/login` ist es derselbe Fehler mit demselben Ergebnis;
+Sandy hat ihn nur noch nicht fotografiert.
+
+### Der Rahmen liegt jetzt dort, wo die fünf Seiten ohnehin zusammenkommen
+
+Neu: **`src/app/(auth)/layout.tsx`**. Die zehn Stellen in den Seiten tragen nur
+noch `flex flex-col`; alles Rahmenhafte — Höhe, Hintergrund, Seitenabstand,
+Zentrierung, Maximalbreite — steht einmal im Layout.
+
+**Warum Layout und nicht zwei Dateien:** Genau das hat der Chief of Staff
+gefordert („entweder alle fünf Auth-Seiten teilen sich einen Rahmen, oder
+keine"), und es ist auch der einzige Bau, der hält. Repariert man die zwei
+gemeldeten Dateien, ist die nächste neue Anmelde-Seite wieder telefonbreit und
+niemand merkt es, bis jemand ein Bildschirmfoto schickt. Ein
+`(auth)/layout.tsx` gab es bis heute nicht.
+
+**Warum `max-w-sm` (384 px) und nicht breiter:** Das ist die Breite, für die
+diese Seiten gestaltet sind — ein Telefon (390 px). Der Desktop zeigt damit
+genau dieselbe Anordnung wie das Handy statt einer zweiten, nirgends
+entworfenen. Eine breitere Marke hätte bedeutet, Feldabstände, Schriftgrößen
+und Logohöhe für einen zweiten Zustand neu zu setzen — für fünf Seiten, die
+ein Handwerker einmal im Jahr sieht.
+
+**Die vertikale Zentrierung bleibt, bekommt aber `items-center` dazu.** Das
+war die eigentliche Beschwerde: *„das Logo hängt mitten im Nichts."* Es hing
+dort, weil der Block senkrecht mittig, aber waagerecht linksbündig am
+Fensterrand klebte — mittig nur in einer von zwei Richtungen sieht aus wie ein
+Fehler. Mittig in beiden sieht aus wie Absicht. Zusätzlich `py-10`, damit auf
+einem kurzen Fenster oben und unten nichts abgeschnitten wird.
+
+### Zweiter Punkt aus demselben Eintrag: das Emoji ist raus
+
+Der Chief of Staff hat das ausdrücklich als Frage gestellt, nicht als Ansage.
+**Meine Antwort: nein, das war keine Absicht — es ist ein Rest.**
+
+`/passwort-vergessen` benutzte 📬 als Bildmarke (`text-5xl`), `/register`
+dasselbe mit 📧. **DC-017 hat die Bildsprache des Produkts auf Lucide
+vereinheitlicht**, weil drei Icon-Sprachen nebeneinander liefen; die
+Anmelde-Seiten liegen außerhalb von `(app)` und waren nie nachgezogen worden.
+Ein Emoji wird von jedem Betriebssystem anders gezeichnet — auf dem einen ein
+flacher Briefkasten, auf dem anderen ein bunter mit Fähnchen — und ist in
+keinem CI-Dokument gedeckt.
+
+Beide tragen jetzt `MailCheck` aus Lucide in einem gelben Quadrat mit
+abgerundeten Ecken, dieselbe Erfolgs-Geste wie im Produkt. **Beide zusammen,
+obwohl nur eine gemeldet war** — dieselbe Lehre wie bei DC-047: Wenn zwei
+Seiten denselben Fehler haben und man nur die gemeldete anfasst, ist die
+nächste Meldung die andere.
+
+### Gebaut
+
+| Datei | Was |
+|---|---|
+| `src/app/(auth)/layout.tsx` | **neu** — der gemeinsame Rahmen |
+| `src/app/(auth)/login/page.tsx` | eigener Rahmen raus (1 Stelle) |
+| `src/app/(auth)/register/page.tsx` | eigener Rahmen raus (2), Emoji → Lucide |
+| `src/app/(auth)/passwort-vergessen/page.tsx` | eigener Rahmen raus (2), Emoji → Lucide |
+| `src/app/(auth)/passwort-reset/page.tsx` | eigener Rahmen raus (3) |
+| `src/app/(auth)/bestaetigt/page.tsx` | eigener Rahmen raus (2) |
+| `src/lib/__tests__/dc111-auth-rahmen.test.ts` | **neu**, 11 Zusicherungen |
+
+### Verifikation — auf Sandys Rechner am echten Projekt
+
+1. **`src/lib/__tests__/dc111-auth-rahmen.test.ts`: 11 grün.** Das Layout
+   existiert und deckelt die Breite; **keine** der fünf Seiten holt sich einen
+   eigenen `min-h-dvh`-Rahmen zurück; **keine** benutzt ein Emoji als
+   Bildmarke. Das ist der Teil, der sonst wieder auseinanderläuft.
+2. **`npx tsc --noEmit -p tsconfig.json`: sauber.**
+3. **`npx eslint` über `src/app/(auth)`: 0 Fehler** (1 Warnung,
+   vorbestehend, `useEffect`-Abhängigkeit in `passwort-reset/page.tsx`).
+
+**Ehrlich dazu: ein Prüfstand kann keine Breite sehen.** Er sichert die
+Bedingung dafür, dass das Layout greifen KANN, nicht das Bild. **Offen bleibt
+der Blick auf ein echtes Desktop-Fenster** — und der gehört ohnehin zu
+CoS-P-013, das bei Sandy schon auf der Liste steht („ging ‚Passwort speichern'
+durch?"). Wenn sie das ohnehin einmal durchklickt, sieht sie beides in einem
+Durchgang.
+
+**Status: ✅ erledigt.**
+
+*Product Designer · 2026-09-17*
+
+---
+
+---
+
+## DC-111 / DC-119 / DC-120 abgenommen und committet — gemessen, nicht geglaubt (Chief of Staff, 2026-09-17, 08:55 UTC)
+
+Eure Arbeit zu DC-111, DC-119 und DC-120 lag **uncommittet** im Arbeitsbaum.
+Ich habe sie nachgemessen und committet; ihr müsst nichts nachholen.
+
+**Was ich selbst auf Sandys Rechner gefahren habe:**
+
+| Prüfung | Ergebnis |
+|---|---|
+| `npx tsc --noEmit -p tsconfig.json` | **fehlerfrei** |
+| `dc111-auth-rahmen.test.ts` | **11 grün** |
+| `dc119-wandflaechen-konflikt.test.ts` | **22 grün** |
+| `src/lib/mengen/__tests__` — 23 Dateien | **256 grün, 0 rot** |
+| die 7 Dateien in `src/lib/__tests__`, die den Rückfragen-Weg oder den Kontext-Analyzer lesen | **122 grün** |
+| die 6 Prüfmeister-Batches (69–77, 79–88, 89–97, 101–103, 104–116, 1509) | **112 grün, 59 Sperrklinken, 0 unerwartet rot** |
+
+**Nicht gemessen, also behaupte ich es nicht:** die restlichen ~96 Dateien in
+`src/lib/__tests__` habe ich in diesem Lauf nicht gefahren — nur die, die eure
+geänderten Module einlesen. Und **ein Prüfstand sieht keine Breite**: dass die
+fünf Anmelde-Seiten auf einem echten Desktop-Fenster richtig aussehen, ist
+weiterhin ungeprüft. Ihr schreibt das selbst so.
+
+**Euer Vorschlag, den Blick an CoS-P-013 zu hängen, ist übernommen** — Sandy
+klickt den Passwort-Durchlauf ohnehin einmal durch, sie sieht beides in einem
+Durchgang. Ich habe es bei ihrem Punkt vermerkt, sie bekommt keine zweite
+Aufgabe dafür.
+
+### Ein Satz zur Sache, weil er nicht untergehen soll
+
+Der Fund, dass **alle fünf** Anmelde-Seiten dieselben Klassen tragen und nicht
+nur die zwei fotografierten, ist die Art Nachprüfung, die ich in meinem
+DC-111-Eintrag ausdrücklich nicht behauptet hatte. Ihr habt meine vorsichtige
+Formulierung widerlegt statt sie zu übernehmen. Richtig so — der Eintrag ist
+korrigiert, indem eure Messung danebensteht.
+
+*Chief of Staff · 2026-09-17*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
