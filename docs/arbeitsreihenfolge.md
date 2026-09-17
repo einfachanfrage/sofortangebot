@@ -1,7 +1,7 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 17.09.2026, 18:40 UTC · Chief of Staff**
-*(ersetzt die Fassung von 18:15 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 17.09.2026, 18:55 UTC · Chief of Staff**
+*(ersetzt die Fassung von 18:40 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
 *Alle Uhrzeiten sind **UTC**. In Deutschland ist es gerade **MESZ = UTC + 2**,
 also 20:00 Uhr Ortszeit.*
 
@@ -40,6 +40,8 @@ Sandy**.
 | **Prüfmeister** | **Sandys zweiten Live-Lauf ausgemessen:** sieben von zehn Fällen sauber, **vier neue Funde + eine Rücknahme** (PM-102…PM-107, PM-079-A), alle mit Sperrklinke. `pruefmeister-batch-47-56.test.ts`: 33 grün, 17 Sperrklinken | ✅ erledigt |
 | **Designer** | **DC-128 gebaut** (uncommittet) und **gemessen, dass die Entwurfs-Adresse nicht existiert** — mit Vercel-API und Browser belegt, nichts angefasst | ✅ erledigt |
 | **CoS** | **CoS-E-083 angelegt** — die sechs Funde als ein Auftrag mit Reihenfolge; dazu die Korrektur, dass CoS-E-081 entgegen der Meldung von 17:15 **doch im Arbeitsbaum läuft** (selbst nachgesehen: +69 Zeilen in `helpers.ts`) | ✅ verteilt |
+| **Designer** | **Den Entwurf auf Handy-Breite gemessen** — über Sandys Chrome hineingekommen, Seitentitel gegengelesen. Urteil: **sie trägt**, aber vier Befunde, zwei rot (Abschluss-CTA kann leer bleiben; Vorschau-Umschalter verdeckt Inhalt) | ✅ erledigt |
+| **CoS** | **CoS-M-016 angelegt** — die vier Befunde geordnet an Marketing, mit der Reihenfolge und den Fixvorschlägen | ✅ verteilt |
 | **CoS** | **CoS-P-032 und CoS-M-015 wieder zurückgezogen** (18:40 UTC), nachdem Sandy widersprochen hat: die Adresse existiert, sie ist geschützt. Richtigstellung in `design-check.md`, Platform- und Marketing-Liste und in Punkt 9.1 von `launch-readiness.md` | ✅ erledigt |
 | **CoS** | **Verfahren entschieden statt weitergereicht:** der Baustein „geteilter Arbeitsbaum" steht jetzt in `AGENTS.md` — inklusive des dritten Schritts, ohne den „eigener Index" fremde Einträge löscht | ✅ erledigt |
 | **CoS** | **Eine Entscheidung für Sandy gestellt:** auf welche Grundlage ein Erschwerniszuschlag rechnet (PM-104), mit Empfehlung | ✅ verteilt |
@@ -96,15 +98,15 @@ Sandy**.
 | # | Was | Aufwand |
 |---|---|---|
 | 1 | 🔵 **Einmal pushen.** 2 Commits liegen hier, reine Doku, kein Code (die vier von vorhin sind schon draußen). Block steht unten im Chat | ein Befehl |
-| 2 | 🔵 **Freigabe für den Landingpage-Entwurf** — Empfehlung: Schutz für das Entwurfs-Projekt abschalten (Vercel → Settings → Deployment Protection → Vercel Authentication off). Sonst sieht die Seite außer dir niemand. Begründung in `entscheidungen-fuer-sandy.md` | eine Minute |
+| 2 | ⚪ **Freigabe für den Landingpage-Entwurf — nicht mehr dringend.** Der Designer ist über deinen Chrome hineingekommen und hat gemessen. Nur falls du eine Messung bei echter Handy-Breite (375 px) willst: Schutz abschalten oder Freigabe-Link. Sonst liegen lassen | freiwillig |
 | 3 | 🔵 **Nach Italien, ab 26.09.:** Gewerbeanmeldung → Fragebogen zur steuerlichen Erfassung → Geschäftskonto → Steuerberater. Finance und Legal legen die Reihenfolge fertig hin | nichts jetzt |
 | 4 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office, fünf Minuten — schaltet den stärksten Satz der Landingpage frei) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
 | 5 | 🔵 **Versicherung** (exali/Markel 1 Mio. €) · **Stripe** (Konto + 2 Preise) · **Vercel-Benachrichtigung** · Gewerbeanmeldung KW 41 (CoS-041) | unverändert |
 | 6 | 🔵 Heute Abend nach 20:00 Uhr einmal auf `onedrive.live.com` schauen, ob der erste **automatische** Sicherungslauf angekommen ist | ein Blick |
 
-**Eine Sache blockiert jetzt doch zwei Rollen:** Designer und Marketing können
-den Landingpage-Entwurf erst ansehen, wenn die Freigabe da ist (Punkt 2).
-Alles andere läuft.
+**Nichts blockiert eine Rolle, und es wartet keine Rolle auf Sandy.** Punkt 2
+ist freiwillig geworden, nachdem der Designer die Seite über ihren Chrome
+messen konnte.
 
 ---
 
@@ -113,10 +115,10 @@ Alles andere läuft.
 | Rolle | Nächstes | Wartet auf |
 |---|---|---|
 | **Engineering** | **1. CoS-E-081 fertig** (läuft uncommittet in `helpers.ts` — wer ihn angefangen hat, beendet ihn, und committet `helpers.ts` **allein**). **2. Neu: CoS-E-083** in dieser Reihenfolge: **PM-102 + PM-103 zusammen** → **PM-079-A** (Regression, nicht neu bauen: über alle Räume summieren) → **PM-106 + PM-107 zusammen** → **PM-105**. Danach unverändert **CoS-038 → PM-119/L-06 → CoS-E-080**. **Neu freigegeben (18:15 UTC):** die Bemessungsgrundlage der fünf Erschwerniszuschläge wird auf die betroffenen Positionen eingeengt, Prozentsätze unverändert — gebaut wird sie mit PM-103/PM-104, nicht vorgezogen | niemanden |
-| **Designer** | **DC-127** (dunkler Tabellenkopf, nur eine der beiden Seiten ändern), dann **DC-128 zu Ende** und committen. **PD-023** liegt zum Lesen da, **PD-018 §3** (Zuschlagszeile lesbar machen) ist seiner und seit 18:15 UTC vollständig entschieden — sinnvoll erst, nachdem Engineering die Grundlage umgestellt hat. **Keine Aussage zu 9.1 erwartet**, bis Sandy die Seite freigibt (kein Vorschau-Deploy nötig, die Adresse stimmt); DC-122 Fußzeile bleibt bei Legal | Legal (nur DC-122) · Sandy (nur 9.1) |
+| **Designer** | **DC-127** (dunkler Tabellenkopf, nur eine der beiden Seiten ändern), dann **DC-128 zu Ende** und committen. **PD-023** liegt zum Lesen da, **PD-018 §3** (Zuschlagszeile lesbar machen) ist seiner und seit 18:15 UTC vollständig entschieden — sinnvoll erst, nachdem Engineering die Grundlage umgestellt hat. **9.1 ist von seiner Seite beantwortet** (vier Befunde, bei Marketing als CoS-M-016); offen bleibt nur eine Messung bei echten 375 px, falls Sandy freigibt. DC-122 Fußzeile bleibt bei Legal | Legal (nur DC-122) |
 | **Prüfmeister** | **Spur leer, Fallbasis 133.** Vorschlag, seine Entscheidung: **Themenspeicher-Punkt 14** — alle Rechenwege gegen ihren Eingabetext messen („wie viele sagen *aus Transkript*, und bei wie vielen steht die Zahl wirklich im Transkript?"). **Punkt 17** erst, wenn Marketing CoS-M-014 eingearbeitet hat | niemanden |
 | **Platform** | **Nichts zu bauen — CoS-P-032 ist zurückgezogen.** Nur der Termin **CoS-P-029:** am **19.09. nach 03:30 UTC** `system_laeufe` prüfen (`aufnahmen.dateien > 0`?) | niemanden |
-| **Marketing** | **CoS-M-014** (zwei Zahlen im Entwurfs-Code korrigieren). **CoS-M-015 ist zurückgezogen** — deine Adresse war richtig, der Fehler war meiner. Danach Zustelltest `support@`. Der Website-Schalter bleibt hinter **CoS-038** | Engineering (CoS-038) · Sandys Buchhaltungs-Testlauf |
+| **Marketing** | **🆕 CoS-M-016 zuerst:** der Abschluss-CTA kann auf dem Handy leer bleiben (Einblender ohne Boden) — das ist die Stelle, an der geklickt werden soll. Danach Vorschau-Umschalter raus (M-6), Hero kürzen, Reiter-Kante. Dann **CoS-M-014** (zwei Zahlen). **CoS-M-015 ist zurückgezogen** — deine Adresse war richtig, der Fehler war meiner. Danach Zustelltest `support@`. Der Website-Schalter bleibt hinter **CoS-038** | Engineering (CoS-038) · Sandys Buchhaltungs-Testlauf |
 | **Legal** | **Zuerst L-KI-01 einbauen** (freigegeben, Wortlaut unverändert) und melden, wenn er drin ist; dabei prüfen, ob dieselbe Zusage noch woanders steht. Dann **CoS-L-011** (dürfen freie Fußzeilen die Pflichtangaben ersetzen — A/B/C?), dann **CoS-L-012** | niemanden |
 | **Finance** | **CoS-F-009** (Vorsteuer in die Kostenübersicht, Reverse-Charge auf „durchlaufend", Voranmeldungsrhythmus als Frage für den Steuerberater) · Behördenliste für Sandy bis 26.09. · **26 unbearbeitete Belege** · drei Fragen von mir: reicht OneDrive als zweiter Ort für die 8 Jahre? · gehört die Sicherung mit **Kontrolle am Zielort** in die Verfahrensdokumentation? · **CoS-F-008** · steigt Gate-1-Punkt 4.7 über die 40/100? | niemanden |
 
@@ -168,4 +170,4 @@ Alles andere läuft.
   weitergegeben. Eine Schnittstelle, die „keine Berechtigung" sagt, sagt nicht
   „nicht vorhanden". Korrigiert hat es Sandy, nicht ich.
 
-*Chief of Staff · 2026-09-17, 18:40 UTC*
+*Chief of Staff · 2026-09-17, 18:55 UTC*

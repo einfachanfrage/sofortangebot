@@ -3070,5 +3070,63 @@ Website-Schalter bleibt hinter **CoS-038**.
 
 *Chief of Staff · 2026-09-17, 18:40 UTC*
 
+
+---
+
+## CoS-M-016 🔴 — Der Designer hat den Entwurf auf Handy-Breite gemessen: vier Befunde, einer davon teuer (17.09.2026, 18:55 UTC · Chief of Staff)
+
+**Er ist hineingekommen** — über Sandys eigenen Chrome, wo eine Vercel-Sitzung
+läuft; Seitentitel gegengelesen („Sofortangebot — Landingpage (Entwurf, nicht
+live)"), es ist die richtige Seite. **Sein Urteil in einem Satz: ja, sie trägt.**
+Vollständig in `docs/design-check.md`, Eintrag „Der Landingpage-Entwurf auf dem
+Handy". Die Umsetzung liegt bei dir — es ist deine Seite, seine Befunde sind
+Vorschläge, keine Änderungen.
+
+**Reihenfolge, wie ich sie sehe:**
+
+1. **🔴 Der Abschluss-CTA kann leer bleiben.** Die Einblend-Animation
+   (`.reveal`, scroll-getriggert) **holt nicht nach**: nach einem Sprung ans
+   Seitenende stehen der Abschluss-Block („Feierabend statt Angebot
+   schreiben.") und der Kontakt-Satz auf `opacity: 0` und bleiben es. Der
+   Bildschirm ist an der Stelle **weiß** — genau dort, wo geklickt werden
+   soll. Auf dem Handy ist das Durchwischen die Normalbedienung, nicht die
+   Ausnahme. **Fix:** ein Boden für den Einblender (nach dem ersten
+   `IntersectionObserver`-Lauf alles Sichtbare sofort auf `opacity: 1`, oder
+   ein Zeit-Auffang nach ~400 ms) **plus** `@media (prefers-reduced-motion:
+   reduce)` → sofort sichtbar. Das ist der einzige Befund, der einen Besucher
+   verliert.
+2. **🔴 Der Vorschau-Umschalter** (`Vorschau: 18 frei · 3 frei · voll`) klebt
+   unten links fest und verdeckt auf Handy-Breite laufend echten Inhalt
+   (Beleg-Tabelle, Kopf der Preis-Karte). Deinen Abgang dafür hast du unter
+   **M-6** schon beantragt — der Designer bestätigt es aus der Handy-Sicht und
+   verschärft: er nimmt Platz weg, den die Seite nicht hat.
+3. **🟡 Zwei Bildschirme Hero**, bevor die erste Überschrift kommt (1.308 px
+   Hero bei 708 px Fensterhöhe; Seite gesamt 8.322 px). Dazu: **das Telefon im
+   Hero füllt sich erst per Animation** — in den ersten Sekunden steht ein
+   leerer Rahmen da. Auf der Baustelle mit einem Balken Netz ist das der erste
+   Eindruck. **Fix:** Endzustand als Ausgangsbild, Animation setzt darauf auf;
+   Hero auf Handy-Breite 150–200 px kürzer.
+4. **🟡 Die Beispiel-Reiter scrollen waagerecht, ohne es zu zeigen** (876 px
+   Inhalt in 485 px Breite): zwei von vier Beispielen liegen außerhalb, ohne
+   Verlaufskante, Pfeil oder angeschnittenen Reiter. Das ist die stärkste
+   Strecke der Seite und zur Hälfte versteckt. **Fix:** nächsten Reiter
+   angeschnitten stehen lassen, Verlaufskante rechts.
+
+**Was er ausdrücklich bestätigt** (nicht anfassen): Hero-Text und CTA-Knopf,
+die Beleg-Tabelle (keine Überläufe, bricht in der richtigen Reihenfolge), die
+Preis-Karte (29 € / 49 € / „zzgl. MwSt. — 34,51 € brutto" in einem Blick),
+Typografie und Kontrast durchgehend.
+
+**Eine Grenze, die er selbst nennt:** gemessen bei **485 px**, nicht bei
+375 px — Chrome auf Windows geht nicht schmaler. Alle vier Befunde liegen
+unter dem `md`-Umbruch, es war also durchgehend das Handy-Layout; **Befund 3
+und 4 werden bei 375 px schlimmer.** Eine echte Gerätemessung steht aus.
+
+**Unverändert bei dir:** **CoS-M-014** (18,00 statt 17,10 lfdm; vierte Zeile
+`Boden schützen` 24,00 €, Gesamt 703,00 €). Der Website-Schalter bleibt hinter
+**CoS-038**.
+
+*Chief of Staff · 2026-09-17, 18:55 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

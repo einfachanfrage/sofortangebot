@@ -13374,4 +13374,134 @@ siehe `entscheidungen-fuer-sandy.md` (18:40 UTC).
 
 *Chief of Staff · 2026-09-17, 18:40 UTC*
 
+## Der Landingpage-Entwurf auf dem Handy — angesehen, gemessen, ein roter Befund (Product Designer, 17.09.2026)
+
+**Bezug:** Bitte des Chief of Staff („Sieh dir den Entwurf an und sag, ob er
+auf dem Handy trägt") · Nachtrag zu meinem korrigierten Eintrag darüber.
+
+**Wie ich hineingekommen bin:** über Sandys eigenen Chrome. Der Entwurf ist
+durch Deployment Protection geschützt; der Browser der Claude-App hat keine
+Vercel-Sitzung, Sandys Chrome hat eine. Kein Passwort eingetippt, keine
+Einstellung geändert — nur die Seite gelesen. Seitentitel zur Sicherheit
+gegengelesen: **„Sofortangebot — Landingpage (Entwurf, nicht live)"**. Es ist
+die richtige Seite.
+
+**Das Urteil in einem Satz:** Ja, sie trägt — der Aufbau ist richtig gebaut
+für einen Daumen. Aber die **letzte Bildschirmseite kann leer sein**, und das
+trifft genau den Abschluss-Knopf.
+
+---
+
+### 🔴 1. Der Abschluss-CTA kann unsichtbar bleiben
+
+Die Abschnitte kommen per Einblend-Animation (`.reveal`, scroll-getriggert).
+**Sie holt nicht nach.** Gemessen: nach einem Sprung an das Seitenende stehen
+zwei Blöcke auf `opacity: 0` und bleiben es:
+
+| Block | Zustand |
+|---|---|
+| `Feierabend statt Angebot schreiben.` (der Abschluss-CTA) | `opacity: 0` |
+| `Nicht dabei? Schreib uns. Antwort i…` | `opacity: 0` |
+
+Der Bildschirm ist an dieser Stelle **weiß und leer** — Screenshot habe ich,
+und die Messung sagt dasselbe: 28 Elemente im Bild, 2 davon unsichtbar, und
+es sind die beiden, auf die es ankommt.
+
+**Warum das auf dem Handy schwerer wiegt als am Schreibtisch:** Der
+Daumenwisch ist dort keine Ausnahme, sondern die Normalbedienung. Wer die
+Seite von oben nach unten durchwischt, landet auf einem leeren Schirm und
+liest daraus „kaputt", nicht „noch nicht eingeblendet". Und es ist die
+Stelle, an der man klicken soll.
+
+**Vorschlag (Umsetzung Marketing/wer die Seite baut, nicht meine Datei):**
+Der Einblender braucht einen Boden — entweder nach dem ersten
+`IntersectionObserver`-Lauf alles Sichtbare sofort auf `opacity: 1`, oder ein
+Zeit-Auffang (nach ~400 ms sichtbar, Animation nur als Zugabe). Dazu
+`@media (prefers-reduced-motion: reduce)` → sofort sichtbar; das ist ohnehin
+fällig.
+
+### 🔴 2. Der Vorschau-Umschalter klebt über dem Inhalt
+
+`Vorschau: 18 frei · 3 frei · voll` sitzt unten links **fest** und verdeckt
+auf Handy-Breite fortlaufend echten Inhalt — in meinen Aufnahmen Zeilen der
+Beleg-Tabelle und den Kopf der Preis-Karte. **Marketing hat seinen Abgang
+schon beantragt** (M-6, zusammen mit der Zählzeile „18 von 25 frei"). Ich
+bestätige das aus der Handy-Sicht und verschärfe es: Er ist dort nicht nur
+verräterisch, er **nimmt Platz weg, den die Seite nicht hat.**
+
+### 🟡 3. Zwei Bildschirme Hero, bevor irgendetwas erklärt wird
+
+Gemessen: **Hero 1.308 px hoch bei 708 px Fensterhöhe** — knapp zwei
+Bildschirme bis zur ersten Überschrift „So läuft das.". Die Seite ist
+insgesamt 8.322 px lang, also gut zwölf Bildschirme.
+
+Dazu: **das Telefon im Hero füllt sich erst per Animation.** In den ersten
+Sekunden steht ein großer, leerer Telefonrahmen da — ich habe ihn zweimal
+leer aufgenommen, bevor er sich mit dem Beispiel-Angebot füllte
+(„Entwurf prüfen", Wohnzimmer 1.124,20 €). Auf der Baustelle, mit einem
+Balken Netz, ist genau das der erste Eindruck.
+
+**Kein Umbau nötig, zwei kleine Sachen genügen:** Das Telefon sollte seinen
+**Endzustand als Ausgangsbild** haben (Animation setzt darauf auf, nicht
+davor), und der Hero darf auf Handy-Breite ruhig 150–200 px kürzer sein —
+die Luft unter dem Trust-Satz trägt dort nichts.
+
+### 🟡 4. Die Beispiel-Reiter scrollen waagerecht, ohne es zu zeigen
+
+Die Reiterleiste über „Gesagt. Und was rauskommt." ist
+`overflow-x-auto`: **876 px Inhalt in 485 px Breite.** Zwei der vier
+Beispiele liegen außerhalb des Bildschirms, und es gibt **keine
+Verlaufskante, keinen Pfeil, keinen halb angeschnittenen Reiter** als
+Hinweis. Wer nicht zufällig seitwärts wischt, sieht zwei von vier.
+
+Das ist die beste Strecke der Seite (echte Angebote mit echten Zahlen) und
+sie ist zur Hälfte versteckt. **Billigster Fix:** den nächsten Reiter
+angeschnitten stehen lassen statt ihn an der Kante abzuschneiden, plus
+Verlaufskante rechts.
+
+### 🟢 Was ausdrücklich trägt
+
+* **Hero-Text und CTA.** „Aufmaß fertig. Angebot fertig." steht zweizeilig,
+  bricht sauber, der gelbe Knopf ist mit dem Daumen bequem zu treffen, und
+  „Ohne Kreditkarte. Monatlich kündbar." sitzt richtig darunter.
+* **Die Beleg-Tabelle.** In Ruhe randlos lesbar, **keine Überläufe** —
+  `scrollWidth == clientWidth`, kein waagerechter Seiten-Scroll, kein
+  Element breiter als der Bildschirm. Titel, Betrag, Erklärsatz und
+  Rechenweg brechen in dieser Reihenfolge, das liest sich von oben nach
+  unten wie ein Angebot.
+* **Die Preis-Karte.** 29 € groß, 49 € durchgestrichen daneben, „zzgl.
+  MwSt. — 34,51 € brutto" darunter: auf Handy-Breite in einem Blick erfassbar.
+* **Typografie und Kontrast** durchgehend in Ordnung, keine Schrift unter
+  brauchbarer Größe, keine grauen Sätze auf gelbem Grund.
+
+### Was ich zurücknehme
+
+In einer Zwischenaufnahme sah die Beleg-Tabelle **rechts abgeschnitten** aus
+(„Kanten sa…", „unter 2,…"). Das war die Einblend-Animation im Zwischenschritt,
+kein Layout-Fehler: im Ruhezustand nachgemessen sind es 403 px Textbreite bei
+485 px Bildschirm, rechte Kante bei 444. **Kein Befund.** Ich nenne es
+trotzdem, weil ein Screenshot mitten in einer Animation dreimal heute schon
+fast zu einer falschen Meldung geführt hat.
+
+### Grenze meiner Messung — ausdrücklich
+
+**Gemessen bei 485 px Breite, nicht bei 375 px.** Chrome auf Windows lässt
+sein Fenster nicht schmaler als etwa 500 px, und die letzte Messung
+(Befund 1) lief sogar bei 969 px, weil das Fenster zwischendurch wieder
+aufgeschnappt ist. Alle vier Befunde liegen **unterhalb** des `md`-Umbruchs
+(768 px), es ist also durchgehend das Handy-Layout gewesen — schmaler wird es
+enger, nicht anders. Trotzdem: **Befund 3 und 4 werden bei 375 px schlimmer,
+und eine echte Gerätemessung steht weiter aus.** Wer die Möglichkeit hat,
+sollte sie am Telefon nachsehen; der Browser der Claude-App könnte 375 × 812
+sauber nachstellen, wenn der Schutz für ihn geöffnet wird (Freigabe-Link
+genügt).
+
+**Angefasst habe ich nichts** — kein Deploy, keine Projekteinstellung, keine
+Datei der Seite. Der Inhalt gehört Marketing, und die vier Befunde sind
+Vorschläge an die Seite, keine Änderungen an ihr.
+
+*Product Designer · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

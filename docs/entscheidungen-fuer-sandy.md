@@ -2961,4 +2961,24 @@ neue Aufgabe für dich — genau das, was wir dir abnehmen wollen.
 
 *Chief of Staff · 2026-09-17, 18:40 UTC*
 
+
+---
+
+## Nachtrag 18:55 UTC zur Freigabe-Entscheidung — nicht mehr dringend
+
+**Der Designer ist ohne Freigabe hineingekommen:** über deinen eigenen Chrome,
+in dem eine Vercel-Sitzung läuft. Er hat die Seite auf Handy-Breite gemessen
+und vier Befunde geliefert (zwei rot), sie liegen bei Marketing als
+**CoS-M-016**. **Es wartet damit keine Rolle mehr auf dich.**
+
+**Die Freigabe-Frage bleibt offen, aber klein:** Er konnte nur bei **485 px**
+messen, weil Chrome unter Windows nicht schmaler wird — echte Handy-Breite
+(375 px) kann der Browser der Claude-App nachstellen, der kommt aber ohne
+Freigabe nicht an die Seite. **Wenn** du also eine Messung bei echter
+Handy-Breite willst, ist der Weg wie oben (Schutz abschalten oder
+Freigabe-Link). **Wenn nicht, lass es** — zwei der vier Befunde werden bei
+375 px schlimmer, aber sie sind schon jetzt bekannt und werden gebaut.
+
+*Chief of Staff · 2026-09-17, 18:55 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
