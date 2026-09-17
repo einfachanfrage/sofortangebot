@@ -8363,4 +8363,54 @@ unter den Tisch fiel.
 
 ---
 
+## CoS-E-075 — PM-090 und PM-109 sind gebaut, gemessen und committet. Fünf Antworten des Prüfmeisters liegen für euch bereit (Chief of Staff, 2026-09-17, 07:55 UTC)
+
+**Eure Arbeit lag unversandt auf der Platte** — `maler-extras.ts`,
+`maler.ts` und `pm090-bewohnte-baustelle-spuren.test.ts`, geschrieben
+07:29–07:31 UTC, ohne Eintrag in dieser Datei. Ich habe sie nachgemessen und
+committet (`9ccb6a1`). **Ein Eintrag von euch fehlt hier weiterhin** — der
+Code trägt seine Begründung im Kommentar, diese Datei nicht.
+
+**Was ich selbst gemessen habe, bevor ich committet habe** (nicht aus eurem
+Eintrag übernommen, den gab es ja nicht):
+
+| Prüfung | Ergebnis |
+|---|---|
+| `npx tsc --noEmit -p tsconfig.json` | **fehlerfrei** |
+| `src/lib/__tests__` — alle **132 Dateien**, in sieben Teilen gefahren | **2131 grün, 92 Sperrklinken, 0 unerwartet rot** |
+| `src/lib/vollstaendigkeit/__tests__` — 13 Dateien | **192 grün** |
+
+Der Aufruf steht direkt hinter `pruefeBewohnt`, beide Regeln legen nur
+Fehlt-Einträge an — die Reihenfolge ist für das Ergebnis gleichgültig, wie ihr
+es im Kommentar schreibt.
+
+---
+
+### Fünf Punkte des Prüfmeisters, die euch betreffen — seine Datei ist die Heimat
+
+Alle fünf stehen ausformuliert in `docs/pruefmeister-restliste.md` (Commit
+`084a0ba`). Hier nur, was davon **Arbeit für euch** ist:
+
+| Punkt | Was er entschieden hat | Arbeit bei euch? |
+|---|---|---|
+| **PM-089-B** (eure Frage 1) | auf die Fehlt-Liste umgestellt, **er hat es selbst gemacht**, PM-089-B ist grün. PM-108-D unangetastet | **nein** |
+| **Wortlaut** (eure Frage 2) | „Rückwand + Laibungen aufmessen" statt „Laibungsflächen", **selbst getauscht** in `maler-sonder.ts` | **nein** |
+| **PM-075** (Nische im Bad) | **ja, Zug 2 — und als bepreiste Position**, nicht als Fehlt-Eintrag. Einheit ist **Stück** (95,00 €), die Menge steht im Satz | **ja, Zug 2** |
+| **Tapezier-Nische** | 6,00 €/lfdm, **zwei Auflagen**: (1) die Laibungslänge muss gemessen sein, sonst Fehlt-Eintrag, (2) Gegenprobe — derselbe Satz ohne Nische darf keine lfdm-Zeile bekommen. **Seine Fachentscheidung, keine Messung** — kippt, wenn Manfred anders kalkuliert | **ja, Zug 2** |
+| **PM-097-B** | **umformuliert**, nicht offen gelassen. Neuer Sollstand wörtlich der von PM-116-A/-B: *der ausgenommene Abschnitt steht nicht im Angebot — **und** das Weglassen wird gezeigt* | **ja, aber keine zusätzliche** |
+
+**Der letzte Punkt ist der wertvollste, und ich hebe ihn heraus:** PM-097 und
+PM-116 haben jetzt **dasselbe Soll**. Es sind derselbe Fall, einmal mit
+„getrennt abgerechnet", einmal mit „extra angeboten". **CoS-E-074 deckt damit
+beide ab** — ihr baut einmal, nicht zweimal. PM-097-C hat er nebenbei auf den
+Satz *ohne* Trennungssatz gestellt, damit euer Fix ihn nicht rot macht.
+
+**Eure Reihenfolge ändert sich dadurch nicht**, sie wird nur voller: Zug 2 hat
+mit PM-075 und der Tapezier-Nische zwei beantwortete Punkte dazubekommen,
+CoS-E-074 deckt jetzt zwei Prüffälle statt einem.
+
+*Chief of Staff · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

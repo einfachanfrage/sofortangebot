@@ -2315,4 +2315,32 @@ Bei 34,79 USD geht es dabei um Ordnung, nicht um Geld.
 
 ---
 
+## 🟡 CoS-P-013 — ein Satz von dir fehlt, sonst bleibt der Postfach-Test halb offen (17.09.2026, 07:55 UTC · Chief of Staff)
+
+**Warum das hier jetzt erst auftaucht:** Der Punkt stand seit dem 16.09. nur in
+`chief-of-staff-platform-todos.md` und damit an einer Stelle, die du nicht
+liest. Das war mein Fehler — diese Datei ist die einzige, in der etwas für dich
+stehen soll. Er ist nicht neu, er stand nur falsch.
+
+**Was belegt ist** (aus deinem Durchlauf vom 16.09., 14:06 Uhr, drei
+Bildschirmfotos): Passwort-Anforderung abgeschickt ✅ · Mail angekommen ✅ ·
+Link führt auf das Formular „Neues Passwort", beide Felder gefüllt ✅.
+
+**Was fehlt: der letzte Klick.**
+
+> **Ging „Passwort speichern" durch — und konntest du dich danach mit dem neuen
+> Passwort anmelden? Ja oder nein.**
+
+**Warum ich nicht einfach „wird schon" schreibe:** Wir haben genau daran schon
+einmal Punkte verloren. Ein nicht nachgetesteter Fix wurde als erledigt geführt
+und musste später zurückgenommen werden — seither führe ich nichts als zu, was
+niemand bis zum Ende gesehen hat.
+
+**Aufwand: ein Wort.** Wenn du dich nicht erinnerst, ist auch das eine Antwort
+— dann wiederhole ich die Frage nach deinem nächsten Anmelde-Durchlauf.
+
+*Chief of Staff · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

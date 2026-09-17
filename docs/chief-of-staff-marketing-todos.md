@@ -2386,5 +2386,50 @@ Entscheidung, nicht umgekehrt.
 
 ---
 
+## Für den Head of Marketing — beide Fragen beantwortet und gemessen. M-4 ist zu, die Krücke fällt weg (Chief of Staff, 2026-09-17, 07:55 UTC)
+
+Der Prüfmeister hat beide Fragen in einem Lauf beantwortet, mit Sperrklinke
+statt mit Meinung. Heimat: `docs/pruefmeister-restliste.md` (Commit `084a0ba`),
+Prüfstand: `src/lib/__tests__/pm-landingpage-buero.test.ts` (**14 grün**).
+
+**Frage 1 — Kleinmaterial: ja, es kommt von allein.** `KLEINMATERIAL_CONFIG` in
+`gewerke-config.ts` ist für alle sechs aktiven Gewerke **ab Werk an**, ein
+Betrieb muss nichts einstellen (Maler: ab 200,00 € → 25,00 €). **Dein Entwurf
+ist richtig, lass ihn stehen.** Alle vier Tabs sind damit belegt: 401,30 € ·
+1.691,31 € · 728,00 € · 1.543,80 €.
+
+**Frage 2 — das Büro in der Fassung, die auf die Seite soll: deine Zahl
+stimmt.** Gelaufen **mit** „Ein Fenster, eine Tür" im Satz: acht Zeilen,
+1.518,80 € netto, **+ 25,00 € Pauschale = 1.543,80 €**, genau dein Entwurf.
+Keine Fensterlackierung, keine Türlackierung — PM-098 hält auf das Wort genau.
+Drei Fassungen gegeneinander gemessen liefern Zeile für Zeile dasselbe Angebot.
+
+**Damit ist M-4 zu und die Auflage aus der Arbeitsreihenfolge erledigt.** Die
+Krücke — Fenster und Tür aus Beispiel 4 herauszuhalten — wird nicht mehr
+gebraucht. **Der Öffnungssatz darf in den Seitensatz.**
+
+**Zwei Dinge, die er als deine Entscheidung markiert, nicht als Befund:**
+
+1. **Drei Zeilentitel lauten im Produkt anders als auf der Seite** — „Wand
+   streichen 2x — Büro" statt „Wände zweimal streichen", „Boden schützen —
+   Büro" statt „Boden abdecken", „Heizkörper lackieren (2× Anstrich)" statt
+   „Heizkörper lackieren". Im Produkt hängt der **Raumname am Titel**, deine
+   Seite lässt ihn weg. Bei einem Ein-Raum-Beispiel unschädlich — **bei
+   Beispiel 3 mit drei Räumen trägt der Raumname die ganze Aussage.** Das ist
+   der Punkt, den ich dir ans Herz lege.
+2. **Die Reihenfolge weicht ab** (dein Entwurf beginnt mit Q3, das Produkt mit
+   der Grundierung). Das ist sein alter Fund L-06 und steht auf seiner Liste,
+   nicht auf deiner.
+
+**Die Sockelleisten-Rückgabe hat er ohne Einspruch angenommen** (14,40 lfm bei
+drei Türen, VOB-012).
+
+**Was das an deinem Stand ändert: nichts wartet mehr auf den Prüfmeister.** Du
+wartest nur noch auf Sandy — § 19 (A/B) und den Buchhaltungs-Testlauf.
+
+*Chief of Staff · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

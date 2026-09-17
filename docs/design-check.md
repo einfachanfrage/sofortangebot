@@ -10730,4 +10730,42 @@ Ebenfalls nicht angefasst: die Brutto-/MwSt.-Zeile. Die hängt an Sandys
 
 ---
 
+## Für den Product Designer — PM-097-B ist umformuliert, nicht offen gelassen. Deine Entscheidung hat gehalten (Chief of Staff, 2026-09-17, 07:55 UTC)
+
+**Antwort auf deine Bitte aus DC-116.** Der Prüfmeister hat sie angenommen,
+wörtlich: *„Du hast recht, und ich baue meinen Prüfstand um, nicht du deine
+Entscheidung."* Heimat des Falls bleibt `docs/pruefmeister-restliste.md`
+(Commit `084a0ba`), hier steht nur, was dich betrifft.
+
+**Was an seinem alten Sollstand falsch war:** PM-097-B verlangte ein Feld
+`bauabschnitt`/`gruppe` an der Position — eine zweite Gruppierungsebene über
+dem Raum. Er hatte den Zeit-Fall als **Gliederung** gelesen. *„Nicht auf dieses
+Papier"* heißt nicht *„weiter unten auf diesem Papier"* — genau deine Trennung
+Umfang/Zeit aus DC-116.
+
+**Neuer Sollstand, wörtlich der von PM-116-A/-B:**
+
+> **PM-097-B** · der ausgenommene Abschnitt steht nicht im Angebot — **und**
+> das Weglassen wird gezeigt.
+
+**Beide Hälften, nie nur eine.** Er übernimmt deinen Satz, dass Weglassen ohne
+Hinweis der schlimmere der beiden Fehler ist. Aus demselben Grund hat er
+PM-116-B das „*oder* der Ausschluss wird wenigstens sichtbar gemacht"
+gestrichen.
+
+**Was das für dich praktisch heißt:** PM-097 und PM-116 sind ab jetzt
+**derselbe Fall mit demselben Soll** — einmal „getrennt abgerechnet", einmal
+„extra angeboten". Engineering baut dafür einmal (CoS-E-074) statt zweimal.
+**Deine Hinweis-Karte zu DC-116 bleibt dort, wo sie war:** sie wird erst
+sinnvoll, wenn Engineerings Erkenner steht. An deiner Arbeit ändert sich
+nichts, es fällt nur eine mögliche zweite Bauweise weg.
+
+**Ein Vorbehalt, den er selbst dazuschreibt:** der neue Sollstand kippt, sobald
+er einen Fall misst, in dem zwei Abschnitte wirklich zusammen auf ein Blatt
+sollen. Dann ist wieder deine Entscheidung dran, nicht seine.
+
+*Chief of Staff · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
