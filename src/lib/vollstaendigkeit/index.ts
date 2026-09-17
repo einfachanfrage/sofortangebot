@@ -2,6 +2,7 @@ import type { BerechnetePosition } from '../mengen/types'
 import { baueVerstaendnis, type ExtraktionSignale } from '../auftrags-verstaendnis'
 import { filtereErschwernis, type ErschwernisConfig } from '../erschwernis'
 import { entferneAusgeschlosseneBauteile } from '../bauteil-ausschluss'
+import { wendeFliesenrichtungAn } from '../fliesen-richtung'
 import {
   entferneZeitlichAusgenommene,
   zeitAusschlussHinweis,
@@ -131,8 +132,27 @@ export function pruefeUndErgaenzeVollstaendigkeit(
     if (!fehlende.includes(zeile)) fehlende.push(zeile)
   }
 
+  const nachZeit = entferneZeitlichAusgenommene(nachBauteil, zeitlichRaus, raumNamen)
+
+  // PM-061-A / PM-062-A (Auflage PM-123): die vierte Bremse, und nur für
+  // Fliesen. „Im Bad nur die Wandfliesen runter" — die Engine schreibt die
+  // Bodenzeilen trotzdem, weil sie das Diktat nicht liest. 324,50 € auf einer
+  // Arbeit, die der Kunde ausdrücklich ausgenommen hat.
+  //
+  // Am Ausgang aus demselben Grund wie die drei Bremsen darüber: Bodenzeilen
+  // entstehen in `fliesenEngine` UND in den Vollständigkeitsregeln.
+  //
+  // Sie räumt NUR weg, wo die Einschränkung wirklich im Satz steht — das Bad
+  // ohne „nur" behält alle seine Bodenzeilen (Auflage Punkt 4). Und sie
+  // bestätigt im selben Zug den Titel der Abbruchzeile, wo die Richtung
+  // feststeht (PM-062-B). Kein Fehlt-Eintrag: ausgenommen ist nicht
+  // vergessen (Auflage Punkt 3).
+  const nachRichtung = gewerk === 'fliesen'
+    ? wendeFliesenrichtungAn(nachZeit, transkript, raumNamen).positionen
+    : nachZeit
+
   return {
     fehlende,
-    positionen: entferneZeitlichAusgenommene(nachBauteil, zeitlichRaus, raumNamen),
+    positionen: nachRichtung,
   }
 }

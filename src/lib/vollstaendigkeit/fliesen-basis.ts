@@ -1,4 +1,5 @@
 import type { BerechnetePosition } from '../mengen/types'
+import { erkenneFliesenEinschraenkung } from '../fliesen-richtung'
 import { hat, add } from './helpers'
 
 export type FliesenBereich = {
@@ -9,8 +10,16 @@ export type FliesenBereich = {
 }
 
 export function erkenneFliesenBereich(ergaenzt: BerechnetePosition[], lower: string): FliesenBereich {
-  const nurBoden = lower.includes('nur boden') || lower.includes('nur bodenfliesen')
-  const nurWand = lower.includes('nur wand') || lower.includes('nur wandfliesen')
+  // PM-061-A (17.09.2026): Bis hierher stand an dieser Stelle
+  // `lower.includes('nur wand')`. Der gemessene Satz des Prüfmeisters heißt
+  // „Im Bad **nur die Wandfliesen** runter" — ein Artikel dazwischen, und die
+  // Einschränkung war unsichtbar. Die Erkennung steht jetzt in
+  // `fliesen-richtung.ts` und wird von dort UND von der Bremse am Ausgang
+  // gelesen: zwei Kopien wären zwei Wahrheiten, und sie wären genau an dem
+  // Satz auseinandergelaufen, der beides auslöst.
+  const einschraenkung = erkenneFliesenEinschraenkung(lower)
+  const nurBoden = einschraenkung.global === 'boden'
+  const nurWand = einschraenkung.global === 'wand'
   return {
     hatBoden:
       hat(ergaenzt, 'bodenfliesen') ||

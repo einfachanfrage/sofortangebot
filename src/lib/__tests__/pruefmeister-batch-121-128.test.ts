@@ -162,13 +162,24 @@ describe('PM-121 · Entsorgung Fliesenmaterial ist Fliesenschutt entsorgen', () 
     expect(preisVon('Fliesenschutt entsorgen — Bad', 'm²')).toBe(8)
   })
 
-  it('PM-121-K4 Kontrolle · heute steht 0,00 € da, und es ist die einzige Zeile des Bades ohne Preis', () => {
+  it('PM-121-K4 Kontrolle · es war die einzige Zeile des Bades ohne Preis — jetzt ist keine mehr übrig', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (Engineering, CoS-E-082)
+    //
+    // Diese Kontrolle hielt fest, dass `Entsorgung Fliesenmaterial` 0,00 €
+    // trägt und die einzige solche Zeile ist. Genau das ist gebaut worden
+    // (eine Zeile Synonym in `preis-matcher.ts`, wie PM-121 entschieden
+    // hat) — sie hat also die Fehlstellung gemessen und ist durch den Bau
+    // rot geworden. Der Satz des Prüfmeisters aus PM-097-C gilt: *eine
+    // Kontrolle, die der Fix rot macht, ist keine Kontrolle.*
+    //
+    // Gegenstand und Zählweise bleiben; nur die Richtung dreht sich. Was
+    // dieselbe Zeile kostet, steht unberührt in PM-121-K5.
     const p = POS_GANZ()
-    expect(preis(p, /^Entsorgung Fliesenmaterial/)).toBeNull()
+    expect(preis(p, /^Entsorgung Fliesenmaterial/)).toBe(8)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const ohnePreis = p.filter((z: any) => preisVon(z.beschreibung, z.einheit) === null)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(ohnePreis.map((z: any) => z.beschreibung.replace(/ — .*$/, ''))).toEqual(['Entsorgung Fliesenmaterial'])
+    expect(ohnePreis.map((z: any) => z.beschreibung.replace(/ — .*$/, ''))).toEqual([])
   })
 
   it('PM-121-K5 Kontrolle · der Geldweg, an drei Bädern gerechnet', () => {
@@ -178,13 +189,15 @@ describe('PM-121 · Entsorgung Fliesenmaterial ist Fliesenschutt entsorgen', () 
     expect(22 * satz).toBe(176)  // PM-117 — Engineerings Zahl, nachgerechnet
   })
 
-  it.fails('PM-121-A 🔴 SOLL: `Entsorgung Fliesenmaterial` findet 8,00 €/m²', () => {
+  // `.fails` gestrichen am 17.09.2026 (Engineering, CoS-E-082) — gebaut.
+  it('PM-121-A 🔴 SOLL: `Entsorgung Fliesenmaterial` findet 8,00 €/m²', () => {
     // Die Zusicherung schlägt an, sobald das Synonym gebaut ist. Entschieden
     // ist sie mit dieser Datei — Engineering darf bauen.
     expect(preis(POS_GANZ(), /^Entsorgung Fliesenmaterial/)).toBe(8)
   })
 
-  it.fails('PM-121-B 🔴 SOLL: danach trägt keine Zeile dieses Bades mehr 0,00 €', () => {
+  // `.fails` gestrichen am 17.09.2026 (Engineering, CoS-E-082) — gebaut.
+  it('PM-121-B 🔴 SOLL: danach trägt keine Zeile dieses Bades mehr 0,00 €', () => {
     const p = POS_GANZ()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     for (const z of p) expect(preisVon(z.beschreibung, z.einheit), z.beschreibung).not.toBeNull()
@@ -293,26 +306,42 @@ describe('PM-122 · der Titel der Duschnische bleibt', () => {
 //      allein zielt, bricht sie.
 // ───────────────────────────────────────────────────────────────────────────
 describe('PM-123 · Auflage zu PM-061-A', () => {
-  it('PM-123-K1 Kontrolle · der Stand heute, Zeile für Zeile', () => {
+  it('PM-123-K1 Kontrolle · der Stand nach dem Bau, Zeile für Zeile', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (Engineering, CoS-E-082)
+    //
+    // Hier standen die sieben Zeilen und die 1.638,02 € von heute morgen —
+    // der Fund selbst. Drei davon sind weg (PM-123-A), eine heißt jetzt
+    // nach ihrer Richtung (PM-062-B), und die Summe steht auf dem Soll des
+    // Prüfmeisters. Die alte Liste ist damit keine Kontrolle mehr.
+    //
+    // Die alte Fassung, damit der Weg nachlesbar bleibt:
+    //   Bodenfliesen verlegen · Verfugung Boden · Wandfliesen verlegen ·
+    //   Verfugung Wand · Fliesensockel / Abschlussleiste ·
+    //   Altfliesen abstemmen · Entsorgung Fliesenmaterial  →  1.638,02 €
     const p = POS_NUR_WAND()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(titel(p).map((t: string) => t.replace(/ — .*$/, ''))).toEqual([
-      'Bodenfliesen verlegen', 'Verfugung Boden', 'Wandfliesen verlegen',
-      'Verfugung Wand', 'Fliesensockel / Abschlussleiste',
-      'Altfliesen abstemmen', 'Entsorgung Fliesenmaterial',
+      'Wandfliesen verlegen', 'Verfugung Wand',
+      'Altfliesen abstemmen, Wand', 'Entsorgung Fliesenmaterial',
     ])
-    expect(summeNetto(p)).toBe(1638.02)
+    expect(summeNetto(p)).toBe(1529.52)
   })
 
-  it('PM-123-K2 Kontrolle · die 324,50 € sind seit CoS-E-078 echtes Geld, nicht mehr Papier', () => {
-    // Vorher trugen diese drei Zeilen 0,00 € und fielen niemandem auf.
+  it('PM-123-K2 Kontrolle · die 324,50 € stehen nicht mehr auf dem Kundenpapier', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (Engineering, CoS-E-082)
+    //
+    // Hier stand, dass die drei Bodenzeilen seit CoS-E-078 ihren Preis
+    // finden — 38,00 € · 10,00 € · 12,00 €, zusammen 324,50 € auf einer
+    // Arbeit, die der Kunde ausgenommen hat. Das war der Fund, und er ist
+    // gebaut: die Zeilen sind weg. Der Betrag wird weiter aus dem Katalog
+    // gerechnet — er ist die Zahl, um die es ging und bleibt unberührt.
     const p = POS_NUR_WAND()
     const boden = 4.75 * katalog('Bodenfliesen Standard (30×30 bis 60×60cm), gerade, Q2')
     const fuge = 4.32 * katalog('Verfugen Boden')
     const sockel = 8.4 * katalog('Sockelleiste / Fliesensockel verlegen')
-    expect(preis(p, /^Bodenfliesen verlegen/)).toBe(38)
-    expect(preis(p, /^Verfugung Boden/)).toBe(10)
-    expect(preis(p, /^Fliesensockel/)).toBe(12)
+    expect(preis(p, /^Bodenfliesen verlegen/)).toBeNull()
+    expect(preis(p, /^Verfugung Boden/)).toBeNull()
+    expect(preis(p, /^Fliesensockel/)).toBeNull()
     expect(Math.round((boden + fuge + sockel) * 100) / 100).toBe(324.5)
   })
 
@@ -336,7 +365,9 @@ describe('PM-123 · Auflage zu PM-061-A', () => {
     expect(Math.round(soll * 100) / 100).toBe(1529.52)
   })
 
-  it.fails('PM-123-A 🔴 SOLL (Auflage 1): alle drei Bodenzeilen fallen weg, der Sockel auch', () => {
+  // `.fails` gestrichen am 17.09.2026 (Engineering, CoS-E-082) — gebaut in
+  // `fliesen-richtung.ts`; der Sockel steht dort ausdrücklich im Muster.
+  it('PM-123-A 🔴 SOLL (Auflage 1): alle drei Bodenzeilen fallen weg, der Sockel auch', () => {
     const p = POS_NUR_WAND()
     expect(finde(p, /^Bodenfliesen verlegen/), 'Bodenfliesen').toBeUndefined()
     expect(finde(p, /^Verfugung Boden/), 'Verfugung Boden').toBeUndefined()
@@ -352,7 +383,10 @@ describe('PM-123 · Auflage zu PM-061-A', () => {
     expect(finde(p, /^Altfliesen abstemmen/)!.menge).toBe(18)
   })
 
-  it.fails('PM-123-C 🔴 SOLL (Auflage, ganz): das Angebot steht bei 1.529,52 €', () => {
+  // `.fails` gestrichen am 17.09.2026 (Engineering, CoS-E-082): PM-061-A,
+  // PM-062-A und PM-121 sind zusammen gebaut. PM-124-A (beide Richtungen,
+  // zwei Zeilen) steht weiter offen und ist hier nicht enthalten.
+  it('PM-123-C 🔴 SOLL (Auflage, ganz): das Angebot steht bei 1.529,52 €', () => {
     // Die Zusicherung gegen den halben Fix. Sie schlägt erst an, wenn
     // PM-061-A, PM-062-A und PM-121 zusammen gebaut sind.
     expect(summeNetto(POS_NUR_WAND())).toBe(1529.52)

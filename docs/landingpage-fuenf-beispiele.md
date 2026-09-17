@@ -30,7 +30,7 @@ nicht, wenn was fehlt."
 | **Summe netto** | | | **728,00 €** |
 
 **Beleg unter „Wand streichen 2x":**
-`18,00 lfdm Umfang × 2,60 m · Fenster und Tür unter 2,5 m² nach VOB nicht abgezogen`
+`18,00 lfm Umfang × 2,60 m · Fenster und Tür unter 2,5 m² nach VOB nicht abgezogen`
 
 Das ist die wichtigste Zeile der ganzen Sektion. Sie beweist in einem Halbsatz,
 dass hier nach Norm gerechnet wird. **Nicht kürzen, auch nicht auf dem Handy.**
@@ -51,7 +51,7 @@ dass hier nach Norm gerechnet wird. **Nicht kürzen, auch nicht auf dem Handy.**
 |---|---|---|---|
 | Trittschalldämmung | 14,00 m² | | 63,00 € |
 | Laminat verlegen, schwimmend | 14,70 m² | | 205,80 € |
-| Sockelleisten montieren | 15,00 lfm | | 82,50 € |
+| Sockelleisten montieren | 15,00 lfdm | | 82,50 € |
 | Übergangsschiene | 1 Stück | | 15,00 € |
 | Kleinmaterial | 1 pauschal | Vorschlag | 35,00 € |
 | **Summe netto** | | | **401,30 €** |

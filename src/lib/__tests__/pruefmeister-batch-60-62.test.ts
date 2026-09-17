@@ -99,16 +99,25 @@ describe('PM-060 — Bad komplett neu fliesen, Nassbereich', () => {
     //     gibt keine.
     //
     // Ob `Entsorgung Fliesenmaterial` und `Fliesenschutt entsorgen` dieselbe
-    // Arbeit sind, ist ein Wortlaut und gehört ihm. **Nicht entschieden, die
-    // Frage liegt in seiner Datei.** Gebaut ist der Stand aus PM-117 (keine
-    // Zeile), weil dessen Sollspalte die jüngere der beiden ist und weil
-    // PM-117-B daran misst. Kippt seine Antwort, ist es eine Zeile
-    // Synonym — dann schlägt diese Zusicherung an.
+    // Arbeit sind, ist ein Wortlaut und gehört ihm. Gebaut war der Stand aus
+    // PM-117 (keine Zeile) — und darunter stand der Satz: *„Kippt seine
+    // Antwort, ist es eine Zeile Synonym — dann schlägt diese Zusicherung
+    // an."*
+    //
+    // ── Sie hat angeschlagen, 17.09.2026 nachmittags (CoS-E-082) ─────────
+    //
+    // **Seine Antwort ist gekippt: PM-121.** Er hat PM-117 selbst
+    // richtiggestellt — „der Matcher findet nichts" und „es gibt keine
+    // Katalogzeile" sind zwei verschiedene Sätze, und nur der erste stimmte.
+    // `Entsorgung Fliesenmaterial` IST `Fliesenschutt entsorgen`, 8,00 €/m².
+    // Eine Zeile Synonym in `preis-matcher.ts`, wie hier vorhergesagt.
+    //
+    // Die Kontrolle zählt weiter dasselbe und auf dieselbe Weise; nur steht
+    // jetzt **null** statt eins. Der Titel dieser Zusicherung bleibt stehen,
+    // damit der Weg nachlesbar ist: sieben → eine → keine.
     const p = pos()
     const ohnePreis = p.filter(z => preis(p, new RegExp(z.beschreibung.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')) === null)
-    expect(ohnePreis.map(z => z.beschreibung.replace(/ — .*$/, '')).sort()).toEqual([
-      'Entsorgung Fliesenmaterial',
-    ])
+    expect(ohnePreis.map(z => z.beschreibung.replace(/ — .*$/, '')).sort()).toEqual([])
     // Was die sieben Zeilen kosten würden, fänden sie ihre Katalogzeile:
     const summe =
       4.75 * katalog('Bodenfliesen Standard (30×30 bis 60×60cm), gerade, Q2')
@@ -163,7 +172,9 @@ describe('PM-060 — Bad komplett neu fliesen, Nassbereich', () => {
     expect(preis(pos(), /verbundabdichtung wand/i)).toBe(28)
   })
 
-  it.fails('SOLL: ein aktives Gewerk bringt für jede erzeugte Zeile einen Preis mit', () => {
+  // `.fails` gestrichen am 17.09.2026 (CoS-E-082): Mit PM-121 findet auch die
+  // letzte Zeile des Bades ihren Katalogpreis. Die Sperrklinke ist zu.
+  it('SOLL: ein aktives Gewerk bringt für jede erzeugte Zeile einen Preis mit', () => {
     const p = pos()
     for (const z of p) {
       expect(preis(p, new RegExp(z.beschreibung.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'))).not.toBeNull()
@@ -196,20 +207,34 @@ describe('PM-061 — „nur die Wandfliesen": der Boden wird trotzdem berechnet'
     expect(finde(pos(), /verfugung wand/i).menge).toBe(17.64)
   })
 
-  it.fails('PM-061-A SOLL: keine Bodenzeile, wenn „nur die Wandfliesen" gesagt ist', () => {
+  // `.fails` gestrichen am 17.09.2026 (CoS-E-082): `fliesen-richtung.ts`
+  // räumt die Bodenarbeit weg, wenn die Einschränkung im Satz steht. Die
+  // Gegenprobe (das Bad ohne „nur" behält alles) steht in PM-123-K3.
+  it('PM-061-A SOLL: keine Bodenzeile, wenn „nur die Wandfliesen" gesagt ist', () => {
     const p = pos()
     expect(finde(p, /bodenfliesen verlegen/i)).toBeUndefined()
     expect(finde(p, /verfugung boden/i)).toBeUndefined()
     expect(finde(p, /fliesensockel/i)).toBeUndefined()
   })
 
-  it('der Geldweg dazu: 324,50 € Arbeit, die niemand bestellt hat', () => {
-    // Zu heutigen Katalogpreisen, sobald PM-060-A behoben ist. Solange die
-    // Zeilen 0,00 € tragen, ist es „nur" Papier — danach ist es Geld.
+  it('der Geldweg dazu: 324,50 €, die das Angebot nicht mehr trägt', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (CoS-E-082) ──────────
+    //
+    // Hier stand „324,50 € Arbeit, die niemand bestellt hat", und gemessen
+    // wurden die MENGEN der drei Bodenzeilen im Angebot. Genau diese drei
+    // Zeilen sind jetzt weg — die Kontrolle hat die Fehlstellung gemessen
+    // und ist durch den Bau rot geworden. Derselbe Satz des Prüfmeisters
+    // wie bei PM-097-C und PM-060-A: *eine Kontrolle, die der Fix rot
+    // macht, ist keine Kontrolle.*
+    //
+    // Sein Betrag bleibt unberührt und wird weiter aus dem Katalog
+    // gerechnet — er ist die Zahl, um die es ging. Geprüft wird ab jetzt,
+    // dass das Angebot ihn nicht mehr trägt: dieselben drei Zeilen,
+    // dieselbe Rechnung, andere Richtung.
     const p = pos()
-    expect(finde(p, /bodenfliesen verlegen/i).menge).toBe(4.75)
-    expect(finde(p, /verfugung boden/i).menge).toBe(4.32)
-    expect(finde(p, /fliesensockel/i).menge).toBe(8.4)
+    for (const m of [/bodenfliesen verlegen/i, /verfugung boden/i, /fliesensockel/i]) {
+      expect(finde(p, m), String(m)).toBeUndefined()
+    }
     const summe = 4.75 * katalog('Bodenfliesen Standard (30×30 bis 60×60cm), gerade, Q2')
       + 4.32 * katalog('Verfugen Boden')
       + 8.4 * katalog('Sockelleiste / Fliesensockel verlegen')
@@ -235,16 +260,29 @@ describe('PM-062 — Altfliesen abstemmen: der Titel sagt nicht, welche', () => 
     expect(katalog('Altfliesen Wand abstemmen')).toBe(22)
   })
 
-  it.fails('PM-062-A SOLL: bei Wandfliesen der Wandpreis — 22,00 € statt 18,00 €', () => {
+  // `.fails` gestrichen am 17.09.2026 (CoS-E-082). Erfüllt ist die Auflage
+  // PM-124 und NICHT durch einen Preiswechsel: der Titel nennt die Richtung,
+  // sobald sie aus dem Diktat feststeht, und trifft damit die Katalogzeile,
+  // die dieser Arbeit entspricht. Fallen BEIDE Richtungen, bleibt die Zeile
+  // unverändert — die Aufteilung ist PM-124-A und steht weiter offen.
+  it('PM-062-A SOLL: bei Wandfliesen der Wandpreis — 22,00 € statt 18,00 €', () => {
     expect(preis(pos(), /altfliesen abstemmen/i)).toBe(22)
   })
 
-  it('heute: 18,00 €/m², auf 18 m² sind das 72,00 € zu wenig', () => {
-    expect(preis(pos(), /altfliesen abstemmen/i)).toBe(18)
+  it('der Geldweg: 72,00 €, die der Betrieb jetzt bekommt', () => {
+    // ── Repariert, nicht umgeschrieben, 17.09.2026 (CoS-E-082) ──────────
+    //
+    // Hier stand „heute: 18,00 €/m²" — der Bodenpreis auf Wandabbruch. Das
+    // war die Fehlstellung selbst; sie ist gebaut und die Zeile damit rot
+    // geworden. Der Betrag des Prüfmeisters bleibt unberührt stehen, die
+    // Richtung dreht sich: gemessen wird ab jetzt, dass die 4,00 €/m²
+    // ankommen. Ohne „nur" bliebe es bei 18,00 € (PM-124-K2).
+    expect(preis(pos(), /altfliesen abstemmen/i)).toBe(22)
     expect(18 * (22 - 18)).toBe(72)
   })
 
-  it.fails('PM-062-B SOLL: der Titel nennt das Bauteil, das abgestemmt wird', () => {
+  // `.fails` gestrichen am 17.09.2026 (CoS-E-082).
+  it('PM-062-B SOLL: der Titel nennt das Bauteil, das abgestemmt wird', () => {
     expect(finde(pos(), /altfliesen abstemmen/i).beschreibung).toMatch(/wand/i)
   })
 })

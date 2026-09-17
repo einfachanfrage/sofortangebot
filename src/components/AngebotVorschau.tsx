@@ -320,14 +320,27 @@ export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRech
 
         {/* POSITIONEN-TABELLE */}
         <div>
-          {/* Tabellenkopf */}
-          <div className="bg-anthracite text-white flex rounded text-[9px] font-bold py-2 px-2.5 mb-0.5">
-            <span style={{ width: '6%' }}>#</span>
+          {/* Tabellenkopf — DC-127 (2026-09-17): Hier stand eine dunkle
+              Fläche mit weißer Fettschrift. Auf dem Papier, das der Kunde in
+              die Hand bekommt, steht an derselben Stelle eine kleine graue
+              Zeile über einer dünnen Linie (lib/pdf.tsx, S.tableHeader /
+              S.thText) — ein Spaltentitel, kein Balken. Die Vorschau zeigt
+              jetzt das, und nicht mehr eine eigene Gestaltung: Größe 7 statt
+              9 wie dort, Versalien mit Sperrung, #999 auf Weiß, Linie
+              #AAA. Auch die Wörter sind die des Papiers — „Einh."/
+              „Einzelpr."/„Gesamt" waren Abkürzungen, die das Dokument nicht
+              kennt; ausgeschrieben passen sie in dieselben Spalten, weil der
+              Kopf jetzt kleiner ist als die Zeilen darunter.
+              Die Spaltenbreiten bleiben bewusst die dieser Vorschau: sie
+              gehören den Zeilen genauso wie dem Kopf, und die Zeilen sind
+              nicht Gegenstand dieses Tickets. */}
+          <div className="flex px-2.5 pb-1.5 mb-0.5 border-b border-[#AAAAAA] text-[7px] font-semibold uppercase tracking-[0.08em] text-[#999999]">
+            <span style={{ width: '6%' }}>Pos</span>
             <span style={{ width: '40%' }}>Bezeichnung</span>
             <span style={{ width: '12%', textAlign: 'right' }}>Menge</span>
-            <span style={{ width: '10%', textAlign: 'center' }}>Einh.</span>
-            <span style={{ width: '16%', textAlign: 'right' }}>Einzelpr.</span>
-            <span style={{ width: '16%', textAlign: 'right' }}>Gesamt</span>
+            <span style={{ width: '10%', textAlign: 'center' }}>Einheit</span>
+            <span style={{ width: '16%', textAlign: 'right' }}>Einzelpreis</span>
+            <span style={{ width: '16%', textAlign: 'right' }}>Gesamtpreis</span>
           </div>
 
           {/* Zeilen — DC-049 PDF-Schritt Nachtrag Teil 2 (2026-09-11): jetzt

@@ -2974,5 +2974,48 @@ Website-Schalter hängt weiter an **CoS-038**.
 ---
 
 
+## 📢 Neue Landingpage: Entwurf liegt unter eigener Adresse — live ist noch die alte Seite
+
+**Datum:** 2026-09-17 · Chief of Staff · Quelle: Sandy
+
+**Entwurf (NICHT live):**
+`https://sofortangebot-landingpage-entwurf-einfachanfrages-projects.vercel.app`
+
+**Live unter `sofortangebot.app` ist weiterhin die alte Seite** — eine reine
+Warteliste: Ueberschrift *Schluss mit stundenlangen Angeboten.*, darunter
+*Einfach aufs Handy sprechen — sofortangebot rechnet, schreibt und schickt.
+Fuer Maler und Bodenleger.* und ein Feld *Frueher Zugang — trag dich ein*.
+Kein Preis, keine Erklaerung, kein Weg ins Produkt.
+
+**Warum das fuer euch zaehlt:**
+
+1. **Verwechselt die beiden nicht.** Wer *sofortangebot.app* aufruft und die
+   neue Seite bewerten will, bewertet die falsche. Der Entwurf hat eine eigene
+   Adresse, und nur dort steht der neue Text.
+2. **Gate-1-Punkt 9.1 haengt genau an dieser Unterscheidung.** Live erfuellt
+   die Seite den Punkt nicht — eine Warteliste erklaert einem Malermeister
+   nicht, was das Produkt tut. Der Entwurf tut es, ist aber nicht
+   veroeffentlicht. **Der Punkt bleibt deshalb auf 0, bis der Entwurf live
+   ist und die offenen Stopper raus sind.**
+3. **Die Stopper sind bekannt und nicht erledigt:** die ausgewiesene
+   Mehrwertsteuer trotz § 19 UStG, die Zeile *18 von 25 Plaetzen frei* bei
+   null Kunden, die Behauptung *echte Aufnahmen, echte Angebote*, dazu vier
+   Gratis-Versprechen, die sich widersprechen. **Nichts davon geht live,
+   bevor Sandy entschieden hat.**
+
+**Schaut euch beide Seiten selbst an** — der Browser in der Claude-App kommt
+an beide Adressen. Urteilt nicht nach Beschreibung, auch nicht nach meiner.
+
+**Fuer dich im Besonderen:** Der Entwurf ist deine Arbeit und er traegt —
+Finance hat ausdruecklich festgehalten, dass die vier Beispielangebote auf
+den Cent stimmen und das Gruenderpreis-Versprechen exakt zum Finanzplan
+passt. **Die Stopper sind kein Urteil ueber die Seite, sondern ueber vier
+Saetze darin.** Zieh sie heraus oder formuliere sie so um, dass sie wahr
+sind, und leg die Fassung dann Sandy vor. Der Live-Schalter gehoert ihr.
+
+*Chief of Staff · 2026-09-17*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

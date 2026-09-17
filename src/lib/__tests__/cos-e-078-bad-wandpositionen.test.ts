@@ -95,13 +95,29 @@ describe('CoS-E-078 — das Bad findet seine Preise', () => {
     }
   })
 
-  it('2 · `Entsorgung Fliesenmaterial` bleibt bewusst ohne Preis — der Prüfmeister hat „keine Katalogzeile" als Soll notiert', () => {
-    // Die einzige der neun Zeilen, die auch nach dem Bau 0,00 € trägt. Das
-    // ist kein Rest, den jemand vergessen hat, sondern die Sollspalte: der
-    // Katalog führt für diese Arbeit keine Zeile. Hier festgehalten, damit
-    // niemand sie später „mitrepariert" und dabei einen Preis erfindet.
+  it('2 · `Entsorgung Fliesenmaterial` findet ihre 8,00 €/m² — und danach trägt keine Zeile mehr 0,00 €', () => {
+    // ── Richtiggestellt am 17.09.2026, nachmittags ──────────────────────
+    //
+    // An dieser Stelle stand bis CoS-E-082 das Gegenteil: „bleibt bewusst
+    // ohne Preis, der Prüfmeister hat ‚keine Katalogzeile‘ als Soll
+    // notiert". Ich habe damit eine Notiz aus PM-117 als Katalogaussage
+    // festgeschrieben — und mir dabei nicht angesehen, ob sie stimmt.
+    //
+    // Sie stimmt nicht. Der Prüfmeister hat sie in PM-121 selbst
+    // richtiggestellt: „Der Matcher findet nichts" und „es gibt keine
+    // Katalogzeile" sind zwei verschiedene Sätze. `Fliesenschutt entsorgen
+    // (Container / Absackung)` steht im Katalog, rechnet in derselben
+    // Einheit und hängt an derselben Fläche — es ist dieselbe Arbeit.
+    //
+    // Die Lehre gehört zu dieser Datei und nicht in eine Dokuzeile: **Eine
+    // Zusicherung, die einen Preis auf 0,00 € festnagelt, muss sagen, WER
+    // das entschieden hat, und nicht nur, dass es heute so gemessen wird.**
+    // Sonst hält die nächste Runde einen Messwert für eine Entscheidung.
     const z = finde(pos, /^Entsorgung Fliesenmaterial/)
-    expect(preis(z.beschreibung, z.einheit)).toBe(0)
+    expect(preis(z.beschreibung, z.einheit)).toBe(8)
+    for (const zeile of pos) {
+      expect(preis(zeile.beschreibung, zeile.einheit), zeile.beschreibung).toBeGreaterThan(0)
+    }
   })
 
   // ── 3.–8. Die Gegenproben: was der Eingriff NICHT anfassen durfte ───────
@@ -219,7 +235,12 @@ describe('CoS-E-078 — das Bad findet seine Preise', () => {
     // einer der beiden Eingriffe später einmal zurückgedreht wird.
     const summe = (zeilen: Zeile[]) => Math.round(
       zeilen.reduce((s, z) => s + preis(z.beschreibung, z.einheit) * z.menge, 0) * 100) / 100
-    expect(summe(pos)).toBe(2980.44)
+    // 3.156,44 € seit CoS-E-082: die 2.980,44 € des Prüfmeisters plus die
+    // 176,00 €, die `Entsorgung Fliesenmaterial` auf diesem Bad (22 m²)
+    // dazubringt, seit PM-121 das Synonym entschieden hat. Die Trennung
+    // darunter bleibt, wie sie war — sie beschreibt CoS-E-078.
+    expect(summe(pos)).toBe(3156.44)
+    expect(Math.round((3156.44 - 22 * 8) * 100) / 100).toBe(2980.44)
     // 543,84 € war der Stand vor dem Bau, 652,96 € der Router-Anteil.
     expect(Math.round((2980.44 - 543.84 - 652.96) * 100) / 100).toBe(1783.64)
   })

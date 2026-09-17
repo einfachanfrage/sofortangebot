@@ -47,6 +47,23 @@ const SYNONYME: Array<[RegExp, string]> = [
   // Substantiv und Verb sind hier dieselbe Arbeit; dasselbe Muster wie
   // `herstellen`/`anlegen`/`setzen` eine Zeile tiefer.
   [/verfugung/g, 'verfugen'],
+  // PM-121 (Prüfmeister 17.09.2026, Antwort auf Engineerings Frage 1): Die
+  // Engine schreibt `Entsorgung Fliesenmaterial`, der Katalog führt
+  // `Fliesenschutt entsorgen (Container / Absackung)` (8,00 €/m²). Nach der
+  // Normalisierung haben beide Seiten NULL Wörter gemeinsam — kein Treffer,
+  // 0,00 € auf jedem Bad mit Altbelag (128,00 € · 144,00 € · 176,00 € an den
+  // drei gemessenen Bädern).
+  //
+  // Dass es dieselbe Arbeit ist, ist entschieden und nicht geraten: Die Menge
+  // hängt an der abgestemmten Fläche („Gleiche Fläche wie Demontage"), nicht
+  // an der verlegten — das ist Abbruchschutt. Die Einheit ist dieselbe (m²).
+  // Und die beiden Gegenkandidaten scheiden an der Einheit aus:
+  // `Fliesenreste / Bruch entsorgen` rechnet pauschal (das ist der Verschnitt
+  // der NEUEN Fliesen), `Altbelag-Schutt entsorgen (Container)` in m³.
+  //
+  // Der gedruckte Titel bleibt, wie er ist: „Entsorgung Fliesenmaterial" sagt
+  // dem Kunden, was weggefahren wird — „Fliesenschutt" ist Katalogsprache.
+  [/entsorgung fliesenmaterial/g, 'fliesenschutt entsorgen'],
   // Dieselbe Familie, dieselbe Zeile im Bad: Die Engine schreibt
   // `Fliesensockel / Abschlussleiste`, der Katalog `Sockelleiste /
   // Fliesensockel verlegen` (12,00 €/lfdm). Kein Katalogtitel im ganzen

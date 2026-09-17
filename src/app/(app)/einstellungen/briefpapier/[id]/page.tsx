@@ -87,8 +87,15 @@ function BriefpapierVorschau({ bp, company }: { bp: Partial<Briefpapier>; compan
 
         {/* Tabelle */}
         <div className="rounded overflow-hidden">
-          <div className="flex text-[6px] font-bold text-white px-1.5 py-1" style={{ background: '#2C2C2C' }}>
-            <span style={{ width: '6%' }}>#</span>
+          {/* DC-127 (2026-09-17): Auch hier stand eine dunkle Fläche mit
+              weißer Schrift, während das Dokument an derselben Stelle graue
+              Spaltentitel über einer dünnen Linie druckt. Diese Kachel ist
+              ein Daumennagel und kein Dokument — sie behält ihre kürzeren
+              Spaltenwörter, weil bei 6 px „Einzelpreis" nicht mehr in die
+              Spalte passt. Der Balken geht trotzdem: er war das, was die
+              Kachel anders aussehen ließ als das Papier. */}
+          <div className="flex text-[5px] font-semibold uppercase tracking-[0.08em] text-[#999999] px-1.5 pb-0.5 border-b border-[#AAAAAA]">
+            <span style={{ width: '6%' }}>Pos</span>
             <span style={{ width: '40%' }}>Bezeichnung</span>
             <span style={{ width: '12%', textAlign: 'right' }}>Menge</span>
             <span style={{ width: '10%', textAlign: 'center' }}>Einh.</span>
