@@ -10652,4 +10652,158 @@ starten kannst nur du ihn bei dir. **Keine neue Datei angelegt, also kein
 *Head of Product Engineering · 2026-09-17, 18:05 UTC*
 
 
+---
+
+## ✅ CoS-E-084 — PM-102 und PM-103 sind gebaut. Der teurere der beiden saß nicht dort, wo er aussah (17.09.2026, 18:55 UTC · Head of Product Engineering)
+
+**Platz 2 der Reihenfolge ist zu.** Zwei Funde, ein Diktat, drei Ursachen —
+zwei davon an einer Stelle, an der niemand gesucht hätte.
+
+### 1. Was jetzt gilt
+
+| Fall | Diktat | vorher | jetzt | Geld |
+|---|---|---|---|---|
+| **PM-102-A** | „Alte Tapete muss runter. Danach Wände und Decke zweimal weiß." (Arbeitenliste enthält `tapezieren`) | keine Wandposition, keine Sockelleisten | **Wand streichen 2x · 65,96 m²** + Sockelleisten | **626,62 €** *für* den Betrieb |
+| **PM-102-C** (Live-Form) | dieselbe Ansage, Arbeitenliste enthält `tapete aufziehen` | zusätzlich `Tapete tapezieren` 65,96 m² × 26,00 € | **keine Tapezierzeile**, Wandanstrich steht | **1.714,96 €** weniger auf dem Kundenpapier |
+| **PM-103-A** | „Altbauwohnzimmer, …" | `Erschwerniszuschlag Altbau 20 % · 460,20 €` | **kein Zuschlag** | **460,20 €** |
+
+Alle drei Zahlen sind an der Pipeline gemessen, nicht gerechnet — und alle
+drei Zusicherungen sind **vor dem Bau rot gewesen**: ich habe meine vier
+Dateien kurz gegen die Fassung aus `HEAD` getauscht und dieselbe Testdatei
+erneut gefahren (4 rot, 5 grün — die fünf grünen sind die Gegenproben, die
+vorher wie nachher halten müssen), danach byte-gleich zurückgestellt (`cmp`).
+
+### 2. PM-102 hat zwei Ursachen, und die teurere liegt nicht bei der Tapete
+
+Der Prüfmeister hat gemessen: *„Sobald `tapezieren` in den Raumarbeiten steht,
+fällt der Wandanstrich ersatzlos weg."* Das stimmt — nur liegt es nicht an der
+Tapezier-Regel.
+
+**Ursache 1: der Scope PRO RAUM.** Die Extraktion gibt dem Raum
+`["tapete entfernen", "tapezieren", "decke_streichen"]` mit. In dieser Liste
+kommt das Wort **„Wand" nicht vor**, „Decke" schon. Damit greift die
+**schwächste** Scope-Regel — *„eine Fläche wurde genannt, die andere nicht"* —
+und schließt daraus „nur Decke". Die Vollständigkeitsprüfung löscht daraufhin
+`Wand streichen 2x` **und** `Sockelleisten abkleben`.
+
+Für den **globalen** Scope ist genau dieser Fall längst entschärft (PM-026,
+`schwachUndUeberstimmbar`). Der **Raum**-Scope hatte die Ausnahme nie — und er
+sticht den globalen, sobald ein Raumname erkannt wird. Dieselbe Fehlerklasse
+wie PM-017 und PM-026, eine Ebene weiter innen, zum dritten Mal.
+
+Die Regel dagegen ist ein Satz: **Tapezierarbeiten sind Wandarbeiten, auch wenn
+das Wort „Wand" nicht darin vorkommt.** Bewusst eng gefasst auf `tapete`,
+`tapezier`, `raufaser` — „spachteln", „grundieren" und „vlies" stehen
+ausdrücklich **nicht** dort, die gibt es auch am Boden. Eine ausdrückliche
+Einschränkung („nur die Decke") ist unberührt: die hat eine andere Herkunft und
+wiegt weiter schwerer. Gegenprobe steht als eigene Zusicherung.
+
+**Ursache 2: eine erfundene Arbeit hat die ausgesprochene überstimmt.** Die
+Live-Zeile `Tapete tapezieren` (1.714,96 €) entsteht, weil die Regel „Tapete
+runter, danach streichen" sich selbst abschaltet, sobald irgendwo die Kategorie
+`tapezieren` auftaucht. Diese Kategorie ist aber die **Vereinigung** aus Diktat
+**und** Arbeitenliste — sie kam hier allein aus dem extrahierten „tapete
+aufziehen". Im Diktat steht davon kein Wort. Jetzt zählt an dieser Stelle nur
+noch, was im **Diktat** steht.
+
+**Der Preis dieser Richtung, offen benannt:** erkennt der Normalisierer eine
+echte Tapezier-Ansage im Diktat nicht, fällt die Tapezierzeile weg, obwohl sie
+bestellt war. Das ist die billigere der beiden Richtungen — eine fehlende Zeile
+sieht der Handwerker beim Durchsehen, eine erfundene 1.714,96-€-Zeile zahlt der
+Kunde. Die Gegenprobe („Tapete runter, danach neue Raufaser drauf") steht als
+Zusicherung daneben und ist grün.
+
+### 3. PM-103: zwei Schranken, und die erste Fassung der zweiten war selbst der Fehler
+
+„Altbau" zählt nur noch als **eigenes Wort** — `Altbauwohnzimmer`,
+`Altbaufenster`, `Altbautür` lösen nichts mehr aus. Dazu werden **Raumnamen aus
+der Aufnahme** vorher aus dem Text genommen, damit auch ein Raum, der wirklich
+„Altbau" heißt, nichts auslöst.
+
+**🟡 Der Fund beim Bauen, und er ist es wert:** Die erste Fassung der zweiten
+Schranke schnitt die Raumnamen mit `split(name).join(' ')` heraus — **ohne
+Wortgrenze**. Die Prüfmeister-Fälle nennen ihre Räume `W`. Damit wurde jedes
+einzelne **„w"** aus dem Transkript gelöscht: aus „Altbauwohnzimmer" wurde
+„altbau ohnzimmer" — und der Zuschlag feuerte **erst recht**, weil das Wort
+danach allein stand. Ein Filter, der genau den Fall herstellt, gegen den er
+gebaut ist. Gefunden hat es keine Überlegung, sondern eine Probe, die den
+tatsächlich geprüften Text ausgedruckt hat. Jetzt: ganze Wörter, und Namen
+unter drei Zeichen bleiben stehen.
+
+**Bewusst mit Enge erkauft:** „Altbau**wohnung**" löst jetzt ebenfalls nichts
+mehr aus — das ist eine Beschreibung des Objekts, keine des Zustands, und liegt
+damit auf der Namens-Seite der Grenze. Ob das so bleiben soll, ist **eine Frage
+an den Prüfmeister**; sie steht in seiner Datei. Ich habe sie nicht selbst
+entschieden.
+
+**Nicht angefasst: die Bemessungsgrundlage.** Sandys Freigabe von 18:15 UTC
+(Zuschlag rechnet nur auf die betroffenen Positionen) ist **nicht** Teil dieses
+Laufs. Sie hängt an PM-104 und sitzt in `zuschlag-basis.ts` — ein eigener Bau,
+der einen eigenen Lauf braucht. **PM-103 ist damit halb zu:** der Zuschlag
+entsteht nicht mehr aus einem Namen; wo er entsteht, rechnet er weiter auf die
+Angebotssumme.
+
+### 4. Prüfstand — voller Stand, in 16 Gruppen gefahren
+
+| Messung | Ergebnis |
+|---|---|
+| `npx tsc --noEmit`, ganzes Projekt | **0 Fehler** |
+| `npx eslint` auf die vier berührten Dateien + die Testdatei | **0 Fehler**, 1 Warnung — **vorbestehend**, gegen `HEAD` nachgesehen |
+| **Prüfstand über alle 191 Testdateien** | **2.870 grün · 101 Sperrklinken · 6 rot** (2.977 Prüfungen) |
+
+**Die 6 roten sind dieselben 6 wie um 18:05 und nicht meine.** Sie stehen alle
+in `pruefmeister-batch-47-56.test.ts` (PM-098, PM-099) und stammen aus fremder,
+uncommitteter Arbeit. **Gemessen, nicht angenommen:** dieselbe Datei hatte vor
+meiner ersten Zeile 6 rot / 32 grün / 12 Sperrklinken und hat jetzt 6 rot / 37
+grün / 10 Sperrklinken — die Differenz ist genau mein Bau.
+
+**Ich habe PM-098 und PM-099 bewusst NICHT entsperrt**, obwohl ihre
+Sperrklinken zugeschnappt sind. Sie sind grün geworden durch Arbeit, die noch
+**uncommittet** im Baum liegt. Wer sie jetzt auf `it` stellt, schreibt einen
+Stand fest, der in `HEAD` nicht existiert — und die Datei wird rot, sobald diese
+Arbeit sich ändert. Das gehört dem, der den Bau gemacht hat.
+
+Ein Aufruf mit mehr als einer Gruppe reißt die 180-Sekunden-Grenze der Konsole;
+eine Gruppe geht zuverlässig. Der Weg von 17:15 gilt unverändert.
+
+### 5. Wo es steht — und was NICHT im Commit ist
+
+Committet als **`98c41ae`**, **fünf Dateien, nur meine**:
+
+* `src/lib/auftrags-verstaendnis.ts` — Raum-Scope mit der Ausnahme für
+  Tapezierarbeiten
+* `src/lib/vollstaendigkeit/maler-extras.ts` — `pruefeAltbau`, Wortgrenze +
+  Raumnamen
+* `src/lib/vollstaendigkeit/maler-tapete.ts` — „Tapete runter + streichen"
+  zählt nur noch das Diktat
+* `src/lib/vollstaendigkeit/maler.ts` — die beiden neuen Übergaben
+* `src/lib/__tests__/cos-e-084-tapete-und-altbau.test.ts` 🆕 — **9
+  Zusicherungen, 4 davon vor dem Bau rot**
+
+**Uncommittet geblieben, mit Absicht:** die vier DC-128-Dateien des Designers,
+`zeit-ausschluss.ts`, und `pruefmeister-batch-47-56.test.ts`. In der Datei des
+Prüfmeisters habe ich zwei Sperrklinken gestrichen und einen Beleg repariert —
+seine Datei, sein Commit. Deshalb steht dieselbe Zusicherung noch einmal in
+**meiner** Testdatei: ein Fix, dessen einziger Nachweis in einer fremden,
+uncommitteten Datei hängt, ist nicht abgesichert.
+
+### 6. Für Sandy
+
+**Code geändert — der Testlauf steht aus.** Ich habe ihn hier gefahren, starten
+kannst ihn nur du. **Kein `git add` nötig** — die neue Datei ist schon mit
+committet.
+
+### 7. Nächster Punkt
+
+Unverändert die Reihenfolge des Chief of Staff, ab Platz 3:
+**PM-079-A** (Isoliergrund über **alle** verrauchten Räume summieren, 463,50 €)
+→ **PM-106 + PM-107** → **PM-105** → **CoS-038 → PM-119/L-06 → CoS-E-080**.
+Dazu neu dazwischen, weil er jetzt allein steht: die **Bemessungsgrundlage der
+fünf Erschwerniszuschläge** (CoS-E-083 §3, seit 18:15 freigegeben) — er gehört
+zu PM-103/PM-104 und ist der einzige Rest dieses Blocks.
+
+*Head of Product Engineering · 2026-09-17, 18:55 UTC*
+
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

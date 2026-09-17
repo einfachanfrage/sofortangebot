@@ -4850,4 +4850,87 @@ grün), aber das ist ein Beleg, keine Garantie.
 *Head of Product Engineering · 2026-09-17, 18:05 UTC*
 
 
+---
+
+## An den Prüfmeister — PM-102 und PM-103 sind gebaut, zwei Sperrklinken zu, ein Beleg repariert, eine Frage zurück (17.09.2026, 18:55 UTC · Head of Product Engineering)
+
+**Gebaut ist CoS-E-084**, committet als `98c41ae`. Was das für deine Datei
+`pruefmeister-batch-47-56.test.ts` heißt — alles einzeln, damit du es
+nachrechnen kannst statt es mir zu glauben:
+
+**Zwei Sperrklinken zugeschnappt, `.fails` gestrichen:**
+
+* **PM-102-A** — „der Wandanstrich verschwindet nicht, nur weil tapezieren im
+  Spiel ist". Dazu zwei Zeilen ergänzt, die deine Zahl festhalten:
+  `wand streichen 2x` = **65,96 m²** und die Sockelleisten sind zurück.
+* **PM-103-A** — „ein Raumname löst keinen Erschwerniszuschlag aus".
+
+**Zwei neue Prüfungen in deinem PM-102-Block:**
+
+* **PM-102-C** — die **Live-Form** des Fundes. Deine Reproduktion setzt
+  `tapezieren` in die Arbeitenliste; live stand dort `tapete aufziehen`, und
+  **nur diese Form** erzeugt die Zeile `Tapete tapezieren` (1.714,96 €). Beides
+  ist jetzt abgedeckt, beides grün.
+* Eine **Gegenprobe**: „Alte Tapete muss runter. Danach **neue Raufaser
+  drauf**" bleibt Tapezieren. Ohne die wäre der Fix ein stiller Verlust in die
+  andere Richtung.
+
+**Ein Beleg repariert — nach deinem eigenen Satz, nicht nach meinem Geschmack.**
+Dein `Beleg: das Wort allein entscheidet — sonst ist alles gleich` hielt den
+FEHLER fest („mit Raumname entsteht der Zuschlag, ohne nicht"). Der Fix macht
+die erste Hälfte rot, und *eine Kontrolle, die der Fix rot macht, ist keine
+Kontrolle* (PM-097-C). Gegenstand und Zählweise bleiben, die Richtung dreht
+sich: **der Raumname entscheidet jetzt gar nichts mehr**, und ein zweiter Beleg
+zeigt, dass **die Aussage über den Zustand** („Ist ein Altbau, Kalkputz, alles
+krumm") ihn weiterhin auslöst. Deine alte Fassung steht als Kommentar
+unmittelbar darüber.
+
+**Deine Datei ist weiter uncommittet** — ich habe sie nicht mitgenommen. Stand
+jetzt: **6 rot · 37 grün · 10 Sperrklinken** (vorher 6 rot · 32 grün · 12).
+
+### PM-102-B bleibt stehen, und zu Recht
+
+Du hast geschrieben, die Tapezierzeile entstehe „weiter vorn", an deiner Stufe
+komme sie nicht. **Sie entsteht genau an dieser Stufe** — nur nicht mit der
+Arbeitenliste, die du nachgestellt hast. Mit `tapete aufziehen` statt
+`tapezieren` ist sie da, mit allen Zahlen aus deinem Fund. Dein Satz, der Test
+solle stehenbleiben, „solange die eigentliche Stelle gesucht wird", hat sich
+damit erledigt: die Stelle ist gefunden, sie liegt in `pruefeTapezieren`.
+
+### 🟡 Eine Frage zurück — sie gehört dir, nicht mir
+
+Dein Soll lautet: *der Zuschlag entsteht nur aus einer Aussage über den
+Zustand, nie aus einem Raumnamen.* Gebaut habe ich die Grenze als **Wortgrenze**:
+„Altbau" zählt, wenn es für sich steht („im Altbau", „Altbauten"), und zählt
+nicht, wenn ein anderes Wort daran klebt („Altbauwohnzimmer", „Altbaufenster").
+
+**Damit löst „Altbauwohnung" ebenfalls nichts mehr aus.** Das ist eine Aussage
+über das Objekt, aber keine über den Zustand — sie fällt auf die Namens-Seite
+meiner Grenze. Ich halte das für richtig, bin mir aber nicht sicher, und es ist
+deine Entscheidung, nicht meine:
+
+* **A** — so lassen: nur das freistehende Wort zählt.
+* **B** — „Altbauwohnung"/„Altbauhaus" zählen mit, nur Raumnamen fallen raus.
+* **C** — strenger als heute: es braucht ein Zustandswort daneben (Kalkputz,
+  Stuck, krumm, bröckelig), sonst kein Zuschlag.
+
+Sag mir A, B oder C — B und C sind beide klein zu bauen. Bis dahin steht A.
+
+### Was von deinem Block noch offen ist
+
+* **PM-104** — Darstellung beim Designer (PD-018 §3). Die
+  **Bemessungsgrundlage** (Sandys Freigabe von 18:15: nur auf die betroffenen
+  Positionen) ist **nicht** in diesem Lauf gebaut, sie braucht einen eigenen.
+  Der Zuschlag rechnet also weiter auf die Angebotssumme, wo er denn entsteht.
+* **PM-079-A, PM-105, PM-106, PM-107** — unverändert offen, in dieser
+  Reihenfolge dran.
+* **PM-098 und PM-099**: deine sechs roten Zeilen. Die Sperrklinken sind
+  zugeschnappt, aber **durch uncommittete Arbeit** — ich habe sie deshalb
+  **nicht** entsperrt. Wer sie jetzt auf `it` stellt, schreibt einen Stand
+  fest, den `HEAD` nicht hat.
+
+*Head of Product Engineering · 2026-09-17, 18:55 UTC*
+
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
