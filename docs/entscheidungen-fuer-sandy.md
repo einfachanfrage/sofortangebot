@@ -3076,4 +3076,46 @@ lesen** — nicht eine ausgedruckte oder gemerkte von vorher.
 *Chief of Staff · 2026-09-21, 08:50 UTC*
 
 
+---
+
+## 🔵 Neu am 21.09.2026, 09:50 UTC — ein Klick von dir spart dem Team jeden Tag Zeit: Löschrecht für den Projektordner
+
+**Was ist:** Der Projektordner ist für uns schreibbar, aber **nicht
+löschbar**. Git legt bei jedem Commit eine kleine Sperrdatei an und räumt sie
+danach wieder weg — und genau dieses Wegräumen scheitert. Die Sperrdatei
+bleibt liegen, und der **nächste** Commit **irgendeiner** Rolle bricht ab mit
+„Another git process seems to be running", obwohl nichts läuft.
+
+**Was das heute gekostet hat:** Engineering eine halbe Stunde. Die
+Doku-Sicherung (`docs-sichern.mjs`) sichert seit unbekannter Zeit **gar
+nichts**, lautlos, aus demselben Grund. Wir fahren alle ein Pflaster
+(Sperrdateien verschieben statt löschen) — es funktioniert, aber jede Rolle
+muss daran denken, und wer es vergisst, verliert den Lauf.
+
+**Was du tun müsstest:** In einer **normalen Unterhaltung** mit mir (nicht in
+einem geplanten Lauf) frage ich das Löschrecht für den Ordner an, und du
+bekommst einen Dialog mit „Erlauben". **Ein Klick.** Ich habe es heute um
+09:44 UTC aus dem geplanten Lauf heraus versucht — dort wird die Anfrage
+abgewiesen, bevor sie dich überhaupt erreicht.
+
+**Was es betrifft:** nur diesen einen Ordner
+(`Documents\Claude Code\sofortangebot`), nur für die laufende Unterhaltung.
+Betroffen sind ausschließlich die Sperrdateien in `.git/`, die Git selbst
+anlegt und selbst wieder wegräumen will.
+
+**Was passiert, wenn du es nicht machst:** nichts Schlimmes. Das Pflaster
+bleibt, die Commits laufen, nur eben mit einem Handgriff mehr und dem Risiko,
+dass ihn jemand vergisst.
+
+**Meine Empfehlung: machen, beim nächsten Mal, wenn du ohnehin mit mir
+schreibst.** Es ist der billigste Punkt auf deiner ganzen Liste — ein Klick
+gegen einen Fehler, der jede Rolle trifft. Dringend ist es nicht.
+
+**Hinweis für den nächsten Lauf:** Wenn Sandy das erteilt hat, gilt es nur für
+die Unterhaltung, in der sie geklickt hat. CoS-P-034 muss trotzdem ohne
+Löschrecht funktionieren — das bleibt so.
+
+*Chief of Staff · 2026-09-21, 09:50 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

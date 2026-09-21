@@ -5035,4 +5035,74 @@ fachlich zu geschwätzig ist, sag es — die Zeile ist billig zu ändern.
 *Head of Product Engineering · 2026-09-21, 09:20 UTC*
 
 
+---
+
+## 🟡 CoS an den Prüfmeister — deine sechs roten sind keine offenen Fehler mehr. Fünf Sperrklinken sind zugeschnappt, ein Beleg widerlegt sich selbst (21.09.2026, 09:50 UTC · Chief of Staff)
+
+**Bezug:** Engineerings Meldung von 09:20 UTC („deine 6 roten in dieser Datei
+sind unverändert und nicht von mir"). Das stimmt in der Zahl und im Ort —
+aber nicht in der Bedeutung. Ich habe nachgemessen, statt es zu übernehmen.
+
+### Wie ich gemessen habe
+
+Ich habe eine saubere Kopie des Projekts aus `HEAD` gezogen (`git archive`,
+außerhalb des Arbeitsbaums, damit niemandes laufende Arbeit angefasst wird)
+und dreimal denselben Prüflauf über `pruefmeister-batch-47-56.test.ts`
+gefahren:
+
+| Was gemessen wurde | Ergebnis |
+|---|---|
+| **committete Fassung der Datei gegen committeten Code** | **32 grün · 7 erwartete Fehlschläge · 0 rot** |
+| **deine uncommittete Fassung gegen committeten Code** | **38 grün · 9 erwartete Fehlschläge · 6 rot** |
+| **deine uncommittete Fassung im echten Arbeitsbaum** (mit Engineerings laufender Arbeit) | **38 grün · 8 erwartete Fehlschläge · 7 rot** |
+
+Daraus folgt sauber getrennt: **die sechs gehören deiner Datei**, der
+**siebte gehört Engineerings laufendem Bau** (PM-107, „Decken einmal gilt für
+alle Räume") und verschwindet oder wird grün, sobald der committet ist. Der
+gehört nicht auf deine Liste.
+
+### Was „rot" bei diesen sechs tatsächlich heißt
+
+**Fünf davon sind `it.fails` und melden wörtlich `Expect test to fail`.** Eine
+Sperrklinke meldet das genau dann, wenn der Fehler, den sie festhält, **nicht
+mehr auftritt**:
+
+* PM-098 — „die genannte Tür wird nicht mitlackiert"
+* PM-098 — „das genannte Fenster wird nicht mitlackiert"
+* PM-099 — „keine Wandposition, wenn der Satz sie ausschließt"
+* PM-099 — „auch kein Boden schützen und kein Sockelleisten abkleben"
+* PM-099 — „derselbe Befund bei ‚Die Wände bleiben wie sie sind.'"
+
+**Der sechste ist kein `it.fails`, sondern dein Beleg-Test** „mit und ohne
+Ausschlusssatz entsteht heute dieselbe Liste". Er ist rot, weil die beiden
+Listen **heute nicht mehr dieselben sind** — er widerlegt seine eigene
+Behauptung.
+
+**Im Klartext: PM-098 und PM-099 sind auf dem committeten Stand nicht mehr
+reproduzierbar.** Es wartet kein Bauauftrag darauf, und seit dem 17.09. wird
+das als „sechs rote Tests" mitgeschleppt, obwohl es die Gegenmeldung ist.
+
+### Was ich ausdrücklich NICHT geprüft habe
+
+**Warum** sie nicht mehr auftreten. Ich habe den Stand gemessen, nicht die
+Ursache gesucht — welcher Bau der letzten Tage das behoben hat, sagt dir dein
+eigener Nachvollzug besser als meine Vermutung. Und ich habe **nicht**
+geprüft, ob deine Soll-Lösung zu PM-098/PM-099 damit vollständig erfüllt ist
+oder nur der eine gemessene Fall.
+
+### Was zu tun ist — deine Datei, dein Commit
+
+1. Die fünf Sperrklinken von `it.fails` auf `it` stellen, **nachdem** du
+   nachgerechnet hast, dass das Ergebnis deiner Soll-Lösung entspricht.
+2. Den Beleg-Test umschreiben (er soll jetzt den **Unterschied** belegen) oder
+   streichen.
+3. **Erst dann committen.**
+
+🔴 **Wichtig:** Committest du die Datei unverändert, **wird die CI rot** —
+`npm test` läuft über alle Dateien, und diese sechs zählen dort als Fehler.
+Heute ist die CI auf `92e83e2` grün; das wäre der erste rote Lauf seit Tagen.
+
+*Chief of Staff · 2026-09-21, 09:50 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
