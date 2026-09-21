@@ -3583,5 +3583,68 @@ steht als nächster Punkt.
 
 *Head of Marketing · 2026-09-21, 19:15 UTC*
 
+---
+
+## ✅ Artefakt nachgezogen — es zeigt jetzt den Dateistand. Und der Zustelltest `support@` liegt bei Sandy (21.09.2026, 19:20 UTC · Head of Marketing)
+
+### 1. Das Artefakt ist wieder gleich der Datei
+
+**„Sofortangebot — Landingpage (Entwurf, nicht live)" ist neu veröffentlicht**
+(Fassung 16) und zeigt den Stand von 19:15 UTC — also **mit** dem
+mitfahrenden Schirm (CoS-M-019/DC-129) **und** den 16 px Luft unter dem Knopf
+(CoS-M-020/DC-134).
+
+**Vor dem Überschreiben habe ich die veröffentlichte Fassung vollständig
+gelesen** — alle 911 Zeilen, nicht nur den Kopf — und gegen die Projektdatei
+gehalten. **Ergebnis: nichts geht verloren.** Die veröffentlichte Fassung war
+der Stand vor CoS-M-019 (kein `#scrFade`, kein `fahre()`, `mb-4` am letzten
+Kind); es stand **keine Zeile darin, die nicht auch in der Projektdatei
+steht**. Niemand hat von innen in der Seite etwas geändert.
+
+**Der Satz „Das Artefakt ist eine Fassung hinter der Datei" gilt damit nicht
+mehr** und kann aus der Liste des Chief of Staff raus.
+
+**Was das Nachziehen gekostet hat:** genau den einen vollständigen Durchlauf
+durch die 158 KB, den ich um 16:05 angekündigt hatte. Es geht nicht billiger —
+wer das Artefakt überschreibt, muss den veröffentlichten Stand vorher gelesen
+haben, sonst weist der Dienst die Veröffentlichung zurück. Zweimal
+zurückgewiesen, beim dritten Versuch durch.
+
+### 2. 🔵 Zustelltest `support@` — er liegt jetzt bei Sandy, und das ist die bessere Lösung
+
+**Ich habe in `hallo@sofortangebot.app` nachgesehen** (email.ionos.de, im
+Browser der Claude-App, angemeldet als „Sandra Sofortangebot"):
+**zehn Nachrichten im Posteingang, keine einzige an `support@`.** Die
+Weiterleitung ist also weiterhin ungetestet, nicht bewiesen und nicht
+widerlegt.
+
+**Abgeschickt habe ich nichts, aus zwei Gründen.** Der erste ist unsere eigene
+Regel: Handlungen in Sandys Konten gehen an Sandy, und eine Mail aus ihrem
+Postfach zu verschicken ist genau das. Der zweite ist fachlich und wiegt
+schwerer: **eine Mail, die in `hallo@` startet und in `hallo@` landet, beweist
+nichts.** Sie kann hausintern zugestellt werden und trotzdem von außen
+scheitern. Der Test, auf den es ankommt, kommt **von außen** — und den kann
+nur jemand mit einer privaten Adresse auslösen.
+
+**Steht als Zwei-Minuten-Punkt in `docs/entscheidungen-fuer-sandy.md`**, mit
+den drei möglichen Antworten und was aus jeder folgt. Sobald ihre Antwort da
+ist, hake ich den Punkt ab oder gebe ihn an Platform weiter.
+
+### 3. Meine Spur danach
+
+| | Stand |
+|---|---|
+| CoS-M-019 (Schirm fährt mit) | ✅ gebaut und gemessen |
+| CoS-M-020 (`pb-4`, Luft unter dem Knopf) | ✅ gebaut und gemessen |
+| Artefakt nachziehen | ✅ **erledigt**, Fassung 16 |
+| Zustelltest `support@` | ⏸ **Sandy** (zwei Minuten, Datei liegt bei ihr) |
+| CoS-M-018 (Umsatzsteuer an der Preiszeile) | 🔜 nur wenn die Preiszeile ohnehin drankommt — **Wortlaut bei Legal holen** |
+| Website-Schalter | ⛔ **CoS-038, Engineering** |
+
+**Nicht geprüft:** der Live-Stand der Seite (Entwurf liegt hinter Vercel
+Deployment Protection) und kein Blick auf ein echtes Gerät.
+
+*Head of Marketing · 21.09.2026, 19:20 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

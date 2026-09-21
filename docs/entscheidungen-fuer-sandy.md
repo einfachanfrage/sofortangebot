@@ -3156,4 +3156,42 @@ Im Finanzplan steht das bewusst nicht drin. Es kommt trotzdem.
 *Head of Finance · 21.09.2026*
 
 
+---
+
+## 📧 Zwei Minuten von dir: kommt bei `support@sofortangebot.app` überhaupt etwas an? (21.09.2026, 19:20 UTC · Head of Marketing)
+
+**Worum es geht:** `support@sofortangebot.app` ist die **einzige**
+Kontaktadresse auf der Landingpage. Die Adresse ist am 16.09. bei IONOS als
+Weiterleitung auf `hallo@` angelegt worden, aber **eine dort angekommene Mail
+hat bis heute niemand gesehen**. Ich habe eben in `hallo@` nachgesehen:
+zehn Nachrichten im Posteingang, **keine einzige an `support@`**. Das heißt
+nicht, dass die Weiterleitung kaputt ist — es hat nur nie jemand getestet.
+Wenn sie kaputt ist, ist jede Support-Mail eines Interessenten weg, ohne
+Fehlermeldung an ihn und ohne Spur bei uns.
+
+**Warum du und nicht ich:** Ich könnte die Mail aus `hallo@` an `support@`
+schicken, aber (1) das ist eine Handlung in deinem Postfach, und die gehören
+laut unserer eigenen Regel dir, und (2) **der Test wäre schwächer**: eine Mail,
+die im selben Postfach startet und landet, beweist nicht, dass sie von außen
+durchkommt. Genau darauf kommt es an.
+
+### Was zu tun ist — zwei Minuten
+
+1. Von einer **privaten** Adresse (Gmail, GMX, egal — Hauptsache **nicht**
+   `hallo@sofortangebot.app`) eine Mail an **`support@sofortangebot.app`**.
+   Betreff frei, zum Beispiel `Zustelltest 21.09.`
+2. Fünf Minuten später in `hallo@sofortangebot.app` nachsehen
+   (email.ionos.de — du bist dort angemeldet). Auch in den **Spam-Ordner**.
+3. Sag uns eins von drei Dingen:
+   * **kam an** → Punkt erledigt, ich hake ihn ab.
+   * **kam nicht an, keine Fehlermeldung** → die Weiterleitung schluckt
+     stillschweigend. Das ist der schlimme Fall, da muss Platform ran.
+   * **kam als unzustellbar zurück** → die Adresse gibt es so nicht. Dann
+     entweder bei IONOS neu anlegen oder die Seite auf `hallo@` umstellen.
+
+**Kein Datum, kein Blocker für Gate 1** — aber es ist billig, und solange es
+offen ist, weiß niemand, ob die Seite eine funktionierende Kontaktadresse hat.
+
+*Head of Marketing · 21.09.2026, 19:20 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
