@@ -40,11 +40,24 @@ button { min-height:44px; }
 .pos.edit { background:rgba(217,164,0,.10); margin:0 -14px; padding-left:14px; padding-right:14px; border-radius:12px; }
 .ep { display:none; }
 .pos.edit .ep { display:flex; }
+/* DC-129: Der Schirm faehrt mit. Weg wird zur Laufzeit gerechnet (--scr-off),
+   Ausloeser ist .edit auf #editRow. Kein overflow/scrollTop: .pscreen ist
+   pointer-events:none, eine Bildlaufleiste darf hier niemand bedienen. */
+#scrRes { transition: opacity .35s ease, transform .6s ease-out; will-change: transform; }
+#scrRes.sofort { transition: opacity .35s ease !important; }
+#scrFade { position:absolute; left:0; right:0; bottom:0; height:24px; z-index:3;
+  background:linear-gradient(to top, #F7F7F5 0%, rgba(247,247,245,0) 100%);
+  pointer-events:none; opacity:0; transition:opacity .35s ease; }
+#scrFade.on { opacity:1; }
 @keyframes blink { 50%{opacity:0} }
 .caret { display:inline-block; width:1.5px; height:13px; background:#2C2C2C; margin-left:1px; vertical-align:-2px; animation: blink .9s step-end infinite; }
 @media (prefers-reduced-motion: reduce) {
   .mic-on, .wave span, .spinner, .caret { animation:none; }
   .reveal, .pos { opacity:1 !important; transform:none !important; transition:none !important; }
+  /* DC-129 Punkt 5: run() laeuft hier gar nicht. Ohne diese Zeile saehe dieser
+     Besucher Summe und Knopf nie - nicht spaeter, sondern nie. */
+  #scrRes { transition:none !important; transform: translateY(calc(-1 * var(--scr-off, 0px))) !important; }
+  #scrFade { opacity:0 !important; }
 }
 </style>
 </head>
@@ -184,6 +197,10 @@ button { min-height:44px; }
                   <div class="bg-yellow rounded-2xl text-anthracite font-black text-[14px] text-center py-3.5">Angebot senden →</div>
                 </div>
               </div>
+
+              <!-- DC-129 Punkt 6: weiche Kante. Sagt "die Liste geht weiter",
+                   und das ist wahr - solange der Weg 0 ist. Am Fuss aus. -->
+              <div id="scrFade"></div>
 
             </div>
           </div>
@@ -817,13 +834,36 @@ button { min-height:44px; }
         recTimer=document.getElementById('recTimer'), calcTimer=document.getElementById('calcTimer'),
         editPrice=document.getElementById('editPrice'), editTotal=document.getElementById('editTotal'), editCalc=document.getElementById('editCalc'), summe=document.getElementById('summe'), kopfSumme=document.getElementById('kopfSumme'),
         editRow=document.getElementById('editRow'),
+        screens=document.getElementById('phoneScreens'), fade=document.getElementById('scrFade'),
         satz='Wohnzimmer, vier mal fünf, zwei sechzig hoch. Wände zweimal weiß, Decke auch. Ein Fenster, eine Tür. Alte Tapete muss runter.',
         worte=satz.split(' '), timers=[];
     var reduced=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     function fmt(n){ return '0:'+(n<10?'0':'')+n; }
     function euro(v){ return v.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.')+' €'; }
+    /* DC-129: Der Weg wird zur Laufzeit gerechnet, nie als Konstante gesetzt.
+       Eine harte 274 waere der naechste Befund, sobald die Liste eine Zeile mehr hat. */
+    var amFuss=false;
+    function weg(){ return Math.max(0, res.scrollHeight - screens.clientHeight); }
+    function merkeWeg(){ var off=weg(); res.style.setProperty('--scr-off', off+'px'); return off; }
+    /* Die Kante gilt nur fuer den Entwurf-Schirm, nur solange der Weg 0 ist,
+       und nur wenn unten wirklich noch etwas liegt. */
+    function kante(){ if(fade) fade.classList.toggle('on', res.classList.contains('on') && !amFuss && weg()>0); }
+    function fahre(){
+      var off=merkeWeg();
+      amFuss=true;
+      res.classList.remove('sofort');
+      res.style.transform = off ? 'translateY(-'+off+'px)' : 'none';
+      kante();
+    }
+    function zurueck(){
+      amFuss=false;
+      res.classList.add('sofort');            /* ohne Uebergang, Schirm steht auf opacity:0 */
+      res.style.transform='none';
+      kante();
+      later(function(){ res.classList.remove('sofort'); }, 60);
+    }
     function zaehle(von,bis,ms){ var t0=performance.now(); (function step(now){ var k=Math.min(1,(now-t0)/ms); summe.textContent=euro(von+(bis-von)*k); kopfSumme.textContent=summe.textContent; if(k<1) requestAnimationFrame(step); })(t0); }
-    function show(el,t){ [rec,calc,res].forEach(function(x){x.classList.remove('on')}); el.classList.add('on'); title.textContent=t; }
+    function show(el,t){ [rec,calc,res].forEach(function(x){x.classList.remove('on')}); el.classList.add('on'); title.textContent=t; kante(); }
     function later(fn,ms){ timers.push(setTimeout(fn,ms)); }
     function run(){
       timers.forEach(clearTimeout); timers=[];
@@ -831,15 +871,16 @@ button { min-height:44px; }
       res.querySelectorAll('.pos').forEach(function(p){p.classList.remove('in')});
       editRow.classList.remove('edit'); editPrice.textContent='9,50'; editTotal.textContent='444,60 €'; editCalc.textContent='46,80 m² × 9,50 €'; summe.textContent=euro(1100.80); kopfSumme.textContent=euro(1100.80);
       show(rec,'Aufnahme läuft');
+      later(zurueck, 400);   /* nach der .35s-Blende: der Schirm ist weg, die Rueckfahrt unsichtbar */
       var pause=600, wortMs=190, dauer=pause+worte.length*wortMs;
       worte.forEach(function(w,i){ later(function(){ recText.textContent+=(i?' ':'')+w; }, pause+i*wortMs); });
       for(var sek=1;sek<=19;sek++){ (function(k){ later(function(){ recTimer.textContent=fmt(k); }, k*(dauer/19)); })(sek); }
       later(function(){ show(calc,'Wird gerechnet'); calcText.textContent=satz; }, dauer+900);
       for(var c=1;c<=4;c++){ (function(k){ later(function(){ calcTimer.textContent=fmt(k); }, dauer+900+k*600); })(c); }
       var tRes=dauer+900+2900, n=res.querySelectorAll('.pos').length;
-      later(function(){ show(res,'Entwurf prüfen'); res.querySelectorAll('.pos').forEach(function(p,i){ later(function(){p.classList.add('in')}, 250+i*300); }); }, tRes);
+      later(function(){ show(res,'Entwurf prüfen'); res.querySelectorAll('.pos').forEach(function(p,i){ later(function(){p.classList.add('in')}, 250+i*300); }); later(function(){ merkeWeg(); kante(); }, 250+n*300); }, tRes);
       var tEdit=tRes+250+n*300+2500;
-      later(function(){ editRow.classList.add('edit'); }, tEdit);
+      later(function(){ editRow.classList.add('edit'); fahre(); }, tEdit);   /* erst fahren, dann tippen: 600 ms, und tEdit+1100 ist der erste Tastenanschlag */
       later(function(){ editPrice.textContent='10,'; }, tEdit+1100);
       later(function(){ editPrice.textContent='10,00'; editTotal.textContent='468,00 €'; editCalc.textContent='46,80 m² × 10,00 €'; zaehle(1100.80,1124.20,700); }, tEdit+1500);
       later(run, tEdit+6500);
@@ -847,6 +888,13 @@ button { min-height:44px; }
     /* Der fertige Entwurf steht schon im HTML und bleibt stehen.
        Wer nur kurz hinsieht, sieht ein volles Handy, keinen leeren Rahmen.
        Bei reduzierter Bewegung bleibt es dabei. */
+    merkeWeg(); if(!reduced) kante();
+    window.addEventListener('load', function(){ merkeWeg(); if(!reduced) kante(); });
+    window.addEventListener('resize', function(){
+      var off=merkeWeg();
+      if(amFuss){ res.classList.add('sofort'); res.style.transform = off ? 'translateY(-'+off+'px)' : 'none'; setTimeout(function(){ res.classList.remove('sofort'); },60); }
+      if(!reduced) kante();
+    });
     if(!reduced) timers.push(setTimeout(run, 2600));
   })();
 
