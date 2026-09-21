@@ -9,6 +9,7 @@ import { DRAFT_STATUSES, SENT_STATUSES, waehlbareStatus, getStatusInfo } from '@
 import { statusPatch, type AblehnungsGrund } from '@/lib/status-uebergang'
 import { aktualisiereProzentZuschlaege, istProzentZuschlag } from '@/lib/zuschlag-basis'
 import { einheitenFuer } from '@/lib/einheiten'
+import { mitDeutschenZahlen } from '@/lib/zahlen-text'
 import { hatAnstrichzahl, anstrichzahl, mitAnstrichzahl, ANSTRICHSTUFEN } from '@/lib/anstrichzahl'
 import { waehleUntertitel } from '@/lib/positions-untertitel'
 import {
@@ -648,11 +649,11 @@ function SortableItem({ item, titleOverride, editingId, setEditingId, updateEdit
             {rechenwegExpandiert && (
               <div className="mt-1.5 pt-1.5 border-t border-anthracite/8">
                 <div className="font-mono text-[11px] text-anthracite/60 leading-relaxed">
-                  {item.berechnungsweg || 'Pauschale'}
+                  {mitDeutschenZahlen(item.berechnungsweg) || 'Pauschale'}
                 </div>
                 {(item.annahmen?.length ?? 0) > 0 && (
                   <div className="mt-1 text-[11px] font-semibold text-anthracite/40">
-                    {item.annahmen!.join(' · ')}
+                    {item.annahmen!.map(mitDeutschenZahlen).join(' · ')}
                   </div>
                 )}
               </div>
@@ -2652,11 +2653,11 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                         {rechenwegExpandiert.has(item.id) && (
                           <div className="mt-1.5 pt-1.5 border-t border-anthracite/8">
                             <div className="font-mono text-[11px] text-anthracite/60 leading-relaxed">
-                              {item.berechnungsweg || 'Pauschale'}
+                              {mitDeutschenZahlen(item.berechnungsweg) || 'Pauschale'}
                             </div>
                             {(item.annahmen?.length ?? 0) > 0 && (
                               <div className="mt-1 text-[11px] font-semibold text-anthracite/40">
-                                {item.annahmen!.join(' · ')}
+                                {item.annahmen!.map(mitDeutschenZahlen).join(' · ')}
                               </div>
                             )}
                           </div>
