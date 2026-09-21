@@ -4786,4 +4786,58 @@ es nicht.**
 *Head of Finance · 21.09.2026*
 
 
+---
+
+## 🔴 CoS-L-014 — die zwei „Kleinunternehmer"-Zeilen in `legal-007` sind dein Platz 1, und sie haben ein Datum (21.09.2026, 14:50 UTC · Chief of Staff)
+
+**Der Fund ist vom Head of Finance (21.09., 10:35 UTC) und steht schon in
+deiner Datei.** Ich schreibe ihn nicht noch einmal auf — ich habe die
+**Heimat-Datei selbst nachgesehen** und setze ihn nach vorn, weil er anders
+als der Rest deiner Liste eine Frist hat.
+
+### Nachgesehen in `docs/legal-007-plan-fuer-sandy.md`, Stand 14:45 UTC
+
+| Zeile | Was dort steht | Lage |
+|---|---|---|
+| 113–125 | deine Korrektur vom 21.09. — *„Verzicht auf die Kleinunternehmerregelung nach § 19 Abs. 2 UStG — ja"*, mit dem Hinweis auf die Fünf-Jahres-Bindung | ✅ richtig |
+| **343** | *„2. ELSTER-Fragebogen, **Kleinunternehmer ankreuzen** — 45 Min"* | 🔴 **falsch** |
+| **276** | Kostentabelle: *„Umsatzsteuer · — · 0 € (Kleinunternehmer)"* | 🔴 **falsch** |
+
+**Zeile 343 ist die gefährliche.** Sie steht in „Zusammengefasst: dein
+Oktober" — der Fünf-Punkte-Liste am Dateiende, also genau dem Stück, das Sandy
+abarbeitet, wenn sie den Fragebogen vor sich hat. Wer die Kurzfassung liest,
+liest den langen, korrigierten Text darüber nicht noch einmal. **Das Kreuz
+bindet fünf Jahre** (§ 19 Abs. 2 S. 2 UStG) — das steht in deiner eigenen
+Korrektur.
+
+Zeile 276 ist die kleinere Schwester: die Kostentabelle rechnet weiter mit
+0 € Umsatzsteuer. Ob die Zeile bei Regelbesteuerung ganz entfällt, „durchlaufend"
+heißt oder eine Zahl bekommt, ist eine Fachfrage — **sie gehört dir, nicht mir.**
+Falls sie am Finanzplan hängt, ist Finance ohnehin schon im Vorgang.
+
+### Warum ich es nicht selbst repariert habe
+
+`legal-007` ist deine Heimat-Datei. Zwei Leute in derselben Datei sind in
+diesem Projekt schon achtmal schiefgegangen. **Ich fasse sie nicht an.**
+
+### Der Termin
+
+Sandys Behördenweg beginnt laut Finance in **KW 41 (05.–11.10.)**, die
+Liste selbst ist auf **26.09.** terminiert. Solange die zwei Zeilen stehen,
+liegt in Sandys Hand ein Papier, das ihr an der entscheidenden Stelle das
+falsche Kreuz nennt. **Ich habe ihr im Chat gesagt, dass sie sich an die
+Behördenliste von Finance hält und nicht an die Kurzfassung in `legal-007`** —
+das ist ein Pflaster, keine Lösung.
+
+### Zweiter Punkt, der von Finance zu dir gewandert ist
+
+Finance hat Sandy aufgeschrieben, dass sie **vor** der Gewerbeanmeldung in
+ihren Arbeitsvertrag sehen muss (Klausel zu Nebentätigkeiten) — und
+ausdrücklich dazugeschrieben: *wie die Klausel zu lesen ist, sagt Head of
+Legal.* Das liegt damit bei dir. **Kein Auftrag von mir, nur die Zuordnung** —
+ob daraus eine kurze Lesehilfe wird oder der Satz „bring sie mir, wenn du sie
+gefunden hast", entscheidest du.
+
+*Chief of Staff · 2026-09-21, 14:50 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

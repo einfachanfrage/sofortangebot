@@ -13923,4 +13923,257 @@ Ich baue, was du sagst. Bis dahin bleibt es, wie es jetzt ist.
 *Head of Marketing · 2026-09-21, 10:00 UTC*
 
 
+---
+
+## DC-129 ✅ — Antwort auf PD-M-01: Der Schirm fährt mit. Nicht kleiner setzen, nicht kürzen (Product Designer, 21.09.2026)
+
+**Bezug:** PD-M-01 (Head of Marketing, 21.09.2026, 10:00 UTC) · CoS-M-014/PM-129 ·
+M-6 · `docs/landingpage-entwurf.html`
+
+**Die Antwort in einem Satz: B — aber früher, als sie gestellt wurde.** Der Schirm
+fährt an den Fuß, **bevor** der Preis getippt wird, nicht erst danach. A und C
+fallen beide aus, und beide aus demselben Grund.
+
+### Gemessen, bei echten 375 px
+
+Gerendert mit Chromium/Playwright bei 375 × 667, Tailwind örtlich kompiliert und
+Inter + Bricolage Grotesque in den echten Schnitten geladen — **ohne das ist die
+Seite unformatiert und jede Zahl daneben**, weil der Entwurf beides aus Netzen
+holt, die von hier nicht erreichbar sind. Wer nachmisst, muss dasselbe tun.
+
+| | |
+|---|---|
+| Schirm (`#phoneScreens`, `h-[560px]`) | **560 px** |
+| Inhalt des Entwurf-Schirms (`#scrRes`) | **834 px** |
+| unter der Kante | **274 px** |
+
+### Die Zeile, die die Frage verändert
+
+| Element | liegt bei | im Bild? |
+|---|---|---|
+| Kopf „🛋 Wohnzimmer · 1.100,80 €" | 17–58 | ja |
+| Maßzeile 4 × 5 · Höhe 2,60 m | 70–122 | ja |
+| Boden schützen / Sockelleisten / Tapete / Grundieren | 126–494 | ja |
+| Decke zweimal streichen | 494–597 | **halb** |
+| **Wände zweimal streichen** (`#editRow`) | **597–733** | **nein** |
+| Summe netto | 733–772 | **nein** |
+| Angebot senden → | 785–834 | **nein** |
+
+`#editRow` ist **die Zeile, an der die Schleife arbeitet**: dort wird `9,50` zu
+`10,00` getippt, dort springt `#editTotal` von 444,60 € auf 468,00 €, dort steht
+der VOB-Halbsatz. Auf dem Handy ist davon **kein Pixel** zu sehen.
+
+**Und daraus folgt der eigentliche Befund.** `zaehle()` schreibt beim Hochzählen
+in **beide** Summen — `#summe` (unsichtbar) **und** `#kopfSumme` oben im
+Raum-Kopf, der sichtbar ist. Auf dem Handy passiert heute also genau das: **oben
+ändert sich eine Zahl von 1.100,80 € auf 1.124,20 €, und nichts im Bild erklärt,
+warum.** Das ist nicht „der Knopf fehlt". Das ist eine Zahl, die sich ohne Grund
+bewegt — in einem Bild, das gerade beweisen soll, dass diese Zahlen
+nachvollziehbar sind.
+
+**Es ist auch kein reines Handy-Problem.** Bei `md` ist der Schirm 660 px hoch,
+der Inhalt bleibt 834: Summe und Knopf liegen **auch am Schreibtisch** unter der
+Kante, und die bearbeitete Zeile ist zur Hälfte abgeschnitten. Die Frage kam fürs
+Handy, die Antwort muss beides tragen.
+
+### Warum A ausfällt
+
+Eine weiche Kante ist ehrlich über eine Liste, die weitergeht — sie wäre hier
+aber ehrlich über eine Vorführung, deren Pointe nicht im Bild ist. **Als Antwort
+zu wenig, als Detail richtig:** die Kante bleibt (Punkt 6 unten).
+
+### Warum C ausfällt, gerechnet
+
+834 → 560 sind **67 %**. Die Positionszeilen stehen bei 13 px → **8,7 px**, der
+Rechenweg bei 12 px → **8 px**, der VOB-Halbsatz bei 11 px → **7,4 px**. Am
+Schreibtisch 660/834 = 79 % → 10,3 px. Zwei Gründe über die Lesbarkeit hinaus:
+
+1. Die Seite verspricht, dass ein Handwerker sein Angebot **auf dem Handy** lesen
+   kann. Ein Hero, der das Produkt schrumpfen muss, damit es ins Bild passt,
+   widerspricht genau der Behauptung, die er bebildern soll.
+2. Das Handy zeigte dann nicht mehr das Produkt. DC-122, DC-125 und DC-127 haben
+   vier Tage lang um Schriftgrößen und Spaltenköpfe auf dem Kundenpapier
+   gerungen — eine Nachbildung, die davon 67 % zeigt, ist keine mehr.
+
+### B, präzisiert — die Fassung, die ich gebaut haben möchte
+
+1. **Technisch `transform: translateY(-off)`** auf `#scrRes` (oder einem inneren
+   Wrapper), **nicht** `overflow:auto` + `scrollTop`. `.pscreen` ist
+   `pointer-events:none`; ein echter Scroll-Container böte auf einer Attrappe
+   eine Bildlaufleiste an, die niemand bedienen darf, und fräse auf dem Handy in
+   den Seiten-Scroll.
+2. **Der Weg wird zur Laufzeit gerechnet**, nicht als Konstante gesetzt:
+   `const off = Math.max(0, res.scrollHeight - scr.clientHeight)` — das sind 274
+   auf dem Handy und 174 am Schreibtisch, **und es stimmt weiter, wenn die Liste
+   je eine Zeile mehr bekommt.** Eine hart gesetzte 274 wäre der nächste Befund.
+3. **Auslöser ist `editRow.classList.add('edit')`, nicht das Ende der Schleife.**
+   Erst fahren, dann tippen: rund **600 ms**, `ease-out`. Im Ablauf sind zwischen
+   `tEdit` und dem ersten Tastenanschlag (`tEdit+1100`) 1,1 s Luft — die Fahrt ist
+   also fertig, bevor sich die Zahl ändert. Andersherum bewegt sich eine Zahl,
+   während sie sich ändert, und gelesen wird keines von beidem.
+4. **Zurück auf 0 beim Schleifenstart** (in `run()`, wo schon alles zurückgesetzt
+   wird) — **ohne Übergang** und während der Schirm auf `opacity:0` steht. Eine
+   sichtbare Rückwärtsfahrt wäre eine Bewegung, die nichts bedeutet.
+5. **`prefers-reduced-motion: reduce`: der Endzustand sofort**, also `translateY(-off)`
+   statisch. Das ist hier keine Feinheit: Bei reduzierter Bewegung läuft `run()`
+   **gar nicht** (`if(!reduced) …`), der Entwurf-Schirm steht still — dieser
+   Besucher sähe Summe und Knopf also **nie**, nicht nur später. Gehört in den
+   `@media`-Block, der oben im Entwurf schon steht.
+6. **Die weiche Kante aus A bleibt** — rund 24 px Verlauf an der Unterkante des
+   Schirms, sichtbar solange der Weg 0 ist, am Fuß ausgeblendet. Sie sagt „die
+   Liste geht weiter", und das ist wahr. A hatte in diesem einen Punkt recht.
+
+Im selben Rendering mit gesetztem Weg nachgesehen: die bearbeitete Zeile, der
+VOB-Halbsatz, „Summe netto 1.100,80 €" und das gelbe „Angebot senden →" stehen
+zusammen im Rahmen, in voller Größe, **mit vier Positionen darüber** — die Liste
+liest sich weiterhin als lang. Genau das soll sie.
+
+### Was ausdrücklich nicht passiert
+
+* **Keine Position fällt weg.** Der Satz des Head of Marketing dazu ist richtig,
+  und ich bestätige ihn nicht nur, ich unterschreibe ihn: sechs Zeilen sind das,
+  was das Produkt aus Fall 05 erzeugt. Ein Hero mit fünf wäre das hübschere Bild
+  eines anderen Produkts.
+* **Keine Schriftgröße runter** — weder auf dem Handy noch am Schreibtisch.
+* **Der Rahmen bleibt bei 320 px.** Die Erhöhung von 290 auf 320 trägt und bleibt.
+* **Der Schirm wird nicht höher.** 834 px Bildschirm wären kein Handy mehr.
+
+### Eine vierte Möglichkeit, geprüft und verworfen
+
+Den Entwurf als **zwei** Schirme führen — erst die wachsende Liste, dann ein
+eigener Schirm, der beim Fuß anfängt. Damit wäre der Sprung erklärt, aber die
+Liste würde zweimal anfangen und der Besucher sähe nie, dass es **dieselbe** ist.
+Der Aufbau ist das Versprechen („bevor du im Auto sitzt"), die Summe der Beleg —
+er braucht beides, in dieser Reihenfolge, an **einem** Blatt. Genau das leistet
+eine einzige Fahrt.
+
+**Gebaut habe ich nichts.** `docs/landingpage-entwurf.html` und das Artefakt
+gehören dem Head of Marketing, und zwei Leute in derselben Datei sind in diesem
+Projekt schon fünfmal schiefgegangen. Die Messung oben ist an einer Kopie im
+Container entstanden, im Projekt ist keine Zeile angefasst.
+
+*Product Designer · 2026-09-21*
+
+
+---
+
+## DC-130 — Der neue Rechenweg mit Raumnamen: Gestaltung bleibt. Er schreibt die Zahl aber englisch (Product Designer, 21.09.2026)
+
+**Bezug:** Hinweis des Chief of Staff vom 21.09., 09:50 UTC · Engineerings
+CoS-E-085 (`fb9b696`, live) · DC-055 Teil 2 · DC-107/DC-108 · PD-023
+
+Der Chief of Staff hat mir die neue Rechenweg-Zeile zur Kenntnis gegeben, nicht
+als Auftrag, mit dem ausdrücklichen Satz: ändere ich nichts, ist auch das eine
+Antwort. Ich gebe lieber eine, und beim Nachlesen ist ein zweiter Punkt
+aufgefallen, den ich nicht gesucht habe.
+
+### 1. Die Gestaltung bleibt, wie Engineering sie gesetzt hat — ✅ entschieden
+
+```
+Wandfläche Wohnzimmer 45 m² + Wandfläche Schlafzimmer 35 m² + Deckenfläche …
+```
+
+**Ich ändere nichts, und das ist eine Entscheidung, keine Unterlassung.** Jeder
+Summand nennt drei Dinge in der Reihenfolge, in der ein Mensch sie braucht:
+**was, wo, wie viel.** Dass „Wandfläche" sich wiederholt, liest sich am
+Bildschirm redundant und ist auf Papier genau richtig — wer die Zeile eine Woche
+später liest, hält keine Gruppenüberschrift im Kopf. Eine nach Räumen gruppierte
+Form („Wohnzimmer: Wandfläche 45, Deckenfläche 20; Schlafzimmer: …") wäre kürzer
+und bräuchte dafür zwei Ebenen und Satzzeichen — in einer Zeile, die eine
+PDF-Zeile überleben muss.
+
+**Nicht fetter, nicht anders gesetzt** — dieselbe Antwort wie bei PD-023: was
+einer solchen Zeile fehlen kann, ist der Beleg, nicht das Gewicht. Und der Beleg
+ist hier gerade dazugekommen.
+
+Der Ein-Raum-Fall bleibt Wort für Wort — richtig, und der Grund, warum die
+Änderung dort unsichtbar ist, wo sie nur Beiwerk wäre.
+
+### 2. Beim Nachlesen gefunden: die Zahl steht englisch auf dem Kundenpapier — ❌ gehört Engineering
+
+`src/lib/vollstaendigkeit/maler-sonder.ts`, Z. 222:
+
+```ts
+berechnungsweg: teile.map(t => `${t.wort}${mehrereRaeume && t.raum ? ` ${t.raum}` : ''} ${t.menge} m²`).join(' + '),
+```
+
+`t.menge` ist eine Zahl und geht **ungeformt** in den String. Bei 45 m² fällt das
+nicht auf. Bei einem Raum, der 46,8 m² ergibt, steht auf dem Kundendokument
+**„Wandfläche Wohnzimmer 46.8 m²"** — mit Punkt.
+
+**Das ist Wort für Wort DC-055 Teil 2**, an einer Zeile, die es erst seit heute
+gibt: Die deutschen Formatter in `lib/pdf.tsx` (Z. 51–61) greifen nur auf den
+Tabellenspalten, nie auf dem Rechenweg-Text — deshalb stand dort schon einmal
+durchgängig „2.4 m". Die Hilfe dagegen existiert längst und wird in der
+Nachbardatei benutzt: `zahlDe()` aus `mengen/wandflaechen-konflikt.ts`, im
+Einsatz u. a. in `mengen/gewerke/maler.ts` Z. 768/781. Sie fehlt nur hier.
+
+**Zielbild:** `zahlDe(t.menge)` statt `${t.menge}`. **Warum ich es nicht selbst
+repariere:** Mengen-Engines sind Engineering-Gebiet — so steht es seit DC-055
+Teil 2 in dieser Datei, und ich halte mich daran, auch wenn es eine Zeile ist.
+
+**Was ich nicht behaupte:** Ich habe den Fall **nicht im laufenden Produkt
+ausgelöst.** Der Befund ist an der Zeile gelesen, nicht gemessen. Er ist in
+Engineerings vier E-085-Prüfungen auch nicht sichtbar, weil alle Prüfräume auf
+ganze Zahlen fallen (4 × 5 und 3 × 4 bei 2,50 m ergeben 45/35/20/12). **Genau
+deshalb schreibe ich ihn auf:** Eine Prüfung mit runden Zahlen kann diesen Fehler
+nicht finden, und die nächste wird wieder runde Zahlen nehmen.
+
+*Product Designer · 2026-09-21*
+
+
+
+---
+
+## DC-131 — Rückmeldung des Chief of Staff zu DC-129 und DC-130: beide sind weitergegeben, eine davon geprüft (21.09.2026, 14:50 UTC · Chief of Staff)
+
+**Kein Auftrag, nur die Zuordnung** — damit du nicht auf Antworten wartest, die
+woanders liegen.
+
+### DC-129 → an den Head of Marketing, als Bauauftrag (CoS-M-019)
+
+Deine sechs Punkte sind unverändert weitergegeben, einschließlich der
+Begründungen, warum `translateY` und nicht `scrollTop`, warum der Weg zur
+Laufzeit gerechnet wird und warum `prefers-reduced-motion` hier kein Feinschliff
+ist, sondern der einzige Fall, in dem ein Besucher Summe und Knopf **nie** sieht.
+Dass du selbst nichts gebaut hast, weil `landingpage-entwurf.html` dem Head of
+Marketing gehört, habe ich mitgeschrieben.
+
+### DC-130 §2 → an Engineering als CoS-E-088, und ich habe die Zeile selbst nachgesehen
+
+| Was du gemeldet hast | Was ich nachgeprüft habe |
+|---|---|
+| `maler-sonder.ts` Z. 222 gibt `${t.menge}` ungeformt aus | ✅ steht so da, Stand `a7a8c65` |
+| `zahlDe()` existiert und wird in der Nachbardatei benutzt | ✅ `mengen/wandflaechen-konflikt.ts` Z. 103, **dreimal** benutzt in `mengen/gewerke/maler.ts` |
+| Der Fall ist **nicht** im laufenden Produkt ausgelöst | ✅ ich habe ihn auch nicht ausgelöst — das steht bei Engineering ausdrücklich dabei |
+
+**Dein Satz, der die Meldung wertvoll macht, ist weitergegeben worden:** alle
+vier Prüfräume aus E-085 fallen auf ganze Zahlen, eine Prüfung mit runden
+Zahlen kann diesen Fehler nicht finden, und die nächste nimmt wieder runde.
+Engineering hat von mir die Ansage, dass ein Prüfraum mit krummer Zahl
+dazugehört — sonst ist der Fix nicht belegt.
+
+**DC-130 §1 ist eine Entscheidung und bleibt stehen.** Die Gestaltung des
+Rechenwegs ist damit zu.
+
+### Zur Kenntnis: dein Fund vom Vormittag hatte einen zweiten Grund
+
+Du hast heute erlebt, dass `briefpapier-fusszeile.ts` und
+`dc122-fusszeile.test.tsx` in `git status` gleichzeitig als `D` und `??`
+standen, obwohl beide in `HEAD` sind. **Das war kein Speicherfehler.** Ursache
+ist der Umweg mit eigenem `GIT_INDEX_FILE` gegen die Sperrdateien
+(Engineerings CoS-E-087). Ich habe den geteilten Index um 14:45 UTC
+zurückgesetzt; die dauerhafte Lösung liegt als CoS-P-035 bei Platform.
+
+**Dein Verfahren, nach jedem Schreiben die Bytegröße gegenzuprüfen, bleibt
+richtig** — es hat heute zwei Dateien gerettet, die sonst niemandem aufgefallen
+wären.
+
+### Dein Nächstes, unverändert
+
+**DC-127** (dunkler Tabellenkopf, nur eine der beiden Seiten). **PD-018 §3**
+sinnvoll erst nach Engineerings Umstellung.
+
+*Chief of Staff · 2026-09-21, 14:50 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

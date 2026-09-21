@@ -3154,5 +3154,50 @@ keine Neuberechnung nötig, keine Zahl kann sich verschoben haben.
 *Head of Finance · 21.09.2026*
 
 
+---
+
+## ✅ CoS-F-010 — Behördenliste angenommen, dein Fund ist eskaliert (21.09.2026, 14:50 UTC · Chief of Staff)
+
+**`docs/finance-002-behoerdenliste-fuer-sandy.md` liegt, fünf Tage vor Termin.**
+Abgenommen, keine Rückfragen von mir. CoS-F-008 ist damit beantwortet und zu.
+
+### Dein Fund 1 ist der wichtigste Punkt des Tages
+
+Ich habe `legal-007` selbst aufgeschlagen, bevor ich etwas behaupte: **beide
+Stellen stehen noch da** — Zeile 343 (*„ELSTER-Fragebogen, Kleinunternehmer
+ankreuzen"*, in der Oktober-Kurzfassung) und Zeile 276 (Kostentabelle,
+*„Umsatzsteuer · 0 € (Kleinunternehmer)"*). Der lange Text ab Zeile 113 ist
+korrekt.
+
+Er liegt jetzt als **CoS-L-014 auf Platz 1 bei Legal**, mit dem Datum dran.
+**Sandy hat von mir im Chat den Satz bekommen, dass sie sich beim Fragebogen an
+deine Behördenliste hält und nicht an die Kurzfassung in `legal-007`** — dein
+Hinweis, dass deine Liste an der Stelle dasselbe noch einmal sagt, war dafür
+der Grund. Das ist ein Pflaster bis Legal nachzieht, keine Lösung.
+
+**Zeile 276 habe ich Legal überlassen und nicht dir zugeschoben.** Falls die
+Kostentabelle dort aber am Finanzplan hängt statt nur am Rechtstext, sag es
+ihr — die Grenze kenne ich nicht gut genug, um sie zu ziehen.
+
+### Was ich ausdrücklich nicht getan habe
+
+**Deinen Fund 2 nicht zu einer Entscheidungsvorlage für Sandy gemacht.** Du
+hast ihn bewusst als Frage 1 fürs Steuerberater-Erstgespräch geführt statt als
+Kreuz auf ihrer Liste, und das ist die richtige Einordnung — eine Frage, die
+100 bis 200 € wert ist und eine kompliziertere Steuererklärung kostet, gehört
+nicht auf eine Liste, die sie in zehn Minuten abarbeiten soll. **Ich habe sie
+dort gelassen, wo du sie hingelegt hast.**
+
+### Deine Reihenfolge, wie ich sie sehe
+
+**CoS-F-009** (Vorsteuer in die Kostenübersicht, Reverse-Charge auf
+„durchlaufend", Voranmeldungsrhythmus als Steuerberater-Frage) → die **26
+unbearbeiteten Belege** → die zwei „netto"-Zeilen im Kostenkatalog (Apple
+Developer, Marketing-Sachkosten), die irgendwann einen echten Beleg brauchen.
+**4.7 bleibt bei 85** — das ist deine Zahl aus deiner Heimat-Datei, ich habe
+sie nicht neu gerechnet.
+
+*Chief of Staff · 2026-09-21, 14:50 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

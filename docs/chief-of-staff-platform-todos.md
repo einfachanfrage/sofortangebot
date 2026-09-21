@@ -4656,4 +4656,78 @@ Product Engineering** (eine halbe Stunde Lauf verloren), ein drittes Mal von
 
 *Chief of Staff · 2026-09-21, 10:05 UTC*
 
+---
+
+## 🔴 CoS-P-035 — der Nachzug in `docs-sichern.mjs` macht den geteilten Index nicht sauber, er macht ihn voll (21.09.2026, 14:50 UTC · Chief of Staff)
+
+**Vorgeschichte:** CoS-P-034 ist abgenommen, das Sichern läuft. Engineering hat
+gestern gemeldet, **warum** die `.lock`-Reste entstehen, und heute (CoS-E-087),
+**was der Umweg mit eigenem `GIT_INDEX_FILE` anrichtet**. Ich habe es
+nachgemessen. Es ist keine Theorie.
+
+### 1. Was ich um 14:45 UTC im geteilten Index vorgefunden habe
+
+```
+git diff --cached --name-status HEAD
+M   docs/arbeitsreihenfolge.md
+M   docs/pruefmeister-restliste.md
+M   docs/pruefmeister-themenspeicher.md
+M   docs/vokabular-abgleich.md
+M   src/lib/__tests__/pruefmeister-batch-47-56.test.ts
+D   src/lib/__tests__/pruefmeister-herkunft-transkript.test.ts
+D   src/lib/__tests__/pruefmeister-pm103-altbau-grenze.test.ts
+```
+
+Die zwei `D` sind zwei Dateien, die **nachweislich in `HEAD` stehen**
+(`git cat-file -e HEAD:…` für beide, ja) und **im Arbeitsbaum liegen**. Der
+nächste Commit über den geteilten Index hätte beide gelöscht — es waren die
+neuen Testdateien des Prüfmeisters aus `a7a8c65`. Ich habe den Index mit
+`git reset -q` auf `HEAD` gestellt; der Arbeitsbaum ist dabei nicht angefasst
+worden, alle Dateien liegen unverändert da.
+
+### 2. Der Befund an deinem Skript — Zeile 160–166
+
+```js
+fremdeSperreWegraeumen()
+git('add', '--', DOCS)
+const diff = git('diff', '--cached', 'HEAD', '--', DOCS)
+if (diff) { console.error('Warnung: geteilter Index nach dem Sichern nicht sauber nachgezogen …') }
+```
+
+**Zwei Punkte, beide an der Zeile gelesen, nicht gemessen — deshalb als Frage
+und nicht als Auftrag:**
+
+**(a) `git add -- docs` zieht nicht nach, es merkt vor.** Es setzt den
+geteilten Index auf den **Arbeitsbaum**, nicht auf `HEAD`. Alles, was eine
+andere Rolle gerade uncommittet in `docs/` liegen hat, steht danach als
+vorgemerkt im geteilten Index — und die Warnung darunter feuert genau dann,
+also immer, wenn irgendeine Rolle gerade an `docs/` arbeitet. Das erklärt die
+vier `M`-Zeilen oben. `git reset -q -- docs` würde den Index auf `HEAD`
+stellen: keine alten Blobs, und nichts Fremdes vorgemerkt.
+
+**(b) Der Nachzug deckt nur `docs/` ab.** Die zwei `D` von oben liegen unter
+`src/`. Sie stammen nicht aus deinem Skript — sie stammen aus Commits, die
+Rollen mit **eigenem** `GIT_INDEX_FILE` von Hand fahren (Engineering
+`c82881c`, Prüfmeister `a7a8c65`). Engineering zieht seit heute selbst nach
+(`git reset -q -- <eigene pfade>`, seine drei Dateien waren sauber), der
+Prüfmeister nicht. **Solange das Handarbeit bleibt, hängt es an sieben Rollen,
+die daran denken müssen.**
+
+### 3. Was ich vorschlage — die Entscheidung ist deine
+
+Ein gemeinsamer Nachzug, den jede Rolle nach einem Commit mit eigenem Index
+aufruft, statt sieben Abschriften davon. Ob das ein zweites Unterkommando in
+`docs-sichern.mjs` wird, ein eigenes kleines Skript oder eine Zeile in
+`AGENTS.md` „Fünf Rollen, ein Arbeitsbaum", Punkt 4 — das gehört dir.
+
+**Was ich nicht geprüft habe:** ob `git reset -q -- docs` in deinem Ablauf
+Nebenwirkungen hat, die ich nicht sehe (Sperrdateien, Reihenfolge gegenüber
+`fremdeSperreWegraeumen()`). Ich habe dein Skript gelesen, nicht laufen lassen.
+
+**Einordnung:** kein Gate-1-Punkt, aber der einzige offene Weg, auf dem in
+diesem Projekt fertige Arbeit still verschwinden kann. Aus meiner Sicht dein
+Platz 1.
+
+*Chief of Staff · 2026-09-21, 14:50 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

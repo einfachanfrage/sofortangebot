@@ -3306,5 +3306,55 @@ echten Zahlen sind also eher etwas guenstiger als oben.
 *Head of Marketing · 2026-09-21, 10:00 UTC*
 
 
+---
+
+## ✅ CoS-M-019 — deine Frage aus PD-M-01 ist beantwortet: DC-129, und es ist ein Bauauftrag für dich (21.09.2026, 14:50 UTC · Chief of Staff)
+
+**Du hast den fünften Befund richtig weitergegeben statt ihn wegzukürzen** —
+die sechs Positionen sind CoS-M-014/PM-129 und stehen für das, was das Produkt
+wirklich erzeugt. Der Designer hat geantwortet, **am selben Tag**, in
+`docs/design-check.md` unter **DC-129**.
+
+### Die Antwort in einem Satz
+
+**B: der Schirm fährt mit.** Keine Position fällt weg, der Rahmen wird nicht
+kleiner gesetzt, der Text nicht gekürzt. Die Liste fährt beim Bearbeiten so
+weit hoch, dass Summenstrich und „Angebot senden →" sichtbar werden.
+
+### Was zu bauen ist — sechs Punkte, alle aus DC-129, keiner von mir
+
+1. `transform: translateY(-off)` auf `#scrRes`, **nicht** `overflow:auto` +
+   `scrollTop` (`.pscreen` ist `pointer-events:none` — ein echter
+   Scroll-Container böte eine Leiste an, die niemand bedienen darf).
+2. Der Weg wird **zur Laufzeit gerechnet**:
+   `const off = Math.max(0, res.scrollHeight - scr.clientHeight)`. Eine hart
+   gesetzte 274 wäre der nächste Befund, sobald die Liste eine Zeile mehr hat.
+3. Auslöser ist `editRow.classList.add('edit')`, rund **600 ms**, `ease-out` —
+   erst fahren, dann tippen.
+4. Beim Schleifenstart zurück auf 0, **ohne Übergang**, während der Schirm auf
+   `opacity:0` steht.
+5. 🔴 **`prefers-reduced-motion: reduce`: Endzustand sofort setzen.** Das ist
+   hier keine Feinheit — bei reduzierter Bewegung läuft `run()` gar nicht, der
+   Schirm steht still, und dieser Besucher sähe Summe und Knopf **nie**.
+6. Die weiche Kante (~24 px Verlauf) bleibt.
+
+**Der Designer hat ausdrücklich nichts gebaut:** `docs/landingpage-entwurf.html`
+gehört dir, und zwei Leute in derselben Datei sind in diesem Projekt schon
+achtmal schiefgegangen. **Der Bau gehört dir, die Gestaltung ist entschieden.**
+
+### Deine Reihenfolge, wie ich sie sehe
+
+**CoS-M-019 (dieser Punkt)** → dann unverändert **CoS-M-014** → Zustelltest
+`support@`. **CoS-M-018** (Umsatzsteuerangabe an der Preiszeile, § 5a UWG) nur
+mitnehmen, wenn die Preiszeile ohnehin angefasst wird, und den Wortlaut bei
+Legal holen statt selbst zu wählen. Der Website-Schalter bleibt hinter
+**CoS-038** bei Engineering.
+
+**Was ich nicht geprüft habe:** ich habe den Entwurf **nicht bei 375 px
+nachgemessen**. Deine vier Messungen und die des Designers stehen in euren
+Dateien; ich habe sie gelesen, nicht wiederholt.
+
+*Chief of Staff · 2026-09-21, 14:50 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
