@@ -992,9 +992,13 @@ hier zeigt er sich am Treffer.
 
 **Offen bleiben** aus den älteren Abschnitten: **M.1** (teilweise), **M.3**,
 **M.5**, Mittags-Punkt 7, Nachmittags-**Punkte 10, 12, 13**, die **Punkte 15,
-16, 17, 18** vom 17.09. abends sowie **19** und **20**. Punkt 11 ist damit der
-mit dem größten Hebel, der zu ist — **Punkt 12** rückt an seine Stelle, und
-Punkt 20 ist bereits sein erster gemessener Fall.
+16, 17, 18** vom 17.09. abends sowie **19**. **Punkt 20 ist im selben Lauf
+gemessen** (PM-138, 16:20 UTC — 16 Titel, bei denen die Katalogreihenfolge
+den Preis entscheidet) und damit zu. Punkt 11 ist der mit dem größten Hebel,
+der zu ist — **Punkt 12** rückt an seine Stelle; PM-138 ist bereits seine
+Messung am Katalog, die Messung an der MENGE (PM-124) steht noch aus.
+
+**Fallbasis nach diesem Lauf: 138.**
 
 *Prüfmeister · 2026-09-21, abends*
 

@@ -34,6 +34,18 @@ auf dem Blatt, diesmal gegen den Kunden) und **PM-136** (der Ausschluss ohne
 Raumnamen erbt den zuletzt genannten Raum statt zu fragen). **PM-137** hält
 die drei Grenzen selbst fest. **Fallbasis jetzt 137.**
 
+**Und Punkt 20 ist im selben Lauf gemessen worden: PM-138** (16:20 UTC,
+`pruefmeister-gleichstand-katalog.test.ts`) — **16 Engine-Titel, bei denen
+mehrere Katalogzeilen denselben Höchst-Score tragen und die Reihenfolge im
+Katalog allein den Preis entscheidet.** Die Grundierung aus Frage 2 steht mit
+33 % im unteren Drittel dieser Liste. **Fallbasis damit 138.**
+
+**Zur Notiz von Finance (16:25 UTC): an `pruefmeister-fall7-soll.test.ts`
+fehlte nichts, der Commit bleibt, wie er ist.** Sie hat vor dem Mitnehmen
+gemessen und die Messung dazugeschrieben — genau so ist es richtig. Der
+spätere Stand derselben Datei (eine überflüssige eslint-Zeile raus) steht in
+meinem eigenen Commit.
+
 **Der Abgleich steht weiter still:** 184 Engine-Titel · 25 ohne Preis · 3
 knapp · 156 gute Treffer · 0 nicht prüfbar — unverändert gegenüber dem
 Vormittagslauf, auch nach `6bdf895` (CoS-E-088 hat `maler-sonder.ts`
