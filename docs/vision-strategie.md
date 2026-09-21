@@ -392,3 +392,15 @@ unbeantwortet ist: welches Gewerk nach Maler/Bodenleger als Nächstes
 drankommt — mit dem Hinweis, dass Kalkulai (der neue Wettbewerber) Bodenleger
 weiterhin bewusst ausspart. Antwort steht noch aus, daher unten unverändert
 gelassen.
+
+**21.09.2026 (siebter Check-in):** Stand Richtung Launch: weiter klar auf
+Kurs zu Gate 1, mit spürbarer Bewegung seit dem letzten Check-in (Gate 1 von
+≈ 50,2 % auf ≈ 54,2 %, siehe `launch-readiness.md`) statt der Stagnation der
+Vorwoche — keine neuen Risiken am großen Bild. Keine akute strategische
+Entscheidung diese Woche; die bisher offene Weichenstellung „wann geht die
+Website online" hat sich praktisch von selbst geklärt: sie hängt nur noch an
+einem laufenden technischen Baustein (der Preisumstellung), nicht mehr an
+einer Entscheidung von Sandy. Frage aus „Was hier noch fehlt" zum dritten Mal
+an Sandy weitergegeben, da die Frage vom 07.09./14.09. weiterhin unbeantwortet
+ist: welches Gewerk nach Maler/Bodenleger als Nächstes drankommt. Antwort
+steht weiter aus, daher unten unverändert gelassen.
