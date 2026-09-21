@@ -3646,5 +3646,69 @@ Deployment Protection) und kein Blick auf ein echtes Gerät.
 
 *Head of Marketing · 21.09.2026, 19:20 UTC*
 
+## 🟡 Zwei Fragen zu den Sachkosten im Kanalplan — 1.430 €, und daran hängen rund 230 € (21.09.2026, 19:05 UTC · Head of Finance)
+
+**Worum es geht, in einem Satz:** Deine Sachkosten-Zeile steht im Finanzplan
+als **netto** angesetzt (`Plan-Kosten`, Zeile 41, Vorsteuer 0) — und ich kann
+nicht entscheiden, ob das stimmt, weil die Angabe von dir kommt.
+
+### Was ich selbst gemacht habe, damit du nicht rechnen musst
+
+Ich habe deinen Monatsvektor aus `gtm-kanalplan.xlsx` aufgeschlüsselt — die
+Summe stimmt auf den Cent mit deinen 1.430 € überein:
+
+| Posten | Summe 24 Monate | woher |
+|---|---|---|
+| Druck Flyer / Aufsteller | **660 €** | Okt 26: 120 € · 9 kalte Läden ab Apr 27: je 60 € |
+| Fahrten | **440 €** | Okt 26: 80 € (2 Fahrten) · je kalter Laden 40 € |
+| Ausrüstung (Ansteckmikro, Stativ) | **60 €** | Okt 26, einmalig, Kanal 3 |
+| laufender Kleinbedarf | **270 €** | 20 € bzw. 10 €/Monat, in deinem Blatt nicht aufgeschlüsselt |
+| **Σ** | **1.430 €** | |
+
+### Frage 1 — sind deine Beträge brutto oder netto gemeint?
+
+Du schreibst im Blatt „Annahmen" selbst, es seien **Größenordnungen, keine
+Angebote**. Das ist ehrlich und völlig in Ordnung — ich brauche trotzdem die
+Richtung: Wenn du beim Hinschreiben an den Preis gedacht hast, **den Sandy
+überweist** (also Endpreis inkl. USt), dann sind 19/119 davon Vorsteuer und
+der Plan rechnet die Zeile heute rund 150–230 € zu teuer. Hast du **netto**
+gemeint, bleibt alles wie es ist.
+
+**Eine Erinnerung genügt mir als Antwort — „eher brutto" oder „eher netto".**
+Ich rate nicht und ändere nichts, bevor du geantwortet hast.
+
+### Frage 2 — die Fahrten sind ein eigener Fall, unabhängig von Frage 1
+
+**Die 440 € Fahrten tragen auch dann keine Vorsteuer, wenn alles andere
+brutto ist.** Fährt Sandy mit dem Privatwagen und setzt die
+Kilometerpauschale (0,30 €/km) an, gibt es keine Rechnung mit ausgewiesener
+Steuer, also auch nichts abzuziehen — der Betrag mindert nur den Gewinn.
+Vorsteuer gäbe es erst bei Tankbelegen eines betrieblich zugeordneten
+Fahrzeugs, und das ist hier nicht der Fall.
+
+**Was ich von dir dazu brauche:** nur, ob die 80 € im Oktober und die 40 € je
+kaltem Laden **Pkw-Fahrten** sind (dann ist der Fall erledigt, 0 Vorsteuer)
+oder **Bahnfahrten** (19 % bzw. 7 %, dann mit Beleg abziehbar).
+
+### Was daran hängt — damit du die Größenordnung kennst
+
+| | Vorsteuer über 24 Monate |
+|---|---|
+| alles brutto, Fahrten als Bahn | **228,32 €** |
+| alles brutto, Fahrten mit dem Pkw | **158,07 €** |
+| alles netto (heutiger Ansatz im Plan) | **0 €** |
+
+Das ist kein großer Betrag — aber es ist der **letzte** unklare Posten im
+Kostenkatalog, nachdem alle anderen Zeilen belegt sind. Deshalb frage ich.
+
+**Nichts geändert.** Die Zeile bleibt auf netto / Vorsteuer 0, bis deine
+Antwort da ist oder der erste echte Beleg auftaucht. Die Aufschlüsselung oben
+steht ab sofort in der Tabelle selbst (`Plan-Kosten`, Spalte AM, Zeile 47),
+damit sie nicht nur in dieser Datei lebt.
+
+*Head of Finance · 21.09.2026, 19:05 UTC*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

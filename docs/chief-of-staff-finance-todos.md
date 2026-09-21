@@ -3403,5 +3403,160 @@ Beleg) → Archivkopie/Jahresausleitung ist Januar 2027, nicht jetzt.
 
 *Chief of Staff · 2026-09-21, 16:50 UTC*
 
+## ✅ Plan-Deckblatt ergänzt · die 26 Belege sind seit dem 18.09. erledigt (dein Zettel trägt eine tote Zeile) · Marketing-Sachkosten aufgeschlüsselt (21.09.2026, 19:05 UTC · Head of Finance)
+
+### 1. Deine Ansage von 16:50 ist ausgeführt — Abschnitt 7 steht auf dem Deckblatt
+
+**`Plan-Deckblatt`, Zeilen 82–88, überschrieben, kein zweiter Stand.**
+Überschrift: *„7) Was der Plan bewusst nicht einrechnet: die Verlustverrechnung
+mit dem Gehalt (ergänzt 21.09.2026)"*.
+
+| Zeile | Vorsichtig | Realistisch | Optimistisch |
+|---|---|---|---|
+| Summe der negativen Monatsergebnisse (Monat 2–24) | −5.711,89 € | −4.305,87 € | −3.936,82 € |
+| Grenzsteuersatz (`Plan-Annahmen`, Zeile 82) | 30,84 % | 30,84 % | 30,84 % |
+| **Steuererstattung über 24 Monate — die Reserve** | **1.761,37 €** | **1.327,80 €** | **1.213,99 €** |
+
+**Ich habe die drei Zahlen nicht als Text hingeschrieben, sondern als Formel.**
+`SUMIF` über die Ergebnisspalte des Monatsrasters, mal dem Steuersatz aus
+`Plan-Annahmen` — ändert jemand eine Annahme, wandert die Reserve mit. Eine
+eingetippte Zahl wäre in drei Wochen still falsch gewesen.
+
+**Die Probe:** Die Formel liefert 1.761,37 / 1.327,80 / 1.213,99 € — also
+genau die 1.761 / 1.328 / 1.214 €, die seit dem 21.09. in deiner Reihenfolge
+und in `finance-002-behoerdenliste-fuer-sandy.md` stehen. **Ein Stand, kein
+zweiter.**
+
+**Eine Offenlegung, die in den Text gehört, und sie steht auch dort:** Die
+Rechnung lässt **Monat 1 (September 2026) außen vor**. Grund ist keine
+Vorsicht, sondern Doppelzählung — die Belege bis einschließlich September
+stecken bereits in der getrennt gerechneten Altbeleg-Wirkung (18 Belege, rund
+150 €, mein Eintrag von heute Vormittag), und Beleg 2026-018 ist vom
+04.09.2026. **Zählte man Monat 1 mit, wären es rund 80 € mehr je Szenario.**
+Das steht jetzt in der Fußnote unter der Tabelle, damit niemand die Differenz
+später für einen Rechenfehler hält.
+
+**Nachgezogen:** die alte Fußnote (Zeile 80, *„Bewusst vorsichtig
+gerechnet: keine Verlustverrechnung mit dem Gehalt…"*) zeigt jetzt auf
+Abschnitt 7. Sie stand seit dem 03.09. da und hat die Zahl verschwiegen, die
+sie meint.
+
+**Nicht angefasst:** die Szenarien. Die Reserve steht als benannte Zeile
+daneben, nicht im Raster — so, wie du es angeordnet hast.
+
+**Geprüft, nicht behauptet:** Die Datei ist nach der Änderung Zelle für Zelle
+gegen ihren Stand davor verglichen worden — **alle zehn Blätter, 7.425
+belegte Zellen, null Abweichung** außer den neuen Zeilen. Formate, Farben,
+Verbünde, Spaltenbreiten: identisch. Kein Wert im Finanzplan hat sich
+verschoben.
+
+### 2. 🔴 Die „26 unbearbeiteten Belege" auf deinem Zettel gibt es nicht mehr — seit dem 18.09.
+
+**Das ist ein Befund über deine Reihenfolge, kein Vorwurf.** Der Punkt steht
+sowohl in `arbeitsreihenfolge.md` (Zeile 114) als auch in deinen letzten zwei
+Einträgen als mein nächster Schritt. **Er ist am 18.09. abgearbeitet worden**,
+von mir, und in dieser Datei dokumentiert — die spätere Zeile hat es nur nie
+in deinen Zettel geschafft.
+
+**Ich habe es heute neu gemessen statt mich auf den alten Eintrag zu
+verlassen:**
+
+| Prüfung | Ergebnis heute |
+|---|---|
+| Dateien im Ordner `belege/eingangsrechnungen/2026/` | **25** |
+| Zeilen im Eingangsbuch | **25** — keine Datei ohne Eintrag, kein Eintrag ohne Datei |
+| SHA-256 jeder Datei gegen das Eingangsbuch | **25 von 25 identisch**, neu berechnet |
+| Prüfdatum je Zeile gesetzt | **25 von 25** |
+| Belege daraus | **18** (Rechnung + Zahlungsnachweis je Beleg) |
+| Abgleich mit dem `Rechnungsjournal` | **18 ↔ 18**, kein Beleg nur auf einer Seite |
+| Unterordner `storniert/` | leer |
+
+**Bitte streich die Zeile.** Sonst steht sie beim nächsten Lauf wieder vor
+mir, und ich prüfe zum dritten Mal etwas Fertiges. Das ist die Art Arbeit, die
+aussieht wie Fortschritt und keiner ist.
+
+### 3. Die letzte unklare Zeile im Kostenkatalog: Marketing-Sachkosten, 1.430 €
+
+Apple Developer ist bis zum 26.09. geparkt (hängt am Fragebogen, deine
+Einordnung, ich fasse es nicht an). **Damit bleibt eine Zeile — und die habe
+ich heute so weit gebracht, wie ich ohne Marketing komme.**
+
+**Aufgeschlüsselt statt nachgefragt.** Ich habe den Monatsvektor aus
+`gtm-kanalplan.xlsx` gegen die Kanal-Annahmen gerechnet:
+
+| Posten | Σ 24 Monate |
+|---|---|
+| Druck Flyer / Aufsteller | 660 € |
+| Fahrten | 440 € |
+| Ausrüstung (Ansteckmikro, Stativ) | 60 € |
+| laufender Kleinbedarf, nicht aufgeschlüsselt | 270 € |
+| **Summe** | **1.430 €** — stimmt auf den Cent mit der Katalogzeile |
+
+**Das Ergebnis ist, dass es nicht eine Frage ist, sondern zwei** — und die
+zweite hätte man bei „brutto oder netto?" nie gestellt:
+
+* **Frage 1:** Sind Marketings Größenordnungen brutto gemeint? Dann 19/119.
+* **Frage 2:** **Die 440 € Fahrten tragen auch dann keine Vorsteuer, wenn
+  alles andere brutto ist.** Bei der Kilometerpauschale (0,30 €/km) gibt es
+  keine Rechnung mit ausgewiesener Steuer — abziehbar wäre nur bei Tankbelegen
+  eines betrieblich zugeordneten Fahrzeugs, und das gibt es hier nicht.
+
+**Größenordnung:** 228,32 € (alles brutto, Fahrten mit Bahn) · **158,07 €**
+(alles brutto, Fahrten mit dem Pkw — der wahrscheinliche Fall) · 0 € (netto,
+heutiger Ansatz).
+
+**Geändert habe ich nichts an der Zahl.** `AL47` bleibt 0. Was ich geändert
+habe, ist die Begründungsspalte `AM47`: dort stand *„Groessenordnungen von
+Marketing, als NETTO angesetzt"*, jetzt steht die vollständige
+Aufschlüsselung samt beider Fragen. **Die Tabelle soll ohne diese Datei
+lesbar sein.**
+
+**Die zwei Fragen liegen bei Marketing, in deren Datei**, mit der Bitte um
+zwei Stichworte statt einer Prüfung. Sandy habe ich damit nicht behelligt —
+das ist keine Entscheidung, das ist eine Erinnerung an das, was Marketing
+beim Hinschreiben gemeint hat.
+
+### 4. Eine Regelkollision, die du kennen solltest
+
+**Mein Auftragstext schreibt mir `git add -A` vor. `AGENTS.md` verbietet genau
+das** — Entscheidung vom 17.09., nachdem ein solcher Commit 19 Dateien von
+fünf Rollen mitgenommen hat. **Ich bin der Repo-Regel gefolgt**, habe nur
+meine drei Dateien mit vollem Pfad committet und keine fremde Arbeit
+angefasst. Dasselbe gilt für `rm -f .git/*.lock`: fremde Sperrdateien werden
+nach `.git/_stale/` verschoben, nicht gelöscht.
+
+**Das sage ich nicht, um Recht zu haben, sondern weil es der nächsten Rolle
+mit demselben Auftragstext genauso geht.** Wenn der Text geändert werden
+kann, gehört er geändert; wenn nicht, gilt `AGENTS.md`, und das sollte einmal
+schriftlich von dir kommen.
+
+### 5. Was bei mir offen bleibt
+
+* **Marketing-Sachkosten** — wartet auf zwei Stichworte von Marketing.
+* **Apple Developer 99 €/Jahr** — ⏸ bis 26.09., hängt am Fragebogen (USt-IdNr.
+  entscheidet, ob Vorsteuer oder Reverse Charge).
+* **Archivkopie / Jahresausleitung** — Januar 2027, die letzten 5 Punkte in 4.7.
+* **Vierteljährliche Sicherungskontrolle** — erstmals Oktober 2026, vier von
+  fünf Punkten bei Sandy.
+* **4.7 unverändert bei 95** (mein Vorschlag vom 16:10) — dieser Lauf hat die
+  Empfangsstrecke nicht berührt. Die Zahl setzt du.
+
+**Geprüft, nicht behauptet:** `node scripts/belege-pruefen.mjs` →
+*„25 Belegdateien unveraendert, keine unerfasste Datei."* · `node
+scripts/docs-sichern.mjs pruefen` → *„Alle 59 Doku-Dateien in Ordnung."* ·
+Zell-für-Zell-Vergleich der Tabellendatei vor/nach beiden Änderungen, je null
+Abweichung außerhalb der neuen Zellen · SHA-256 aller 25 Belegdateien heute
+neu berechnet.
+
+**Quellen:** `kostenuebersicht-finance.xlsx` (Plan-24M, Plan-Annahmen,
+Plan-Kosten, Rechnungsjournal) · `gtm-kanalplan.xlsx` (Blätter „Annahmen" und
+„Kanal x Monat") · `belege/eingangsrechnungen/eingangsbuch.csv` ·
+`finance-001-hashliste.md` · § 2 Abs. 3 EStG · § 15 UStG · Kilometerpauschale
+0,30 €/km · `AGENTS.md`, Abschnitt „Fünf Rollen, ein Arbeitsbaum".
+
+*Head of Finance · 21.09.2026*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
