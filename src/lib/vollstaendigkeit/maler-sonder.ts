@@ -1,5 +1,5 @@
 import type { BerechnetePosition } from '../mengen/types'
-import { hat, add, filtereArray, istWandStreichen, istDeckeStreichen, NISCHE_WORT, raumNamenAus, findeRaumImSatz } from './helpers'
+import { hat, add, filtereArray, istWandStreichen, istDeckeStreichen, NISCHE_WORT, raumNamenAus, findeRaumImSatz, raumAusTitel } from './helpers'
 import { saetze } from '../satz-raum'
 import { ersetzeZahlenWorte } from '../zahlen-parser'
 import { mitTitelZusatz } from '../positions-titel'
@@ -102,6 +102,28 @@ const URSACHE_BEIDE = /nikotin|\bruß\b|\bruss\b|rauch|verraucht|verqualmt|vergi
 
 const ISOLIERGRUND = 'Isoliergrund gegen Nikotin / Ruß / Wasserflecken'
 
+/**
+ * Steht dieser Raumname als GANZES Wort im Satz?
+ *
+ * Mit Wortgrenze, und Namen unter drei Zeichen zählen gar nicht — die
+ * Lehre aus PM-103: die Prüfmeister-Fälle nennen ihre Räume `W`, und ein
+ * Namensvergleich ohne Grenze hat dort jedes einzelne „w" getroffen.
+ * `Altbauwohnzimmer` ist kein „Wohnzimmer", `Badezimmer` kein „Bad".
+ */
+const WORTZEICHEN = /[a-zäöüß0-9]/i
+function nenntRaum(satz: string, raumName: string): boolean {
+  const name = raumName.toLocaleLowerCase('de-DE').trim()
+  if (name.length < 3) return false
+  for (let ab = 0; ; ) {
+    const stelle = satz.indexOf(name, ab)
+    if (stelle === -1) return false
+    const davor = stelle === 0 ? '' : satz[stelle - 1]
+    const danach = satz[stelle + name.length] ?? ''
+    if (!WORTZEICHEN.test(davor) && !WORTZEICHEN.test(danach)) return true
+    ab = stelle + 1
+  }
+}
+
 export function pruefeWasserflecken(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string, hatSchimmelFlag: boolean): void {
   if (hatSchimmelFlag) return
   // Wächter kennt beide Schreibweisen — sonst legt er die Position nach der
@@ -113,7 +135,8 @@ export function pruefeWasserflecken(ergaenzt: BerechnetePosition[], fehlende: st
   // Der Satz mit dem Auslöser ist der Satz, in dem die Fläche stehen kann.
   // „gelb an den Wänden" steht in einem anderen Satz als „da muss ein
   // Sperrgrund drauf" — das ist die Ursache, nicht die genannte Fläche.
-  const ausloeserSatz = saetze(text).find(s => SPERR_AUSLOESER.test(s))
+  const alleSaetze = saetze(text)
+  const ausloeserSatz = alleSaetze.find(s => SPERR_AUSLOESER.test(s))
   if (!ausloeserSatz) return
 
   const genannt: Array<'wand' | 'decke'> = []
@@ -133,11 +156,54 @@ export function pruefeWasserflecken(ergaenzt: BerechnetePosition[], fehlende: st
     return
   }
 
-  const wandPos = ergaenzt.find(p => istWandStreichen(p.beschreibung))
-  const deckenPos = ergaenzt.find(p => istDeckeStreichen(p.beschreibung))
-  const teile: Array<{ name: string; menge: number }> = []
-  if (flaechen.includes('wand') && wandPos) teile.push({ name: 'Wandfläche', menge: wandPos.menge })
-  if (flaechen.includes('decke') && deckenPos) teile.push({ name: 'Deckenfläche', menge: deckenPos.menge })
+  // ── CoS-E-085 · PM-079-A / PM-079-B (21.09.2026) ──────────────────────
+  //
+  // Hier stand `ergaenzt.find(istWandStreichen)` und `find(istDeckeStreichen)`
+  // — `find` nimmt die ERSTE Position, und der Raumbezug des Auslösersatzes
+  // wurde nicht mitgeführt. Eine Zeile, zwei Wirkungen:
+  //
+  //   PM-079-A  zwei verrauchte Räume → der Isoliergrund lag nur auf dem
+  //             ersten. 47,00 m² × 9,00 €/m² = 423,00 € zu wenig (live
+  //             an Fall 8 gemessen: 463,50 €).
+  //   PM-079-B  war nur der ZWEITE Raum verraucht, lag er auf den Flächen
+  //             des ersten — auf dem falschen Raum, nicht bloß auf zu
+  //             wenigen. Der Handwerker sperrt ein Zimmer, das es nicht
+  //             braucht, und lässt es dort weg, wo es nötig ist.
+  //
+  // Betroffen ist ein Raum, wenn sein Name in einem Satz steht, der das
+  // Auslösewort ODER die Ursache nennt. „auch verraucht" im zweiten Satz
+  // reicht also — so redet ein Handwerker, und PM-080 (die Ursache allein
+  // löst nichts aus) bleibt davon unberührt: ohne Auslösersatz sind wir
+  // oben schon ausgestiegen.
+  //
+  // Nennt kein betroffener Satz einen bekannten Raum, gilt wie bisher das
+  // ganze Angebot — der Ein-Raum-Fall ändert sich damit um nichts (PM-079-C).
+  const raumNamen = raumNamenAus(ergaenzt)
+  const betroffeneRaeume = new Set<string>()
+  for (const satz of alleSaetze) {
+    if (!SPERR_AUSLOESER.test(satz) && !URSACHE_BEIDE.test(satz) && !URSACHE_DECKE.test(satz)) continue
+    for (const name of raumNamen) if (nenntRaum(satz, name)) betroffeneRaeume.add(name)
+  }
+  const imBereich = (p: BerechnetePosition) =>
+    betroffeneRaeume.size === 0 || betroffeneRaeume.has(raumAusTitel(p.beschreibung) ?? '')
+
+  const teile: Array<{ wort: string; raum: string | null; menge: number }> = []
+  const sammle = (art: 'wand' | 'decke', trifft: (b: string) => boolean, wort: string) => {
+    if (!flaechen.includes(art)) return
+    for (const p of ergaenzt) {
+      if (!trifft(p.beschreibung) || !imBereich(p)) continue
+      teile.push({ wort, raum: raumAusTitel(p.beschreibung), menge: p.menge })
+    }
+  }
+  sammle('wand', istWandStreichen, 'Wandfläche')
+  sammle('decke', istDeckeStreichen, 'Deckenfläche')
+
+  // Der Rechenweg steht auf dem Kundendokument. Hat die Aufnahme nur einen
+  // Raum, bleibt er Wort für Wort, wie er war — der Name wäre dort nur
+  // Beiwerk. Sobald es mehrere Räume GIBT, muss er dabeistehen, auch wenn
+  // am Ende nur einer gesperrt wird: gerade dann ist die Frage „welcher?"
+  // die, die der Handwerker beantwortet haben will (PM-079-B).
+  const mehrereRaeume = raumNamen.length > 1
 
   if (teile.length === 0) {
     add(ergaenzt, fehlende, ISOLIERGRUND)
@@ -153,7 +219,7 @@ export function pruefeWasserflecken(ergaenzt: BerechnetePosition[], fehlende: st
     menge: m2,
     einheit: 'm²',
     konfidenz: 'high',
-    berechnungsweg: teile.map(t => `${t.name} ${t.menge} m²`).join(' + '),
+    berechnungsweg: teile.map(t => `${t.wort}${mehrereRaeume && t.raum ? ` ${t.raum}` : ''} ${t.menge} m²`).join(' + '),
     annahmen: [],
   })
 }

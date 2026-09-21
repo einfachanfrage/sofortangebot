@@ -128,23 +128,28 @@ describe('PM-079 · zwei verrauchte Räume', () => {
     expect(preis(p, /Isoliergrund/, 'maler')).toBe(katalog('Isoliergrund gegen Nikotin / Ruß / Wasserflecken'))
   })
 
-  it.fails('PM-079-A · beide verrauchten Räume tragen den Isoliergrund', () => {
+  // ✅ CoS-E-085 (21.09.2026): gebaut. Die Fläche wird über alle betroffenen
+  // Räume summiert statt über den ersten. Sperrklinke gestrichen.
+  it('PM-079-A · beide verrauchten Räume tragen den Isoliergrund', () => {
     const iso = finde(lauf('maler', T_BEIDE, ZWEI_RAEUME), /Isoliergrund/)
     expect(iso).toBeDefined()
-    // 45 + 20 + 35 + 12 = 112 m². Ist: 65 m² — der zweite Raum fehlt.
+    // 45 + 20 + 35 + 12 = 112 m². War: 65 m² — der zweite Raum fehlte,
+    // 47 m² × 9,00 € = 423,00 € zu wenig.
     expect(iso!.menge).toBe(112)
   })
 
-  it.fails('PM-079-B · der Auslöser im zweiten Satz meint auch den zweiten Raum', () => {
+  // ✅ CoS-E-085 (21.09.2026): gebaut. Betroffen ist, wessen Raumname in
+  // einem Satz mit Auslöser oder Ursache steht. Sperrklinke gestrichen.
+  it('PM-079-B · der Auslöser im zweiten Satz meint auch den zweiten Raum', () => {
     // Schärfer als PM-079-A: Hier ist NUR das Schlafzimmer verraucht. Die
-    // Regel legt den Isoliergrund trotzdem auf die Flächen des Wohnzimmers —
-    // die Position steht auf dem falschen Raum, nicht bloß auf zu wenigen.
+    // Regel legte den Isoliergrund trotzdem auf die Flächen des Wohnzimmers —
+    // die Position stand auf dem falschen Raum, nicht bloß auf zu wenigen.
     const t =
       'Wohnzimmer vier mal fünf, Höhe zwo fünfzig, Wände und Decke streichen. '
       + 'Schlafzimmer drei mal vier, Höhe zwo fünfzig, Wände und Decke streichen, total verraucht, da muss Sperrgrund drauf.'
     const iso = finde(lauf('maler', t, ZWEI_RAEUME), /Isoliergrund/)
     expect(iso).toBeDefined()
-    // Schlafzimmer: Wand 35 m² + Decke 12 m² = 47 m². Ist: 65 m² (Wohnzimmer).
+    // Schlafzimmer: Wand 35 m² + Decke 12 m² = 47 m². War: 65 m² (Wohnzimmer).
     expect(iso!.menge).toBe(47)
   })
 })
