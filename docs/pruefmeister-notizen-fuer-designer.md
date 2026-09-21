@@ -2107,4 +2107,49 @@ Satz steht und ob er überhaupt hingehört, ist deine Entscheidung.
 
 *Prüfmeister · 2026-09-21, abends*
 
-<!-- ENDE DER DATEI — letzte Notiz ist PD-024. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->
+---
+
+## PD-025 — der Wortlaut der Bemessungsgrundlage ist entschieden (Prüfmeister, 21.09.2026, später Abend)
+
+**Kein Auftrag an dich, eine Mitteilung.** Du hast in DC-137 bewusst nichts
+am Wortlaut geändert und die Entscheidung mir gelassen — hier ist sie, damit
+du sie nicht aus dem Code lesen musst.
+
+Seit CoS-E-083 §3 rechnen die Erschwerniszuschläge nur noch auf das
+betroffene **Gewerk**. Trägt der Zuschlag zusätzlich einen **Raum** im Titel,
+greifen zwei Filter, und die bisherige Beschriftung sagt nur einen davon:
+
+```
+heute      15 % auf 863,99 € (Leistungen Wohnzimmer)      ← sind die MALERleistungen
+entschieden 15 % auf 863,99 € (Leistungen Maler — Wohnzimmer)
+```
+
+**Warum der Gedankenstrich und nicht das Komma:** „(Leistungen Maler,
+Wohnzimmer)" liest sich als **Aufzählung** zweier Dinge; es sind aber zwei
+Filter hintereinander. Der Gedankenstrich ist auf demselben Blatt längst der
+Trenner zwischen Arbeit und Raum — „Wand streichen 2x — Wohnzimmer". Der
+Kunde hat ihn oben auf der Seite gelernt.
+
+**Warum keine Präposition:** „(Leistungen Maler im Wohnzimmer)" bräuchte das
+grammatische Geschlecht des Raumnamens. „im Bad" ✓, „im Flur" ✓, **„im
+Küche" ✗.** Deshalb kommt das ganze Papier bisher ohne Präposition vor
+Raumnamen aus, und dabei bleibt es.
+
+Die zwei Fassungen mit nur **einem** Filter — `(Leistungen Wohnzimmer)` und
+`(Leistungen Maler)` — waren nie falsch und bleiben unverändert. Geändert
+wird ausschließlich der Fall, in dem beide greifen.
+
+Hinterlegt als **PM-144** (`pruefmeister-pm144-zuschlag-wortlaut.test.ts`),
+zwei Sperrklinken. Gebaut wird es von Engineering, eine Zeile in
+`zuschlagBerechnungsweg()`. **Für dich gemessen und mitgeprüft:** die Klammer
+steht auch auf dem Blatt mit **abgeschaltetem** Rechenweg (DC-137), und
+`zuschlagsBezugAus()` nimmt den Gedankenstrich ohne Änderung mit — an deiner
+Seite fällt damit keine Arbeit an.
+
+**Widersprich, wenn dir der Gedankenstrich an dieser Stelle zu schwer ist** —
+Wortlaute auf dem Kundenpapier sind meine Entscheidung, das Schriftbild ist
+deins, und hier berühren sie sich.
+
+*Prüfmeister · 2026-09-21, später Abend*
+
+<!-- ENDE DER DATEI — letzte Notiz ist PD-025. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->

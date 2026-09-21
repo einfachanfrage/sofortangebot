@@ -2720,5 +2720,54 @@ braucht.**
 
 *Prüfmeister · 2026-09-21, 16:20 UTC*
 
+---
+
+## Nachtrag 21.09.2026, später Abend — der Abgleich misst nur EINE Richtung (Prüfmeister)
+
+**Zahlenstand unverändert, dritter Lauf in Folge:** 184 Engine-Titel · 25
+ohne Preis · 3 knapp · 156 gute Treffer · 0 nicht prüfbar. Selbst gefahren
+auf Sandys Rechner, am lokalen Stand.
+
+**Zwei Befunde, die beide an diesem Abgleich hängen — und beide aus einer
+Richtung kommen, die er bisher nicht misst.**
+
+### 1 · Ein Engine-Titel, zwei Katalogpreise — zwei von 184 (PM-139)
+
+Der Abgleich fragt heute: *findet dieser Engine-Titel einen Preis?* Er fragt
+nicht: *findet er den **richtigen** von mehreren?* Gemessen an allen 184:
+
+| Engine-Titel | trifft | daneben im Katalog, teurer |
+|---|---|---|
+| `Altfliesen abstemmen` | Altfliesen **Boden** abstemmen (einlagig) 18,00 € | Altfliesen **Wand** abstemmen **22,00 €** |
+| `Aufpreis Diagonalverlegung` | Aufpreis Diagonalverlegung (Parkett) 10,00 € | Fliesen **Boden** 12,00 € · **Wand** 14,00 € |
+
+Der erste ist **PM-124**: der Engine-Titel nennt den Ort nicht, der Katalog
+schon, und die Wandzeile kostet **4,00 €/m² mehr**. Der zweite ist heute
+richtig zugeordnet (den Titel erzeugt allein `boden.ts` für Parkett) und
+**wird falsch, sobald ein Fliesen-Pfad ihn benutzt**.
+
+Die Gegenprobe gehört dazu: `Verfugen Boden`/`Verfugen Wand` (10/12 €),
+`Wand`/`Decke streichen` (6/7 €, 9,50/11 €), Großformat, Naturstein,
+Wanddurchbruch spreizen im Katalog genauso — und sind **harmlos**, weil die
+Engine dort zwei getrennte Titel führt. **Nicht der Katalog entscheidet,
+sondern ob der Engine-Titel den Ort selbst nennt.**
+
+### 2 · Katalogzeilen ohne jeden Engine-Titel (PM-140)
+
+`Aufpreis Diagonalverlegung Boden` (12,00 €/m²) und `… Wand` (14,00 €/m²)
+werden von **keinem** Engine-Titel erzeugt: `fliesen.ts` liest die
+Verlegerichtung überhaupt nicht. Diagonal verlegte Fliesen kosten im Angebot
+dasselbe wie gerade verlegte — **Geld gegen den Betrieb, und stumm.**
+
+### Was daraus für diesen Abgleich folgt
+
+**Er misst eine Richtung von zweien.** „Engine-Titel ohne Preis" (25) ist die
+eine; „Katalogzeile ohne Engine-Titel" ist die andere, und die ist nie
+gezählt worden. Ich behaupte keine Zahl dafür — PM-140 ist der erste Beleg,
+dass es sie gibt. **Als Themenspeicher-Punkt 23 notiert.** Wer den Abgleich
+das nächste Mal anfasst: es ist dieselbe Schleife, andersherum gelesen.
+
+*Prüfmeister · 2026-09-21, später Abend*
+
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

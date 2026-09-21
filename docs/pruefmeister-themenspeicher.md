@@ -10,7 +10,9 @@ Fenstern und Türen — die Welt, die das Datenmodell ohnehin kann. Alles, was *
 einem Raum steht, kam nicht vor. Diese Liste ist die Gegenprobe: sie wird nicht
 aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 
-**Zielgröße:** 100 Fälle. Stand 16.09.2026: **97**
+**Zielgröße:** 100 Fälle — am 17.09. erreicht und überschritten. Stand 21.09.2026 abends: **144**
+*(die Aufzählung darunter zählt den Stand vom 16.09., sie wird nicht fortgeschrieben)*
+**Alt: 97**
 (46 + PM-047 bis PM-056 + PM-057 bis PM-063 + PM-064 bis PM-068
 + PM-069 bis PM-078 + PM-079 bis PM-088 + PM-089 bis PM-097).
 
@@ -1001,6 +1003,72 @@ Messung am Katalog, die Messung an der MENGE (PM-124) steht noch aus.
 **Fallbasis nach diesem Lauf: 138.**
 
 *Prüfmeister · 2026-09-21, abends*
+
+---
+
+## Nachtrag 21.09.2026, später Abend — Punkt 12 und Punkt 21 sind zu, beide kleiner als vermutet
+
+**Fallbasis: 144 Fälle.** Hinterlegt als
+`src/lib/__tests__/pruefmeister-batch-139-143.test.ts` (16 Zusicherungen,
+12 grün / 4 Sperrklinken) und
+`src/lib/__tests__/pruefmeister-pm144-zuschlag-wortlaut.test.ts`
+(6 Zusicherungen, 4 grün / 2 Sperrklinken). Befunde ausführlich in
+`pruefmeister-restliste.md`.
+
+**Abgeräumt:**
+
+* **Punkt 12 — „Zwei Preise für dieselbe Arbeit auf EINER Zeile."** →
+  **gemessen, und die Klasse ist klein.** Alle **184 Engine-Titel** gegen den
+  Standardkatalog: **genau zwei** tragen zwei Katalogzeilen mit verschiedenem
+  Preis — `Altfliesen abstemmen` (Boden 18,00 € / Wand 22,00 €, das ist
+  PM-124 selbst) und `Aufpreis Diagonalverlegung` (Parkett 10,00 € / Fliesen
+  12,00 € und 14,00 €, heute latent). **Meine Vermutung einer breiten Klasse
+  ist widerlegt.** `Verfugen`, `streichen`, Großformat, Naturstein,
+  Wanddurchbruch spreizen im Katalog genauso und sind harmlos, weil die
+  Engine dort den Ort selbst nennt: **der Unterschied ist nie der Katalog,
+  immer der Engine-Titel.** **PM-139.**
+* **Punkt 21 — „Dieselbe Satzmechanik sitzt in zwei weiteren Bremsen."** →
+  **gemessen, und es ist ein geteiltes Bild, kein Durchschlag.**
+  **PM-134 sitzt** in `sockelleisten-ausschluss.ts` (**PM-141**),
+  **PM-136 sitzt in beiden** Bremsen (**PM-142**), **PM-135 sitzt in keiner**
+  (**PM-143**). Der Grund für alle drei Antworten ist derselbe:
+  `saetzeMitRaum()` liefert **Teilsätze**, nicht Sätze — die
+  Sockelleisten-Bremse liest von Haus aus eine Stufe feiner.
+
+**Neu aufgemacht:**
+
+23. **Die Fliesen-Engine kennt die Verlegerichtung nicht.** `boden.ts` liest
+    sie und setzt je Belag einen eigenen Aufpreis; `fliesen.ts` hat weder
+    `diagonal` noch Musterverlegung. Die Katalogzeilen `Aufpreis
+    Diagonalverlegung Boden` (12,00 €) und `… Wand` (14,00 €) haben damit
+    **keinen Engine-Titel** — diagonal verlegte Fliesen kosten im Angebot
+    dasselbe wie gerade verlegte. **PM-140** 🔴, Sperrklinke, Bauauftrag
+    offen; Muster steht in `boden.ts` Z. 202–205. **Und die größere Frage
+    dahinter, ungemessen: welche Katalogzeilen haben sonst noch keinen
+    Engine-Titel?** Der Abgleich misst bisher nur die Gegenrichtung
+    (Engine-Titel ohne Preis, 25 Stück). Klein, ohne App, am Katalog.
+24. **Zwei Bremsen, ein Satzbau, zwei Antworten.** Seit CoS-E-091 hat die
+    Gegenprobe der Bauteil-Bremse innerhalb des Satzes eine **Richtung**; die
+    Sockelleisten-Bremse ist über das Komma in **beide** Richtungen blind.
+    „… machen wir nichts, … neu" heißt in der einen Bremse *kein Ausschluss*,
+    in der anderen *Ausschluss*. **PM-143-A**, Sperrklinke. Welche Antwort
+    die richtige ist, gehört an **PM-134** entschieden, nicht hier.
+25. **Der Wortlaut der Bemessungsgrundlage ist entschieden, der Bau steht
+    aus.** `(Leistungen Maler — Wohnzimmer)`, wenn Raum **und** Gewerk
+    filtern. **PM-144**, zwei Sperrklinken, eine Zeile in
+    `zuschlagBerechnungsweg()`. Die Datei liegt in Engineerings Arbeitsbaum
+    (CoS-E-092) — deshalb Zusicherung statt fremder Hand.
+
+**Offen bleiben** aus den älteren Abschnitten: **M.1** (teilweise), **M.3**,
+**M.5**, Mittags-Punkt 7, Nachmittags-**Punkte 10, 13**, die **Punkte 15, 16,
+17, 18** vom 17.09. abends sowie **19** und **22**. **Punkt 12 und Punkt 21
+sind zu.** Der größte Hebel unter den offenen ist jetzt **Punkt 13** (der
+Katalogtitel als gedruckter Titel, 184 Titel, ohne App) — gefolgt von dem
+neuen **Punkt 23**, der dieselbe Messung von der anderen Seite her macht.
+
+**Fallbasis nach diesem Lauf: 144.**
+
+*Prüfmeister · 2026-09-21, später Abend*
 
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
