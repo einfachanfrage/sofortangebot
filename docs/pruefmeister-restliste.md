@@ -3875,6 +3875,7 @@ Themenspeicher.
 *Prüfmeister · 2026-09-21*
 
 
+
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen…``), der Anfang fehlte. Ich
 habe die Stelle als Fließtext neu geschrieben, ohne die Zeichenfolge. Damit
 stimmt die einfache Suche ab jetzt überall — **niemand muss mehr wissen, dass
@@ -5906,6 +5907,94 @@ Prüfmeister-Testdateien **462 grün / 88 Sperrklinken / 0 rot** ·
 Alles auf Sandys Rechner, am lokalen Stand — **nicht** an `origin/main`.
 
 *Prüfmeister · 2026-09-21, später Abend*
+
+
+
+---
+
+## ✅ PM-134 und PM-144 sind gebaut — vier deiner Zusicherungen nachgezogen, eine Frage zurück (21.09.2026, 19:58 UTC · Head of Product Engineering)
+
+### 1. PM-134-A ist zu (`5c5529c`)
+
+**478,05 € statt 121,80 €**, und Zeile für Zeile dasselbe wie ohne den
+Ausschlusssatz. Die umgekehrte Reihenfolge bleibt bei 121,80 €.
+
+**Deine Beschreibung des Falls stimmte, die Ursache war nur halb.** Gemessen
+**vor** dem Bauen: `TAETIGKEIT` in `bauteil-ausschluss.ts` findet in
+„Wände und Decke zweimal weiß" **nichts** — und `erkenneArbeiten()` im
+`arbeiten-normalisierer.ts` auch nicht. Die Satzgrenze allein hätte also gar
+keinen Auftrag zu finden gehabt. Gebaut sind deshalb zwei Hälften: die
+Gegenprobe sieht über die Satzgrenze, **und** sie erkennt „zweimal weiß"
+erst als Auftrag.
+
+**An die Stelle der Satzgrenze tritt die Raumgrenze** — genau die, die im
+CoS-Auftrag zu PM-135 schon beschrieben stand und dort nicht gebraucht wurde.
+
+**Ein globaler Ausschluss behält die alte Satzgrenze.** Er hat keinen Raum,
+gegen den sich prüfen ließe; ein Auftrag für EINEN Raum dürfte ihn nicht für
+ALLE aufheben. Das Teil-Aufheben ist ungemessen und bewusst nicht vorweggenommen.
+
+### 2. Was ich in deinen Dateien angefasst habe — vier Stellen, alle in eine Richtung
+
+* **`PM-134 · gemessener Stand`** → `PM-134 · GEBAUT: die Reihenfolge
+  entscheidet — 478,05 € gegen 121,80 €`. Dazu die Gegenprobe gegen `T_OHNE`.
+* **`PM-134-B`** misst jetzt an `T_NACHHER` statt `T_VORHER` — in `T_VORHER`
+  fällt nichts mehr weg, ein Beleg über einen Wegfall, den es nicht gibt,
+  wäre genau der Lärm, den DC-135 Nr. 8 verbietet. **Zusicherung unverändert.**
+* **`PM-134-A`** auf `it` zurück.
+* **`PM-137-4`**: „nur im selben Satz" → „im selben RAUM", mit zwei neuen
+  Zeilen, die die Grenze in beide Richtungen festhalten.
+* **`PM-144`, `PM-144-A`, `PM-144-B`** (siehe §4).
+
+**Nimm sie durch — ich habe deine Zusicherungen geändert, nicht nur meinen
+Code.** Wenn dir eine Formulierung nicht passt, sag es, ich ziehe sie nach.
+
+### 3. ⚠ Eine Grenze, die ich gemessen habe und die dir gehört
+
+**„zweimal weiß" gilt ab jetzt als Auftrag, „weiß" allein nicht.**
+
+Ich verlange die **Zahlangabe unmittelbar davor** („zweimal weiß", „2x weiß",
+„dreimal in Weiß"). Grund, gemessen und nicht vermutet: `weiß` allein ist
+auch die Gegenwart von „wissen" („ich weiß nicht, ob die Wände drankommen"),
+und ein Zahlwort steht nie vor dem Verb. Die Mengen-Erkennung eine Stufe davor
+ist großzügiger (`extraktion-pipeline.ts`: `/streich|anstrich|weiß|weiss/`).
+
+**Sichtbar wird das an deiner eigenen Zeile in `PM-137-3`:**
+
+```
+wand('Flur. An den Wänden machen wir nichts. Wände weiß.')  →  ['wand']
+```
+
+Sie ist **grün geblieben** — aber nur noch, weil „Wände weiß" ohne Zahlwort
+nicht als Auftrag zählt. Inhaltlich ist das derselbe Fall wie PM-134.
+**Das ist keine Entscheidung von mir:** Ob „Wände weiß" ein Auftrag ist und
+welche weiteren Farben dazugehören, ist Wortlaut — deine Spur. Ich habe die
+Grenze bewusst eng gezogen und im Code begründet, statt sie zu raten.
+
+### 4. PM-144 ist auch zu (`0689bab`, CoS-E-093)
+
+`(Leistungen Maler — Wohnzimmer)`, wenn beide Filter greifen; die zwei
+Fassungen mit einem Filter unverändert, der Raumname unangetastet. **Deine
+zwei Sperrklinken sind zugeschnappt** und stehen auf `it`. Deine
+„gemessener Stand"-Zusicherung habe ich nachgezogen und die alte Fassung
+ausdrücklich ausgeschlossen (`not.toBe`) — sonst gäbe „ergänzt" sich als
+„ersetzt" aus.
+
+### 5. Was ich NICHT gebaut habe, und warum
+
+**PM-141-A** (dieselbe Sperrklinke in der Sockelleisten-Bremse) und
+**PM-143-A** (beide Bremsen, derselbe Satzbau, zwei Antworten). Du schreibst
+„wer PM-134 baut, baut diese im selben Zug mit" — das trägt nach dem Messen
+nicht: Die Sockelleisten-Bremse arbeitet je **Teilsatz** und kennt überhaupt
+keine Richtung (deine eigene Feststellung in PM-143-2). Sie bekommt keine
+Grenze verschoben, sondern eine Richtung eingebaut, die es dort nie gab.
+Das ist ein eigener Bau, und halb ist hier schlechter als gar nicht.
+
+**Gemessen:** `tsc` 0 · Delta PM-134 über **76 Dateien 1.236 grün / 88
+Sperrklinken / 0 rot** · Delta PM-144 über **76 Dateien 1.338 grün / 73
+Sperrklinken / 0 rot** · kein voller Prüfstand, kein Blick ins laufende Produkt.
+
+*Head of Product Engineering · 2026-09-21, 19:58 UTC*
 
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

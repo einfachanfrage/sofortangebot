@@ -12601,4 +12601,113 @@ Fall in deinem laufenden Bau mit entschieden wird, ob du willst oder nicht.
 *Chief of Staff · 2026-09-21, 19:50 UTC*
 
 
+
+---
+
+## ✅ PM-134 gebaut — und CoS-E-093/PM-144 gleich hinterher (21.09.2026, 19:58 UTC · Head of Product Engineering)
+
+### 1. PM-134 — die Selbstkorrektur mitten im Diktat kostet nichts mehr
+
+**Commit `5c5529c`.** „An den Wänden machen wir nichts. Wände und Decke
+zweimal weiß." ergibt jetzt **478,05 € statt 121,80 €** — Zeile für Zeile
+dasselbe wie ein Diktat ohne den Ausschlusssatz. Die umgekehrte Reihenfolge
+bleibt bei 121,80 €: **das jüngere Wort gewinnt, in beide Richtungen.**
+
+**Der Auftrag hatte zwei Hälften, und ich habe die zweite erst beim Messen
+gefunden.** Dein Auftrag (und der Themenspeicher) beschreibt die Satzgrenze.
+Die fällt jetzt — aber sie allein hätte den Fall **nicht** geheilt:
+
+| gemessen VOR dem Bauen | |
+|---|---|
+| `TAETIGKEIT` gegen „Wände und Decke zweimal weiß" | **kein Treffer** |
+| `erkenneArbeiten()` (`arbeiten-normalisierer.ts`) gegen denselben Satz | **kein Treffer** |
+
+Die Gegenprobe kannte den Auftrag also gar nicht, über den sie hätte stolpern
+sollen. Die Mengen-Erkennung eine Stufe davor kennt ihn sehr wohl
+(`extraktion-pipeline.ts`: `/streich|anstrich|weiß|weiss/`) — deshalb stand
+`Wand streichen 2x` überhaupt auf dem Blatt, bevor die Bremse es wegnahm.
+**Ohne die zweite Hälfte hätte die erste in genau diesem Satz nichts
+gefunden, und der Commit wäre grün und wirkungslos gewesen.**
+
+**Was an die Stelle der Satzgrenze tritt, ist die Raumgrenze** — wie in
+deinem Auftrag zu CoS-E-091 beschrieben, und hier wird sie wirklich gebraucht:
+ein späterer Teilsatz zählt nur, wenn er denselben Raum meint. Ohne diese
+zweite Grenze räumt ein Mehrraum-Diktat jeden Ausschluss von hinten auf.
+
+**Eine Grenze habe ich bewusst NICHT verschoben, und sie gehört in die Lage:**
+Ein **globaler** Ausschluss („überall", oder gar kein Raum bekannt) behält die
+alte Satzgrenze. Er hat keinen Raum, gegen den sich prüfen ließe, und ein
+Auftrag für EINEN Raum würde ihn sonst für ALLE aufheben — aus einer Bremse,
+die zu viel nimmt, würde eine, die zu wenig nimmt. Die richtige Antwort ist
+ein Teil-Aufheben, und das ist nicht gemessen.
+
+### 2. Vier fremde Zusicherungen nachgezogen — alle vier in einer Richtung
+
+Keine davon war falsch; alle vier maßen den Stand von **vor** dem Bau.
+
+* **`PM-134 · gemessener Stand`** hielt fest, dass vorher und nachher gleich
+  sind. Sie sind es nicht mehr — jetzt steht dort **478,05 € gegen 121,80 €**,
+  und dazu die Gegenprobe, dass die spätere Fassung **Zeile für Zeile**
+  dasselbe ergibt wie ein Diktat ohne den Ausschluss.
+* **`PM-134-B`** (der Wegfall ist nicht mehr stumm) misst ab jetzt an
+  `T_NACHHER`: in `T_VORHER` fällt nichts mehr weg, also gibt es nichts zu
+  belegen. **Die Zusicherung selbst ist unverändert.**
+* **`PM-134-A`** — Sperrklinke zugeschnappt, auf `it` zurück.
+* **`PM-137-4`** hieß „die Gegenprobe wirkt nur im selben Satz". Jetzt:
+  „im selben RAUM". Zwei Zeilen dazu, die die neue Grenze in **beide**
+  Richtungen festhalten — Auftrag im Flur lässt den Ausschluss im Wohnzimmer
+  stehen, derselbe Auftrag im Wohnzimmer hebt ihn auf. **Ohne die zweite
+  Zeile wäre nicht zu sehen, ob der Raum oder der Satz getrennt hat.**
+
+Dazu **eine** Zeile in der Datei des Designers (`dc135-…`): sein Prüftext war
+wörtlich der PM-134-Fall, in dem jetzt nichts mehr wegfällt — fünf seiner
+Zusicherungen wären an einem Hinweis über einen Wegfall gescheitert, den es
+nicht mehr gibt. Reihenfolge der zwei Sätze getauscht, Gegenstand der Datei
+unberührt. **Notiz liegt in `design-check.md`.**
+
+### 3. CoS-E-093 / PM-144 — mitgenommen, weil er wirklich eine Zeile war
+
+**Commit `0689bab`.** `(Leistungen Maler — Wohnzimmer)`, wenn Raum **und**
+Gewerk filtern; die zwei Fassungen mit einem Filter unverändert. Beide
+Sperrklinken des Prüfmeisters (`PM-144-A`, `PM-144-B`) sind zugeschnappt und
+stehen auf `it`; seine „gemessener Stand"-Zusicherung habe ich nachgezogen
+und **die alte Fassung ausdrücklich ausgeschlossen** (`not.toBe`), damit
+„ergänzt" nicht als „ersetzt" durchgeht.
+
+### 4. Wo ich gemessen habe
+
+**Direkt auf Sandys Rechner, im echten Arbeitsbaum.**
+
+| | |
+|---|---|
+| `npx tsc --noEmit`, zweimal (nach jedem der zwei Bauten) | **0 Fehler** |
+| Delta PM-134, **76 Dateien** (jede Testdatei zu `bauteil-ausschluss`, `satz-raum`, `zeit-/raum-/sockelleisten-ausschluss`, `vollstaendigkeit`), in fünf Blöcken | **1.236 grün · 88 Sperrklinken · 0 rot** |
+| Delta PM-144, **76 Dateien** (jede Testdatei zu `zuschlag`, `Rechenweg`, `erschwernis`), in drei Blöcken | **1.338 grün · 73 Sperrklinken · 0 rot** |
+
+**Nicht gemessen, und ich behaupte es deshalb nicht:** kein voller Prüfstand
+über alle 198 Testdateien. **Kein Blick ins laufende Produkt** — dass die
+Wand jetzt stehen bleibt, ist an Zahlen und Zeichenketten belegt, nicht an
+einem Angebot in der Hand. **Sechster Lauf in Folge.**
+
+### 5. Für Sandy
+
+**Code geändert — der Testlauf steht aus.** Ich habe ihn hier gefahren,
+starten kannst nur du ihn. **Kein `git add` nötig** — meine zwei Commits
+fassen nur Dateien an, die schon in Git sind.
+
+### 6. Nächster Punkt
+
+**PM-136** (der Ausschluss ohne Raumnamen). Danach unverändert
+**CoS-038 → PM-119/L-06 → CoS-E-080**, der Beleg je Position (CoS-E-086)
+dahinter.
+
+**Zwei Punkte, die aus PM-134 herausfallen und NICHT von mir gebaut sind** —
+begründet in der Datei des Prüfmeisters: **PM-141-A** (dieselbe Sperrklinke
+in der Sockelleisten-Bremse) und **PM-143-A** (beide Bremsen antworten auf
+denselben Satzbau verschieden). Die Sockelleisten-Bremse liest je Teilsatz und
+kennt überhaupt keine Richtung; das ist ein eigener Bau, kein Nachzug.
+
+*Head of Product Engineering · 2026-09-21, 19:58 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
