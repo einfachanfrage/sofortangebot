@@ -122,6 +122,50 @@ export function zeitAusschlussHinweis(raum: string, satz: string): string {
   return `⚠ „${raum}" steht nicht in diesem Angebot — gesagt: „${satz}"`
 }
 
+/**
+ * Derselbe Satzbau einmal rückwärts — DC-128 (Product Designer, 17.09.2026).
+ *
+ * Die Zeile aus `zeitAusschlussHinweis()` reist als EIN Stück Text bis auf
+ * den Bildschirm. Die Oberfläche braucht sie aber in zwei Teilen: DC-116
+ * verlangt den Raumnamen als Überschrift und den Beleg-Satz darunter als
+ * Zitat („Gesagt: …"), weil ein Betrieb erst dann sieht, WORAUF sich das
+ * Weglassen stützt.
+ *
+ * Bewusst hier und nicht in der Oberfläche: Erzeuger und Leser stehen
+ * nebeneinander in einer Datei (DC-125-Lehre „eine Bedingung, drei Leser").
+ * Wer den Wortlaut oben ändert, sieht diese Funktion beim Hinsehen.
+ *
+ * Rückgabe `null` heißt: keine Zeit-Ausschluss-Zeile. Die Oberfläche zeigt
+ * sie dann unverändert als gewöhnlichen Hinweis — lieber der rohe Satz als
+ * ein verschluckter.
+ *
+ * ACHTUNG: Engineering hält in `zeitlichAusgenommeneRaeume()` beides ohnehin
+ * getrennt vor (`Map<Raumname, Beleg-Satz>`). Sobald diese zwei Felder bis
+ * zur Route durchgereicht sind, ersetzt das hier das Zerlegen — die Frage
+ * liegt bei Engineering (Eintrag DC-128 in `docs/design-check.md`).
+ */
+const HINWEIS_MUSTER =
+  /^⚠\s*„(.+?)"\s+steht nicht in diesem Angebot\s+—\s+gesagt:\s*„([\s\S]+)"$/
+
+export interface ZeitAusschlussHinweis {
+  raum: string
+  satz: string
+}
+
+export function zerlegeZeitAusschlussHinweis(zeile: string): ZeitAusschlussHinweis | null {
+  const m = HINWEIS_MUSTER.exec((zeile ?? '').trim())
+  if (!m) return null
+  const raum = m[1].trim()
+  const satz = m[2].trim()
+  if (raum.length === 0 || satz.length === 0) return null
+  return { raum, satz }
+}
+
+/** Ist diese Hinweiszeile ein Zeit-Ausschluss (DC-116)? */
+export function istZeitAusschlussHinweis(zeile: string): boolean {
+  return zerlegeZeitAusschlussHinweis(zeile) !== null
+}
+
 export interface PositionMitBeschreibung {
   beschreibung: string
 }

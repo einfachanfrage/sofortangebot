@@ -9,6 +9,7 @@ import type { Wand } from '@/lib/raum-geometrie'
 import { uebernehmeGrundrisse, type RaumDetail } from '@/lib/mengen/raum-details'
 import { ergaenzeAusAufnahmeHinweisen, normalisiereBodenPositionenAusAufnahme } from '@/lib/mengen/aufnahme-hinweise'
 import { pruefeMassPlausibilitaet } from '@/lib/mass-plausibilitaet'
+import { istZeitAusschlussHinweis } from '@/lib/zeit-ausschluss'
 import { filtereExakteDubletten } from '@/lib/quote-items-dedup'
 import { trenneGeschuetzte, handaenderungsHinweis } from '@/lib/manuelle-positionen'
 import { filtereErschwernis, type ErschwernisConfig } from '@/lib/erschwernis'
@@ -206,6 +207,14 @@ export async function POST(req: NextRequest) {
     // PM-034/PM-036: was die Pipeline an den Maßen repariert hat, bevor
     // gerechnet wurde (korrigierte Raumseiten, erkannte Teilflächen).
     mass_hinweise?: string[]
+    // DC-128 (Product Designer, 17.09.2026): Die Bewertung wurde hier bisher
+    // NICHT gelesen. Damit endete die DC-116-Hinweiszeile („„Küche" steht nicht
+    // in diesem Angebot") an dieser Stelle — der Raum verschwand aus dem
+    // Angebot, und niemand erfuhr es. Genau die Hälfte, die DC-116 als die
+    // schlimmere der beiden bezeichnet. Nur die Hinweiszeilen werden
+    // übernommen, nicht die ganze Bewertung: alles andere darin hat heute
+    // keinen Leser auf dem Bildschirm (siehe DC-128).
+    bewertung?: { fehlende_angaben?: string[] }
     extraktion?: {
       gewerk?: string
       // CoS-E-018 (Manfred TN-044/TN-129, 11.09.2026): Dieses Feld liefert
@@ -288,6 +297,18 @@ export async function POST(req: NextRequest) {
     ...(extData.mass_hinweise ?? []),
     ...pruefeMassPlausibilitaet(extData.extraktion?.raeume ?? []),
   ]
+
+  // DC-128: Die Zeit-Ausschluss-Hinweise (DC-116/PM-116) nehmen denselben Weg
+  // wie die Maß-Hinweise — `warnungen` ist die EINZIGE Hinweisliste, die es
+  // heute bis auf den Bildschirm schafft. Nebenwirkung, und sie ist gewollt:
+  // die Entwurfsseite leitet bei vorhandenen Warnungen nicht mehr sofort
+  // weiter, sondern zeigt sie erst. Ein weggelassener Bauabschnitt ist genau
+  // der Fall, für den diese Bremse gebaut wurde (PM-010).
+  for (const zeile of extData.bewertung?.fehlende_angaben ?? []) {
+    if (istZeitAusschlussHinweis(zeile) && !massWarnungen.includes(zeile)) {
+      massWarnungen.push(zeile)
+    }
+  }
 
   // Sichtbarkeit: roh (direkt von GPT) + final (nach allen Nachbearbeitungs-
   // Modulen) speichern. Bei Rückfragen ruft das Frontend diese Route für

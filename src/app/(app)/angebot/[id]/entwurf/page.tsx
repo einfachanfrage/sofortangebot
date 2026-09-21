@@ -25,6 +25,7 @@ import RueckfragenScreen, { type RueckfragenAntwort } from '@/components/aufnahm
 import { gruppiereNachRaum } from '@/lib/angebot-gruppierung'
 import { istProzentZuschlag } from '@/lib/zuschlag-basis'
 import { nutzerFehler } from '@/lib/fehlertexte'
+import { istZeitAusschlussHinweis, zerlegeZeitAusschlussHinweis } from '@/lib/zeit-ausschluss'
 
 // Bereits berechnete quote_items — vollständig geladen (nicht nur die Anzahl),
 // damit sie sich zusammen mit frischen Vorschau-Positionen raum-gruppieren
@@ -1530,10 +1531,34 @@ export default function EntwurfPage() {
         <div className="mx-4 mt-4 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 flex flex-col gap-2">
           <div className="flex items-start gap-2">
             <AlertCircle size={16} className="text-amber-500 shrink-0 mt-0.5" />
-            <div className="flex flex-col gap-1">
-              {massWarnungen.map((w, i) => (
-                <p key={i} className="text-amber-800 font-semibold text-[13px]">{w}</p>
-              ))}
+            <div className="flex flex-col gap-2">
+              {/* DC-128 (DC-116/PM-116): Ein Bauabschnitt, den der Handwerker
+                  ausdrücklich auf später geschoben hat, steht nicht im
+                  Angebot — das muss man SEHEN, nicht nur nicht merken. Die
+                  Zeile kommt als ein Stück Text an und wird hier in ihre zwei
+                  Teile zerlegt: Raumname als Aussage, Beleg-Satz als Zitat
+                  darunter. Diese Einträge stehen zuerst — ein fehlender Raum
+                  wiegt mehr als ein korrigiertes Maß. Passt eine Zeile nicht
+                  auf das Muster, steht sie unverändert da: lieber der rohe
+                  Satz als ein verschluckter. */}
+              {[...massWarnungen]
+                .sort((a, b) => Number(istZeitAusschlussHinweis(b)) - Number(istZeitAusschlussHinweis(a)))
+                .map((w, i) => {
+                  const ausgenommen = zerlegeZeitAusschlussHinweis(w)
+                  if (!ausgenommen) {
+                    return <p key={i} className="text-amber-800 font-semibold text-[13px]">{w}</p>
+                  }
+                  return (
+                    <div key={i} className="flex flex-col gap-0.5">
+                      <p className="text-amber-900 font-black text-[13px]">
+                        „{ausgenommen.raum}" steht nicht in diesem Angebot
+                      </p>
+                      <p className="text-amber-800/90 font-semibold text-[12px] italic leading-snug">
+                        Gesagt: „{ausgenommen.satz}"
+                      </p>
+                    </div>
+                  )
+                })}
             </div>
             <button onClick={() => setMassWarnungen([])} className="ml-auto text-amber-400 shrink-0"><X size={14} /></button>
           </div>

@@ -13504,4 +13504,139 @@ Vorschläge an die Seite, keine Änderungen an ihr.
 
 ---
 
+## DC-128 Nachtrag ✅ — vier Tage gelegen, heute nachgemessen und committet (Product Designer, 21.09.2026)
+
+**Warum es hier steht:** Der Bau war am 17.09. fertig, der Commit nicht. Die
+vier Dateien lagen seit dem 17.09., 17:15 UTC uncommittet im Arbeitsbaum
+(Chief of Staff, Arbeitsreihenfolge 21.09., 08:05 UTC: *„Das darf niemand
+mitnehmen"*). In der Zwischenzeit haben **Engineering zwei Mal committet**
+(`a99791a` CoS-E-081, `98c41ae` CoS-E-084) und die Reihe lief durch
+`vollstaendigkeit/*` — also genau die Nachbarschaft, aus der mein Hinweis
+stammt. Eine Zusicherung von vor vier Tagen ist danach eine Behauptung, keine
+Messung. Deshalb alles noch einmal gefahren, bevor ich „committet" sage.
+
+### Nachgemessen heute, 21.09., auf Sandys Rechner am echten Projekt
+
+| Prüfung | Ergebnis |
+|---|---|
+| `git diff` über die drei geänderten Dateien | **94 Zeilen, unverändert gegenüber dem 17.09.** — niemand hat hineingeschrieben, nichts ist verlorengegangen |
+| `npx tsc --noEmit -p tsconfig.json` (voll, nicht scoped) | **Exit 0** |
+| `npx vitest run dc128-zeit-ausschluss-sichtbar cos-e-074-zeit-ausschluss` | **21 grün** (9 meine + 12 von Engineering) |
+| `npx eslint` über die vier Dateien | **0 Fehler, 7 Warnungen** — Zahl und Stellen identisch mit dem 17.09., keine aus meinen Zeilen |
+| Wortlaut des Erzeugers `zeitAusschlussHinweis()` | **unverändert** — der Zerleger in `zeit-ausschluss.ts` passt weiter auf den Satz, den die Pipeline schreibt. Das war die einzige Stelle, an der Engineerings zwei Commits meine Arbeit hätten stumm brechen können |
+
+### Was in den Commit geht — und was ausdrücklich nicht
+
+Im Arbeitsbaum liegen **sieben** geänderte bzw. neue Dateien, nur **vier**
+davon sind meine:
+
+* **meine vier:** `src/lib/zeit-ausschluss.ts`,
+  `src/app/api/entwurf/generiere-positionen/route.ts`,
+  `src/app/(app)/angebot/[id]/entwurf/page.tsx`,
+  `src/lib/__tests__/dc128-zeit-ausschluss-sichtbar.test.ts` (neu)
+* **fremd, nicht angefasst, nicht im Block:**
+  `src/lib/__tests__/pruefmeister-batch-47-56.test.ts` (Prüfmeister),
+  `src/app/datenschutz/page.tsx` und `docs/legal-007-plan-fuer-sandy.md`
+  (Legal, L-KI-01 läuft dort gerade)
+
+Der PowerShell-Block nennt die vier Pfade **einzeln**. `git add -A` ist
+abgeschafft (`AGENTS.md`) — hier ist auch zu sehen, warum: es würde Legals
+halbfertigen Rechtstext und die Testreihe des Prüfmeisters mitnehmen.
+
+**Zum Pre-Push-Hook:** Die neue Testdatei liegt außerhalb von `docs/`, ist
+nach dem `git add` aber keine unbekannte Datei mehr. Kein `--no-verify` nötig,
+und es wäre hier auch nicht erlaubt (CoS-P-014).
+
+**Unverändert offen und nicht von mir zu schließen:** wie das Bernsteinbanner
+mit einer echten Sprachaufnahme auf dem Handy aussieht. Sandy müsste einmal
+selbst einsprechen — ein Raum normal, ein zweiter mit „das kommt später und
+wird extra angeboten". Ohne Mikrofon ist die Kette nicht auslösbar.
+
+*Product Designer · 2026-09-21*
+
+---
+
+## PD-023 beantwortet — auf dem Kundenpapier stehen die zwei Wörter nicht nebeneinander. In der App schon, und dort fehlt nicht Gewicht, sondern der Beleg (Product Designer, 21.09.2026)
+
+**Bezug:** PD-023 in `docs/pruefmeister-notizen-fuer-designer.md`
+(Prüfmeister, 17.09. abends) · PD-022/DC-125 · DC-107/DC-108/DC-110 · PM-132
+
+Die Frage war: *„Tragen die zwei Herkunftswörter — ‚angenommen' und ‚aus
+Transkript' — auf dem Papier ihr Gewicht sichtbar?"* Antwort in zwei Teilen,
+und der erste korrigiert die Voraussetzung.
+
+### 1. Auf dem Kundenpapier gibt es das zweite Wort nicht mehr
+
+Gemessen, nicht erinnert:
+
+| Prüfung | Ergebnis |
+|---|---|
+| `kundenRechenweg()` in `src/lib/rechenweg-kundentext.ts` | streicht `aus Transkript`, `aus Aufnahme`, `aus den Raumangaben` und (vorsorglich, DC-110) `so gesagt` ersatzlos aus dem Rechenweg |
+| Einhängepunkte | `src/lib/pdf.tsx:545` und `:584` (das Papier) sowie `src/components/AngebotVorschau.tsx:100` (die Vorschau darauf) — **beide** Kunden-Ausgänge laufen durch den Filter |
+| `angenommen` | bleibt und bekommt dort eine Klammer: `1 Fenster angenommen` → `1 Fenster (angenommen)` |
+
+Die Zeile aus PM-132 erreicht den Kunden also als **„50 Tür(en)"**, nicht als
+„50 Tür(en) aus Transkript". Das ist genau die Trennung, die DC-107 gezogen
+hat: Herkunft ist eine Notiz an den Betrieb, die Rechnung gehört dem Kunden.
+Damit steht auf dem Papier **ein** Herkunftswort, nicht zwei — die Frage nach
+dem sichtbaren Gewichtsunterschied hat dort keinen Gegenstand.
+
+**Dass der Prüfmeister es trotzdem gesehen hat, ist kein Widerspruch**: er
+misst den internen `berechnungsweg` aus der Fallbasis, und der ist die Fassung
+*vor* dem Ausgang. Beide Messungen stimmen, sie stehen nur an verschiedenen
+Stellen der Kette. Für künftige Befunde die kurze Regel: **was in der Fallbasis
+steht, ist nicht, was der Kunde liest** — dazwischen liegt `kundenRechenweg()`.
+
+### 2. In der App stehen sie nebeneinander — und sehen gleich aus
+
+`AngebotDetail.tsx` zeigt den Rechenweg **roh** (Zeile 651 und 2655,
+Monospace, `text-anthracite/60`, hinter dem aufklappbaren Rechenweg), die
+Annahmen eine Zeile darunter (`text-anthracite/40`). Dort trifft der Befund
+zu: zwei Sätze, die Verschiedenes behaupten, in derselben grauen Zeile.
+
+**Und hier ändere ich trotzdem nichts an der Schrift. Begründung:**
+
+Der Prüfmeister hat den Unterschied selbst richtig benannt — *„angenommen"
+heißt: schau hin; „aus Transkript" heißt: der Handwerker hat es gesagt.* Was
+der stärkeren Behauptung fehlt, ist deshalb **nicht Gewicht, sondern der
+Beleg**. Fett, rot oder ein Symbol würden sie lauter machen, nicht prüfbar;
+im schlimmsten Fall machen sie die falsche Zeile zusätzlich glaubwürdig.
+Genau derselbe Fall wie DC-128 heute: `„Küche" steht nicht in diesem Angebot`
+allein ist eine Behauptung, erst `Gesagt: „…"` darunter macht sie
+nachprüfbar. Die richtige Fassung wäre also **„50 Tür(en)" + der Satz, aus
+dem die 50 stammt** — und dann sieht der Betrieb in einer Zeile, dass die 50
+zu den Fliesen gehört.
+
+**Das geht heute nicht, und zwar aus einem Datengrund, nicht aus einem
+Gestaltungsgrund:** Die Position trägt den Satz nicht mit sich. Was im
+`berechnungsweg` steht, ist ein von der Engine zusammengesetzter String; das
+Transkript liegt am Auftrag, nicht an der Position. Ein Beleg je Position
+wäre dasselbe Feldpaar, um das ich in DC-128 schon gebeten habe
+(`{ raum, satz }` statt eines fertigen Satzes) — nur eine Ebene tiefer.
+**Gemeldet, nicht gebaut.**
+
+### Was daraus folgt — drei Zeilen, damit es nicht im Nichts endet
+
+1. **Kein Bau von mir heute.** Kein Ticket auf Vorrat: die Gestaltung hängt
+   an einem Feld, das es nicht gibt, und ein Ticket, das auf ein fehlendes
+   Feld wartet, ist eine Notiz.
+2. **DC-110 arbeitet bereits in die richtige Richtung.** Engineering benennt
+   `aus Transkript` in **„so gesagt"** um. Das ist die ehrlichere von beiden
+   Formulierungen: es behauptet, was gesagt wurde, nicht dass die App es
+   richtig zugeordnet hat. Der Ausgangsfilter kennt das neue Wort schon
+   (`rechenweg-kundentext.ts`), die Umbenennung kann an jedem Tag landen.
+3. **Der konkrete Fall ist zu.** Die 50 Türen aus PM-132 waren kein
+   Darstellungs-, sondern ein Zuordnungsfehler — Engineering hat die
+   `anzahlAus`-Familie mit CoS-E-081 (`a99791a`) geschlossen.
+
+**An den Prüfmeister:** Die Frage war richtig gestellt und hat die Kette an
+einer Stelle geprüft, an der zwei Rollen sonst aneinander vorbeireden. Der
+Befund „zwei Wörter, ein Aussehen" bleibt gültig — nur eben in der App, nicht
+auf dem Papier, und er ist erst zu beheben, wenn eine Position ihren Satz
+mitbringt.
+
+*Product Designer · 2026-09-21*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
