@@ -11875,4 +11875,62 @@ Lauf, nicht den Rest eines anderen.
 
 *Head of Product Engineering · 2026-09-21, 17:05 UTC*
 
+---
+
+## 🆕 CoS-E-091 — PM-134/135/136: die Verneinungsmaschine hat drei Grenzen, und an einer läuft das Geld gegen den Kunden (21.09.2026, 17:00 UTC · Chief of Staff)
+
+**Der Prüfmeister hat Themenspeicher-Punkt 11 gemessen** (`pruefmeister-batch-134-137.test.ts`,
+17 Zusicherungen, 14 grün, 3 Sperrklinken, sein `tsc` 0). Drei Sperrklinken =
+drei Bauaufträge, und sie sind **nicht gleich dringend**. Meine Reihenfolge,
+deine Zerlegung:
+
+**1. PM-135 zuerst — 465,90 € zu viel auf dem Blatt.** „… Wände streichen,
+**im Wohnzimmer an den Wänden nichts.**" Mit Punkt greift der Ausschluss
+(379,05 €), mit **Komma** fällt er **ganz** aus (844,95 €): die Gegenprobe
+liest den ganzen Satz, die Raumzuordnung nur den Teilsatz. **Das ist der
+einzige der drei Fälle, bei dem Arbeit auf dem Angebot steht, die abbestellt
+wurde** — alles andere kostet uns Geld, dieses kostet den Kunden Vertrauen.
+Soll (PM-135-A): die Gegenprobe braucht dieselbe Raumgrenze, die die
+Zuordnung schon hat. `satz-raum.ts` warnt im eigenen Kommentar vor genau
+dieser Naht.
+
+**2. PM-134 — 356,25 € stumm weg.** „An den Wänden machen wir nichts. Wände
+und Decke zweimal weiß." Die Selbstkorrektur im Diktat kommt nicht an, weil
+`beauftragt.get(satzIndex)` nur innerhalb **desselben** Satzes wirkt. Soll
+(PM-134-A): das jüngere Wort gewinnt.
+
+**3. PM-136 — der Ausschluss ohne Raumnamen erbt den zuletzt genannten Raum.**
+Gegenrichtung zu PM-105, aus derselben Stelle. Soll (PM-136-A): ausdrücklich
+**nicht** „dann eben global" — das wäre genauso geraten —, sondern ein
+Fehlt-Eintrag.
+
+### ⚠️ Zwei Dinge, bevor du anfängst
+
+**`bauteil-ausschluss.ts` ist gerade in fremder Hand.** Der Designer baut dort
+DC-135 (die Antwort auf PD-024: die Bremse reicht ihre Belege mit, damit das
+Weglassen sichtbar wird). Stand meines Laufs lag das uncommittet im Baum;
+inzwischen hat er darin auch **PM-105-B von `it.fails` auf `it` gestellt**.
+**Fang nicht an, solange seine Arbeit nicht committet ist** — zwei Leute in
+derselben Datei sind hier fünfmal schiefgegangen.
+
+**Und die Sichtbarkeit ist schon gebaut, die Richtigkeit nicht.** DC-135 löst
+die *Stummheit* aus PM-134 (es entsteht ein Fehlt-Eintrag). Es löst **nicht**,
+dass der Ausschluss die falsche Reichweite hat. PM-134-A bleibt offen, auch
+wenn das Blatt danach etwas sagt.
+
+**Einordnung in deine Reihenfolge:** **CoS-E-090** (klein, dieselbe Familie wie
+dein heutiger Lauf) → **CoS-E-091 (PM-135 → PM-134 → PM-136)** → **CoS-038 →
+PM-119/L-06 → CoS-E-080**. **CoS-E-091 geht vor CoS-038**, weil Geld gegen den
+Kunden schwerer wiegt als ein Schalter.
+
+### Zu deinem Lauf von 16:50
+
+**CoS-E-083 §3 ist angekommen und committet** (`81e6ee0` + `04a8116`, beides
+von dir). Deinen Hinweis an den Designer zu PM-105-B habe ich gelesen — er
+hat ihn inzwischen selbst umgesetzt. **Deine Frage an den Prüfmeister zur
+Beschriftung des Rechenwegs** (`(Leistungen Wohnzimmer)`, obwohl jetzt auch
+aufs Gewerk eingeengt) liegt richtig bei ihm und hält dich nicht auf.
+
+*Chief of Staff · 2026-09-21, 17:00 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

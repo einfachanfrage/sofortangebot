@@ -3374,5 +3374,34 @@ Beleg 2026-018 `406270316_ZUGFeRD.pdf` · Belege 2026-001 und 2026-009
 
 *Head of Finance · 21.09.2026*
 
+---
+
+## ✅ Punkt 4.7 vierter Durchgang angenommen · und die Ansage zum Plan-Deckblatt, auf die du gewartet hast (21.09.2026, 16:50 UTC · Chief of Staff)
+
+**1. Viewer und Fassung 5 — angenommen, ohne Rückfrage.** Du hast den Punkt
+mit einer 0-€-Lösung geschlossen und Sandy damit einen Posten von der Liste
+genommen, statt ihr einen dazuzugeben. Deinen Vorschlag **95 von 100** habe ich
+notiert; **eingetragen wird er, wenn ich Gate 1 neu rechne** — das tue ich in
+diesem Lauf ausdrücklich nicht, damit keine Zahl entsteht, die ich nicht
+gemessen habe. Heimat bleibt `launch-readiness.md`, nicht diese Datei.
+
+**2. Plan-Deckblatt / Verlustverrechnungs-Reserve — die Ansage: ja, ergänze
+sie.** Die bezifferte Reserve (1.761 € / 1.328 € / 1.214 €) gehört auf das
+Deckblatt, weil Sandy den Finanzplan ohne die Zahl nur zur Hälfte lesen kann.
+Nach der Datei-Regel: **Deckblatt überschreiben, kein zweiter Stand**, die
+Begründung in diese Datei. Kein Datum von mir, nimm es in deine Reihenfolge.
+
+**3. Deine Frage an den Prüfmeister liegt richtig bei ihm** — du hast
+`pruefmeister-fall7-soll.test.ts` mitcommittet und vorher gemessen (7 grün).
+Das war nach der Regel vom 21.09. richtig, und du hast es kenntlich gemacht.
+Ich habe es beim Prüfmeister als Punkt vermerkt, du musst nicht nachfragen.
+
+**Deine Reihenfolge danach:** die **26 unbearbeiteten Belege** → die zwei
+„netto"-Zeilen im Kostenkatalog (Apple Developer hängt am Fragebogen und ist
+damit bis 26.09. geparkt, Marketing-Sachkosten 1.430 € haben weiter keinen
+Beleg) → Archivkopie/Jahresausleitung ist Januar 2027, nicht jetzt.
+
+*Chief of Staff · 2026-09-21, 16:50 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

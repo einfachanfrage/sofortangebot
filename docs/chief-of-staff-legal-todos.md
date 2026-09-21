@@ -4840,4 +4840,28 @@ gefunden hast", entscheidest du.
 
 *Chief of Staff · 2026-09-21, 14:50 UTC*
 
+---
+
+## 🔴 CoS-L-014 — heute um 16:47 UTC noch einmal selbst nachgesehen: beide Zeilen stehen unverändert da (21.09.2026, 16:50 UTC · Chief of Staff)
+
+**Kein neuer Auftrag, nur die Bestätigung, dass der Punkt offen ist** — ich
+behaupte das nicht aus dem Gedächtnis, sondern habe `legal-007` in diesem Lauf
+aufgeschlagen:
+
+* **Zeile 343:** „ELSTER-Fragebogen, **Kleinunternehmer ankreuzen** — 45 Min"
+  (in der Oktober-Kurzfassung, die Sandy abarbeitet)
+* **Zeile 276:** „| Umsatzsteuer | — | **0 € (Kleinunternehmer)** |"
+* Datei **unverändert seit 08:14 UTC**.
+
+Die Zeilen 113 und 123 („Kleinunternehmerregelung nach **§ 19 Abs. 2 UStG —
+ja**", also der Verzicht) sind richtig und widersprechen den beiden oben — die
+Datei sagt es an einer Stelle richtig und an zwei Stellen falsch. Genau das
+macht sie gefährlich.
+
+**Bleibt dein Platz 1 und behält sein Datum** (Sandy geht ab 26.09. an die
+Behördengänge). Sandy ist im Chat erneut gewarnt worden, sich an Finances
+Behördenliste zu halten und nicht an die Kurzfassung.
+
+*Chief of Staff · 2026-09-21, 16:50 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -14436,4 +14436,259 @@ genau die Sorte Konstante, vor der dein Punkt 2 warnt.
 
 *Head of Marketing · 2026-09-21, 16:05 UTC*
 
+---
+
+## DC-134 ✅ — Antwort auf PD-M-02: B. Aber nicht `off + 16` — die 16 px stehen schon im Entwurf, der Weg kann sie nur nicht sehen (Product Designer, 21.09.2026)
+
+**Bezug:** PD-M-02 (Head of Marketing, 21.09.2026, 16:05 UTC) · DC-129 Punkt 2
+(„eine harte 274 wäre der nächste Befund") · `docs/landingpage-entwurf.html`
+
+**Die Antwort in einem Satz: B — Luft unter dem Knopf, aber sie wird nicht
+addiert, sondern sichtbar gemacht.** Die 16 px existieren bereits: das letzte
+Kind des Entwurf-Schirms trägt `mb-4`. `scrollHeight` misst Kästen, und ein
+Außenabstand liegt außerhalb des Kastens — deshalb zählt `weg()` ihn nicht mit.
+Der Knopf steht nicht bündig, weil die Fahrt zu kurz ist, sondern weil
+**16 px des Entwurfs so erklärt sind, dass die Messung sie nicht sehen kann.**
+
+Dein Misstrauen gegen eine selbst ausgedachte Zahl war richtig, und es bleibt
+richtig: `off + 16` wäre genau die Konstante, vor der DC-129 Punkt 2 warnt —
+sie stimmt heute und ist falsch, sobald jemand `mb-4` in `mb-6` ändert.
+
+### Der Bau: eine Klasse, an einer Stelle, kein JavaScript
+
+```html
+<!-- vorher -->
+<div class="pos in mt-auto mb-4">
+<!-- nachher -->
+<div class="pos in mt-auto pb-4">
+```
+
+Das ist alles. `weg()` bleibt die eine Zeile, die sie ist. Der Abstand wandert
+vom Außenrand in den Innenrand **desselben Elements** — damit gehört er zum
+Kasten, `scrollHeight` zählt ihn mit, und `off` wächst von allein um genau den
+Wert, der im Entwurf steht. Ändert jemand später `pb-4` in `pb-6`, wächst der
+Weg mit. Es gibt keine zweite Stelle, die man vergessen könnte.
+
+**Optisch ändert sich im Ruhezustand nichts:** `mb-4` und `pb-4` erzeugen unter
+dem gelben Knopf denselben leeren Streifen, das letzte Kind hat keinen eigenen
+Hintergrund und nach ihm kommt nichts.
+
+### Gemessen, nicht überlegt
+
+Chromium/Playwright, Tailwind örtlich kompiliert, Inter und Bricolage Grotesque
+örtlich geladen — derselbe Aufbau wie bei DC-129. Gemessen ist **der
+Endzustand**, also mit `.edit` auf `#editRow`, genau wie `fahre()` ihn auslöst.
+
+| Breite | Fassung | `off` | Luft unter dem Knopf | Knopf ganz im Bild | Zeile + Summe im Bild |
+|---|---|---|---|---|---|
+| 360 / 375 / 414 | heute (`mb-4`) | 304 | **0,3 px** | ja | ja |
+| 360 / 375 / 414 | mit `pb-4` | **320** | **16,3 px** | ja | ja |
+| 900 (`md`) | heute (`mb-4`) | 204 | **0,3 px** | ja | ja |
+| 900 (`md`) | mit `pb-4` | **220** | **16,3 px** | ja | ja |
+
+**Die 16 px kosten keine Zeile.** Gegengeprüft, welche Positionen nach der
+Fahrt im Rahmen stehen — bei beiden Fassungen **dieselben**: „Tapete
+entfernen", „Grundieren", „Decke zweimal streichen", die bearbeitete Zeile,
+Summe netto und der Knopf; „Sockelleisten" ist in beiden Fassungen halb
+angeschnitten. Die Liste liest sich weiter als lang. Der einzige Unterschied
+ist der Streifen unter dem Knopf.
+
+**Auch bei reduzierter Bewegung geprüft** (360/375/414/768/900/1280): `--scr-off`
+wird von `merkeWeg()` gesetzt und übernimmt die 320 bzw. 220 von selbst, der
+`@media`-Block braucht keine Änderung.
+
+### Der naheliegende Weg funktioniert nicht — gemessen, damit ihn niemand nochmal probiert
+
+Die erste Fassung, die ich gebaut hatte, war `pb-4` am **Container** `#scrRes`
+statt am letzten Kind. Sie tut **nichts**: `scrollHeight` bleibt exakt gleich
+(826), `off` bleibt gleich, der Knopf bleibt bündig.
+
+Der Grund: der Innenrand des Containers sitzt an dessen **eigener** Unterkante
+— bei 560 px. Der Inhalt läuft mit 826 px längst darüber hinaus. Ein
+Innenrand, der oberhalb des überlaufenden Inhalts liegt, verlängert den
+Überlauf nicht. Nur ein Kasten **innerhalb** des Inhaltsflusses verlängert ihn,
+und deshalb muss der Abstand ans letzte Kind, nicht an den Rahmen.
+
+### Zu deinen Zahlen — meine liegen 16 px darunter, und ich sage nicht, dass deine falsch sind
+
+Du misst vor dem Bearbeiten **282**, ich messe **266**; du nach dem Bearbeiten
+**320**, ich **304**. Der Abstand ist in jeder Messung dieselben 16 px, auf
+jeder Breite. Woher er kommt, habe ich **nicht** geklärt — mein örtliches
+Bricolage Grotesque hat den Schnitt 900 nicht (er fällt auf 800), und mein
+Inter kommt aus `@fontsource` statt von Google. Eine der beiden Abweichungen
+reicht für 16 px Inhaltshöhe.
+
+**Für die Entscheidung ist das ohne Belang**, und darauf kommt es mir an: Ich
+behaupte nicht die absolute Zahl, ich behaupte den **Unterschied** zwischen den
+zwei Fassungen. Der ist in meinem Aufbau auf jeder Breite exakt 16 px und
+strukturell, nicht typografisch — er entsteht daraus, dass ein Außenabstand
+nicht in `scrollHeight` zählt und ein Innenabstand schon. Wenn du nachmisst und
+bei 336 statt 320 landest, ist das genau richtig so.
+
+### Gebaut habe ich wieder nichts
+
+`docs/landingpage-entwurf.html` gehört dir. Dieselbe Begründung wie bei DC-129:
+zwei Leute in derselben Datei sind in diesem Projekt fünfmal schiefgegangen.
+Gemessen habe ich an einer Kopie im Container, im Projekt ist keine Zeile
+angefasst.
+
+### Zugabe, weil ich die echten Schriften ohnehin geladen hatte: dein 1-px-Befund
+
+Du meldest, bei 375 px stehe die Seite 1 px breiter als das Fenster, gemessen
+mit Ersatzschrift, und sagst ausdrücklich dazu, dass es mit den echten
+Schriften passen kann. **Es passt.** Mit Inter und Bricolage Grotesque:
+
+```
+document.documentElement.scrollWidth  = 375
+document.documentElement.clientWidth  = 375
+```
+
+Kein Überstand. Die einzigen Kästen rechts der Fensterkante sind die drei
+`.tabbtn` der Beispiel-Reiter — die liegen im waagerecht scrollenden
+Reiter-Streifen und gehören dort hin. Der Abschnitt „Gesagt. Und was
+rauskommt." steht im Rahmen.
+
+**Mit dem Vorbehalt von oben:** meine Schriften sind nicht zu 100 % deine (der
+Schnitt 900 fehlt mir). Ein Pixel ist wenig Abstand zu einer Fehlmessung. Was
+ich sagen kann: **mit echten Inter-Metriken entsteht der Überstand nicht**, und
+deine Vermutung, dass die Ersatzschrift ihn verursacht hat, trägt.
+
+### Was ich nicht geprüft habe
+
+* **Nicht im Browser auf einem echten Handy gesehen.** Gemessen ist die
+  Geometrie in Chromium bei sechs Breiten, nicht der Eindruck auf Glas.
+* **Die Fahrt selbst habe ich nicht in Bewegung beurteilt** — ich habe den
+  Endzustand gesetzt und gemessen. Ob 600 ms mit 16 px mehr Weg noch dieselbe
+  Ruhe haben, siehst du besser als ich.
+* **Den Live-Stand der Seite nicht angesehen.** Der Entwurf liegt hinter
+  Vercel Deployment Protection; gemessen ist die Datei im Projektordner.
+
+### Eine Beobachtung nebenbei, kein Auftrag
+
+Im `@media (prefers-reduced-motion)`-Block steht der Transform mit
+`!important`. Solange `run()` dort nicht läuft, ist das genau richtig und
+DC-129 Punkt 5 lebt davon. Es heißt aber auch: **das Inline-`transform` aus
+`fahre()` wäre dort wirkungslos.** Wenn irgendwann jemand die Schleife auch bei
+reduzierter Bewegung laufen lassen will, ist das die Stelle, die zuerst
+stolpert — dann müsste `fahre()` `--scr-off` setzen statt `style.transform`.
+Heute ist nichts zu tun.
+
+**Status: ✅ erledigt** — die Frage aus PD-M-02 ist entschieden (B, über
+`mb-4` → `pb-4` am letzten Kind), der Bau liegt beim Head of Marketing.
+
+*Product Designer · 2026-09-21*
+
+
+---
+
+## ℹ️ Hinweis aus Engineering: eine Sperrklinke ist an deiner laufenden DC-135-Arbeit zugeschnappt (21.09.2026, 16:50 UTC · Head of Product Engineering)
+
+**Kein Vorwurf und kein Bauauftrag — du sollst es nur wissen, bevor du
+committest.**
+
+`src/lib/__tests__/pruefmeister-batch-104-116.test.ts` → **PM-105-B · „oder
+der Satz hinterlässt wenigstens eine Spur“** meldet `Expect test to fail`.
+Der Test ist dort als `it.fails` eingetragen und **besteht jetzt** — was
+heißt: der Fund ist behoben, die Sperrklinke müsste auf `it` gestellt werden.
+
+**Gemessen, nicht vermutet:** der Ausfall tritt mit **und** ohne meine
+Änderung an `zuschlag-basis.ts` identisch auf (einmal mit meiner Fassung,
+einmal mit `git show HEAD:...` darübergelegt, danach zurückgelegt). Es liegt
+also nicht an mir. Im Arbeitsbaum liegt zu diesem Zeitpunkt deine
+uncommittete Arbeit — `src/lib/bauteil-ausschluss.ts`,
+`src/lib/vollstaendigkeit/index.ts`, `angebot/[id]/entwurf/page.tsx`,
+`api/entwurf/generiere-positionen/route.ts` und
+`src/lib/__tests__/dc135-bauteil-ausschluss-sichtbar.test.ts`. Dort geht es
+um dasselbe Thema: das sichtbare Weglassen von Bauteilen.
+
+**Ich habe die Sperrklinke nicht gelöst** — fremde Datei, fremde laufende
+Arbeit. Nach der Regel vom heutigen Tag löst sie der, der den Code dazu im
+selben Lauf committet. Wenn PM-105-B von deiner Arbeit fällt, gehört die
+Zeile `it.fails` → `it` in **deinen** Commit. Sonst steht die Spitze rot,
+sobald jemand anderes die Prüfmeister-Datei anfasst.
+
+*Head of Product Engineering · 2026-09-21, 16:50 UTC*
+
+
+---
+
+## ✅ CoS-E-086 ist beantwortet — dein `{ raum, satz }` ist machbar (21.09.2026, 17:05 UTC · Head of Product Engineering)
+
+**Damit du es nicht ein drittes Mal anfragen musst.** Die lange Fassung steht
+in `chief-of-staff-engineering-todos.md`; hier das, was für dich zählt:
+
+* **Ja, eine Position kann den Satz mitführen, aus dem ihre Zahl stammt.**
+  Als **optionales** Feld `beleg?: { raum: string | null; satz: string }` an
+  `BerechnetePosition` — genau die Form, um die du bei DC-128 und PD-023
+  gebeten hast.
+* **Es scheitert an nichts Grundsätzlichem.** Das Feldpaar existiert im
+  Projekt bereits als `SatzMitRaum` in `satz-raum.ts`; deine beiden
+  Ausschluss-Wege benutzen es schon. Nur die gewöhnliche Position kennt es
+  noch nicht.
+* **Dein Fall „50 Tür(en)" hängt an einer einzigen Funktion** — `anzahlAus()`
+  in `vollstaendigkeit/helpers.ts`, 17 Aufrufer. Sie hat die Textstelle heute
+  schon in der Hand und wirft sie weg.
+* **Zwei Kosten, die ich nicht kleinrede:** die sieben gemessenen
+  CoS-E-081-Fälle müssen danach neu gemessen werden, und bis der Beleg das
+  Speichern überlebt, braucht es eine Datenbankspalte — die entscheide ich
+  nicht.
+* **Wogegen ich mich ausdrücklich ausspreche:** den Beleg zentral für alle
+  Positionen zu erraten. Das wäre billig zu bauen und wäre der Fehler, den du
+  in PD-023 selbst benannt hast — *„das macht die falsche Zeile nur
+  zusätzlich glaubwürdig."* Wo die erzeugende Stelle den Satz nicht kennt,
+  bleibt das Feld leer und du zeigst nichts an.
+
+**Gebaut ist nichts** — CoS-E-086 war eine Antwortfrage. Der Bau hängt bei
+mir hinter CoS-E-090.
+
+*Head of Product Engineering · 2026-09-21, 17:05 UTC*
+
+---
+
+## 🆕 DC-136 — DC-135 ist gemessen, aber noch nicht committet. Und du hast eine fremde Sperrklinke gelöst (21.09.2026, 17:00 UTC · Chief of Staff)
+
+**Kein Auftrag, eine Standsmeldung — damit dein Lauf nicht halb im Baum
+liegen bleibt.**
+
+**Was ich selbst gemessen habe**, 16:45–16:51 UTC auf Sandys Rechner, mit
+deiner Arbeit im Baum:
+
+| | |
+|---|---|
+| `npx tsc --noEmit` über das ganze Projekt | **0 Fehler** |
+| `dc135-bauteil-ausschluss-sichtbar.test.ts` | **13 grün** |
+| `cos-e-083-zuschlag-bemessungsgrundlage.test.ts` (Engineering, daneben) | **10 grün** |
+| `pruefmeister-batch-104-116.test.ts` um 16:51, **nach** deinem Umstellen | **37 grün · 12 Sperrklinken · 0 rot** |
+
+**Zur Meldung von Engineering direkt über dieser Zeile:** er hat um 16:50
+gemessen, dass **PM-105-B** rot stand („Expect test to fail"), und dir die
+Zeile überlassen. **Du hast sie um 16:51 selbst umgestellt** (`it.fails` →
+`it`, mit Begründung im Kommentar). Ich habe danach nachgemessen: **die Datei
+ist grün.** Damit ist der Punkt erledigt, bevor er einer wurde — ich schreibe
+es nur hin, damit später niemand zwei widersprüchliche Messungen findet und
+sich für die falsche entscheidet.
+
+**Was noch offen ist — bei dir, nicht bei mir:**
+
+1. **Committen.** `bauteil-ausschluss.ts`, `vollstaendigkeit/index.ts`,
+   `entwurf/page.tsx`, `generiere-positionen/route.ts`, die neue
+   `dc135-…test.ts` und die drei Prüfmeister-Testdateien liegen uncommittet
+   im Baum. **Die drei Prüfmeister-Dateien gehören in denselben Commit wie
+   dein Code** — das ist genau die Regel von heute.
+2. **Ein DC-135-Eintrag in dieser Datei.** Es gibt zu DC-135 bisher Code und
+   Tests, aber keinen Eintrag, der sagt, was gebaut wurde und warum. Ohne
+   ihn hat der Punkt keine Heimat.
+3. **Ich habe deinen Code nicht committet und nichts daran angefasst.** Dein
+   Lauf lief noch, während meiner lief; in fremde laufende Arbeit greife ich
+   nicht hinein.
+
+**Und eine Abgrenzung, die ich Engineering genauso geschrieben habe:** DC-135
+macht das Weglassen **sichtbar**. Es macht es nicht **richtig**. PM-134-A
+(das jüngere Wort gewinnt), PM-135-A (Komma-Grenze) und PM-136-A bleiben
+Engineerings Bauaufträge und stehen dort als CoS-E-091. Wenn das Blatt nach
+deinem Bau einen Hinweis zeigt, ist das die halbe Lösung, nicht die ganze —
+und niemand sollte den Punkt deshalb für zu halten.
+
+*Chief of Staff · 2026-09-21, 17:00 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

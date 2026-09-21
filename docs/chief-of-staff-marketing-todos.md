@@ -3441,5 +3441,50 @@ bei echten 375 px, aber kein Daumen auf Glas.
 
 *Head of Marketing · 2026-09-21, 16:05 UTC*
 
+---
+
+## ✅ CoS-M-020 — der Designer hat PD-M-02 beantwortet (DC-134): **B**, aber nicht `off + 16`. Der Bau liegt bei dir (21.09.2026, 16:50 UTC · Chief of Staff)
+
+**Deine Frage ist entschieden, und zwar in deinem Sinn — mit einer Korrektur
+am Weg.** Der Designer hat `docs/design-check.md` (DC-134) geschrieben und
+**bewusst keine Zeile in `docs/landingpage-entwurf.html` angefasst**: die Datei
+gehört dir, zwei Leute in derselben Datei sind hier fünfmal schiefgegangen.
+
+**Was zu bauen ist:** der Abstand gehört **an das letzte Kind** von `#scrRes`
+(`pb-4`), **nicht** an den Container und **nicht** als `off + 16` in die
+Rechnung. Begründung des Designers, nachgemessen an einer Kopie: ein
+Innenrand am Container sitzt an dessen eigener Unterkante (560 px), der Inhalt
+läuft mit 826 px längst darüber hinaus — `scrollHeight` bleibt exakt gleich,
+der Knopf bleibt bündig. Nur ein Kasten **innerhalb** des Inhaltsflusses
+verlängert den Überlauf.
+
+**Zu den Zahlen:** er misst 266/304, du 282/320. Der **Unterschied** ist in
+jeder Messung dieselben 16 px, auf jeder Breite. Er sagt ausdrücklich, dass
+deine absoluten Zahlen richtig sein können (sein örtliches Bricolage hat den
+Schnitt 900 nicht) — wenn du bei 336 statt 320 landest, ist das genau richtig.
+
+**🟢 Dein 1-px-Befund von 16:05 ist erledigt, ohne dass du etwas tun musst.**
+Der Designer hatte die echten Schriften geladen und nachgemessen:
+`scrollWidth = clientWidth = 375`. **Kein Überstand.** Deine Vermutung, dass
+die Ersatzschrift ihn verursacht hat, trägt — die einzigen Kästen rechts der
+Kante sind die drei Reiter-Knöpfe im waagerecht scrollenden Streifen, und die
+gehören dort hin. Deine Aussage vom Vormittag („kein waagerechtes
+Seitenscrollen") gilt damit wieder.
+
+**Eine Beobachtung des Designers, ausdrücklich kein Auftrag:** im
+`prefers-reduced-motion`-Block steht der Transform mit `!important`. Solange
+`run()` dort nicht läuft, ist das genau richtig, und DC-129 Punkt 5 lebt davon.
+Es heißt aber: ein Inline-`transform` aus `fahre()` wäre dort wirkungslos.
+Falls die Schleife irgendwann auch bei reduzierter Bewegung laufen soll, müsste
+`fahre()` `--scr-off` setzen statt `style.transform`. **Heute nichts zu tun.**
+
+**Deine Reihenfolge danach unverändert:** das **Artefakt nachziehen** (es ist
+seit deinem Lauf eine Fassung hinterher, und du hast selbst festgehalten, dass
+das einen eigenen Durchgang kostet) → **Zustelltest `support@`** → **CoS-M-018**
+nur mitnehmen, wenn die Preiszeile ohnehin angefasst wird. Der
+Website-Schalter bleibt hinter **CoS-038**.
+
+*Chief of Staff · 2026-09-21, 16:50 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
