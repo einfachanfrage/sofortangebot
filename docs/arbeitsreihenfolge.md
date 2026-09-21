@@ -1,11 +1,11 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 21.09.2026, 19:50 UTC · Chief of Staff**
+**Stand: 21.09.2026, 19:55 UTC · Chief of Staff**
 *(ersetzt die Fassung von 19:00 UTC — diese Datei wird immer ersetzt, nie ergänzt.
 Wer mir etwas mitteilen will, schreibt es in seine eigene Heimat-Datei; was hier
 hineingeschrieben wird, ist beim nächsten Lauf weg.)*
 *Alle Uhrzeiten sind **UTC**. In Deutschland ist es gerade **MESZ = UTC + 2**,
-also 21:50 Uhr Ortszeit.*
+also 21:55 Uhr Ortszeit.*
 
 ---
 
@@ -17,15 +17,15 @@ completed/success** (15:41:51 UTC, seither **kein neuer Lauf**, weil nichts
 gepusht wurde), Vercel-Produktion **`b973c26` READY**, acht von acht
 abgefragten Produktions-Deploys READY.
 
-**🟡 Einunddreißig Commits liegen ungepusht** (um 19:00 waren es
-fünfundzwanzig). **Keiner der einunddreißig war in der CI.** Sandy muss
+**🟡 Dreiunddreißig Commits liegen ungepusht** (um 19:00 waren es
+fünfundzwanzig). **Keiner der dreiunddreißig war in der CI.** Sandy muss
 einmal pushen — Block steht im Chat.
 
 **🟢 Vier Rollen haben seit 19:00 geliefert.** Engineering **CoS-E-092 ✅**,
 Marketing **CoS-M-020 ✅** plus Artefakt nachgezogen, Prüfmeister
 **Themenspeicher Punkt 12 und 21 zu, Fallbasis 138 → 144**, Designer
-**DC-139/DC-140 ✅**. **Engineering baut gerade PM-134** — vier Dateien liegen
-offen im Arbeitsbaum, zuletzt angefasst 19:36.
+**DC-139/DC-140 ✅**. **Und Engineering hat PM-134 um 19:47 committet** (`5c5529c`), während ich
+diesen Lauf geschrieben habe — der Bericht dazu steht noch aus.
 
 ---
 
@@ -42,22 +42,25 @@ offen im Arbeitsbaum, zuletzt angefasst 19:36.
 
 ---
 
-## 🟡 Engineering baut gerade — ich habe seine vier Dateien NICHT angefasst
+## 🟢 Engineering hat PM-134 committet, während dieser Lauf lief
 
-Im Arbeitsbaum liegen offen: `src/lib/bauteil-ausschluss.ts` (19:33),
-`pruefmeister-batch-134-137.test.ts` (19:36),
-`dc135-bauteil-ausschluss-sichtbar.test.ts` (19:36) und
-`dc138-tausenderpunkt.test.ts` (19:20, vom Designer).
+Als ich um 19:44 gemessen habe, lagen vier Dateien offen im Arbeitsbaum. Um
+**19:47** hat Engineering drei davon als **`5c5529c` „PM-134: die Gegenprobe
+sieht über die Satzgrenze — begrenzt durch den Raum"** committet, um 19:50 kam
+mein eigener Commit darüber. **Ich habe seine Dateien nicht angefasst** — ich
+habe mit eigenem Index committet, nur meine zwei Doku-Pfade genannt und
+danach Schritt 3 aus `AGENTS.md` gefahren (`git diff --cached HEAD` war leer).
 
-Die ersten drei sind **PM-134 im Bau** — in `dc135-…` steht die Begründung
-wörtlich drin: der Diktattext wurde umgedreht, *„weil der spätere
-ausdrückliche Auftrag seit PM-134-A den früheren Ausschluss aufhebt und ein
-Hinweis über einen Wegfall, den es nicht gibt, genau der Lärm wäre, den die
-Datei verbietet."*
+**Was das für den Rest dieser Datei heißt:** die Zeile „Engineering baut
+gerade PM-134" ist seit 19:47 überholt. **PM-134 ist gebaut, der Bericht dazu
+steht noch aus** — in `chief-of-staff-engineering-todos.md` steht sein Lauf
+von 19:05, nicht dieser. **Abgenommen ist PM-134 damit nicht**, und
+**PM-143-A** (mein Nachtrag von 19:50) ist ihm zum Zeitpunkt des Commits noch
+nicht untergekommen.
 
-**Ich habe davon nichts committet und nichts nachgezogen.** Um 18:43 ist mein
-Commit genau an dieser Gleichzeitigkeit gestorben; zweimal muss das nicht
-sein. **Die vier Dateien gehören der Rolle, die sie offen hat.**
+**Offen bleibt im Arbeitsbaum:** `docs/design-check.md` und
+`dc138-tausenderpunkt.test.ts` — beides **DC-139/DC-140 vom Designer**, fertig
+und uncommittet. Die gehen beim nächsten Lauf mit.
 
 ---
 
@@ -83,7 +86,7 @@ sein. **Die vier Dateien gehören der Rolle, die sie offen hat.**
   Ständen. Wer sie zitiert, sagt das dazu.
 * **Kein voller Prüfstand.** Die letzte Vollmessung (198 Dateien, 2.955 grün,
   99 erwartet fehlschlagend, 0 rot) ist Platforms und gilt für **`b973c26`** —
-  **nicht** für die einunddreißig Commits darüber.
+  **nicht** für die dreiunddreißig Commits darüber.
 * **Gate 1 rechne ich nicht neu.** Stand bleibt **54,2 %**. Finances Vorschlag
   95/100 für Punkt 4.7 ist weiter notiert, nicht eingetragen.
 * **Kein Blick ins laufende Produkt. Sechster Lauf in Folge.** Engineering und
@@ -100,7 +103,7 @@ sein. **Die vier Dateien gehören der Rolle, die sie offen hat.**
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | 🔵 **Einmal pushen.** Einunddreißig Commits liegen lokal, keiner war in der CI. Block steht im Chat | ein Befehl |
+| 1 | 🔵 **Einmal pushen.** Dreiunddreißig Commits liegen lokal, keiner war in der CI. Block steht im Chat | ein Befehl |
 | 2 | 🔴 **Beim ELSTER-Fragebogen nicht der Kurzfassung in `legal-007` folgen.** Dort steht weiter „Kleinunternehmer ankreuzen" — **falsch**, und das Kreuz bindet fünf Jahre. Richtig ist **Verzicht auf die Kleinunternehmerregelung**. **Halte dich an Finances Behördenliste.** Legal zieht die zwei Zeilen nach (CoS-L-014) | nichts jetzt |
 | 3 | 📧 **NEU: Zustelltest `support@`.** Von einer **privaten** Adresse eine Mail an `support@sofortangebot.app`, fünf Minuten später in `hallo@` nachsehen (auch Spam). Marketing hat nachgesehen: zehn Nachrichten im Postfach, **keine einzige an `support@`** — die Weiterleitung ist ungetestet. Volle Anleitung in `entscheidungen-fuer-sandy.md` | 2 Min |
 | 4 | 🔵 **Vor der Gewerbeanmeldung in den Arbeitsvertrag sehen** — Klausel zu Nebentätigkeiten. Muss **davor** passieren | 10 Min |
@@ -118,11 +121,11 @@ sein. **Die vier Dateien gehören der Rolle, die sie offen hat.**
 
 | Rolle | Nächstes | Wartet auf |
 |---|---|---|
-| **Engineering** | **PM-134 läuft gerade** (vier Dateien offen im Arbeitsbaum, zuletzt 19:36). **Nachtrag von mir, der in denselben Bau gehört: PM-143-A** — seit CoS-E-091 antworten die Bauteil- und die Sockelleisten-Bremse auf denselben Satzbau verschieden; der Prüfmeister entscheidet ausdrücklich nicht, welche recht hat, sagt aber: *„zwei Antworten auf demselben Angebot sind nicht zu verteidigen."* Danach **CoS-E-093 (PM-144, ein Einzeiler in `zuschlagBerechnungsweg()`, die zwei Sperrklinken liegen schon committet)** → **PM-136** → **CoS-E-094 (PM-140, Fliesen-Aufpreis)** → **CoS-038 → PM-119/L-06 → CoS-E-080**, CoS-E-086 dahinter | niemanden |
+| **Engineering** | **PM-134 ist um 19:47 committet** (`5c5529c`, drei Dateien) — **Bericht steht aus, abgenommen ist er nicht.** **Nachtrag von mir, der in denselben Bau gehört und beim Commit noch nicht vorlag: PM-143-A** — seit CoS-E-091 antworten die Bauteil- und die Sockelleisten-Bremse auf denselben Satzbau verschieden; der Prüfmeister entscheidet ausdrücklich nicht, welche recht hat, sagt aber: *„zwei Antworten auf demselben Angebot sind nicht zu verteidigen."* Danach **CoS-E-093 (PM-144, ein Einzeiler in `zuschlagBerechnungsweg()`, die zwei Sperrklinken liegen schon committet)** → **PM-136** → **CoS-E-094 (PM-140, Fliesen-Aufpreis)** → **CoS-038 → PM-119/L-06 → CoS-E-080**, CoS-E-086 dahinter | niemanden |
 | **Designer** | **Bei dir liegt nichts.** DC-139 und DC-140 sind fertig, deine Spur ist leer. **PD-021** wartet unverändert auf Engineerings Grundreihenfolge (CoS-038). Vorschlag, kein Auftrag: **das laufende Produkt hat weiter niemand angesehen — sechster Lauf.** Du hast dieselbe Zeile heute selbst in deinen Bericht geschrieben | niemanden |
 | **Prüfmeister** | **Beide Punkte zu, Fallbasis 144.** Wie angekündigt als Nächstes: Themenspeicher **Punkt 13** (Katalogtitel als gedruckter Titel, 184 Titel, ohne App) und der neue **Punkt 23** (Katalogzeilen ohne Engine-Titel). **Deine zwei roten Funde sind verteilt:** PM-140 als **CoS-E-094**, PM-143-A als Nachtrag an Engineerings laufenden PM-134-Bau. PM-144 liegt als **CoS-E-093** bei Engineering, mit der Rückendeckung des Designers (DC-140) | niemanden |
 | **Marketing** | **Zwei Fragen von Finance liegen bei dir** (seit 19:05 in deiner Datei): sind die 1.430 € Sachkosten im Kanalplan **brutto oder netto** gemeint, und sind die Fahrten **Pkw oder Bahn**? Zwei Stichworte genügen, daran hängen rund 230 € Vorsteuer. Danach: **CoS-M-018** nur mitnehmen, wenn die Preiszeile ohnehin drankommt — **Wortlaut vorher bei Legal holen**. Website-Schalter bleibt hinter **CoS-038** | Engineering (CoS-038) |
-| **Platform** | **Bei dir liegt nichts.** Vorschlag, kein Auftrag: **sobald Sandy gepusht hat, die Vollmessung am neuen `origin/main`** — deine Zahl gilt für `b973c26`, nicht für die einunddreißig Commits darüber | Sandy (Push) |
+| **Platform** | **Bei dir liegt nichts.** Vorschlag, kein Auftrag: **sobald Sandy gepusht hat, die Vollmessung am neuen `origin/main`** — deine Zahl gilt für `b973c26`, nicht für die dreiunddreißig Commits darüber | Sandy (Push) |
 | **Legal** | **Unverändert CoS-L-014, Platz 1 und mit Datum.** `legal-007` Zeile 342 („Kleinunternehmer ankreuzen") und Zeile 276 („0 € (Kleinunternehmer)") — Datei seit 08:14 UTC unangetastet. Danach: wie die Nebentätigkeitsklausel in Sandys Arbeitsvertrag zu lesen ist. **Und neu, klein: Marketing braucht für CoS-M-018 einen Wortlaut von dir** (Umsatzsteuerangabe an der Preiszeile, § 5a UWG) | niemanden |
 | **Finance** | **Plan-Deckblatt ✅.** Danach wie geplant die **26 unbearbeiteten Belege**. Die zwei „netto"-Zeilen bleiben offen: Apple Developer hängt am Fragebogen (bis 26.09. geparkt), die Marketing-Sachkosten warten auf zwei Stichworte von Marketing — **du hast richtig gefragt statt geraten** | Marketing (2 Stichworte) |
 
@@ -132,7 +135,7 @@ sein. **Die vier Dateien gehören der Rolle, die sie offen hat.**
 
 * **🟡 Die letzte Vollmessung gilt für `b973c26`, nicht für den lokalen Stand.**
   198 Dateien / 2.955 grün / 99 erwartet fehlschlagend / 0 rot. Darüber liegen
-  **einunddreißig** ungemessene Commits. **Wer „alles grün" sagt, sagt dazu,
+  **dreiunddreißig** ungemessene Commits. **Wer „alles grün" sagt, sagt dazu,
   an welchem Stand.**
 * **🔴 Drei Begründungen des Chief of Staff waren falsch, die Fixes nicht.**
   CoS-E-088 und CoS-E-090 behaupteten, der englische Rechenweg stünde auf dem
@@ -196,6 +199,6 @@ sein. **Die vier Dateien gehören der Rolle, die sie offen hat.**
   `dc050-rechenweg-pdf.test.ts` und `dc119-wandflaechen-konflikt.test.ts` ansehen.
 * **`menge_unbekannt` ist bewusst nicht gebaut.** Offen, wer die Messung macht.
 
-*Chief of Staff · 2026-09-21, 19:50 UTC*
+*Chief of Staff · 2026-09-21, 19:55 UTC*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
