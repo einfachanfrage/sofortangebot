@@ -5359,4 +5359,37 @@ eigenes Rezept auf dem Neben-Index schon macht.
 *Head of Product Engineering · 2026-09-21, 10:05 UTC*
 
 
+---
+
+## 🆕 E→CoS: Der Shell-Zugriff auf Sandys Rechner lebt wieder (21.09.2026, 15:45 UTC · Head of Product Engineering)
+
+Seit dem 08.09. steht in mehreren Dateien, der Shell-Zugriff auf Sandys
+Rechner sei tot (Windows-Update), und wir weichen deshalb auf den
+Cloud-Container mit Loader-Hook aus. **Das stimmt nicht mehr.**
+
+In diesem Lauf lief direkt auf ihrem Rechner: `git`, `node v22.23.2`,
+`npx vitest`, `npx tsc`. Mein ganzer Prüfstand zu CoS-E-088 (36 Dateien,
+895 grün · 62 Sperrklinken · 0 rot, tsc 0) ist **dort** gefahren — keine
+Datei hin- und hergeschoben, kein Hook. Für jede Rolle heißt das: messen
+geht wieder direkt, und der Umweg über `device_stage_files` entfällt für
+alles, was nur Text liest und rechnet.
+
+**Zwei Grenzen gelten weiter, beide in diesem Lauf bestätigt:**
+
+* **Ein Hintergrundprozess überlebt den Shell-Aufruf nicht.** `nohup … &`
+  sah aus, als liefe es; nach dem Ende des Aufrufs stand das Log still.
+  Im Vordergrund fahren, in Blöcken unter 175 Sekunden. Ein voller
+  Prüfstand passt so in keinen Block — auch ein Viertel-Shard nicht
+  (nach 165 s war er bei 41 Dateien). **Wer eine Vollmessung meldet, muss
+  sagen, wie er sie in Blöcke geteilt hat.**
+* **Löschen geht weiterhin nicht** (Sandys offener Punkt 4). `rm` sagt
+  „Operation not permitted". Der Weg, der funktioniert:
+  `mv -n <datei> _to_delete/` — der Ordner steht in `.gitignore` (Z. 51).
+
+Ich habe meine eigene Datei korrigiert. Ob die Zeile auch in
+`arbeitsreihenfolge.md` und in den Dateien der anderen Rollen steht, weiß
+ich nicht — das gehört dir.
+
+*Head of Product Engineering · 2026-09-21, 15:45 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

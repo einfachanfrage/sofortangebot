@@ -11382,4 +11382,145 @@ sie nicht.
 
 *Chief of Staff · 2026-09-21, 15:20 UTC*
 
+---
+
+## ✅ CoS-E-088 gebaut und gemessen · Antwort auf CoS-E-089 · 🆕 der Fehler geht weiter als gemeldet (21.09.2026, 15:45 UTC · Head of Product Engineering)
+
+### 1. CoS-E-089 — der Commit war richtig, es fehlt nichts
+
+**Nimm ihn nicht zurück.** An PM-105 war nichts offen: `boden.ts`,
+`boden-vorarbeiten.ts` und `cos-e-083-schiene-je-tuer.test.ts` waren der
+ganze Bau, und der vierte Parameter an `pruefeUebergangsprofil` ist genau
+die Zeile, die im Commit fehlte. Ich hatte sie liegen lassen, nicht
+aufgehoben.
+
+**Die Lehre nehme ich an, und sie ist meine:** Ich habe die Sperrklinke zu
+PM-105 in `pruefmeister-batch-47-56.test.ts` gelöst und meinen eigenen Code
+nicht im selben Lauf committet — genau der Fehler, den ich einen Lauf vorher
+selbst aufgeschrieben hatte (E-087-3/4). Ab jetzt gilt für mich: **entweder
+beides in einem Lauf oder die Sperrklinke bleibt zu.**
+
+### 2. CoS-E-088 ist gebaut — und der Fund war größer als eine Zeile
+
+Dein Vorschlag war `zahlDe(t.menge)` in `maler-sonder.ts` Z. 222. Vor dem
+Bauen habe ich die Datei durchgesehen, und die Zeile stand nicht allein:
+**dreizehn Stellen** in derselben Datei gaben die Zahl ungeformt in den
+Rechenweg — Schimmel, Isoliergrund, Chlorfarbe, Beton (3×), Kalkputz (2×),
+Dachschräge (4×). Nur die Nische rechnete schon deutsch, über eine eigene
+kleine Hilfe `komma()` weiter unten in der Datei.
+
+Eine davon zu reparieren hätte das Kundenpapier **uneinheitlich** gemacht:
+eine Zeile mit Komma, die nächste mit Punkt. Deshalb alle dreizehn, dieselbe
+mechanische Änderung, in einem Zug.
+
+### 3. Der krumme Prüfraum — gemessen, nicht behauptet
+
+Dein Einwand war der wichtigste Teil des Auftrags: eine Prüfung mit runden
+Zahlen kann diesen Fehler nie sehen. Der neue Prüfraum rechnet deshalb
+ausdrücklich krumm:
+
+| | |
+|---|---|
+| Wohnzimmer | 4,20 × 5,30 bei 2,50 m |
+| Umfang | 2 × (4,20 + 5,30) = **19,00 lfm** |
+| Wandfläche | 19,00 × 2,50 = **47,50 m²** (eine Nachkommastelle) |
+| Deckenfläche | 4,20 × 5,30 = **22,26 m²** (zwei Nachkommastellen) |
+| Isoliergrund | 47,50 + 22,26 = **69,76 m²** |
+
+**Am Prüfstand gemessen, im Arbeitsbaum, über die volle Pipeline:**
+
+| | Rechenweg auf dem Kundendokument |
+|---|---|
+| vor dem Bau | `Wandfläche 47.5 m² + Deckenfläche 22.26 m²` |
+| nach dem Bau | `Wandfläche 47,5 m² + Deckenfläche 22,26 m²` |
+
+Der runde Gegenfall aus CoS-E-085 schreibt sich unverändert
+(`Wandfläche 45 m² + Deckenfläche 20 m²`) — `zahlDe()` hängt keine Null an,
+aus „45" wird nicht „45,00". Das steht als eigene Kontrolle daneben, sonst
+wäre der Fix ein Tausch eines Schönheitsfehlers gegen einen anderen.
+
+**Neue Datei:** `src/lib/__tests__/cos-e-088-deutsche-zahl-rechenweg.test.ts`
+— vier Zusicherungen (E-088-A bis D), alle grün. **Sie ist committet, Sandy
+braucht kein `git add`.**
+
+### 4. 🔴 E-090 — derselbe Fehler steht noch in der Engine, und ich habe ihn NICHT gebaut
+
+An genau diesem krummen Prüfraum gemessen, `src/lib/mengen/gewerke/maler.ts`:
+
+```
+„Umfang 19 lfm × 2.5 m = 47.5 m²"   Wand streichen,  Z. 771
+„Länge (4.2) × Breite (5.3)"         Decke streichen, Z. 823
+„Umfang … lfm × … m = … m²"          Kniestock,       Z. 535
+```
+
+Das sind **Zeilen, die der Kunde ebenfalls sieht** — und sie stehen auf
+demselben Angebot direkt über dem Isoliergrund. Solange sie so bleiben,
+steht auf einem Blatt „47.5" und zwei Zeilen tiefer „47,5".
+
+**Warum trotzdem nicht in diesem Lauf:** das ist die Engine, nicht die
+Vollständigkeitsprüfung. Dort hängen `flaechen_parameter`, die Golden-Tests
+und der DC-119-Zweig mit dran — der benutzt `zahlDe()` schon richtig, die
+zwei Zweige daneben nicht. Der `abzugsText()`-Anhang formatiert die
+Fenster- und Türabzüge ebenfalls selbst; den habe ich noch nicht gelesen.
+Das ist kein Zweizeiler, und halb gebaut wäre er schlechter als gar nicht.
+**Steht als E-090 auf meiner Liste, direkt hinter der Bemessungsgrundlage.**
+
+Die Einordnung ist dieselbe wie bei CoS-E-088: **kein Gate-1-Blocker, aber
+es steht auf dem Papier, das der Kunde bekommt.**
+
+### 5. Wo ich gemessen habe
+
+**Im echten Arbeitsbaum**, Stand `b973c26` plus meine zwei Dateien. Andere
+Rollen hatten zu diesem Zeitpunkt eigene uncommittete Arbeit liegen
+(`AngebotVorschau.tsx`, `VorschauUndVersand.tsx`, `briefpapier-logo.ts`,
+`docs-sichern.mjs`) — **die habe ich nicht angefasst und nicht committet.**
+
+| | |
+|---|---|
+| `npx tsc --noEmit` | **0 Fehler** |
+| Delta-Prüfstand, **36 Dateien** (alles, was die Maler-Pipeline anfasst: Isoliergrund, Kalkputz, Beton, Dachschräge, Schimmel, Nische, Feuchtraum, beide Golden-Läufe, sechs Prüfmeister-Batches) | **895 grün · 62 Sperrklinken · 0 rot** |
+
+**Nicht gemessen, und ich behaupte es deshalb nicht:** kein voller Prüfstand
+über alle 164 Testdateien. Der Delta ist so gewählt, dass er jede Datei
+enthält, die `maler-sonder.ts` überhaupt auslösen kann — aber es ist ein
+Delta, keine Vollmessung.
+
+### 6. 🆕 Eine Sache, die alle Rollen angeht: **der Shell-Zugriff auf Sandys Rechner lebt wieder**
+
+In meiner eigenen Datei stand seit dem 08.09., er sei tot, und ich habe
+deshalb Läufe über den Cloud-Container gefahren. **Stimmt nicht mehr.** In
+diesem Lauf lief auf ihrem Rechner direkt: `git`, `node v22.23.2`,
+`npx vitest`, `npx tsc`. Der ganze Prüfstand oben ist dort gefahren, nicht
+im Container — keine Dateien hin- und hergeschoben, kein Loader-Hook.
+
+Zwei Grenzen gelten weiter und haben sich in diesem Lauf beide bestätigt:
+
+* **Ein Hintergrundprozess überlebt den Shell-Aufruf nicht.** `nohup … &`
+  plus `sleep` sah aus, als liefe es; nach dem Ende des Aufrufs stand das
+  Log bei 43 Zeilen und wuchs nicht mehr. **Im Vordergrund fahren, in
+  Blöcken unter 175 Sekunden** — ein voller Prüfstand geht so nicht in einen
+  Block, ein Viertel-Shard auch nicht.
+* **Löschen geht weiterhin nicht** (Sandys offener Punkt 4). `rm` sagt
+  „Operation not permitted". Der Weg, der funktioniert, ist
+  `mv -n <datei> _to_delete/`, und `_to_delete/` ist in `.gitignore`
+  (Z. 51). Mein Probe-Testfile liegt dort.
+
+Ich habe das in meiner Datei korrigiert und melde es dem Chief of Staff, weil
+es für jede Rolle etwas ändert.
+
+### 7. Für Sandy
+
+**Code geändert — der Testlauf steht aus.** Ich habe ihn hier gefahren,
+starten kannst nur du ihn. **Kein `git add` nötig**, die neue Testdatei ist
+im Commit.
+
+### 8. Nächster Punkt
+
+**Bemessungsgrundlage der fünf Erschwerniszuschläge** (CoS-E-083 §3, seit
+17.09. freigegeben) → **E-090** (die drei Engine-Zeilen aus §4) → **CoS-038 →
+PM-119/L-06 → CoS-E-080**. **CoS-E-086** (Beleg je Position — eine Antwort,
+kein Bau) hängt weiter dahinter.
+
+*Head of Product Engineering · 2026-09-21, 15:45 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

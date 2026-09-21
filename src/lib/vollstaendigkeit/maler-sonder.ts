@@ -3,6 +3,11 @@ import { hat, add, filtereArray, istWandStreichen, istDeckeStreichen, NISCHE_WOR
 import { saetze } from '../satz-raum'
 import { ersetzeZahlenWorte } from '../zahlen-parser'
 import { mitTitelZusatz } from '../positions-titel'
+// CoS-E-088 (DC-130 §2): Der Rechenweg steht auf dem Kundendokument. Eine Zahl
+// mit Nachkommastelle ging dort ungeformt hinein — „46.8 m²" statt „46,8 m²".
+// `zahlDe()` ist dieselbe Hilfe, die `mengen/gewerke/maler.ts` schon benutzt;
+// keine neue.
+import { zahlDe } from '../mengen/wandflaechen-konflikt'
 
 // Schimmel → Schimmelbehandlung + Sperranstrich (additiv)
 export function pruefeSchimmel(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string): boolean {
@@ -13,7 +18,7 @@ export function pruefeSchimmel(ergaenzt: BerechnetePosition[], fehlende: string[
     ?? lower.match(/(\d+(?:[.,]\d+)?)\s*(?:m²|qm|quadratmeter)[^.!?]*?schimmel/i)
   const schimmelM2 = schimmelMatch ? parseFloat(schimmelMatch[1].replace(',', '.')) : null
   if (schimmelM2 && schimmelM2 > 0) {
-    ergaenzt.unshift({ beschreibung: 'Schimmelbehandlung', menge: schimmelM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${schimmelM2} m² aus Transkript (Schimmelbereich)`, annahmen: [] })
+    ergaenzt.unshift({ beschreibung: 'Schimmelbehandlung', menge: schimmelM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${zahlDe(schimmelM2)} m² aus Transkript (Schimmelbereich)`, annahmen: [] })
     // ── F.2 #3 / F.3 (Prüfmeister, 12.09.2026) ──────────────────────────
     //
     // Zwei Engine-Titel („Sperranstrich / Flecken sperren", „Sperranstrich
@@ -31,7 +36,7 @@ export function pruefeSchimmel(ergaenzt: BerechnetePosition[], fehlende: string[
     //
     // Deshalb der Katalogtitel wörtlich, und der Anlass in den Rechenweg —
     // der steht auch auf dem Kundendokument, die Annahmen nicht (CoS-E-002).
-    ergaenzt.push({ beschreibung: 'Isoliergrund gegen Nikotin / Ruß / Wasserflecken', menge: schimmelM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${schimmelM2} m² Schimmelbereich, Sperranstrich nach der Behandlung`, annahmen: [] })
+    ergaenzt.push({ beschreibung: 'Isoliergrund gegen Nikotin / Ruß / Wasserflecken', menge: schimmelM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${zahlDe(schimmelM2)} m² Schimmelbereich, Sperranstrich nach der Behandlung`, annahmen: [] })
   } else {
     add(ergaenzt, fehlende, 'Schimmelbehandlung')
     add(ergaenzt, fehlende, 'Isoliergrund gegen Nikotin / Ruß / Wasserflecken (nach Schimmelbehandlung)')
@@ -219,7 +224,7 @@ export function pruefeWasserflecken(ergaenzt: BerechnetePosition[], fehlende: st
     menge: m2,
     einheit: 'm²',
     konfidenz: 'high',
-    berechnungsweg: teile.map(t => `${t.wort}${mehrereRaeume && t.raum ? ` ${t.raum}` : ''} ${t.menge} m²`).join(' + '),
+    berechnungsweg: teile.map(t => `${t.wort}${mehrereRaeume && t.raum ? ` ${t.raum}` : ''} ${zahlDe(t.menge)} m²`).join(' + '),
     annahmen: [],
   })
 }
@@ -279,7 +284,7 @@ export function pruefeChlor(ergaenzt: BerechnetePosition[], lower: string): void
     einheit: streichflaeche > 0 ? 'm²' : 'Pauschale',
     konfidenz: 'high',
     berechnungsweg: streichflaeche > 0
-      ? `Gleiche Fläche wie die Streichpositionen (${Math.round(streichflaeche * 100) / 100} m²)`
+      ? `Gleiche Fläche wie die Streichpositionen (${zahlDe(streichflaeche)} m²)`
       : 'Chlorbeständige Spezialfarbe erkannt — Fläche nicht bekannt',
     annahmen: [],
   })
@@ -300,13 +305,13 @@ export function pruefeBetonwand(ergaenzt: BerechnetePosition[], fehlende: string
   if (wandPosBeton) {
     const bm2 = wandPosBeton.menge
     filtereArray(ergaenzt, p => !istWandStreichen(p.beschreibung))
-    ergaenzt.push({ beschreibung: 'Betonwände schleifen / Untergrundvorbereitung', menge: bm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${bm2} m²`, annahmen: [] })
+    ergaenzt.push({ beschreibung: 'Betonwände schleifen / Untergrundvorbereitung', menge: bm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${zahlDe(bm2)} m²`, annahmen: [] })
     // F.6 (Prüfmeister): fünf Schreibweisen, ein Preis. Tiefengrund ist
     // Tiefengrund — auf Beton, auf der Dachschräge, an der Decke. Der alte
     // Titel `Tiefengrund Beton` fand im Katalog GAR NICHTS (0,00 €), obwohl
     // `Grundieren (Tiefengrund)` mit 4,50 €/m² dort steht.
-    ergaenzt.push({ beschreibung: 'Grundieren (Tiefengrund)', menge: bm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${bm2} m² Beton`, annahmen: ['Untergrund Beton'] })
-    ergaenzt.push({ beschreibung: 'Betonfarbe streichen', menge: bm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${bm2} m²`, annahmen: [] })
+    ergaenzt.push({ beschreibung: 'Grundieren (Tiefengrund)', menge: bm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${zahlDe(bm2)} m² Beton`, annahmen: ['Untergrund Beton'] })
+    ergaenzt.push({ beschreibung: 'Betonfarbe streichen', menge: bm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${zahlDe(bm2)} m²`, annahmen: [] })
   } else {
     add(ergaenzt, fehlende, 'Betonwände schleifen / Untergrundvorbereitung')
     add(ergaenzt, fehlende, 'Grundieren (Tiefengrund)')
@@ -323,10 +328,10 @@ export function pruefeKalkputz(ergaenzt: BerechnetePosition[], fehlende: string[
   if (wandPosKalk) {
     const km2 = wandPosKalk.menge
     filtereArray(ergaenzt, p => !istWandStreichen(p.beschreibung))
-    ergaenzt.push({ beschreibung: 'Untergrundvorbereitung für Kalkputz', menge: km2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${km2} m²`, annahmen: [] })
+    ergaenzt.push({ beschreibung: 'Untergrundvorbereitung für Kalkputz', menge: km2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${zahlDe(km2)} m²`, annahmen: [] })
     // F.3: Der Katalog sagt „aufbringen", die Engine sagte „auftragen" —
     // und fand deshalb nichts. 35,00 €/m² standen die ganze Zeit da.
-    ergaenzt.push({ beschreibung: 'Kalkputz aufbringen', menge: km2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${km2} m²`, annahmen: [] })
+    ergaenzt.push({ beschreibung: 'Kalkputz aufbringen', menge: km2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${zahlDe(km2)} m²`, annahmen: [] })
   } else {
     add(ergaenzt, fehlende, 'Untergrundvorbereitung für Kalkputz')
     add(ergaenzt, fehlende, 'Kalkputz aufbringen')
@@ -366,14 +371,14 @@ export function pruefeDachschraege(ergaenzt: BerechnetePosition[], fehlende: str
   // Raum-Gruppierung als Raumname gelesen, sodass die Position unter
   // „Allgemein" statt beim Raum landete. Jetzt überall dieselbe Bezeichnung.
   if (dsm2 !== null && dsm2 > 0) {
-    if (explizitSpachteln && !hat(ergaenzt, 'spachtel', 'untergrund')) ergaenzt.push({ beschreibung: 'Dachschrägen spachteln', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m² Dachschrägenfläche`, annahmen: [] })
+    if (explizitSpachteln && !hat(ergaenzt, 'spachtel', 'untergrund')) ergaenzt.push({ beschreibung: 'Dachschrägen spachteln', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${zahlDe(dsm2)} m² Dachschrägenfläche`, annahmen: [] })
     // F.6: siehe oben — ein Preis, fünf Schreibweisen. Die Dachschräge steht
     // im Rechenweg. (Genau diese Zusammenführung hat der Prüfmeister
     // verlangt, als ich beim ersten Anlauf „Dachschräge" als Erschwernis-Wort
     // eingebaut und damit die beiden auseinandergerissen hatte.)
-    if (explizitGrundierung && !hat(ergaenzt, 'grundier')) ergaenzt.push({ beschreibung: 'Grundieren (Tiefengrund)', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Dachschräge ${dsm2} m²`, annahmen: [] })
-    if (!hat(ergaenzt, 'dachschrägen streich', 'dachschräge streich', 'schräge streich')) ergaenzt.push({ beschreibung: 'Dachschrägen streichen 2x', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: [] })
-    if (!hat(ergaenzt, 'boden schütz', 'abdecken')) ergaenzt.push({ beschreibung: 'Boden schützen / Abdeckfolie', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${dsm2} m²`, annahmen: ['Bodenfläche geschätzt'] })
+    if (explizitGrundierung && !hat(ergaenzt, 'grundier')) ergaenzt.push({ beschreibung: 'Grundieren (Tiefengrund)', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Dachschräge ${zahlDe(dsm2)} m²`, annahmen: [] })
+    if (!hat(ergaenzt, 'dachschrägen streich', 'dachschräge streich', 'schräge streich')) ergaenzt.push({ beschreibung: 'Dachschrägen streichen 2x', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${zahlDe(dsm2)} m²`, annahmen: [] })
+    if (!hat(ergaenzt, 'boden schütz', 'abdecken')) ergaenzt.push({ beschreibung: 'Boden schützen / Abdeckfolie', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${zahlDe(dsm2)} m²`, annahmen: ['Bodenfläche geschätzt'] })
   } else {
     if (explizitSpachteln && !hat(ergaenzt, 'spachtel')) add(ergaenzt, fehlende, 'Dachschrägen spachteln')
     if (explizitGrundierung && !hat(ergaenzt, 'grundier')) add(ergaenzt, fehlende, 'Grundieren (Tiefengrund) — Dachschräge')
