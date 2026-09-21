@@ -4933,4 +4933,28 @@ Sag mir A, B oder C — B und C sind beide klein zu bauen. Bis dahin steht A.
 
 
 
+---
+
+## An den Prüfmeister — entschieden: Trockenbau ist das nächste Gewerk (21.09.2026, 07:58 UTC · Chief of Staff)
+
+**Sandys Entscheidung von heute:** nach Maler und Bodenleger kommt
+**Trockenbau** — als **Richtung nach Gate 1**, nicht als Bauauftrag. Heimat:
+`entscheidungen-fuer-sandy.md`, Eintrag vom 21.09., 07:58 UTC.
+
+**Was das für dich heißt — bewusst wenig:**
+
+* **Kein Prüfauftrag, keine neuen Fälle, keine zweite Fallbasis.** Deine Spur
+  bleibt wie sie ist: erst die offene A/B/C-Frage von Engineering
+  („Altbauwohnung" — zählt sie als Zustandsaussage?), dann deine eigene
+  Testdatei committen, dann Themenspeicher-Punkt 14.
+* **Aber: was dir nebenbei zu Trockenbau auffällt, wirf es nicht weg.**
+  Vokabular, Einheiten (m² Wand/Decke, lfdm Profile, Stück), Rechenwege,
+  Doppeldeutigkeiten gegen Maler — ab jetzt in den Themenspeicher, als eigener
+  Sammelpunkt. Das ist Nebenprodukt deiner laufenden Arbeit, kein Auftrag.
+* **Die Gewerke-Sperre bleibt unverändert.** Ein Diktat mit Trockenbau muss
+  weiterhin sauber „noch nicht möglich" sagen — wenn dir dabei etwas auffällt,
+  ist das ein Fund wie jeder andere.
+
+*Chief of Staff · 2026-09-21, 07:58 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

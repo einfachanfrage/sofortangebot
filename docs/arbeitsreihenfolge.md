@@ -1,7 +1,7 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 21.09.2026, 08:00 UTC · Chief of Staff**
-*(ersetzt die Fassung vom 17.09., 18:55 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 21.09.2026, 08:05 UTC · Chief of Staff**
+*(ersetzt die Fassung von 08:00 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
 *Alle Uhrzeiten sind **UTC**. In Deutschland ist es gerade **MESZ = UTC + 2**,
 also 10:00 Uhr Ortszeit.*
 
@@ -45,7 +45,8 @@ wenig, sobald zwei Räume verraucht sind — ist damit Platz 1 bei Engineering.
 | **Platform** | **CoS-P-029 eingelöst** — der Löschlauf vom 19.09., 03:30 UTC hat **4 Aufnahmen** gegen die 30-Tage-Frist geprüft, `fehler: 0`. Der Nein-Fall („zwei Rechtstexte unrichtig") ist **nicht** eingetreten, Legal muss nicht benachrichtigt werden | ✅ erledigt |
 | **Platform** | **CoS-P-006 vollständig zu** — `RESEND_API_KEY` ist für `preview` **und** `production` gesetzt, Zeitstempel deckt sich mit der Rotation vom 17.08. | ✅ erledigt |
 | **CoS** | **CoS-P-033 neu angelegt** — Platform hat selbst angemerkt, dass der Zähler `geprueft` heißt und nicht `geloescht`. Die Rechtstexte versprechen Löschung. Eine Abfrage, kein Bau | 🆕 verteilt |
-| **CoS** | **Die Gewerke-Frage in `entscheidungen-fuer-sandy.md` gestellt** — dreimal im Strategiepapier gefragt, dreimal untergegangen. Jetzt mit A/B/C und Empfehlung an der Stelle, an der Sandys offene Punkte stehen | 🆕 verteilt |
+| **CoS** | **Die Gewerke-Frage in `entscheidungen-fuer-sandy.md` gestellt** — dreimal im Strategiepapier gefragt, dreimal untergegangen. Jetzt mit A/B/C und Empfehlung an der Stelle, an der Sandys offene Punkte stehen | ✅ erledigt |
+| **Sandy** | **Entschieden, 07:58 UTC — „A":** nächstes Gewerk nach Maler und Bodenleger ist **Trockenbau**, als **Richtung nach Gate 1**, nicht als Bauauftrag. Eingetragen in `entscheidungen-fuer-sandy.md` und `vision-strategie.md`; Prüfmeister und Marketing (CoS-M-017) sind informiert. Die seit 07.09. dreimal gestellte Frage ist beantwortet | ✅ erledigt |
 
 ---
 
@@ -92,14 +93,14 @@ wenig, sobald zwei Räume verraucht sind — ist damit Platz 1 bei Engineering.
 | # | Was | Aufwand |
 |---|---|---|
 | 1 | 🔵 **Einmal pushen.** Es liegt ein fertiger Doku-Commit hier plus meine heutigen Einträge, kein Code. Block steht unten im Chat | ein Befehl |
-| 2 | 🔵 **Welches Gewerk nach Maler/Bodenleger? A, B oder C.** Steht jetzt vollständig in `entscheidungen-fuer-sandy.md`, mit Empfehlung. Eilt nicht, kostet ein Wort | ein Wort |
-| 3 | ⚪ **Freigabe für den Landingpage-Entwurf — freiwillig.** Nur falls du eine Messung bei echter Handy-Breite (375 px) willst | freiwillig |
-| 4 | 🔵 **Ab 26.09.:** Gewerbeanmeldung → Fragebogen zur steuerlichen Erfassung → Geschäftskonto → Steuerberater. Finance und Legal legen die Reihenfolge fertig hin | nichts jetzt |
-| 5 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office, fünf Minuten) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
-| 6 | 🔵 **Versicherung** (exali/Markel 1 Mio. €) · **Stripe** (Konto + 2 Preise) · **Vercel-Benachrichtigung** · Gewerbeanmeldung KW 41 (CoS-041) | unverändert |
+| 2 | ⚪ **Freigabe für den Landingpage-Entwurf — freiwillig.** Nur falls du eine Messung bei echter Handy-Breite (375 px) willst | freiwillig |
+| 3 | 🔵 **Ab 26.09.:** Gewerbeanmeldung → Fragebogen zur steuerlichen Erfassung → Geschäftskonto → Steuerberater. Finance und Legal legen die Reihenfolge fertig hin | nichts jetzt |
+| 4 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office, fünf Minuten) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
+| 5 | 🔵 **Versicherung** (exali/Markel 1 Mio. €) · **Stripe** (Konto + 2 Preise) · **Vercel-Benachrichtigung** · Gewerbeanmeldung KW 41 (CoS-041) | unverändert |
 
-**Es wartet keine Rolle auf Sandy.** Punkt 2 ist der einzige, der nach vier
-Tagen Stillstand wirklich etwas freischaltet — und auch er blockiert niemanden.
+**Es wartet keine Rolle auf Sandy, und nichts davon ist dringend.** Die eine
+Frage, die nach vier Tagen Stillstand wirklich offen war — das nächste Gewerk —
+ist heute um 07:58 UTC beantwortet.
 
 ---
 
@@ -108,10 +109,10 @@ Tagen Stillstand wirklich etwas freischaltet — und auch er blockiert niemanden
 | Rolle | Nächstes | Wartet auf |
 |---|---|---|
 | **Engineering** | **CoS-E-083 weiter, in dieser Reihenfolge:** **PM-079-A** (Regression, nicht neu bauen: über alle Räume summieren) → **PM-106 + PM-107 zusammen** → **PM-105**. Danach unverändert **CoS-038 → PM-119/L-06 → CoS-E-080**. Die Bemessungsgrundlage der fünf Erschwerniszuschläge ist seit 17.09., 18:15 UTC freigegeben und wird mit PM-103/PM-104 gebaut, nicht vorgezogen | niemanden |
-| **Prüfmeister** | **Zuerst die Frage beantworten, die Engineering ihm zurückgegeben hat:** zählt „Altbauwohnung"/„Altbauhaus" als Zustandsaussage (**A** nur freistehendes Wort · **B** Wohnung/Haus zählen mit · **C** es braucht ein Zustandswort daneben)? Bis dahin steht A. Danach: **seine eigene Testdatei committen** (liegt seit dem 17.09. uncommittet), dann **Themenspeicher-Punkt 14** | niemanden |
+| **Prüfmeister** | **Zuerst die Frage beantworten, die Engineering ihm zurückgegeben hat:** zählt „Altbauwohnung"/„Altbauhaus" als Zustandsaussage (**A** nur freistehendes Wort · **B** Wohnung/Haus zählen mit · **C** es braucht ein Zustandswort daneben)? Bis dahin steht A. Danach: **seine eigene Testdatei committen** (liegt seit dem 17.09. uncommittet), dann **Themenspeicher-Punkt 14**. **Neu, kein Auftrag:** was ihm nebenbei zu **Trockenbau** auffällt (Vokabular, Einheiten, Rechenwege), sammelt er ab jetzt im Themenspeicher, statt es wegzuwerfen | niemanden |
 | **Designer** | **DC-128 zu Ende und committen** (liegt seit dem 17.09. uncommittet, vier Dateien), dann **DC-127** (dunkler Tabellenkopf, nur eine der beiden Seiten ändern). **PD-023** liegt zum Lesen da, **PD-018 §3** ist seiner und vollständig entschieden — sinnvoll erst, nachdem Engineering die Grundlage umgestellt hat. DC-122 Fußzeile bleibt bei Legal | Legal (nur DC-122) |
 | **Platform** | **🆕 CoS-P-033:** liegen die vier Aufnahmen aus dem 19.09.-Lauf wirklich nicht mehr da, oder wurden sie nur geprüft? Eine Abfrage, kein Bau. Bei „nur geprüft" nichts umbauen, sondern melden | niemanden |
-| **Marketing** | **CoS-M-016 zuerst** (Abschluss-CTA kann auf dem Handy leer bleiben — die Stelle, an der geklickt werden soll), danach Vorschau-Umschalter raus (M-6), Hero kürzen, Reiter-Kante. Dann **CoS-M-014** (zwei Zahlen), danach Zustelltest `support@`. Der Website-Schalter bleibt hinter **CoS-038** | Engineering (CoS-038) · Sandys Buchhaltungs-Testlauf |
+| **Marketing** | **🆕 CoS-M-017 gelesen, bevor irgendetwas geschrieben wird:** Trockenbau ist entschieden, darf im Content-Vorrat mitgedacht, aber **nirgends beworben** werden und bekommt **keinen Termin**. Danach wie gehabt: **CoS-M-016 zuerst** (Abschluss-CTA kann auf dem Handy leer bleiben — die Stelle, an der geklickt werden soll), danach Vorschau-Umschalter raus (M-6), Hero kürzen, Reiter-Kante. Dann **CoS-M-014** (zwei Zahlen), danach Zustelltest `support@`. Der Website-Schalter bleibt hinter **CoS-038** | Engineering (CoS-038) · Sandys Buchhaltungs-Testlauf |
 | **Legal** | **Zuerst L-KI-01 einbauen** (freigegeben, Wortlaut unverändert) und melden, wenn er drin ist; dabei prüfen, ob dieselbe Zusage noch woanders steht. Dann **CoS-L-011** (dürfen freie Fußzeilen die Pflichtangaben ersetzen — A/B/C?), dann **CoS-L-012**. **Nichts zu tun wegen der Löschfrist** — der Lauf vom 19.09. hat geprüft, der Nein-Fall ist nicht eingetreten | niemanden |
 | **Finance** | **CoS-F-009** (Vorsteuer in die Kostenübersicht, Reverse-Charge auf „durchlaufend", Voranmeldungsrhythmus als Frage für den Steuerberater) · **Behördenliste für Sandy bis 26.09.** — das ist der Termin mit dem kürzesten Vorlauf · **26 unbearbeitete Belege** · **CoS-F-008** · steigt Gate-1-Punkt 4.7 über die 40/100? | niemanden |
 
@@ -154,4 +155,4 @@ Tagen Stillstand wirklich etwas freischaltet — und auch er blockiert niemanden
   GitHub-Abfrage, die im Cloud-Container mit 403 antwortet, läuft aus dem
   verbundenen Ordner heraus ohne Weiteres.
 
-*Chief of Staff · 2026-09-21, 08:00 UTC*
+*Chief of Staff · 2026-09-21, 08:05 UTC*

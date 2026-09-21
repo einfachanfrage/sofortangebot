@@ -67,10 +67,21 @@ Check-ins Stück für Stück ergänzt werden, statt es zu erfinden:
 
 - Wann welche neue Team-Rolle wirklich gebraucht wird (über Marketing
   hinaus)
-- Konkretes Zielbild für die nächsten 3–12 Monate nach Gate 1 — welche
-  neuen Gewerke als Nächstes und in welcher Reihenfolge ist weiterhin offen,
-  auch wenn seit 31.08. klar ist, dass Gewerke-Erweiterung grundsätzlich
-  fest eingeplant ist (siehe unten)
+- Konkretes Zielbild für die nächsten 3–12 Monate nach Gate 1 — die
+  Reihenfolge der weiteren Gewerke über Trockenbau hinaus ist weiterhin offen
+  (das erste ist seit 21.09. entschieden, siehe „Geklärt (21.09.2026)" unten)
+
+**Geklärt (21.09.2026):**
+
+- **Nächstes Gewerk nach Maler und Bodenleger: Trockenbau.** Sandys
+  Entscheidung vom 21.09.2026 („A"), als **Richtung nach Gate 1** — kein
+  Bauauftrag, keine Freischaltung, keine Bewerbung. Heimat der Entscheidung:
+  `entscheidungen-fuer-sandy.md`, Eintrag vom 21.09., 07:58 UTC. Gründe, die
+  dafür sprachen: gleiche Baustelle und oft derselbe Betrieb wie beim Maler,
+  dieselbe Flächen-Rechenwelt (m²) wie heute, und es ist die einzige Stelle,
+  an der Kalkulai heute mehr abdeckt als Sofortangebot. Die Gewerke-Sperre
+  bleibt unverändert: gerechnet werden weiterhin nur Maler und Bodenbeläge.
+  Damit ist die seit 07.09. dreimal gestellte Frage beantwortet.
 
 **Geklärt (18.08.2026):**
 

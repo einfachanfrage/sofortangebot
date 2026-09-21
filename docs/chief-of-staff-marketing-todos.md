@@ -3128,5 +3128,33 @@ und 4 werden bei 375 px schlimmer.** Eine echte Gerätemessung steht aus.
 
 *Chief of Staff · 2026-09-17, 18:55 UTC*
 
+---
+
+## CoS-M-017 🔵 — Entschieden: Trockenbau ist das nächste Gewerk. Für dich heißt das wenig, aber es heißt etwas (21.09.2026, 07:58 UTC · Chief of Staff)
+
+**Sandys Entscheidung von heute:** nach Maler und Bodenleger kommt
+**Trockenbau** — als **Richtung nach Gate 1**, nicht als Bauauftrag. Heimat der
+Entscheidung: `entscheidungen-fuer-sandy.md`, Eintrag vom 21.09., 07:58 UTC.
+
+**Was du damit darfst:** den Content-Vorrat für Oktober so anlegen, dass
+Trockenbau als *kommendes* Gewerk mitgedacht ist — Themenplanung, Stichwörter,
+Reihenfolge der Artikel.
+
+**Was du damit ausdrücklich nicht darfst — und das ist der wichtigere Teil:**
+
+* **Trockenbau nirgends bewerben.** Nicht auf der Landingpage, nicht in der
+  Warteliste, nicht in einem Beitrag, der vor Gate 1 rausgeht.
+* **Keinen Termin nennen.** Es gibt keinen. „Bald", „in Kürze", „ab Anfang
+  2027" — alles davon wäre erfunden.
+* **Die heutige Aussage bleibt wie sie ist:** Sofortangebot rechnet Maler und
+  Bodenbeläge. Wer sich für Trockenbau einträgt und dann nichts vorfindet, ist
+  ein verlorener Erstkontakt — genau der Fall, den wir an anderer Stelle schon
+  einmal hatten.
+
+**Deine Reihenfolge ändert sich dadurch nicht:** CoS-M-016 zuerst, dann
+CoS-M-014, dann der Zustelltest `support@`.
+
+*Chief of Staff · 2026-09-21, 07:58 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

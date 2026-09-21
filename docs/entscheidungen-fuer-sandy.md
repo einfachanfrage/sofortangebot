@@ -3016,4 +3016,32 @@ ab jetzt in diese Richtung mitsammeln statt ins Blaue.
 
 *Chief of Staff · 2026-09-21, 07:55 UTC*
 
+---
+
+## ✅ Entschieden am 21.09.2026, 07:58 UTC — Trockenbau ist die Richtung nach Maler und Bodenleger
+
+**Sandys Antwort: „A".**
+
+**Was damit gilt:** **Trockenbau** ist das nächste Gewerk nach Maler und
+Bodenleger — als **Richtung nach Gate 1**, nicht als Bauauftrag. Es wird jetzt
+nichts umgesetzt, keine Position, kein Katalog, keine Freischaltung. Die
+Gewerke-Sperre bleibt unverändert: alles außer Maler und Bodenbeläge wird nicht
+gerechnet.
+
+**Was sich dadurch konkret ändert — und nur das:**
+
+* **Prüfmeister:** wenn im laufenden Prüfen etwas zu Trockenbau auffällt
+  (Vokabular, Einheiten, Rechenwege), landet es im Themenspeicher statt im
+  Papierkorb. Kein eigener Prüfauftrag, keine neue Fallbasis.
+* **Marketing:** der Content-Vorrat für Oktober darf Trockenbau als *kommendes*
+  Gewerk mitdenken. **Nicht** bewerben, nicht auf die Landingpage, keine
+  Zusage eines Termins — Sofortangebot kann heute Maler und Bodenleger, und
+  genau das steht auch weiter da.
+* **Engineering:** nichts. Die Reihenfolge bleibt unverändert.
+
+**Erledigt:** Punkt aus „Was hier noch fehlt" in `vision-strategie.md`
+nachgezogen, Prüfmeister und Marketing informiert.
+
+*Chief of Staff · 2026-09-21, 07:58 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
