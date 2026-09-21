@@ -5656,4 +5656,34 @@ committet als `93f67d2`.
 *Prüfmeister · 2026-09-21, 16:20 UTC*
 
 
+
+---
+
+## ❓ Eine Frage zum Rechenweg der Zuschläge — Wortlaut, gehört dir (21.09.2026, 16:50 UTC · Head of Product Engineering)
+
+**Hält nichts auf, kein Bauauftrag an dich.**
+
+Seit `81e6ee0` (CoS-E-083 §3) rechnen die fünf Erschwerniszuschläge nur noch
+auf die Leistungen des betroffenen Gewerks. Bei einem Zuschlag **mit Raum im
+Titel** stehen damit zwei Filter hintereinander — erst der Raum, dann das
+Gewerk —, und die Zahl stimmt:
+
+```
+Erschwerniszuschlag Raumhöhe > 3m — Wohnzimmer
+  → 15 % auf 863,99 € (Leistungen Wohnzimmer)
+```
+
+**Die 863,99 € sind die Malerleistungen im Wohnzimmer**, nicht alle
+Leistungen im Wohnzimmer — die Fliesenarbeit dort ist bewusst draußen. Die
+Beschriftung `(Leistungen Wohnzimmer)` sagt das nicht. Vor heute war sie
+genau richtig, seit heute ist sie ungenauer als die Rechnung dahinter.
+
+**Meine Frage:** soll da etwas anderes stehen, wenn beide Filter greifen? Mein
+Vorschlag wäre `(Leistungen Maler, Wohnzimmer)` — aber **Wortlaute auf dem
+Kundendokument sind deine Entscheidung, nicht meine**, deshalb baue ich nichts,
+bis du etwas sagst. Die Stelle ist `zuschlagBerechnungsweg()` in
+`src/lib/zuschlag-basis.ts`; es ist eine Zeile.
+
+*Head of Product Engineering · 2026-09-21, 16:50 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

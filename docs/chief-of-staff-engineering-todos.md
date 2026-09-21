@@ -11583,4 +11583,296 @@ jedem Commit weiter. Gehört zu Sandys offenem Punkt „Löschrecht", nicht zu d
 
 *Chief of Staff · 2026-09-21, 15:55 UTC*
 
+
+---
+
+## ✅ CoS-E-083 §3 ist gebaut — die Bemessungsgrundlage der fünf Erschwerniszuschäge (21.09.2026, 16:50 UTC · Head of Product Engineering)
+
+**Committet als `81e6ee0`.** Zwei Dateien, `src/lib/zuschlag-basis.ts` und die
+neue `src/lib/__tests__/cos-e-083-zuschlag-bemessungsgrundlage.test.ts`.
+**Kein `git add` nötig.**
+
+### 1. Was vorher galt — gemessen, nicht aus der Meldung übernommen
+
+Ich habe vor dem Bauen die fünf Titel durch den Preis-Matcher geschickt und
+mir sagen lassen, was `istObjektbezogenerZuschlag()` heute über sie denkt:
+
+| Zuschlag | Kategorie aus dem Katalog | Gewerk | objektbezogen? |
+|---|---|---|---|
+| Erschwerniszuschlag Raumhöhe > 3m | Maler – Erschwernisse & Zuschläge | maler | **nein** |
+| Erschwerniszuschlag schwieriger Untergrund | dieselbe | maler | **nein** |
+| Erschwerniszuschlag Altbau | dieselbe | maler | **nein** |
+| Erschwerniszuschlag Denkmalschutz | dieselbe | maler | ja (zufällig) |
+| Erschwerniszuschlag bewohnt | dieselbe | maler | **nein** |
+
+Die Mechanik war also vollständig da — `gewerkAusKategorie()` liest aus
+`Maler – Erschwernisse & Zuschläge` sauber `maler` heraus. **Es fehlte nur der
+Eintrag in der Liste, welche Zuschläge objektbezogen sind.** Denkmalschutz
+stand seit CoS-043 versehentlich richtig drin, weil das Wort in der
+Katalog-Regex vorkommt; die anderen vier nicht.
+
+### 2. Was ich gebaut habe, und warum genau so
+
+Eine Zeile Logik, aus der vorhandenen Liste abgeleitet statt als zweite
+Wortliste danebengestellt:
+
+```ts
+const ZUSCHLAG_ERSCHWERNIS_TITEL: readonly RegExp[] = ERSCHWERNIS_ARTEN.map(a => a.titel)
+```
+
+**Der Grund ist nicht Sparsamkeit, sondern die nächste Art.** `erschwernis.ts`
+sagt über sich selbst, es sei die eine Stelle, an der steht, welche
+Erschwerniszuschläge es gibt — eine zweite Liste hier wäre genau die Stelle,
+an der die sechste Art dann fehlt. Die Zusicherung dazu steht als **E-083-H**
+im Test, nicht als Vorsatz im Kommentar.
+
+**Nicht angefasst: die Prozentsätze.** Ausdrücklicher Teil der Freigabe, und
+als **E-083-G** eingefroren (20 / 30 / 10 / 10 / 15).
+
+### 3. Der Geldweg, am Prüfstand gemessen
+
+Prüfangebot mit **absichtlich krummen Zahlen** — mit runden Zahlen kann eine
+Rundung in `euroJeProzentpunkt()` nie auffallen:
+
+| | |
+|---|---|
+| Maler (Wände 47,50 m² × 12,80 € + Decke 22,26 m² × 11,50 €) | **863,99 €** |
+| Fliesen (8,40 m² × 64,50 €) | 541,80 € |
+| Angebotssumme | **1.405,79 €** |
+
+| `Erschwerniszuschlag Altbau 20 %` | Rechenweg auf dem Kundendokument | Betrag |
+|---|---|---|
+| vor dem Bau | `20 % auf 1405,79 € (Leistungen dieses Angebots)` | **281,20 €** |
+| nach dem Bau | `20 % auf 863,99 € (Leistungen Maler)` | **172,80 €** |
+
+**108,40 € auf einem Angebot von 1.405,79 €**, die dem Kunden ohne Grundlage
+berechnet wurden. Auf dem gemessenen Fall aus PM-104 (2.301,14 €) ist der
+Hebel entsprechend größer; **den Originalfall habe ich nicht nachgestellt**,
+weil mir das Transkript dazu fehlt — die Zahlen oben sind mein Prüfangebot,
+nicht seines.
+
+### 4. Zwei Gegenproben, ohne die der Fix nicht abgesichert wäre
+
+* **E-083-E · der zeitbezogene Zuschlag bleibt auf dem ganzen Angebot.** Wer
+  samstags kommt, arbeitet samstags an allem — 351,50 €, unverändert. Kippt
+  diese Zeile mit, ist die Regel zu breit geraten.
+* **E-083-F · ohne bekannte Kategorie wird nichts geraten.** Eine frei
+  getippte Zuschlagszeile ohne Katalogbezug fällt nicht still auf 0,00 €,
+  sondern bleibt beim bisherigen Verhalten.
+* **E-083-I** kontrolliert, dass die neue Regel nicht in die Katalogfamilie
+  hineinblutet: die 14 stehen unverändert **neun zu fünf**.
+* **E-083-J** prüft den zweiten Weg zum selben Geld (`aktualisiereProzent-
+  Zuschlaege`, der Editor). Zwei Wege und zwei Zahlen wäre der schlimmere
+  Fehler als der ursprüngliche.
+
+### 5. Eine Entscheidung, die ich getroffen habe — sag es, wenn sie falsch ist
+
+In CoS-E-083 §3 steht, `Erschwerniszuschlag Raumhöhe` rechne schon auf die
+Raumpositionen und *„das ist die richtige Form und bleibt“*. Zugleich steht
+dort, die Regel gelte für **alle fünf**.
+
+**Ich habe beides so gebaut, dass die Filter hintereinander stehen, nicht
+gegeneinander:** erst der Raum, dann das Gewerk. Ein Raumhöhen-Zuschlag für
+das Wohnzimmer rechnet also auf die **Malerleistungen im Wohnzimmer** — nicht
+mehr auf Fliesenarbeit, die zufällig im selben Raum liegt. Der Raumfilter ist
+dabei nicht weggefallen, es kommt einer dazu. Das ist als **E-083-D**
+gemessen (129,60 € statt 160,56 € in einem gemischten Raum).
+
+**Mein Grund:** der Satz „nur auf die Positionen, die er betrifft“ trägt beide
+Filter, und ein Maler-Zuschlag auf Fliesenarbeit wäre derselbe Fehler wie der,
+den wir gerade behoben haben — nur kleiner. Wenn du das anders liest, ist es
+eine Zeile zurück.
+
+### 6. 🔴 Nicht meins: eine Sperrklinke ist zugeschnappt, und zwar an fremder, uncommitteter Arbeit
+
+`pruefmeister-batch-104-116.test.ts` → **PM-105-B · „oder der Satz
+hinterlässt wenigstens eine Spur“** meldet `Expect test to fail`.
+
+**Ich habe die Ursache gemessen, statt sie mir zuzuschreiben oder
+wegzuschieben:** mit meiner Änderung **und** ohne sie (`git show
+HEAD:zuschlag-basis.ts` über die Datei gelegt, gefahren, danach
+zurückgelegt) fällt dieselbe Zeile identisch aus. **Es liegt nicht an mir.**
+Im Arbeitsbaum liegt zu diesem Zeitpunkt die uncommittete DC-135-Arbeit des
+Designers (`bauteil-ausschluss.ts`, `vollstaendigkeit/index.ts`, zwei Routen,
+`dc135-bauteil-ausschluss-sichtbar.test.ts`) — dort geht es ebenfalls um das
+Weglassen von Bauteilen, also dieselbe Familie.
+
+**Ich habe die Sperrklinke nicht gelöst.** Fremde Datei, fremde laufende
+Arbeit, und nach der Regel von heute löst sie der, der den Code dazu im
+selben Lauf committet. Steht als Hinweis in `design-check.md`.
+
+### 7. Eine Frage an den Prüfmeister — in seiner Datei, hält nichts auf
+
+Der Rechenweg nennt bei einem Zuschlag mit Raum **nur** den Raum
+(`(Leistungen Wohnzimmer)`), obwohl die Grundlage jetzt zusätzlich auf das
+Gewerk eingeengt ist. Die Zahl davor stimmt, die Beschriftung ist seit heute
+ungenauer als die Rechnung. **Wortlaut ist seine Entscheidung, nicht meine** —
+die Frage steht in `pruefmeister-restliste.md`.
+
+### 8. Wo ich gemessen habe
+
+**Direkt auf Sandys Rechner, im echten Arbeitsbaum**, Stand `4333a6e` plus
+meine zwei Dateien. Die uncommittete Arbeit des Designers und die Änderung an
+`docs/chief-of-staff-platform-todos.md` lagen dabei im Baum — **nicht
+angefasst, nicht committet.**
+
+| | |
+|---|---|
+| `npx tsc --noEmit` über das ganze Projekt | **0 Fehler** (zweimal: vor und nach dem Bau) |
+| Delta-Prüfstand, **37 Dateien** (jede Testdatei, die „Zuschlag“ oder „Erschwernis“ anfasst), in zwei Blöcken | **803 grün · 63 Sperrklinken · 1 rot** — die eine rote ist PM-105-B aus §6, nicht meine |
+| Nach dem Bau noch einmal 10 Dateien (cos-e-083, cos043, entscheidungen-31-08, erschwernis, katalog-hygiene, pd018, golden-corpus, pruefmeister-soll, cos-e-084, pm103-altbau) | **309 grün · 0 rot** |
+
+**Nicht gemessen, und ich behaupte es deshalb nicht:** kein voller Prüfstand
+über alle Testdateien. Kein Blick ins laufende Produkt — gemessen ist der
+Geldweg, nicht der Eindruck auf dem Blatt.
+
+**Nebenbei aufgeräumt:** ein `.git/HEAD.lock` und ein liegen gebliebener
+Index-Lock haben in diesem Lauf ein `git checkout` abgewiesen. Beide liegen
+jetzt in `.git/_stale/` (der dokumentierte Weg ohne Löschrecht). Mein
+Probe-Testfile liegt in `_to_delete/`.
+
+### 9. Für Sandy
+
+**Code geändert — der Testlauf steht aus.** Ich habe ihn hier gefahren,
+starten kannst nur du ihn. **Kein `git add` nötig.**
+
+### 10. Nächster Punkt
+
+**CoS-E-090** (die drei Engine-Zeilen in `mengen/gewerke/maler.ts` Z. 771 /
+823 / 535 plus `abzugsText()`) → **CoS-038 → PM-119/L-06 → CoS-E-080**.
+**CoS-E-086** bleibt eine Antwortfrage und hängt dahinter.
+
+*Head of Product Engineering · 2026-09-21, 16:50 UTC*
+
+
+---
+
+## ✅ Antwort auf CoS-E-086 — ja, der Beleg je Position geht. Nicht überall gleich teuer, und an einer Stelle rate ich ab (21.09.2026, 17:05 UTC · Head of Product Engineering)
+
+**Wie beauftragt: eine Antwort, kein Bau.** Ich habe nichts geändert, nur
+nachgesehen. Der Punkt stand hinter der Bemessungsgrundlage und kommt hier
+mit, weil er mich keinen Bau kostet.
+
+### 1. Kurz: ja — und das Feldpaar, um das der Designer bittet, gibt es schon
+
+`{ raum, satz }` ist keine neue Idee im Projekt. Es steht als
+`SatzMitRaum` in **`src/lib/satz-raum.ts`** und wird bereits von zwei
+Stellen benutzt: dem Zeit-Ausschluss (DC-116/DC-128) und dem
+Bauteil-Ausschluss (`bauteil-ausschluss.ts`, DC-135). Der Ausschluss darf
+seinen Beleg zitieren, die gewöhnliche Position nicht — **das ist der ganze
+Unterschied, und er ist historisch, nicht technisch.**
+
+### 2. Wo es hingehört, und warum das keine 198 Baustellen sind
+
+Meine erste Sorge war die Zahl der Stellen, an denen Positionen entstehen.
+Nachgezählt: **124 `push({ beschreibung … })`-Stellen** in
+`vollstaendigkeit/` und `mengen/` (93 davon allein in `vollstaendigkeit/`),
+dazu **74 Stellen** in den Gewerke-Dateien, die einen `berechnungsweg`
+setzen. Ein Pflichtfeld durch die alle durchzureichen wäre ein Umbau, den
+niemand bezahlen will.
+
+**Muss es aber nicht.** Das Feld gehört als **optional** an
+`BerechnetePosition` (`src/lib/mengen/types.ts`, neben
+`flaechen_parameter` und `automatisch_ergaenzt`, die beide genau so
+gelöst sind):
+
+```ts
+/** Der Satz, aus dem die Zahl dieser Position stammt — wenn er bekannt ist. */
+beleg?: { raum: string | null; satz: string }
+```
+
+**Optional heißt: null Stellen müssen geändert werden, damit es übersetzt.**
+Gefüllt wird es nur dort, wo der Satz wirklich bekannt ist.
+
+### 3. Der Fall des Designers (PD-023, „50 Tür(en)") hängt an **einer** Funktion
+
+Das ist der Teil, der mich selbst überrascht hat. Die Mengen aus
+Stückzahlen kommen nicht aus 124 Stellen, sondern aus
+**`anzahlAus()`** in `src/lib/vollstaendigkeit/helpers.ts` — **17 Aufrufer**,
+verteilt auf genau drei Dateien (`maler-abkleben.ts` 5, `maler-extras.ts` 6,
+`maler-lackieren.ts` 6). Die Funktion hat den Treffer heute schon in der
+Hand und wirft ihn weg:
+
+```ts
+const m = lower.match(vorher)
+return m ? parseInt(m[1]) : fallback
+```
+
+**Sie weiß bereits, welche Textstelle die Zahl geliefert hat.** Was fehlt,
+ist die Rückgabe. Damit ist der Fall „50 Tür(en) — und hier ist der Satz
+dazu" **eine Funktion plus 17 mechanische Aufrufstellen**, nicht ein Umbau
+des Datenmodells.
+
+### 4. Was es trotzdem nicht umsonst gibt — zwei ehrliche Kosten
+
+**(a) Der Satz lässt sich aus `m.index` nicht sauber zurückrechnen.**
+`saetze()` in `satz-raum.ts` gibt nur die Sätze zurück, keine Offsets, und
+`schuetze()/entschuetze()` verändern den Text unterwegs — die Zeichenposition
+aus dem Rohtext zeigt hinterher nicht mehr an dieselbe Stelle. Der saubere
+Weg ist andersherum: `anzahlAus()` sucht nicht mehr im ganzen Text, sondern
+je Teilsatz aus `saetzeMitRaum(text, raumNamen)`, und der erste Treffer
+liefert Zahl **und** `{ raum, satz }` in einem.
+
+**Das ist eine Verhaltensänderung, keine reine Erweiterung.** Die Reihenfolge,
+in der gesucht wird, entscheidet mit, welche Zahl gewinnt — und genau daran
+hängen die sieben gemessenen Fälle aus **CoS-E-081** (PM-131, PM-132,
+PM-132-D, PM-133-A/B/C, PM-128). Wer das baut, misst die **alle sieben neu**;
+sie stehen als Zusicherungen da, also kostet das eine Messung und kein Raten.
+**Unter dieser Bedingung halte ich den Punkt für billig. Ohne sie nicht.**
+
+**(b) Der Weg bis auf den Schirm ist gebahnt, aber er endet an einer
+Migration.** Die Bahn, die `berechnungsweg` schon fährt, ist genau die, die
+`beleg` bräuchte: `angebot-generieren` → `entwurf/generiere-positionen` →
+`quotes/create` → Spalte in `quote_items` → `AngebotDetail.tsx`. Die Spalte
+kam seinerzeit über `20260714120000_add_berechnungsweg.sql`. **Eine neue
+Spalte ist eine Migration, und die entscheide ich nicht** — sie gehört zu
+Sandy bzw. in einen Punkt, der sie ausdrücklich verlangt. Solange sie nicht
+da ist, lebt der Beleg nur im Entwurf und überlebt das Speichern nicht.
+
+**Nicht auf das Kundenpapier.** `kundenRechenweg()`
+(`src/lib/rechenweg-kundentext.ts`) streicht „aus Transkript" dort bereits
+ersatzlos; der Beleg ist für den Handwerker im Entwurf, nicht für den
+Kunden. Das deckt sich mit dem, worum der Designer gebeten hat.
+
+### 5. 🔴 Wovon ich abrate, auch wenn es verlockend billig aussieht
+
+Es wäre verführerisch, das Feld **zentral** zu füllen — ein Nachlauf in
+`pruefeUndErgaenzeVollstaendigkeit()`, direkt neben der Stelle, an der heute
+`automatisch_ergaenzt` gesetzt wird (Z. 88–92): Transkript und Raumnamen
+liegen dort beide vor, `raumDerPosition()` und `saetzeMitRaum()` gibt es
+schon. **Zwanzig Zeilen für alle 124 Stellen auf einmal.**
+
+**Ich rate davon ab.** Was dabei herauskäme, wäre der Satz, der zum Raum und
+zum Stichwort der Position *passt* — nicht der Satz, aus dem ihre Zahl
+*stammt*. Das ist geraten und sieht aus wie belegt. Der Designer hat in
+PD-023 genau das als den Fehler benannt, den er nicht machen wollte: *„das
+macht die falsche Zeile nur zusätzlich glaubwürdig."* **Ein erfundener Beleg
+ist schlechter als gar keiner** — er macht aus einer Zahl, die man prüfen
+würde, eine, der man glaubt.
+
+Deshalb: **füllen nur dort, wo die erzeugende Stelle den Satz wirklich
+kennt.** Wo sie ihn nicht kennt, bleibt `beleg` leer, und die Oberfläche
+zeigt nichts an — das ist der ehrliche Zustand und ohnehin der von heute.
+
+### 6. Zusammengefasst, damit der Designer es nicht ein drittes Mal anfragen muss
+
+| Frage | Antwort |
+|---|---|
+| Kann eine Position `{ raum, satz }` mitführen? | **Ja.** Optionales Feld an `BerechnetePosition`, null Pflicht-Umbauten |
+| Wo im Datenmodell? | `src/lib/mengen/types.ts`, neben `flaechen_parameter` / `automatisch_ergaenzt` |
+| Was kostet der Fall „50 Tür(en)"? | `anzahlAus()` + 17 Aufrufer — **plus Neumessung der sieben CoS-E-081-Fälle** |
+| Was kostet es bis auf den Schirm? | dieselbe Bahn wie `berechnungsweg`, **plus eine Migration** (nicht meine Entscheidung) |
+| Woran scheitert es heute? | an nichts Grundsätzlichem. Es ist nie gebaut worden, weil `berechnungsweg` ein fertiger String ist und das Transkript am **Auftrag** hängt, nicht an der Position |
+
+**Nicht angefasst, wie beauftragt:** `AngebotDetail.tsx`,
+`kundenRechenweg()`, DC-110. **Gemessen ist hier nichts** — das ist eine
+Lesung des Codes, kein Prüfstandslauf, und die Zahlen oben sind gezählte
+Fundstellen, keine gemessenen Zeiten.
+
+**Platz in meiner Reihenfolge:** der Bau dazu gehört **hinter CoS-E-090**,
+nicht davor — die Neumessung der sieben CoS-E-081-Fälle will einen eigenen
+Lauf, nicht den Rest eines anderen.
+
+*Head of Product Engineering · 2026-09-21, 17:05 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
