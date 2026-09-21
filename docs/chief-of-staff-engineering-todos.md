@@ -12491,4 +12491,114 @@ CoS-E-080**, der Beleg je Position (CoS-E-086) dahinter.
 
 *Head of Product Engineering · 2026-09-21, 19:05 UTC*
 
+---
+
+## 🔵 CoS-E-093 — PM-144: der Wortlaut ist entschieden **und** vom Designer gegengelesen. Eine Zeile in `zuschlagBerechnungsweg()` (21.09.2026, 19:50 UTC · Chief of Staff)
+
+**Deine Rückfrage aus CoS-E-092 ist beantwortet — von beiden Seiten, und sie
+sind sich einig.** Das ist ein Bauauftrag, kein Diskussionsstand.
+
+### Was gebaut wird
+
+**`(Leistungen Maler — Wohnzimmer)`**, wenn Raum **und** Gewerk filtern. Die
+zwei Fassungen mit nur einem Filter bleiben **unverändert**.
+
+### Warum der Gedankenstrich und nicht das Komma — beide Rollen, unabhängig
+
+**Prüfmeister (PM-144):** dein Komma-Vorschlag liest sich als Aufzählung
+zweier Dinge; es sind aber zwei Filter hintereinander. Eine Präposition
+(„im Wohnzimmer") bräuchte das Geschlecht des Raumnamens und geht bei
+**„im Küche"** kaputt.
+
+**Designer (DC-140):** der Gedankenstrich steht auf diesem Blatt seit dem
+ersten Angebot zwischen Arbeit und Ort („Wand streichen 2x — Wohnzimmer"),
+in jeder Positionszeile darüber. Ein Komma an dieser einen Stelle hieße, dass
+dasselbe Blatt das Zeichen zweimal verschieden meint.
+
+### Die eine Stelle, an der es hätte stolpern können — der Designer hat sie nachgesehen, nicht angenommen
+
+**`ANWEISUNG_MIT_TRENNER` in `src/lib/rechenweg-kundentext.ts` Z. 116**
+(aus DC-108 A) wirft alles ab dem Trennzeichen weg. **Sie greift nur, wenn
+hinter dem Strich „bitte" steht** — ein Raumname tut das nicht, die neue
+Klammer läuft unangetastet durch. Ebenfalls nachgesehen: `zuschlagsBezugAus()`
+liest über `\([^)]*\)` und nimmt den Strich mit; der Zuschlags-Zweig in
+`kundenRechenwegZeile()` hängt an der Einheit `%`, nicht am Wortlaut — bei
+abgeschaltetem Rechenweg (DC-137) bleibt die Klammer also stehen.
+
+### Was schon liegt
+
+`src/lib/__tests__/pruefmeister-pm144-zuschlag-wortlaut.test.ts` ist
+committet (`ab725e9`): **4 grün · 2 Sperrklinken**. Die zwei Sperrklinken
+warten genau auf deine Zeile.
+
+**Reihenfolge: nimm ihn mit, sobald PM-134 committet ist** — ich unterbreche
+deinen laufenden Bau dafür nicht. Es ist dieselbe Datei, die du in CoS-E-092
+ohnehin schon offen hattest.
+
+**Von mir nicht gemessen.** Beide Zahlen oben sind fremde Messungen
+(Prüfmeister bzw. Designer, beide an Sandys Rechner).
+
+---
+
+## 🔴 CoS-E-094 — PM-140: der Aufpreis für **diagonal verlegte Fliesen** wird nie erzeugt. Gegen den Betrieb, und stumm (21.09.2026, 19:50 UTC · Chief of Staff)
+
+**Befund des Prüfmeisters, Beifang aus Themenspeicher Punkt 12:**
+`src/lib/fliesen.ts` kennt die **Verlegerichtung überhaupt nicht**. Die zwei
+Katalogzeilen
+
+* `Aufpreis Diagonalverlegung Boden` — **12,00 €**
+* `Aufpreis Diagonalverlegung Wand` — **14,00 €**
+
+haben **keinen Engine-Titel**. Diagonal verlegte Fliesen kosten im Angebot
+damit dasselbe wie gerade verlegte — der Betrieb verliert die Zeile, ohne dass
+irgendwo etwas auffällt.
+
+**Das Muster für den Bau steht schon daneben:** `src/lib/boden.ts`
+Zeilen 202–205 (Parkett, 10,00 €) macht genau das, was hier fehlt.
+
+**Hinterlegt:** Sperrklinke in
+`src/lib/__tests__/pruefmeister-batch-139-143.test.ts` (committet, `ab725e9`).
+
+### Eine Frage vorab, die ich nicht selbst entscheide
+
+**Die Boden-Zeile ist im freigegebenen Gewerk, die Wand-Zeile womöglich
+nicht.** Sandys Entscheidung vom 15.09.2026: alles außer Maler und
+Bodenbeläge wird gar nicht mehr gerechnet. Bodenfliesen fallen unter
+Bodenbeläge; Wandfliesen sind Fliesenleger. **Sieh dir das an, bevor du beide
+Zeilen baust** — wenn die Wand-Zeile hinter die Gewerke-Sperre gehört, ist sie
+hier kein Bauauftrag, sondern ein Sperr-Fall.
+
+**Reihenfolge: hinter PM-136, vor CoS-038.** Begründung: es ist Geld auf dem
+Kundenpapier und es ist stumm, aber es blockiert nichts.
+
+**Von mir nicht gemessen** — Befund und Zahlen sind die des Prüfmeisters.
+
+---
+
+## 🟡 Nachtrag zu PM-134, den du gerade baust: PM-143-A gehört dazu (21.09.2026, 19:50 UTC · Chief of Staff)
+
+**Der Prüfmeister hat beim Messen von Themenspeicher Punkt 21 einen Fund
+gemacht, den er nicht gesucht hat — und er hängt direkt an deinem laufenden
+Bau:**
+
+**Seit CoS-E-091 antworten die zwei Bremsen auf denselben Satzbau
+verschieden.** Bei „… machen wir nichts, … neu" lässt die **Bauteil-Bremse**
+den Auftrag dahinter gewinnen, die **Sockelleisten-Bremse** nicht — über das
+Komma ist sie in **beide** Richtungen blind.
+
+**Welche der zwei Antworten richtig ist, entscheidet der Prüfmeister
+ausdrücklich nicht** — sein Satz dazu: *„zwei Antworten auf demselben Angebot
+sind nicht zu verteidigen."*
+
+**Hinterlegt als `PM-143-A`, Sperrklinke, ausdrücklich „gehört an PM-134
+angehängt".** Was er dazu gemessen hat: PM-134 sitzt in
+`sockelleisten-ausschluss.ts` (**PM-141**) · PM-136 in **beiden** Bremsen
+(**PM-142**) · PM-135 in **keiner** (**PM-143**).
+
+**Kein neuer Auftrag, keine Vorgabe zur Lösung** — nur der Hinweis, dass der
+Fall in deinem laufenden Bau mit entschieden wird, ob du willst oder nicht.
+
+*Chief of Staff · 2026-09-21, 19:50 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
