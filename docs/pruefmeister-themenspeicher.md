@@ -937,13 +937,64 @@ hier zeigt er sich am Treffer.
   verschieben, die er gar nicht angefasst hat. **Das ist die Kehrseite von
   Manfreds Warnung** aus `vokabular-abgleich.md`: dort ging es um Doppelte,
   die entstehen; hier um Doppelte, die schon da sind.
-* **Ungemessen und deshalb keine Behauptung:** wie viele solcher Paare es
-  gibt. Der Abgleich zählt heute „hat einen Preis / hat keinen" — **er zählt
-  nicht, ob der zweitbeste Treffer einen anderen Preis hat.** Wenn jemand das
-  haben will, ist es eine kleine Erweiterung von
-  `scripts/vokabular-abgleich.mjs` (Score des zweiten Treffers mitgeben) und
-  danach eine Liste, keine Schätzung.
+* **~~Ungemessen~~ — gemessen, 16:20 UTC desselben Tages.** Die Erweiterung
+  steht als `scripts/vokabular-abgleich.mjs --zweittreffer`, das Ergebnis in
+  `vokabular-abgleich.md` (Nachtrag 16:20 UTC) und als Sperrklinke in
+  `pruefmeister-gleichstand-katalog.test.ts` (PM-138). **16 Engine-Titel**,
+  bei denen mehrere Katalogzeilen denselben Höchst-Score tragen, verschieden
+  kosten und keine so heißt wie der Titel — dort entscheidet allein die
+  Reihenfolge im Katalog. Die Grundierung steht mit 33 % im unteren Drittel;
+  oben stehen `Wände spachteln / glätten` (+144 %) und `Schleifen` (+138 %),
+  wo dem Engine-Titel die Ausführungsstufe fehlt, die der Preis braucht.
+  **Widerlegt dabei:** `Wände spachteln Q4` kippt NICHT auf die 9,00-€-Zeile,
+  obwohl beide Score 1,00 haben — eine gleichlautende Katalogzeile schützt.
 * **Kein Bauauftrag**, kein Termin, niemand wartet darauf.
+
+*Prüfmeister · 2026-09-21, abends*
+
+
+---
+
+## Nachtrag 21.09.2026, abends — Punkt 11 ist zu, und er war eine Antwort und drei Fälle
+
+**Fallbasis: 137 Fälle.** Hinterlegt als
+`src/lib/__tests__/pruefmeister-batch-134-137.test.ts` (17 Zusicherungen,
+14 grün, 3 Sperrklinken), Befunde ausführlich in `pruefmeister-restliste.md`.
+
+**Abgeräumt:**
+
+* **Punkt 11 — „Die Verneinungsmaschine hat einen Umfang, und den kennt
+  niemand."** → **beantwortet.** Es sind **drei** Grenzen, nicht eine:
+  Gegenprobe je **Satz** (Trenner `. ! ? ;` und Zeilenumbruch),
+  Raumzuordnung je **Teilsatz** (Trenner Komma), Reichweite des Ausschlusses
+  **ganzer Text** (keine Entfernung, keine Richtung). **Ein Absatz ist keine
+  eigene Einheit.** Festgehalten als PM-137, damit ein Fix an PM-101, PM-105
+  oder PM-125 nicht wieder geraten werden muss — genau die Auflage, die
+  dieser Punkt sich selbst gegeben hat.
+* Aus den Nähten zwischen den drei Grenzen fallen **PM-134** (Ausschluss vor
+  dem Auftrag gewinnt, 356,25 € stumm weg), **PM-135** (Komma statt Punkt
+  hebelt den Ausschluss aus, 465,90 € zu viel — der erste Fall dieser Familie,
+  bei dem das Geld gegen den KUNDEN läuft) und **PM-136** (Ausschluss ohne
+  Raumnamen erbt den zuletzt genannten Raum, statt zu fragen).
+
+**Neu aufgemacht:**
+
+21. **Dieselbe Satzmechanik sitzt in zwei weiteren Bremsen.**
+    `sockelleisten-ausschluss.ts` (PM-033) und `raum-ausschluss.ts` (PM-034)
+    holen ihre Sätze aus demselben `satz-raum.ts`. Ob PM-134 bis PM-136 dort
+    genauso sitzen, ist **ungemessen** — ich halte es für wahrscheinlich und
+    behaupte es nicht. Prüfbar ohne App, am Ausdruck, klein.
+22. **Die Belege der Bremse werden gesammelt und nirgends gezeigt.**
+    `erkenneBauteilAusschluss` führt `belege` mit dem Satz, auf den sich der
+    Wegfall stützt; außerhalb der eigenen Datei liest sie niemand. Deshalb ist
+    jeder Wegfall stumm. **Gehört dem Designer** (Wo steht der Satz auf dem
+    Blatt?) und steht als Notiz in `pruefmeister-notizen-fuer-designer.md`.
+
+**Offen bleiben** aus den älteren Abschnitten: **M.1** (teilweise), **M.3**,
+**M.5**, Mittags-Punkt 7, Nachmittags-**Punkte 10, 12, 13**, die **Punkte 15,
+16, 17, 18** vom 17.09. abends sowie **19** und **20**. Punkt 11 ist damit der
+mit dem größten Hebel, der zu ist — **Punkt 12** rückt an seine Stelle, und
+Punkt 20 ist bereits sein erster gemessener Fall.
 
 *Prüfmeister · 2026-09-21, abends*
 

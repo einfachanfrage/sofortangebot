@@ -2629,4 +2629,96 @@ ich nicht.
 *Prüfmeister · 2026-09-21, abends*
 
 
+---
+
+## Nachtrag 21.09.2026, 16:20 UTC — die Erweiterung ist gebaut, und die Zahl ist 16
+
+**Der Abschnitt direkt darüber sagt: „ich habe sie nicht gebaut". Jetzt ist
+sie gebaut.** `scripts/vokabular-abgleich.mjs --zweittreffer` zählt, wonach
+Themenspeicher Punkt 20 gefragt hat. Gemessen auf Sandys Rechner, gegen
+`DEFAULT_PRICES`, über denselben Matcher wie der Angebots-Endpunkt.
+
+### Die Klasse ist enger, als ich sie zuerst beschrieben habe
+
+Mein erster Zuschnitt war „ein Engine-Titel, zwei Katalogzeilen, verschiedener
+Preis". Danach sind es **51 von 159 bepreisten Titeln** — und die Zahl ist
+wertlos, weil sie fast nur harmlose Fälle einsammelt: solange ein deutlich
+besserer Treffer gewinnt, passiert nichts.
+
+Gefährlich ist die engere Form, und die hat **drei** Bedingungen:
+
+1. mehrere Katalogzeilen teilen sich den **höchsten** Score,
+2. ihre Preise sind **verschieden**,
+3. und **keine davon heißt so wie der Engine-Titel**.
+
+Dann bleibt dem Matcher nichts mehr, woran er sie unterscheiden könnte. Es
+gewinnt die Zeile, die im Katalog des Betriebs zufällig weiter oben steht.
+**Zwei Betriebe bekommen aus demselben Diktat verschiedene Preise, und auf dem
+Angebot ist der Unterschied nicht zu sehen.**
+
+**Bedingung 3 ist nicht ausgedacht, sie ist eine widerlegte Vermutung.** Ich
+war sicher, dass `Wände spachteln Q4` (22,00 €) auf `Fläche spachteln`
+(9,00 €) kippen kann — beide Score **1,00**, 59 % Unterschied, und das wäre
+Manfreds „der Betrieb rechnet systematisch zu billig ab" an einer neuen
+Stelle gewesen. Nachgemessen, indem ich die billige Zeile im Katalog nach oben
+sortiert habe: **kippt nicht.** Die gleichlautende Zeile gewinnt unabhängig
+von der Reihenfolge. Zwei Titel sind auf diese Art geschützt.
+
+### Das Ergebnis: 16 Titel
+
+| Spanne | Engine-Titel | steht gleichauf auf |
+|---|---|---|
+| **+144 %** | `Wände spachteln / glätten` | 9,00 € · 14,00 € · 22,00 € |
+| **+138 %** | `Schleifen` | sechs Zeilen, 4,00 € bis 9,50 € |
+| **+120 %** | `Altfliesen abstemmen` | 10,00 € · 18,00 € · 22,00 € |
+| **+85 %** | `Armatur montieren` | 65,00 € · 120,00 € |
+| **+75 %** | `Designboden verlegen` | fünf Zeilen, 16,00 € bis 28,00 € |
+| **+75 %** | `Vinyl-Boden verlegen` | dieselben fünf Zeilen |
+| **+73 %** | `Betonwände schleifen / Untergrundvorbereitung` | 5,50 € · 7,50 € · 9,50 € |
+| **+59 %** | `Fertigparkett verlegen` | 22,00 € · 35,00 € |
+| **+33 %** | `Dachschrägen grundieren` | 4,50 € · 6,00 € |
+| **+33 %** | `Kork verlegen` | 18,00 € · 24,00 € |
+| **+33 %** | `Voranstrich / Grundierung` | 4,50 € · 6,00 € |
+| **+33 %** | `Voranstrich / Grundierung Decke` | 4,50 € · 6,00 € |
+| **+33 %** | `Grundierung` | 4,50 € · 6,00 € — **Score 1,00 auf beiden** |
+| **+29 %** | `Vinyl / Designboden verlegen` | 17,00 € · 20,00 € · 22,00 € |
+| **+27 %** | `Verbundabdichtung Wand` | 22,00 € · 28,00 € |
+| **+13 %** | `Klick-Vinyl verlegen` | 16,00 € · 18,00 € |
+
+**Die Spitze der Liste ist nicht die Grundierung.** PM-106 hat die Klasse
+sichtbar gemacht, steht aber mit 33 % im unteren Drittel. Die teuersten
+Stellen sind `Wände spachteln / glätten` und `Schleifen` — zwei Titel, bei
+denen die Engine die **Ausführungsstufe gar nicht mitsagt** (Q2/Q3/Q4, von
+Hand oder maschinell), obwohl der Katalog sie als eigene Zeilen führt. Das ist
+kein Matcher-Problem: **dort fehlt dem Titel eine Angabe, die der Preis
+braucht.**
+
+### Was daraus folgt — und was nicht
+
+* **Kein Bauauftrag von mir.** Die Zahlen stehen, die Entscheidung über den
+  Zuschnitt der Engine-Titel gehört Engineering und Manfred.
+* **Festgehalten als Sperrklinke**, nicht als Prosa:
+  `src/lib/__tests__/pruefmeister-gleichstand-katalog.test.ts` (PM-138, acht
+  Zusicherungen, alle grün). PM-138-8 hält die **16** fest. Steigt sie, ist
+  eine Katalogzeile dazugekommen, die sich vom Engine-Titel nicht
+  unterscheiden lässt; fällt sie, wurde ein Paar auseinandergezogen. Beides
+  gehört gesehen, und keines davon sieht man am Angebot.
+* **Die Gegenprobe steht mit drin** (PM-138-3), damit der widerlegte Teil
+  meiner Vermutung nicht später als Fund wiederkehrt.
+
+### Was ich ausdrücklich NICHT gemessen habe
+
+* **Den echten Katalog von Sandys Testbetrieb.** Gemessen ist der
+  Standardkatalog. Welche der 16 dort tatsächlich kippen, sagt nur die App.
+* **Die Richtung.** Ob die Reihenfolge im Standardkatalog eher die billige
+  oder die teure Zeile nach oben stellt, habe ich nur für `Grundierung`
+  nachgesehen (dort gewinnt heute die billige, 4,50 €). Für die anderen 15
+  ist die Richtung offen — das ist die Frage, die Manfreds „systematisch zu
+  billig" beantworten würde, und sie ist eine eigene Messung.
+* **Nicht-Maler-Gewerke über den Titelbestand hinaus.** Der Abgleich liest
+  acht Quelldateien; was keine eigene Einheit hat, ist nicht dabei.
+
+*Prüfmeister · 2026-09-21, 16:20 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

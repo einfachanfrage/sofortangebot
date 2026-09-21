@@ -53,6 +53,12 @@ const { ausgleichsmasseTitel } = await jiti.import(path.join(ROOT, 'src/lib/voll
 
 const alle = process.argv.includes('--alle')
 const alsMarkdown = process.argv.includes('--md')
+// (21.09.2026, Prüfmeister) Themenspeicher Punkt 20 fragte, wie viele
+// Engine-Titel auf zwei verschieden teure Katalogzeilen passen. Das zählte
+// der Abgleich nicht — er kannte nur „hat einen Preis / hat keinen". Mit
+// --zweittreffer zählt er es. Festgehalten als Test in
+// `pruefmeister-gleichstand-katalog.test.ts` (PM-138).
+const zweittreffer = process.argv.includes('--zweittreffer')
 
 // `gewerkFuerPosition` stand bis zum 12.09.2026 im Next.js-Endpunkt und war
 // von hier nicht importierbar — deshalb lag an dieser Stelle eine KOPIE, mit
@@ -358,3 +364,54 @@ tabelle('KNAPPE TREFFER — es steht ein Preis da, nur vielleicht der falsche', 
 if (alle) tabelle('GUTE TREFFER — trotzdem durchsehen: hoher Score heißt nicht richtig', gut, true)
 else console.log(`\n(${gut.length} gute Treffer nicht gezeigt — mit --alle anhängen.)`)
 console.log('')
+
+// ── Zweittreffer: wo die REIHENFOLGE im Katalog den Preis entscheidet ─────
+//
+// Gefährlich ist nicht „zwei Zeilen, zwei Preise" — das ist häufig und meist
+// harmlos, weil ein deutlich besserer Treffer gewinnt. Gefährlich ist die
+// engere Form: mehrere Zeilen teilen sich den HÖCHSTEN Score, ihre Preise
+// sind verschieden, und KEINE heißt so wie der Engine-Titel. Dann gewinnt
+// die Zeile, die im Katalog des Betriebs zufällig oben steht — zwei Betriebe
+// bekommen aus demselben Diktat verschiedene Preise.
+//
+// Die Bedingung „keine heißt so wie der Titel" ist nicht ausgedacht, sondern
+// gemessen: `Wände spachteln Q4` teilt sich Score 1,00 mit `Fläche spachteln`
+// (9,00 € statt 22,00 €) und kippt trotzdem NICHT, weil es die
+// gleichlautende Zeile gibt.
+if (zweittreffer) {
+  const gleich = (a, b) => a.toLowerCase().replace(/\s+/g, ' ').trim() === b.toLowerCase().replace(/\s+/g, ' ').trim()
+  const scharf = []
+  let geschuetzt = 0
+  for (const eintrag of zeilen) {
+    if (eintrag.score === null) continue
+    const gewerk = gewerkFuerPosition(eintrag.titel, undefined)
+    const katalog = DEFAULT_PRICES
+      .filter(preis => preisKategoriePasstZuGewerk(preis.category, gewerk))
+      .map((preis, i) => ({ id: `standard-${i}`, ...preis }))
+    const erst = findePreisposition(eintrag.titel, eintrag.einheit, katalog)
+    if (!erst) continue
+    const oben = [erst.position]
+    let rest = katalog
+    for (let runde = 0; runde < 10; runde++) {
+      rest = rest.filter(preis => preis.title !== oben[oben.length - 1].title)
+      const weiter = findePreisposition(eintrag.titel, eintrag.einheit, rest)
+      if (!weiter || Math.abs(weiter.score - erst.score) > 1e-9) break
+      oben.push(weiter.position)
+    }
+    if (oben.length < 2) continue
+    const preise = [...new Set(oben.map(p => p.unit_price))]
+    if (preise.length < 2) continue
+    if (oben.some(p => gleich(p.title, eintrag.titel))) { geschuetzt++; continue }
+    scharf.push({ ...eintrag, oben, spanne: (Math.max(...preise) - Math.min(...preise)) / Math.min(...preise) })
+  }
+  scharf.sort((a, b) => b.spanne - a.spanne)
+  console.log(`\nGLEICHSTAND AN DER SPITZE — die Katalogreihenfolge entscheidet den Preis`)
+  console.log(`  betroffene Engine-Titel          : ${scharf.length}`)
+  console.log(`  durch gleichlautende Zeile geschützt: ${geschuetzt}`)
+  console.log('-'.repeat(72))
+  for (const s of scharf) {
+    console.log(`\n  +${(s.spanne * 100).toFixed(0)} %  ${s.titel} [${s.einheit}]  ·  Score ${s.score.toFixed(2)} auf ${s.oben.length} Zeilen`)
+    for (const p of s.oben) console.log(`        ${euro(p.unit_price).padStart(10)}  ${p.title}`)
+  }
+  console.log('')
+}
