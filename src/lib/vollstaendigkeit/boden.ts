@@ -220,7 +220,10 @@ export function pruefeBoden(
   // Die Übergangsschiene sitzt zwischen zwei Räumen. Sie je Raum zu prüfen
   // hieße, sie an jeder Zimmertür zu erfinden — genau die Falle, auf die
   // PM-032 gebaut war.
-  pruefeUebergangsprofil(ergaenzt, fehlende, lower)
+  // PM-105: die Zahl der Räume mit neuem Belag wandert mit — sie ist die
+  // einzige belastbare Quelle dafür, was „an jeder Tür eine Übergangsschiene"
+  // in Stück heißt. `raumNamen` ist oben aus den Positionen gelesen.
+  pruefeUebergangsprofil(ergaenzt, fehlende, lower, raumNamen.length)
 
   // Trittschalldämmung ist bewusst NICHT raumweise: Die Ansage fällt einmal
   // für den ganzen Auftrag („überall dasselbe Klick-Vinyl … Trittschalldämmung

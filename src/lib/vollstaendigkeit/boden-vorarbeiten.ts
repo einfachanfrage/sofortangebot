@@ -266,6 +266,12 @@ export function pruefeUebergangsprofil(
   ergaenzt: BerechnetePosition[],
   fehlende: string[],
   lower: string,
+  /**
+   * PM-105: Zahl der Räume, die einen neuen Belag bekommen. Nur dafür da,
+   * „an jeder Tür eine Übergangsschiene" in eine Stückzahl zu übersetzen.
+   * Fehlt sie (0), bleibt alles wie vorher.
+   */
+  anzahlRaeumeMitBelag = 0,
 ): void {
   // Robust gegen Flexion (Türübergäng-EN mit ä) und "Alu-Profil(e)".
   // PM-009: "Übergangsschiene" (mindestens so gebräuchlich wie "-profil" im
@@ -351,6 +357,47 @@ export function pruefeUebergangsprofil(
     else if (abschnitt && !/(?:profile|schienen)\b/i.test(abschnitt)) anzahl = 1
   }
 
+  // ── PM-105 (Sandys Fall 5, Live-Lauf 17.09.2026) ─────────────────────────
+  //
+  // „An jeder Tür eine Übergangsschiene." — zwei Räume, je eine Tür, im
+  // Angebot stand Menge 1. Die zweite Schiene wurde eingebaut und nicht
+  // bezahlt: 15,00 € plus die Arbeit.
+  //
+  // Warum die Regeln oben das nicht fangen: „eine" ist zu diesem Zeitpunkt
+  // längst „1" (`ersetzeZahlenWorte` am Eingang der Pipeline). Die
+  // Stückzahl-Suche liest also brav die 1 — sie ist nur die Zahl PRO Tür,
+  // nicht die Gesamtzahl. Genau dieselbe Verwechslung wie bei PM-033, dort
+  // stand nur ein Zahlwort davor („an den BEIDEN Türen … jeweils eine"),
+  // das es hier nicht gibt. Die Zahl der Türen steht nirgends im Satz.
+  //
+  // Woher die Zahl dann kommt: aus der Zahl der Räume, die einen neuen Belag
+  // bekommen. Bewusst nicht aus der Türsumme der Aufnahme — die zählt auch
+  // Türen in Räumen ohne neuen Boden, und dann stünde eine Schiene auf dem
+  // Angebot, die niemand einbaut. Eine zu Unrecht berechnete Position ist
+  // der teurere Fehler (PM-106: 279,00 € ungefragt).
+  //
+  // Eng gehalten, mit Absicht:
+  //   * nur wenn die gefundene Stückzahl 0 oder 1 ist. Steht eine echte Zahl
+  //     im Satz („dazu 3 Übergangsschienen"), gewinnt sie — multipliziert
+  //     wird nie.
+  //   * nur wenn der PM-033-Weg NICHT gegriffen hat, sonst zählte dieselbe
+  //     Ansage zweimal.
+  //   * nur bei mehr als einem Raum. Bei einem Raum bleibt es bei einer.
+  //
+  // Bekannte Grenze: ein Raum mit zwei Durchgängen bekommt weiter eine
+  // Schiene. Die Aufnahme trägt dort eine angenommene Tür je Raum; die
+  // zweite ist aus dem Diktat nicht erkennbar. Lieber eine zu wenig in einem
+  // Fall, den wir nicht messen können, als eine zu viel in einem, den wir
+  // messen.
+  const VERTEILT =
+    /\b(?:je|jede[rnms]?|jeweils|pro)\s+(?:[a-zäöüß-]+\s+){0,2}?(?:t[üu]re?n?|zimmert[üu]re?n?|durchg[aä]ng|überg[aä]ng|uebergang|schwellen?|r[aä]um|zimmer)/i
+  const verteiltJeTuer =
+    anzahl <= 1
+    && anzahlRaeumeMitBelag > 1
+    && !proStueckMatch
+    && VERTEILT.test(abschnitt)
+  if (verteiltJeTuer) anzahl = anzahlRaeumeMitBelag
+
   // Bezeichnung — Wortwahl aus dem Transkript übernehmen (Profil vs. Schiene),
   // statt immer "Profil" zu sagen, auch wenn der Handwerker "Schiene" meinte.
   const nurSchiene = lower.includes('schiene') && !lower.includes('profil')
@@ -363,7 +410,10 @@ export function pruefeUebergangsprofil(
     : 'Übergangsprofil'
 
   if (anzahl > 0) {
-    ergaenzt.push({ beschreibung, menge: anzahl, einheit: 'Stück', berechnungsweg: `${anzahl} Stück aus Transkript`, ...mk })
+    const weg = verteiltJeTuer
+      ? `${anzahl} Stück — je Tür eine, ${anzahlRaeumeMitBelag} Räume mit neuem Belag`
+      : `${anzahl} Stück aus Transkript`
+    ergaenzt.push({ beschreibung, menge: anzahl, einheit: 'Stück', berechnungsweg: weg, ...mk })
   } else {
     fehlende.push(beschreibung + ' (Anzahl prüfen)')
   }
