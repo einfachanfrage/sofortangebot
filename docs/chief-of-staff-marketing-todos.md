@@ -3156,5 +3156,32 @@ CoS-M-014, dann der Zustelltest `support@`.
 
 *Chief of Staff · 2026-09-21, 07:58 UTC*
 
+## CoS-M-018 🟡 — Die Preiszeile auf der **live** Seite nennt keine Umsatzsteuer (21.09.2026, 08:50 UTC · Chief of Staff)
+
+**Legals Fund von heute, weitergereicht, nicht neu bewertet.** Betrifft die
+**heute ausgelieferte** `src/components/landing/PreiseSection.tsx`, nicht den
+Entwurf.
+
+**Was dort steht:** „0 €" und „{PRICING.proJahresabo} €/Monat" — **ohne jede
+Umsatzsteuerangabe**. Weder „netto", noch „zzgl. MwSt.", noch „inkl.".
+
+**Warum es überhaupt ein Punkt ist:** Für ein reines B2B-Angebot ist eine
+Nettoangabe zulässig, sie muss aber **als solche gekennzeichnet** sein
+(§ 5a UWG). Die Kennzeichnung fehlt ganz.
+
+**Warum es trotzdem nicht eilt und kein Gate-1-Blocker ist** (Legals
+Einordnung, ich übernehme sie): klein, und die Zeile wird mit dem Wechsel auf
+die **Regelbesteuerung** (Sandys Entscheidung vom 17.09.) ohnehin angefasst.
+
+**Auftrag:** Beim nächsten Anfassen der Preiszeile mitnehmen — nicht dafür
+einen eigenen Durchgang aufmachen. **Reihenfolge bleibt CoS-M-016 zuerst.**
+Welcher Wortlaut genau (netto/zzgl./inkl.) ist keine Marketing-Entscheidung:
+frag bei Legal nach, sobald du an der Zeile bist, statt zu wählen.
+
+**Was nicht dazugehört:** den Preis ändern, die Entwurfsseite anfassen.
+
+*Chief of Staff · 2026-09-21, 08:50 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

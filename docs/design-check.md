@@ -13639,4 +13639,43 @@ mitbringt.
 
 ---
 
+## DC-122 ist frei — Legal hat geantwortet, und der Designer hing nie an Sandy (21.09.2026, 08:50 UTC · Chief of Staff)
+
+**Kein neuer Befund, eine Freigabe.** Heimat der Antwort ist
+`docs/chief-of-staff-legal-todos.md`, CoS-L-011 — dort vollständig, hier nur
+die Grenze, um die gebeten wurde.
+
+**Antwort: B.** Die drei freien Fußzeilen **ersetzen nichts**, sie kommen
+zusätzlich. Die fünf Zeilen, an denen du dich ausrichten kannst:
+
+1. Die drei freien Zeilen kommen **zusätzlich**, in einer eigenen Zeile über
+   oder unter dem festen Fuß. Sie können nichts überschreiben.
+2. Der feste Fuß ist **nicht der von heute**, sondern die Zeile aus CoS-E-057.
+   Bis die gebaut ist, bleibt der heutige stehen — er ist nicht falsch, nur
+   unvollständig.
+3. **Kein Zeichenbudget, das den festen Fuß verdrängt.** Zu langer Freitext
+   wird umbrochen oder gekürzt, nie der feste Teil.
+4. **Keine Prüfung des Freitextes** — nicht auf Pflichtangaben, nicht auf
+   Dopplungen. Stehen Registerangaben zweimal da, ist das hässlich und nicht
+   unser Problem.
+5. Die **Steuernummer** aus dem Fuß nehmen, sobald eine USt-IdNr. da ist, ist
+   **L-35a-01** und gehört zu CoS-E-057 — **nicht** zu dir.
+
+**Und eine Korrektur, die dich betrifft:** In der Arbeitsreihenfolge stand
+seit Tagen „DC-122 wartet auf Legal" und darunter mitgemeint, es hänge an
+Sandys Steuerentscheidung. **Das war falsch.** Der Fuß trägt die Daten des
+**Handwerksbetriebs**, nicht Sandys — er hing nie an ihr, nur an dieser
+Antwort. Sie liegt jetzt vor.
+
+**Was heute von dir kam, ist verteilt, nicht liegengeblieben:** Dein
+Feldpaar-Wunsch aus DC-128 und aus PD-023 (`{ raum, satz }` statt eines
+fertigen Strings) liegt als **CoS-E-086** bei Engineering — als Antwortfrage,
+nicht als Bauauftrag, und ausdrücklich ohne Vortritt vor PM-079-A. Deine
+Entscheidung, in PD-023 **nichts** fetter oder röter zu machen, habe ich
+dort im Wortlaut mitgegeben: was der Zeile fehlt, ist der Beleg, nicht das
+Gewicht.
+
+*Chief of Staff · 2026-09-21, 08:50 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -10806,4 +10806,51 @@ zu PM-103/PM-104 und ist der einzige Rest dieses Blocks.
 
 
 
+## CoS-E-086 🟡 — Der Beleg je Position: `{ raum, satz }` statt eines fertigen Satzes. Zweimal angefragt, einmal beantwortet werden (21.09.2026, 08:50 UTC · Chief of Staff)
+
+**Warum das hier landet und nicht beim Designer:** Der Designer hat dasselbe
+Feldpaar heute **zweimal** gebraucht und beide Male nicht gebaut, weil es an
+einem Feld hängt, das es nicht gibt — nicht an Gestaltung.
+
+1. **DC-128** (gebaut, `3c3dd3d`): der ausgenommene Bauabschnitt wird im
+   Entwurf angezeigt, mit Belegzitat. Dort hat er um `{ raum, satz }`
+   gebeten statt um einen von der Engine zusammengesetzten String.
+2. **PD-023** (heute beantwortet, `design-check.md`): in der App stehen
+   „angenommen" und „aus Transkript" nebeneinander und sehen gleich aus. Seine
+   Messung: was der stärkeren Behauptung fehlt, ist **nicht Gewicht, sondern
+   der Beleg**. Er hat bewusst nichts fetter oder röter gemacht — „das macht
+   die falsche Zeile nur zusätzlich glaubwürdig". Die richtige Fassung wäre
+   „50 Tür(en)" **plus dem Satz, aus dem die 50 stammt**. Das geht heute
+   nicht: `berechnungsweg` ist ein fertiger String, das Transkript liegt am
+   **Auftrag**, nicht an der **Position**.
+
+**Auftrag — eine Antwort, kein Bau, und ausdrücklich kein Vordrängeln:**
+
+1. Kann eine Position den Satz mitführen, aus dem ihre Zahl stammt
+   (`{ raum, satz }` oder gleichwertig)? Wenn ja: wo im Datenmodell, und
+   was kostet es an Umbau?
+2. Wenn nein: woran scheitert es, damit der Designer es nicht ein drittes Mal
+   anfragt.
+3. **Wo in der CoS-E-083-Reihenfolge es hingehört, entscheidest du** —
+   PM-079-A, PM-106/107, PM-105 bleiben davor. Ich will die Antwort, nicht
+   den Vortritt.
+
+**Was nicht dazugehört:** die Darstellung in `AngebotDetail.tsx` ändern (das
+ist der Fall, den der Designer genau deshalb zurückgestellt hat),
+`kundenRechenweg()` anfassen, DC-110 vorziehen.
+
+**Zwei Dinge, die der Designer nebenbei belegt hat und die hier
+festgehalten gehören, weil sie zwei Rollen aneinander vorbeireden ließen:**
+
+* **Was in der Fallbasis steht, ist nicht, was der Kunde liest.** Dazwischen
+  liegt `kundenRechenweg()` (`src/lib/rechenweg-kundentext.ts`), eingehängt
+  in `src/lib/pdf.tsx:545`/`:584` und `src/components/AngebotVorschau.tsx:100`.
+  Auf dem Kundenpapier ist „aus Transkript" bereits ersatzlos gestrichen.
+* **Der konkrete Auslöser ist zu.** Die 50 Türen aus PM-132 waren ein
+  Zuordnungs-, kein Darstellungsfehler — mit CoS-E-081 (`a99791a`)
+  geschlossen.
+
+*Chief of Staff · 2026-09-21, 08:50 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -95,6 +95,7 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
+| CoS-P-033 | 🟡 **„geprüft" ist nicht „gelöscht"** — für die vier Aufnahmen aus dem 19.09.-Lauf geprüft, ob Audiodatei/Datenbankzeile noch da sind | ✅ **beantwortet, 21.09.** — Zusage vollständig erfüllt: Audiodatei ist weg (Storage + Datenbank-Verweis), Datenbankzeile bleibt bewusst (Transkript/Positionen), das ist Absicht laut Code, nicht die versprochene Löschung. Fix-Update am Dateiende | Chief of Staff, 2026-09-21 |
 | CoS-P-028 | 🟡 **`sandra@` und `support@` leiten jetzt auf `hallo@` (eingerichtet 16.09., Zustelltest offen)** — vorher: BEFUND: genau EIN Postfach (`hallo@`), null Weiterleitungen** — sieben von acht Absenderadressen empfangen nichts, darunter `sandra@`, der Absender aller Anmelde- und Passwort-Mails. Antworten von Nutzern gehen verloren, ohne Fehlermeldung. Umsetzung offen. Vorher: Acht Absender, keiner nachweislich empfangsfähig** — MX zeigt auf IONOS (selbst geprüft), aber ob dort Postfächer existieren, weiß niemand. `hallo@` steht im Impressum, § 5 DDG. Dazu: Resend zeigt „No sent emails yet" trotz nachweislich versendeter Mails — vermutlich falsches Team | ❌ offen, vor Gate 1 | Sandys Frage, 2026-09-16 |
 | CoS-P-024 | 🔴 **Push-Hook ersatzlos abschaffen** — `.git/hooks/pre-push` als No-Op, beide Prüfungen raus aus dem Push-Weg. Sandys ausdrückliche Anweisung nach der zweiten Blockade. CoS-P-023 damit zurückgezogen. Stehende Regel: in Sandys Push-/Commit-Weg kommt nichts, das abbrechen kann | ✅ **erledigt & geprüft, 16.09. abends** — `.git/hooks/pre-push` auf Sandys Rechner enthält jetzt Byte für Byte den geplanten No-Op-Inhalt (Kommentar + `exit 0`, 173 Byte, gegengelesen). Da Git-Hooks nie versioniert werden, ist damit nichts mehr offen — kein Commit nötig, kein Datei-Schreibvorgang blockiert mehr. Kein Punkt aus CoS-P-023 wandert nach CI: die einzige Prüfung mit echtem CI-Gegenstück (`pruefe-gepushten-commit.mjs`, Lint+TypeScript gegen den gepushten Commit) deckt sich bereits mit den bestehenden CI-Schritten „Lint“/„TypeScript“; die andere (`pruefe-unerfasste-dateien.mjs`) prüft den lokalen Arbeitsordner und hat in der CI keinen Gegenstand. Fix-Update am Dateiende | Sandy, 2026-09-15 |
 | CoS-P-025 | 🔴 **Schrumpf-Prüfung** — dritter Datenverlust in zwei Tagen, `docs-sichern.mjs pruefen` findet ihn nicht: eine Pflichtdatei wurde beim Zurückschreiben schlicht kürzer, Endmarkierung blieb intakt. Auch `.github/workflows/ci.yml` selbst war so betroffen, vier Tage unbemerkt | ✅ **erledigt & geprüft, 17.09.** — GitHub-Spiegel frisch geklont: `ci.yml` enthält dort jetzt Byte-für-Byte denselben Stand wie auf Sandys Rechner (`fetch-depth: 0` + Schritt „Schrumpf-Pruefung (CoS-P-025)"), Sandy hat also zwischenzeitlich committet/gepusht. `scripts/docs-sichern.mjs` und `docs-schrumpfung.test.ts` ebenfalls inhaltsgleich im Spiegel. Im Klon erneut geprüft: `npm run typecheck` sauber, `npm run lint:ci` 0 Fehler/110 Warnungen, `npx vitest run` für die betroffenen Testdateien 17/17 grün, `node scripts/docs-sichern.mjs pruefen` → 57 Dateien in Ordnung, `node scripts/docs-sichern.mjs schrumpfung` → keine Schrumpfung. Nichts mehr offen. Fix-Update am Dateiende | Platform & Integrations Engineer, 2026-09-17 |
@@ -4419,5 +4420,120 @@ teil-belegt.
 umschreiben (erst nach 2.), Produktionsdaten löschen.
 
 *Chief of Staff · 2026-09-21, 07:50 UTC*
+
+## ✅ CoS-P-033 — beantwortet: Audiodatei ist weg, Datenbankzeile bleibt bewusst so bestehen (21.09.2026, Platform & Integrations Engineer, automatischer Lauf)
+
+**Auftrag war eine Abfrage, kein Bau.** Für die vier Aufnahmen aus dem
+19.09.-Lauf (`aufnahmen.geprueft: 4`): liegt die Datei im Storage noch, ist
+der Datenbankeintrag noch da?
+
+**Die vier Aufnahmen identifiziert** (Produktionsdatenbank
+`yqlledouhfovytifeekd`, per SQL): die vier ältesten Zeilen in
+`entwurf_aufnahmen`, alle vom 19.08.2026 (11:20, 11:37, 13:47, 13:48 UTC) —
+genau die, die am 19.09. 03:30 UTC die 30-Tage-Frist überschritten.
+
+**Gemessen:**
+- `audio_url` ist bei allen vieren jetzt `null` (vorher gesetzt).
+- Im Bucket `entwurf-audio` existiert kein Storage-Objekt mehr zu einer
+  dieser vier Aufnahme-IDs — gezielt gesucht, nichts gefunden.
+- Die Datenbankzeile selbst ist **nicht** gelöscht — Transkript und erkannte
+  Positionen sind weiterhin da (23 statt 24 Zeilen insgesamt, aber nicht
+  wegen dieser vier — eine andere Zeile fehlt aus anderem Grund).
+
+**Code gegengelesen** (GitHub-Spiegel, `src/lib/aufnahmen-aufraeumen.ts`,
+aktueller `main`-Stand — reines Lesen, keine Änderung nötig): der Job löscht
+die Storage-Datei zuerst und setzt `audio_url` erst bei Erfolg auf `null`
+(Kommentar im Code: „erst die Datei, dann der Verweis"). Die Datenbankzeile
+bewusst stehen zu lassen ist kein Rest, sondern Absicht — der Kommentar im
+Code sagt es direkt: „30 Tage nach der Aufnahme wird die Audiodatei gelöscht,
+das Transkript bleibt."
+
+**Antwort auf CoS-P-033, Punkt 3:** er löscht, weist es nur unter einem
+anderen Namen aus (`geprueft` statt `geloescht`). Die Zusage aus
+Datenschutzerklärung Z. 117 / AGB § 8.3 — „wir löschen die Audiodatei nach 30
+Tagen" — ist damit **vollständig belegt**, nicht nur behauptet. Keine
+Rechtstext-Abweichung, kein Fix nötig. **Punkt endgültig zu.**
+
+*Platform & Integrations Engineer · 2026-09-21*
+
+## ✅ CoS-P-033 — abgenommen, Punkt endgültig zu (21.09.2026, 08:50 UTC · Chief of Staff)
+
+**Danke — das ist die Antwort, um die ich gebeten habe, und sie ist gemessen
+statt ausgelegt.** `audio_url` bei allen vier auf `null`, im Bucket
+`entwurf-audio` kein Objekt mehr zu diesen vier IDs, und der Code sagt an der
+Quelle, warum die Datenbankzeile bleibt („erst die Datei, dann der Verweis";
+„das Transkript bleibt").
+
+**Folge für die Rechtstexte:** Datenschutzerklärung Z. 117 und AGB § 8.3
+versprechen die Löschung der **Audiodatei** nach 30 Tagen. Genau das ist
+belegt. Kein Rechtstext-Mangel, kein Fix, Legal muss nichts ändern — ich habe
+es dort als CoS-L-013 eingetragen, damit der Punkt nicht bei zwei Rollen
+offen weiterläuft.
+
+**Der Zähler heißt weiter `geprueft`.** Das ist jetzt eine Benennung, kein
+Befund. Nicht umbauen.
+
+---
+
+## CoS-P-034 🔴 — `docs-sichern.mjs sichern` sichert seit unbekannter Zeit nichts (21.09.2026, 08:50 UTC · Chief of Staff)
+
+**Gefunden hat es Legal, nicht du** — der vollständige Befund steht in
+`docs/chief-of-staff-legal-todos.md` am Dateiende. Hier steht nur, was zu tun
+ist. **Ich habe den Kern selbst nachgemessen, bevor ich ihn weitergebe:**
+`git status --porcelain` legt in diesem Ordner `.git/index.lock` an und kann
+sie nicht wieder entfernen (`unlink … Operation not permitted`). Die Datei
+liegt in diesem Moment da, 0 Byte.
+
+**Was passiert:** `sichern` macht zwei Git-Aufrufe hintereinander
+(`scripts/docs-sichern.mjs`, Z. 97 und Z. 102): erst `git status --porcelain
+-- docs`, dann `git add -- docs`. Der erste hinterlässt die Sperrdatei, der
+zweite scheitert an ihr. **Das Skript stolpert über seine eigene Sperre** —
+kein zweiter Git-Prozess, Legal hat während des Fehlers `ps aux` mitlaufen
+lassen.
+
+**Warum rot:** Sandy hat die Doku-Sicherung am 31.08. freigegeben. Der Teil,
+der einen wiederherstellbaren Stand erzeugt, läuft ins Leere — und zwar
+lautlos. **Wie lange schon, weiß niemand, und das behaupte ich auch nicht.**
+`pruefen` ist **nicht** betroffen (braucht kein Git, meldet weiter „Alle 58
+Doku-Dateien in Ordnung", heute um 08:44 UTC nachgestellt).
+
+**Auftrag:**
+
+1. **`docs-sichern.mjs` so reparieren, dass `sichern` auf diesem Mount wieder
+   committet.** Legals Vorschlag, den ich übernehme, weil er die Ursache
+   trifft und nicht das Symptom: das Skript durchgängig auf einen **eigenen
+   `GIT_INDEX_FILE` außerhalb des Repos** legen (`git read-tree HEAD` davor,
+   damit fremde uncommittete Dateien gar nicht erst mitrutschen können). Die
+   Variante „liegengebliebene `index.lock` der Größe 0 und älter als 60 s
+   entfernen" ist die zweite Wahl — auf diesem Mount scheitert genau dieses
+   Entfernen.
+2. **Das Verhalten des Skripts sonst nicht ändern.** Es committet weiterhin
+   alles unter `docs/`, das ist so gewollt und von Sandy so freigegeben.
+   `git add -A` bleibt abgeschafft.
+3. **Melden, ob nach dem Fix ein `sichern`-Lauf wirklich einen Commit
+   erzeugt** — nicht „müsste jetzt gehen", sondern der Commit-Hash.
+
+**Richtigstellung zu meiner eigenen Notiz vom 08:05-Lauf:** Ich hatte
+geschrieben, die Git-Sperrreste seien „für git harmlos". **Das war falsch.**
+Eine liegengebliebene `index.lock` blockiert den nächsten `git add` **jeder**
+Rolle. Dass heute trotzdem vier Commits durchgingen, liegt daran, dass Legal
+und der Designer je einen eigenen Index benutzt bzw. die Sperre verschoben
+haben — nicht daran, dass sie folgenlos wäre.
+
+**Was ich nachgeprüft und dabei korrigiert habe:** Legal schreibt, die
+Sperrreste lägen jetzt in einem Ordner `_git-sperrreste-zum-loeschen/` im
+Projektordner und Sandy müsse den von Hand löschen. **Den Ordner gibt es
+nicht** (08:45 UTC nachgesehen, `ls` und `git status`). Die fünf leeren
+Sperrdateien liegen in **`.git/_locks/`** — innerhalb von `.git`, also
+unsichtbar für `git status` und nicht mitcommittbar. **Für Sandy ist damit
+nichts zu tun**, und ich habe ihr entsprechend auch nichts auf die Liste
+gesetzt.
+
+**Was nicht dazugehört:** `.git/worktrees/alt/*.lock` und `.git/_locks/`
+aufräumen (Löschrechte gibt es in geplanten Läufen nicht), `AGENTS.md`
+ändern, den pre-commit-Hook anfassen.
+
+*Chief of Staff · 2026-09-21, 08:50 UTC*
+
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

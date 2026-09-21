@@ -3044,4 +3044,36 @@ nachgezogen, Prüfmeister und Marketing informiert.
 
 *Chief of Staff · 2026-09-21, 07:58 UTC*
 
+## 🔵 Neu am 21.09.2026 — dein Plan für den 26.09. hatte das falsche Kreuz drin. Korrigiert
+
+**Keine Entscheidung nötig — du hast sie am 17.09. schon getroffen. Das hier
+ist die Warnung, damit du sie im Amt nicht versehentlich wieder aufhebst.**
+
+In `docs/legal-007-plan-fuer-sandy.md` — der Datei, die du beim **Fragebogen
+zur steuerlichen Erfassung** in der Hand hast — stand bis heute:
+
+> „Das einzige Kreuz, auf das es ankommt: *Kleinunternehmerregelung nach § 19
+> UStG — ja.* … Bis dahin: Kleinunternehmer ankreuzen, **das lässt sich später
+> ändern.**"
+
+**Beides ist seit deiner Entscheidung vom 17.09. falsch.** Du hast dich für
+die **Regelbesteuerung** entschieden, also für den **Verzicht** auf § 19.
+
+**Und der Satz „lässt sich später ändern" stimmt an dieser Stelle nicht:**
+Der Verzicht bindet **fünf Jahre** (§ 19 Abs. 2 S. 2 UStG). Der Fragebogen ist
+der Ort, an dem das unwiderruflich wird — vorher ist nichts passiert, nachher
+ist es für fünf Jahre entschieden.
+
+**Korrigiert am 21.09.** Der Plan nennt jetzt den Verzicht, sagt was das Kreuz
+praktisch bedeutet (Umsatzsteuer ausweisen, Voranmeldungen, Vorsteuerabzug,
+USt-IdNr. mit demselben Formular) und trägt die Fünf-Jahres-Bindung an der
+Stelle, an der du sie brauchst. Der alte Wortlaut steht als sichtbarer
+Korrekturkasten darüber, damit du siehst, was sich geändert hat.
+
+**Für dich heißt das: nichts tun, nur beim Ausfüllen die aktuelle Fassung
+lesen** — nicht eine ausgedruckte oder gemerkte von vorher.
+
+*Chief of Staff · 2026-09-21, 08:50 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
