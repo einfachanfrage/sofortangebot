@@ -912,4 +912,40 @@ Chief of Staff vom 21.09., 07:58 UTC: auffallen lassen, nicht suchen)*
 *Prüfmeister · 2026-09-21*
 
 
+---
+
+**20. Ein Engine-Titel, zwei Katalogzeilen, ein Drittel Preisunterschied**
+*(Nebenbefund aus der Antwort an Engineering, 21.09. abends — kein Auftrag)*
+
+**Das ist kein neues Thema, sondern der erste am Matcher gemessene Fall von
+Punkt 12** (17.09. nachmittags, „wo sonst eine Engine-Zeile zwei Katalogzeilen
+mit verschiedenen Preisen abdeckt"). PM-124 hat ihn an der Menge gezeigt —
+hier zeigt er sich am Treffer.
+
+
+* **Gemessen am Fall:** `Voranstrich / Grundierung` trifft im Standardkatalog
+  `Grundieren (Tiefengrund)` **4,50 €/m²**. In derselben Kategorie
+  `Maler – Untergrundvorbereitung` steht `Grundieren (Haftgrund / Sperrgrund)`
+  **6,00 €/m²**. Nimmt man die erste Zeile heraus, landet **derselbe
+  Engine-Titel** auf der zweiten — der Preis steigt um ein Drittel, ohne dass
+  im Angebot irgendetwas anders aussieht. Genau so kamen die 279,00 €
+  zustande, die ich am 17.09. live gesehen und fälschlich als Treffer-Fehler
+  notiert hatte.
+* **Was daran allgemein ist:** Der Gewerke-Filter trennt die zwei Zeilen
+  nicht, nur der Titel-Score entscheidet. Jeder Betrieb, der in „Deine Preise"
+  eine Zeile löscht oder umbenennt, kann damit den Preis einer Position
+  verschieben, die er gar nicht angefasst hat. **Das ist die Kehrseite von
+  Manfreds Warnung** aus `vokabular-abgleich.md`: dort ging es um Doppelte,
+  die entstehen; hier um Doppelte, die schon da sind.
+* **Ungemessen und deshalb keine Behauptung:** wie viele solcher Paare es
+  gibt. Der Abgleich zählt heute „hat einen Preis / hat keinen" — **er zählt
+  nicht, ob der zweitbeste Treffer einen anderen Preis hat.** Wenn jemand das
+  haben will, ist es eine kleine Erweiterung von
+  `scripts/vokabular-abgleich.mjs` (Score des zweiten Treffers mitgeben) und
+  danach eine Liste, keine Schätzung.
+* **Kein Bauauftrag**, kein Termin, niemand wartet darauf.
+
+*Prüfmeister · 2026-09-21, abends*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

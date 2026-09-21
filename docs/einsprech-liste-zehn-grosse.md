@@ -231,8 +231,6 @@ Wände streichen **und** vier Türen lackieren im selben Raum.
 
 | Position | Menge | € / Einheit | Betrag |
 |---|---|---|---|
-| Voranstrich / Grundierung — Flur | 37,5 m² | 4,50 € | 168,75 € |
-| Voranstrich / Grundierung Decke — Flur | 9 m² | 4,50 € | 40,50 € |
 | Wand streichen 2x — Flur | 37,5 m² | 9,50 € | 356,25 € |
 | Decke streichen 2x — Flur | 9 m² | 11,00 € | 99,00 € |
 | Boden schützen — Flur | 9 m² | 1,20 € | 10,80 € |
@@ -241,17 +239,22 @@ Wände streichen **und** vier Türen lackieren im selben Raum.
 | Türen grundieren | 4 Stück | 25,00 € | 100,00 € |
 | Türen lackieren (2× Anstrich) | 4 Stück | 90,00 € | 360,00 € |
 | Türzarge lackieren | 4 Stück | 45,00 € | 180,00 € |
-| **Summe netto** | | | **1.407,30 €** |
+| **Summe netto** | | | **1.198,05 €** |
 
 - Je Tür eine Zarge — überall Menge 4.
+- `Türen grundieren` ist bestellt („abschleifen, grundieren und lackieren") und bleibt. Gemeint war nie diese Zeile, sondern die Grundierung von Wand und Decke.
 
 **⚠️ Hier schau bitte genau hin:**
 
-- `Voranstrich / Grundierung` über 37,50 m² **und** `Grundierung Decke` über 9,00 m² kommen dazu, obwohl niemand grundieren gesagt hat. Zusammen 209,25 €. Das will ich wissen — bitte notieren, ob es dasteht.
+- Es darf **keine** Zeile `Voranstrich / Grundierung` für Wand oder Decke dastehen. Kommt sie wieder, ist PM-106 zurück.
 
-**`[x] stimmt`**  ·  *eingesprochen 17.09.*
+**`[x] stimmt`**  ·  *eingesprochen 17.09. · Soll am 21.09. nachgezogen*
 
-**Live-Ergebnis 17.09.:** Die beiden Grundierungen (225,00 € + 54,00 €) kommen ungefragt, sobald Türlackierung im Raum liegt. → PM-106
+**Live-Ergebnis 17.09.:** Die beiden Grundierungen (225,00 € + 54,00 €) kamen ungefragt, sobald Türlackierung im Raum lag. → PM-106
+
+**Gebaut und nachgemessen 21.09.:** Engineering hat PM-106 in `c82881c` behoben; die zwei Zeilen kommen nicht mehr. **Das Soll oben ist deshalb geändert** — zwei Zeilen raus, Summe von 1.407,30 € auf **1.198,05 €**. Selbst gemessen auf Sandys Rechner, festgehalten in `src/lib/__tests__/pruefmeister-fall7-soll.test.ts` (PM-106-S1 bis S4).
+
+**Zur Preiszeile:** Die 225,00 € / 54,00 € vom 17.09. entsprechen **6,00 €/m²**, die Tabelle rechnete mit 4,50 €. Beides stimmt: Gegen den Standardkatalog trifft `Voranstrich / Grundierung` die Zeile `Grundieren (Tiefengrund)` (4,50 €); fehlt die im Katalog des Betriebs, landet derselbe Titel auf `Grundieren (Haftgrund / Sperrgrund)` (6,00 €). Kein Treffer-Fehler, eine Katalogfrage (PM-106-P1 bis P3).
 
 ---
 

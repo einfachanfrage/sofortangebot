@@ -1,6 +1,6 @@
 # Verfahrensdokumentation Rechnungseingang (GoBD)
 
-**Fassung 4 · 17.09.2026 · erstellt und fortgeschrieben vom Head of Finance**
+**Fassung 5 · 21.09.2026 · erstellt und fortgeschrieben vom Head of Finance**
 **Betrieb:** Sandra Holm, Einzelunternehmen (Gewerbeanmeldung geplant KW 41/2026)
 **Geltungsbereich:** Alle Rechnungen, die der Betrieb **empfaengt** — Papier,
 PDF, XRechnung, ZUGFeRD. Ausgangsrechnungen sind hier **nicht** geregelt; es
@@ -182,9 +182,38 @@ unberuehrt — ein privat genutztes Abo wird durch eine formell einwandfreie
 Kleinbetragsrechnung nicht abziehbar. Das ist die Frage, die bei den
 Apple-Belegen offen ist, und sie ist eine andere.
 
-**Lesbarkeit einer `.xml`-Rechnung:** ohne Viewer nicht moeglich. Empfehlung
-steht (Quba-Viewer, Open Source, 0 €), Installation liegt bei Sandy — F-004.
-**Bis dahin gilt: keine reine XML-Rechnung bezahlen.**
+**Lesbarkeit einer `.xml`-Rechnung: geloest seit 21.09.2026.** Im Projekt
+liegt `scripts/e-rechnung-ansehen.mjs`. Der Befehl
+
+```
+node scripts/e-rechnung-ansehen.mjs <datei.xml|datei.pdf>
+```
+
+macht aus einer XRechnung (UBL) oder einer CII-/ZUGFeRD-Datei eine lesbare
+HTML-Ansicht und **rechnet die Rechnung dabei nach** — die Pruefpunkte 1 bis
+11 dieser Liste, soweit sie sich aus der Datei beantworten lassen. Bei einem
+ZUGFeRD-PDF holt er sich den strukturierten Teil selbst heraus. Er braucht
+keine Installation und keine Internetverbindung, weil er nur mit Node
+arbeitet, das ohnehin im Projekt steht.
+
+**Damit faellt die bisherige Regel „keine reine XML-Rechnung bezahlen" weg.**
+An ihre Stelle tritt: **eine reine XML-Rechnung wird erst bezahlt, wenn sie
+durch diesen Befehl gelaufen ist und keinen Fehler zeigt.** Drei Grenzen, die
+dazugehoeren:
+
+* Der Befehl prueft **nicht gegen das amtliche XSD-Schema** und ersetzt keine
+  Konformitaetspruefung. Er beantwortet die kaufmaennische Frage („stimmt das,
+  darf ich das bezahlen"), nicht die formale Zertifizierungsfrage.
+* Er prueft **nicht die sachliche Richtigkeit** (Pruefpunkt 10) — ob die
+  Leistung bezogen wurde und der Preis der Vereinbarung entspricht, sieht nur
+  ein Mensch.
+* Er schreibt die HTML-Ansicht **ausserhalb von `belege/`** und verweigert
+  das Gegenteil. Die Ansicht ist eine Lesehilfe, **kein Beleg**;
+  aufbewahrungspflichtig bleibt die Originaldatei in der Form, in der sie
+  eingegangen ist. Die Originaldatei wird nur gelesen.
+
+Der Quba-Viewer (F-004, bei Sandy) bleibt sinnvoll als zweite, unabhaengige
+Ansicht — **notwendig fuer den Zahlungsweg ist er nicht mehr.**
 
 ### Schritt 2a — Fremdwaehrung umrechnen
 
@@ -309,7 +338,7 @@ Rhythmus bedienbar, ohne dass hier etwas geaendert werden muss.
 | Rechner | Windows-Arbeitsplatz von Sandra Holm, Einzelplatz |
 | Ablageort | `C:\Users\runni\Documents\Claude Code\sofortangebot\belege\eingangsrechnungen\` |
 | Dateiformate | `.pdf` (auch PDF/A-3 mit eingebettetem XML), `.xml` (UBL/CII), `.jpg`/`.png` nur als Scan von Papier |
-| Viewer fuer strukturierte Rechnungen | **fehlt weiterhin** (Quba vorgesehen, F-004). Der erste echte ZUGFeRD-Eingang (Beleg 2026-018) war trotzdem pruefbar, weil das Sichtformat des PDF vollstaendig ist und der strukturierte Teil sich auslesen laesst. **Bei einer reinen `.xml`-Rechnung waere das nicht so** — dort bleibt es bei: nicht bezahlen, was nicht lesbar ist. |
+| Viewer fuer strukturierte Rechnungen | **vorhanden seit 21.09.2026: `scripts/e-rechnung-ansehen.mjs`** (Node, keine Installation, keine Internetverbindung, keine laufenden Kosten). Liest XRechnung (UBL 2.1), CII/ZUGFeRD und holt den strukturierten Teil aus einem ZUGFeRD-PDF heraus; erzeugt eine HTML-Ansicht und rechnet die Rechnung nach. Gemessen an vier echten Dateien und sechs gebauten Fehlerfaellen, siehe `chief-of-staff-finance-todos.md`, Eintrag vom 21.09.2026. Ein **externer** Viewer (Quba, F-004, bei Sandy) bleibt als zweite Meinung sinnvoll, ist aber fuer den Zahlungsweg nicht mehr noetig. |
 | Buchhaltungssoftware | **keine im Einsatz** |
 | Datensicherung | **eingerichtet seit 17.09.2026.** Taeglich 20:00 Uhr kopiert die Windows-Aufgabe `Sofortangebot Sicherung` (`scripts/sicherung-onedrive.ps1`) den gesamten Projektordner — einschliesslich `belege/` — nach `OneDrive\\Sofortangebot-Sicherung`, Konto `einfachanfrage@outlook.com`. **Es wird nichts geloescht.** Einzelheiten und die Kontrollpflicht: Teil 4. |
 | Versionsverwaltung | Die Belege liegen **bewusst ausserhalb von Git** (`.gitignore`). Git-Historie laesst sich umschreiben und ist deshalb kein Unveraenderbarkeitsnachweis; ausserdem gehoeren Lieferantenrechnungen nicht in ein Code-Repository. |
@@ -412,7 +441,7 @@ sichtbar** ist. Die Erfolgsmeldung des Kopierwerkzeugs belegt das nicht.
 
 | Luecke | Bei wem | Status |
 |---|---|---|
-| Viewer fuer XRechnung/ZUGFeRD | Sandy (F-004) | offen, nicht eilig |
+| Viewer fuer XRechnung/ZUGFeRD | — | ✅ **erledigt 21.09.2026** durch `scripts/e-rechnung-ansehen.mjs` (eigenes Werkzeug, 0 €). Quba (F-004, bei Sandy) bleibt eine freiwillige zweite Ansicht |
 | `rechnung@sofortangebot.app` | — | ✅ **erledigt 17.09.** (Sandy, IONOS) |
 | Zustelltest mit echtem `.xml`-Anhang | — | ✅ **bestanden 17.09.2026.** Sandy hat aus `einfachanfrage@outlook.com` an `rechnung@` geschickt, die Mail ist in `hallo@` angekommen — mit allen drei Anhaengen (`zugferd-cii.xml`, `zugferd-rechnung.pdf`, `xrechnung-ubl.xml`). Beleg: Bildschirmfoto des Posteingangs |
 | Zweite Kopie der Ablage (Datensicherung) | — | ✅ **erledigt 17.09.2026.** OneDrive-Sicherung taeglich 20:00 Uhr, am Zielort geprueft. Teil 4 |
@@ -433,6 +462,7 @@ ohnehin im Plan steht.
 | 2 | 17.09.2026 | Hinweis zu Pruefpunkt 9 korrigiert (nur Supabase ist Reverse Charge); **Schritt 2a Fremdwaehrungsumrechnung neu** (§ 16 Abs. 6 UStG, amtliche BMF-Monatskurse) | Head of Finance |
 | 3 | 17.09.2026 | **Schritt 2b Kleinbetragsrechnungen neu** (§ 33 UStDV, 250-€-Grenze) — Korrektur nach Einwand von Sandy. Erster echter Durchgang mit 25 abgelegten Dateien. **Namensschema zurueckgenommen** (Schritt 1) — der Lieferantendateiname bleibt, die Ordnung macht das Eingangsbuch. **Kontrollbefehl `scripts/belege-pruefen.mjs`** neu (Schritt 3). **Datensicherung und Kontrolle am Zielort** in Teil 3 und 4 aufgenommen, mit vierteljaehrlichem Rhythmus und der Unterscheidung Sicherung/Archiv. **USt-Status auf Regelbesteuerung** umgestellt (Entscheidung F-006 = B, erklaert wird sie erst im Fragebogen) | Head of Finance |
 | 4 | 17.09.2026 | **Schritt 6 Umsatzsteuer-Voranmeldung neu**: Rhythmus ist nicht gesetzt. Die Pflicht zur monatlichen Abgabe in Neugruendungsfaellen ist bis einschliesslich 2026 ausgesetzt (§ 18 Abs. 2 Satz 6 UStG); Regelfall ist das Quartal, Grenzen 9.000 € und 2.000 €. Fuer 2027 offen und als Frage fuer das Steuerberater-Erstgespraech festgehalten, mit der Zahllast aus allen drei Planszenarien | Head of Finance |
+| 5 | 21.09.2026 | **Die Regel „keine reine XML-Rechnung bezahlen" ist aufgehoben** und durch `scripts/e-rechnung-ansehen.mjs` ersetzt (Schritt 2): eigene Lese- und Rechenpruefung fuer XRechnung, CII und ZUGFeRD-PDF, mit den drei Grenzen, die dort benannt sind. Teil 3 und die Lueckenliste nachgezogen | Head of Finance |
 
 *Diese Dokumentation ist fortzuschreiben, sobald eine Buchhaltungsloesung
 eingefuehrt wird oder sich der Eingangsweg aendert. Alte Fassungen bleiben in

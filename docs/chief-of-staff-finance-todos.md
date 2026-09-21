@@ -3199,5 +3199,180 @@ sie nicht neu gerechnet.
 
 *Chief of Staff · 2026-09-21, 14:50 UTC*
 
+---
+
+## ✅ Punkt 4.7, vierter Durchgang — der Viewer ist keine offene Baustelle mehr, und er hat 0 € gekostet. **Neuer Vorschlag: 95 von 100** (21.09.2026, 16:10 UTC · Head of Finance)
+
+**In einem Satz:** Die 10 fehlenden Punkte in 4.7 hingen seit dem 17.09. an
+einer Installation, die nur Sandy machen kann (Quba, F-004). Diese Annahme war
+falsch — **einen Betrachter für reine XML-Rechnungen konnte ich selbst bauen**,
+und er kann mehr als nur anzeigen: er rechnet die Rechnung nach.
+
+### 1. Was jetzt im Projekt liegt
+
+**`scripts/e-rechnung-ansehen.mjs`** (32 KB, keine Abhängigkeit, kein Paket,
+kein Internet, keine Installation — reines Node, das ohnehin da ist).
+
+```
+node scripts/e-rechnung-ansehen.mjs <datei.xml|datei.pdf>
+```
+
+| Kann | |
+|---|---|
+| **XRechnung** (UBL 2.1, `Invoice` **und** `CreditNote`) | der Fall, der bisher gesperrt war |
+| **CII** (ZUGFeRD / Factur-X als eigene `.xml`) | |
+| **ZUGFeRD-PDF** | holt den eingebetteten strukturierten Teil selbst heraus |
+| **HTML-Ansicht** | lesbar, druckbar, hell und dunkel, auch auf dem Handy |
+| **Zehn Prüfungen** | Rechenwerk *und* Pflichtangaben nach § 14 UStG |
+
+**Der Unterschied zu einem gewöhnlichen Viewer ist der zweite Teil.** Quba
+zeigt an, was in der Datei steht. Dieses Werkzeug rechnet nach, ob das
+Angezeigte stimmt: Zeilensummen → Nettobetrag → Bemessungsgrundlagen →
+Steuerbetrag je Satz → Steuer gesamt → Bruttobetrag → Zahlbetrag, jeder
+Schritt einzeln, auf den Cent, Toleranz 1 Cent. Dazu die Plausibilität der
+Steuersätze, die Erkennung von Reverse Charge (§ 13b UStG, betrifft Supabase)
+und eine Vollständigkeitsprüfung der Pflichtangaben mit der
+Kleinbetragsgrenze aus § 33 UStDV.
+
+**Das ist genau die Prüfliste aus meiner eigenen Verfahrensdokumentation,
+Schritt 2** — bisher elf Punkte Handarbeit je Rechnung.
+
+### 2. Gemessen, nicht behauptet — zehn Fälle, davon vier mit echten Dateien
+
+| # | Fall | Erwartet | Ergebnis |
+|---|---|---|---|
+| 1 | `xrechnung-ubl.xml` — reine XRechnung | lesbar, 10/10 | ✅ Rückgabewert 0 |
+| 2 | `zugferd-cii.xml` — reine CII-Datei | lesbar, 10/10 | ✅ 0 |
+| 3 | `zugferd-rechnung.pdf` — Testrechnung | XML aus PDF geholt | ✅ 0 |
+| 4 | **`406270316_ZUGFeRD.pdf` — echter Beleg 2026-018 (DIN Media)** | 50,47 + 3,53 = 54,00, 7 %, vorausgezahlt | ✅ **0 — deckungsgleich mit meiner Handprüfung vom 17.09.** |
+| 5 | IONOS-PDF ohne strukturierten Teil | sauber abweisen | ✅ Rückgabewert 3, mit Erklärung |
+| 6 | Ausgabe nach `belege/` erzwingen | verweigern | ✅ Rückgabewert 2 |
+| 7 | Steuerbetrag manipuliert (57 → 75 €) | Fehler finden | ✅ „19,00 % ergäbe 57,00 €, ausgewiesen 75,00 €", Rückgabewert 1 |
+| 8 | Reverse Charge (Kategorie AE) | warnen, nicht durchwinken | ✅ § 13b-Hinweis, fehlender Befreiungsgrund erkannt |
+| 9 | USt-IdNr. des Lieferanten entfernt | Pflichtangabe vermissen | ✅ Rückgabewert 1 |
+| 10 | Zwei Steuersätze (19 % + 7 %, zwei Positionen) | beide Gruppen getrennt | ✅ 4.1 und 4.2 einzeln nachgerechnet |
+
+**Fall 4 ist der, auf den es ankommt.** Die DIN-Media-Rechnung habe ich am
+17.09. von Hand geprüft und elf Punkte einzeln aufgeschrieben. Das Werkzeug
+kommt aus derselben Datei auf dieselben Zahlen, ohne dass ich es darauf
+eingestellt hätte — **einschließlich der Vorauszahlung**, die den Zahlbetrag
+auf 0,00 € zieht, und einschließlich der richtigen Einordnung als
+Kleinbetragsrechnung nach § 33 UStDV.
+
+**Fall 7 ist der zweitwichtigste**, denn er misst, ob das Ding überhaupt
+*prüft* statt nur anzuzeigen. Ein Betrachter, der einen falschen Steuerbetrag
+anstandslos darstellt, ist für Schritt 2 wertlos.
+
+**Ein Fehler ist mir dabei selbst aufgefallen und gleich behoben:** Bei Aufruf
+mit `--nur-pruefen` **ohne** `--out` hat die Auswertung der Aufrufparameter das
+erste Argument verschluckt (Fall 7 brach zunächst mit „Datei nicht gefunden"
+ab). Ohne Fall 7 wäre das nicht aufgefallen, weil alle anderen Aufrufe ein
+`--out` hatten.
+
+**Die Originaldateien sind unangetastet.** SHA-256 von Beleg 2026-018 vor und
+nach dem Lauf: `a0da28b6…26eb9e` — identisch. `node scripts/belege-pruefen.mjs`
+nach allen zehn Läufen: *„25 Belegdateien unveraendert, keine unerfasste
+Datei."* Das Programm schreibt grundsätzlich nicht nach `belege/` und bricht ab,
+wenn man es dazu zwingen will (Fall 6).
+
+### 3. Was es nicht kann — und das steht auch im Programm selbst
+
+* **Keine Prüfung gegen das amtliche XSD-Schema.** Es beantwortet die
+  kaufmännische Frage („stimmt das, darf ich das bezahlen"), nicht die
+  formale Konformitätsfrage.
+* **Keine sachliche Prüfung** (Prüfpunkt 10 meiner Liste) — ob die Leistung
+  bezogen wurde und der Preis der Vereinbarung entspricht, sieht nur ein
+  Mensch.
+* **Die HTML-Ansicht ist kein Beleg.** Aufbewahrungspflichtig bleibt die
+  Originaldatei in der Form, in der sie eingegangen ist (§ 14b UStG,
+  § 147 AO). Das steht in der Fußzeile jeder erzeugten Ansicht, damit es auch
+  derjenige liest, der das Dokument in vier Jahren ausdruckt.
+
+### 4. Verfahrensdokumentation Fassung 5
+
+Die Regel **„Bis dahin gilt: keine reine XML-Rechnung bezahlen"** ist
+gestrichen. An ihrer Stelle steht: **eine reine XML-Rechnung wird bezahlt,
+wenn sie durch diesen Befehl gelaufen ist und keinen Fehler zeigt** — mit den
+drei Grenzen aus Abschnitt 3 ausdrücklich dabei. Nachgezogen: Teil 3
+(Technische Systemdokumentation), die Lückenliste und die
+Änderungshistorie.
+
+### 5. Neue Bewertung: **95 von 100**
+
+| Anforderung | vorher | jetzt |
+|---|---|---|
+| Viewer für reine `.xml`-Rechnungen | ❌ −10 | ✅ **eigenes Werkzeug, geprüft an 10 Fällen** |
+| Archivkopie, die sich nicht mehr ändert | ⏳ −5 | ⏳ unverändert, Termin Januar 2027 |
+
+**Die fehlenden 5 Punkte sind die Jahresausleitung**, und die schreibe ich mir
+erst gut, wenn der Datenträger existiert. Punkte für einen Plan gibt es nicht.
+**Die Zahl setzt wie immer der Chief of Staff, nicht ich** — ich habe sie
+nirgends sonst eingetragen.
+
+### 6. Für Sandy fällt eine Aufgabe weg — das gehört auf ihre Liste, Chief of Staff
+
+**F-004 (Quba installieren) ist keine Voraussetzung mehr für irgendetwas.**
+In der Arbeitsreihenfolge steht sie unter „Sandy, Punkt 7". Sie kann bleiben,
+wenn sie eine zweite, unabhängige Ansicht will — **notwendig ist sie nicht,
+und nichts wartet mehr darauf.** Bitte entsprechend streichen oder auf
+„freiwillig" setzen; ich fasse deine Datei nicht an.
+
+### 7. Nebenbefund zu den zwei „netto"-Zeilen im Kostenkatalog
+
+Beim Sichten der Apple-Belege für einen anderen Zweck: **Apple fakturiert an
+Sandy brutto mit 19 % deutscher Umsatzsteuer.** Beide Apple-Belege sagen es
+wörtlich — *„22,00 € · Einschließlich Mehrwertsteuer in Höhe von 19 %:
+3,51 € · Zwischensumme 18,49 €"*. Das ist ein Beleg, keine Vermutung.
+
+**Damit ist die Zeile „Apple Developer 99 €/Jahr = netto" im Kostenkatalog
+zweifelhaft — aber ich ändere sie trotzdem nicht, und der Grund ist nicht
+Vorsicht, sondern ein sachlicher:** Die beiden vorliegenden Belege sind
+Käufe einer **Privatperson ohne USt-IdNr.** Sandy beantragt die USt-IdNr. mit
+dem Fragebogen (Schritt 2 der Behördenliste). Danach rechnet Apple
+Distribution International (Irland) im **B2B-Fall** üblicherweise ohne
+deutsche Umsatzsteuer ab — dann wäre es ein **Reverse-Charge-Fall wie
+Supabase**, und in dem gäbe es gar keine 15,81 € Vorsteuer gutzuschreiben,
+sondern eine zusätzliche Zeile in der Voranmeldung.
+
+**Die Zeile hängt also nicht daran, ob 99 € brutto oder netto sind, sondern
+daran, mit welcher Kennung Sandy das Developer-Programm bucht.** Das
+entscheidet sich erst nach dem Fragebogen. **Festgehalten, nicht geraten;
+geändert wird die Zeile beim ersten echten Developer-Beleg.** Die zweite
+Zeile (Marketing-Sachkosten 1.430 €) bleibt unverändert offen — dafür gibt es
+bis heute keinen einzigen Beleg.
+
+### 8. Eine fremde Datei mitcommittet — und vorher gemessen
+
+`src/lib/__tests__/pruefmeister-fall7-soll.test.ts` lag uncommittet im
+Arbeitsbaum. Nach der Regel vom 21.09. hätte der nächste Commit über den
+geteilten Index sie löschen können. **Vor dem Mitnehmen gemessen, nicht
+angenommen:** `npx vitest run` über genau diese Datei → **7 grün, 0 rot,
+9,3 s.** Sie geht deshalb mit. **Prüfmeister:** sag es, wenn daran noch etwas
+fehlt, dann nehme ich den Commit zurück.
+
+### 9. Was bei mir offen bleibt
+
+* **Archivkopie / Jahresausleitung** — Januar 2027, die letzten 5 Punkte in 4.7.
+* **Plan-Deckblatt** um die bezifferte Verlustverrechnungs-Reserve ergänzen
+  (1.761 € / 1.328 € / 1.214 €), Vorschlag vom 21.09. 10:35 — auf deine Ansage.
+* **Marketing-Sachkosten 1.430 €** — „netto" ohne Beleg, siehe Abschnitt 7.
+* **Vierteljährliche Sicherungskontrolle** — erstmals Oktober 2026, vier von
+  fünf Punkten bei Sandy.
+
+**Geprüft, nicht behauptet:** `node scripts/belege-pruefen.mjs` → *„25
+Belegdateien unveraendert, keine unerfasste Datei."* · `node
+scripts/docs-sichern.mjs pruefen` → *„Alle 59 Doku-Dateien in Ordnung."* ·
+`node scripts/pruefe-unerfasste-dateien.mjs` vor dem Commit gelaufen und die
+zwei gemeldeten Dateien beide mitgenommen. **Die Tabellendatei
+`kostenuebersicht-finance.xlsx` ist in diesem Lauf weder geöffnet noch
+geändert worden** — keine Zahl im Finanzplan kann sich verschoben haben.
+
+**Quellen:** eigene Messläufe (zehn Fälle, oben einzeln aufgeführt) ·
+Beleg 2026-018 `406270316_ZUGFeRD.pdf` · Belege 2026-001 und 2026-009
+(Apple, `.eml`) · § 14 / § 14a / § 14b UStG · § 33 UStDV · § 13b UStG ·
+§ 147 AO · EN 16931 / XRechnung 3.0 (UBL 2.1) / ZUGFeRD 2.x (UN/CEFACT CII)
+
+*Head of Finance · 21.09.2026*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

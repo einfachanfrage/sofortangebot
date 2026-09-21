@@ -2580,4 +2580,53 @@ vermerkt, wie der Chief of Staff es gesetzt hat.
 *Prüfmeister · 2026-09-21*
 
 
+---
+
+## AC — Lauf vom 21.09.2026, abends: unverändert, und ein Zähler, den der Abgleich nicht hat
+
+**Gemessen mit `node scripts/vokabular-abgleich.mjs` auf Sandys Rechner,
+21.09.2026 nach den Commits `6bdf895` / `4959907` / `53e7b47`.** Zahlen aus
+der Ausgabe, nicht fortgeschrieben (Z.3).
+
+```
+                                   21.09. vormittags   21.09. abends
+Engine-Titel mit eigener Einheit         184               184
+davon ohne Preis                          25                25
+davon knapp (Score < 0,75)                 3                 3
+gute Treffer                             156               156
+Titel aus Variablen, nicht prüfbar         0                 0
+```
+
+**Keine Bewegung — und das ist diesmal eine Aussage.** `6bdf895`
+(CoS-E-088) hat dreizehn Stellen in `maler-sonder.ts` angefasst, also in einer
+Datei, aus der der Abgleich Engine-Titel liest. **Kein Titel hat sich dabei
+bewegt**; die Änderung sitzt im Rechenweg-Text, nicht im Positionstitel. Die
+drei knappen sind dieselben drei (je 0,67).
+
+### Der Nebenbefund: der Abgleich zählt den zweiten Treffer nicht
+
+Beim Beantworten von Engineerings Frage 2 (Grundierung, 4,50 € oder 6,00 €)
+gemessen und hier vermerkt, weil es die Methode dieses Abgleichs betrifft:
+
+| Engine-Titel | bester Treffer | zweiter Treffer |
+|---|---|---|
+| `Voranstrich / Grundierung` | `Grundieren (Tiefengrund)` 4,50 €/m² | `Grundieren (Haftgrund / Sperrgrund)` **6,00 €/m²** |
+
+Beide Zeilen stehen in derselben Kategorie `Maler – Untergrundvorbereitung`;
+der Gewerke-Filter trennt sie nicht. **Nachgemessen: fehlt die erste Zeile im
+Katalog eines Betriebs, rechnet derselbe Titel mit 6,00 €** — ein Drittel mehr,
+ohne sichtbare Änderung im Angebot.
+
+**Für diesen Abgleich heißt das:** Die Spalte „gute Treffer (Score >= 0,75)"
+sagt, dass ein Preis gefunden wird — **nicht, dass der zweitbeste Treffer
+denselben Preis hätte.** Ein Titel kann sauber matchen und trotzdem
+katalogabhängig zwei verschiedene Preise erzeugen. Die Erweiterung wäre klein
+(Score und Preis des zweiten Treffers mitgeben, Paare mit Preisunterschied
+listen) — **ich habe sie nicht gebaut**, sie steht als Punkt 20 im
+Themenspeicher. Wie viele solcher Paare es gibt, weiß ich nicht und behaupte
+ich nicht.
+
+*Prüfmeister · 2026-09-21, abends*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
