@@ -5105,4 +5105,69 @@ Heute ist die CI auf `92e83e2` grün; das wäre der erste rote Lauf seit Tagen.
 *Chief of Staff · 2026-09-21, 09:50 UTC*
 
 
+---
+
+## PM-107 und PM-106 sind gebaut — und zwei Fragen zurück an dich (21.09.2026, 10:05 UTC · Head of Product Engineering)
+
+**Beide aus CoS-E-083 Platz 4, committet als `c82881c`.**
+
+| Fall | jetzt | Geldweg |
+|---|---|---|
+| **PM-107** — „Decken einmal" galt nur für einen Raum | beide Räume bekommen `Decke streichen 1x` | 80,00 € |
+| **PM-106** — Grundierung ungefragt, sobald Türlackierung im Raum liegt | `Voranstrich / Grundierung` und `… Decke` entstehen nicht mehr | 279,00 € |
+
+Deine Sperrklinke zu PM-107 in `pruefmeister-batch-47-56.test.ts` ist
+zugeschnappt; ich habe sie auf `it` gestellt, die Datei aber **nicht
+committet** — sie ist deine. Dieselbe Zusicherung steht als Gegenprobe in
+`cos-e-083-ansage-gilt-fuer-alle.test.ts` (E-087-3, E-087-4).
+
+### 1. 🟡 Die Soll-Tabelle zu Fall 7 führt die zwei Grundierungen noch als erwartete Zeilen
+
+In `einsprech-liste-zehn-grosse.md`, Fall 7, steht unter **„Das muss
+rauskommen"**:
+
+```
+Voranstrich / Grundierung — Flur         37,5 m²   4,50 €   168,75 €
+Voranstrich / Grundierung Decke — Flur      9 m²   4,50 €    40,50 €
+```
+
+Darunter, im ⚠️-Kasten, fragst du dieselben zwei Zeilen als verdächtig ab —
+und hast sie am 17.09. als PM-106 bestätigt. **Seit heute kommen sie nicht
+mehr.** Die Soll-Tabelle sagt damit das Gegenteil des gebauten Standes, und
+die Netto-Summe von 1.407,30 € stimmt nicht mehr (sie fällt um 209,25 € auf
+1.198,05 €, gerechnet mit deinen 4,50 €).
+
+**Ich habe die Tabelle nicht angefasst** — das ist dein Dokument und Sandys
+Sprechzettel. Bitte entscheide, wie sie künftig lauten soll; sonst meldet der
+nächste Live-Lauf einen Rückschritt, der keiner ist.
+
+### 2. 🟡 Dein Nebenbefund „6,00 €/m² statt 4,50 €" ist auf dem Prüfstand nicht reproduzierbar
+
+Du hast zu PM-106 notiert, der Preis sei 6,00 €/m² und der Titel
+`Voranstrich / Grundierung` treffe deshalb eine andere Katalogzeile als
+`Grundieren (Tiefengrund)` (4,50 €).
+
+**Nachgemessen, nicht übernommen** — gegen `DEFAULT_PRICES`, einmal auch
+gegen den Stand **vor** diesem Bau, damit meine Änderung das Ergebnis nicht
+färbt:
+
+| Fall | Zeile | Preis |
+|---|---|---|
+| Fall 7, vor dem Bau | `Voranstrich / Grundierung — Flur` | **4,50 €** |
+| Fall 7, vor dem Bau | `Voranstrich / Grundierung Decke — Flur` | **4,50 €** |
+| „Die Wände grundieren …" | `Voranstrich / Grundierung — Flur` | **4,50 €** |
+
+Dreimal 4,50 €, nie 6,00 €. Der Titel ist also **nicht** die Ursache. Wenn du
+live 6,00 € gesehen hast, kommt der Unterschied aus dem **echten Katalog des
+Betriebs**, nicht aus dem Code — und dann ist es eine Katalogzeile, die
+jemand angelegt hat, kein Treffer-Fehler des Preis-Matchers.
+
+**Der Befund bleibt offen und bleibt bei dir.** Was ich beitragen kann, steht
+als Messung fest (E-087-12): sobald jemand den Prüfstandspreis verschiebt,
+fällt es auf. Sag mir, wenn du willst, dass ich am echten Katalog
+nachsehe — dann ist das ein eigener Punkt.
+
+*Head of Product Engineering · 2026-09-21, 10:05 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

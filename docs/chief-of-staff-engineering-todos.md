@@ -11063,4 +11063,139 @@ misst. Die Bereinigung liegt beim Prüfmeister, ich habe sie ihm geschrieben.
 *Chief of Staff · 2026-09-21, 09:50 UTC*
 
 
+---
+
+## CoS-E-083 Platz 4 ist gebaut — PM-107 und PM-106, eine Ansage gilt für alles, was sie betrifft (21.09.2026, 10:05 UTC · Head of Product Engineering)
+
+**Committet als `c82881c`.** Drei Dateien, davon eine neue — **kein `git add`
+für Sandy nötig**, die neue Datei ist mit committet.
+
+### 1. Was jetzt anders herauskommt — an der Pipeline gemessen, nicht gerechnet
+
+| Fall | Diktat | vorher | jetzt | Geldweg |
+|---|---|---|---|---|
+| **PM-107** (Sandys Fall 9) | zwei Räume, „Wände zweimal und **Decken einmal** streichen" | Büro `Decke streichen 2x` · Besprechungsraum `1x` | **beide `1x`** | **80,00 €** zu viel, und zwei Anstrichzahlen für denselben Satz |
+| **PM-106** (Sandys Fall 7) | „Wände und Decke zweimal weiß. Die 4 Innentüren mit Zargen abschleifen, **grundieren** und weiß lackieren." | `Voranstrich / Grundierung` 37,50 m² **plus** `… Decke` 9,00 m² | **beide weg** | **279,00 €** ungefragt |
+
+**Gemessener Ausgangsstand meiner Datei: 5 rot / 6 grün** (E-087-11 war rot,
+weil *meine* Sollzahl falsch war — 37,50 m², nicht 39; korrigiert, bevor
+gebaut wurde). **Danach 12 grün.** Die sechs Kontrollen, die vorher wie
+nachher halten müssen, waren von Anfang an grün.
+
+### 2. Zwei Funde, eine Wurzel — und es ist dieselbe wie gestern
+
+Beide Male wird eine Ansage auf einen **Teil** des Auftrags angewandt statt
+auf den, den sie meint. Das ist wörtlich die Form von PM-079-B von gestern,
+und die Regel, die dort gilt, trägt hier ein zweites Mal:
+
+> **Nennt ein Satz keinen bekannten Raum, gilt er für das ganze Angebot.**
+
+* **PM-107:** `abschnittFuerRaum()` gibt einem Raum den Text von seinem Namen
+  bis zum nächsten Raumnamen. Der Schlusssatz „danach Wände zweimal und Decken
+  einmal streichen" gehört damit dem **zuletzt** genannten Raum — der erste
+  sieht ihn nie und fällt still auf den Standard 2x zurück. Jetzt: erst der
+  eigene Abschnitt, dann die allgemeinen Sätze, dann der Standard.
+* **PM-106:** Dieselbe Krankheit eine Ebene weiter — nicht Raum gegen Raum,
+  sondern **Bauteil gegen Fläche**. Das Wort „grundieren" galt den Türen;
+  unten kam nur an, *dass* es gefallen ist. Jetzt: nennt **jeder** Satz mit
+  dem Grundierwort ein anderes Bauteil (Tür, Zarge, Fenster, Heizkörper) und
+  **keine** Fläche, gilt der Auftrag dem Bauteil.
+
+**Beide Regeln sind absichtlich in die sichere Richtung gebaut.** Bei PM-107
+schlägt die raumeigene Ansage die allgemeine — sonst hätte die Reparatur nur
+die Richtung des Fehlers gedreht und „im Besprechungsraum zweimal" wäre ins
+Büro geblutet (PM-005). Bei PM-106 steht `every` und nicht `some`: sobald ein
+einziger Satz eine Fläche nennt („Wände grundieren, und die Türen auch"),
+bleibt die Grundierung stehen. Eine zu Unrecht **gelöschte** Grundierung wäre
+der teurere Fehler — dann fehlt bezahlte Arbeit im Angebot und es merkt
+niemand. Beide Gegenproben stehen als Zusicherung (E-087-6, E-087-11).
+
+### 3. 🟡 Die Lehre aus PM-103 hat diesmal eine Datei gespart
+
+Für „welcher Satz nennt welchen Raum?" gibt es das längst: `satz-raum.ts`,
+und die Datei sagt im Kopf selbst, warum — *„wer das je Auswertung neu
+nachbaut, baut es dreimal unterschiedlich falsch"*. Ich habe sie benutzt
+statt einen dritten Namensvergleich zu schreiben. Sie bringt die Namensgrenze
+(Namen unter drei Zeichen zählen nicht) mit, an der PM-103 gescheitert ist.
+
+**Bewusst auf Satzebene, nicht auf Teilsatzebene:** „Im Büro, Decke einmal."
+zerfällt am Komma in „Im Büro" und „Decke einmal" — der zweite Teil nennt
+keinen Raum und würde als allgemeine Ansage in jeden anderen Raum bluten.
+Ganze Sätze halten ihn dort, wo er hingehört.
+
+### 4. 🔴 Der Fund, der alle Rollen angeht — und er ist die zweite Hälfte von gestern
+
+Gestern habe ich gemeldet, **warum** die Git-Sperrreste entstehen. Heute die
+Folge davon, und die ist schlimmer:
+
+**Ein Commit mit eigenem `GIT_INDEX_FILE` lässt den Haupt-Index von `.git`
+stehen, wo er war.** Der Haupt-Index kennt danach den vorigen `HEAD`. Jede
+Datei, die so **neu** hinzugekommen ist, steht in `git status` als
+`D` — *gelöscht* — **und** gleichzeitig als `??`.
+
+**Gemessen, nicht vermutet:** Um 09:33 UTC standen
+`src/lib/briefpapier-fusszeile.ts` und
+`src/lib/__tests__/dc122-fusszeile.test.tsx` (beide vom Designer, beide in
+`HEAD`) genau so da. Nach meinem eigenen Commit um 10:04 stand meine neue
+Testdatei genauso da.
+
+**Warum das teuer ist:** Wer als Nächstes ohne eigenen Index committet,
+committet damit die **Löschung** dieser Dateien. Der Umweg, den wir alle
+gegen die Sperrdateien benutzen, legt also selbst eine Falle — und zwar für
+die jeweils nächste Rolle, nicht für die, die ihn benutzt hat.
+
+**Der Nachtrag, der fehlt, ist eine Zeile:** nach dem Commit einmal
+`git reset -q -- <die eigenen Pfade>` **ohne** `GIT_INDEX_FILE`. Der
+Arbeitsbaum wird dabei nicht angefasst, nur der Haupt-Index für genau diese
+Pfade nachgeführt. Für meine drei Dateien habe ich es gemacht;
+`git diff HEAD` ist für sie leer. **Die fremden Einträge habe ich in Ruhe
+gelassen** — ein `git reset` ohne Pfade würde die Vormerkungen anderer Rollen
+mitnehmen, und das ist nicht meine Entscheidung. **An den Chief of Staff
+geschrieben.**
+
+### 5. Prüfstand — voller Stand, in 12 Gruppen gefahren
+
+| Messung | Ergebnis |
+|---|---|
+| `npx tsc --noEmit`, ganzes Projekt | **0 Fehler** |
+| `npx eslint` auf die drei berührten Dateien | **0 Fehler** (23 Warnungen, byte-genau dieselbe Zahl wie in `HEAD` — gegengemessen) |
+| **Prüfstand über alle 195 Testdateien** | **2.915 grün · 97 Sperrklinken · 6 rot** (3.018 Prüfungen) |
+
+**Die 6 roten sind dieselben wie am 17.09. und nicht meine** — alle in
+`pruefmeister-batch-47-56.test.ts` (PM-098, PM-099), an fremder,
+uncommitteter Arbeit. **Die Sperrklinken sind von 98 auf 97 gefallen**: genau
+eine ist zugeschnappt, und zwar die zu PM-107 in derselben fremden Datei.
+
+**Uncommittet geblieben, mit Absicht — wie gestern:** ich habe die
+zugeschnappte Sperrklinke in `pruefmeister-batch-47-56.test.ts` von
+`it.fails` auf `it` gestellt (sonst meldet die Datei einen Fehler, den es
+nicht gibt), die Datei aber **nicht** committet. Fremde Arbeit, fremder
+Commit. Dieselbe Zusicherung steht doppelt in **meiner** Datei (E-087-3,
+E-087-4) — ein Fix, dessen einziger Nachweis in einer fremden Datei hängt,
+ist nicht abgesichert.
+
+### 6. Zwei Fragen an den Prüfmeister — beide in seiner Datei
+
+Keine davon hält etwas auf, beide gehören ihm und nicht mir: die
+Soll-Tabelle zu Fall 7 führt die zwei Grundierungen noch als erwartete
+Zeilen, und sein Nebenbefund „6,00 €/m² statt 4,50 €" ist auf dem Prüfstand
+nicht reproduzierbar.
+
+### 7. Für Sandy
+
+**Code geändert — der Testlauf steht aus.** Ich habe ihn hier gefahren,
+starten kannst ihn nur du. **Kein `git add` nötig.**
+
+### 8. Nächster Punkt
+
+Die Reihenfolge des Chief of Staff, jetzt ab Platz 5: **PM-105** (zwei Türen,
+eine Übergangsschiene — Kleinkram, billig zu bauen) → die
+**Bemessungsgrundlage der fünf Erschwerniszuschläge** (CoS-E-083 §3, seit
+17.09. freigegeben) → **CoS-038 → PM-119/L-06 → CoS-E-080**. **CoS-E-086**
+(Beleg je Position — eine Antwort, kein Bau) hänge ich weiterhin hinter
+PM-105.
+
+*Head of Product Engineering · 2026-09-21, 10:05 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
