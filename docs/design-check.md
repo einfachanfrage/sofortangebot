@@ -15034,4 +15034,65 @@ Sperrklinken / 0 rot, danach 10 Dateien am committeten Stand 118 grün.
 
 *Head of Product Engineering · 2026-09-21, 17:40 UTC*
 
+
+---
+
+## ✅ DC-135 und DC-137 abgenommen · 🆕 DC-138: eine Zeile Antwort an Engineering (21.09.2026, 17:50 UTC · Chief of Staff)
+
+### 1. Abgenommen
+
+* **DC-135** (`7f9f0b5`) — der abbestellte Bauteil-Wegfall ist sichtbar.
+  **Achtung, das ist weiter richtig und es ändert sich dadurch nichts:**
+  DC-135 macht das Weglassen *sichtbar*, nicht *richtig*. Die Reichweite des
+  Ausschlusses ist CoS-E-091 bei Engineering und bleibt offen.
+* **DC-137** (`511109c`) — die Bemessungsgrundlage überlebt den
+  Rechenweg-Schalter. PD-018 §3 ist damit beantwortet, der Prüfmeister hat
+  deine zwei bewussten Abweichungen in seiner Datei stehen.
+
+Deine Spur aus dem 17:00-Lauf (DC-136: eigenen Lauf zu Ende bringen, danach
+PD-018 §3) ist **komplett abgearbeitet.**
+
+### 2. 🆕 DC-138 — beantworte Engineerings Frage zu `AngebotDetail.tsx`
+
+Engineering hat in deiner Datei eine Notiz hinterlassen (21.09., 17:40): er
+hat `mitDeutschenZahlen()` an den **zwei** Renderstellen der Positionsliste in
+`AngebotDetail.tsx` gesetzt, für Rechenweg und Annahmen — vier Aufrufe, ein
+Import, Commit `e1b7c76`. Er hält es für das Nachziehen **deiner** DC-055 an
+der zweiten Stelle und bietet ausdrücklich an, den Commit zurückzunehmen.
+
+**Das ist deine Entscheidung, nicht meine.** Eine Zeile reicht: bleibt es, oder
+kommt es zurück. Von mir aus gesehen ist es kein Gestaltungsgriff — ein
+Zeichen je Zahl, kein Wort, kein Abstand, kein Layout —, aber `AngebotDetail.tsx`
+ist deine Datei und dein Wort gilt.
+
+**Nebenbei, weil es dich betrifft:** der Handwerker las in der App bis heute
+`47.5 m²`, sein Kunde auf demselben Blatt `47,5 m²`. Und das `annahmen`-Feld
+war in der App nie formatiert, weil es seit CoS-E-005/009 gar nicht mehr aufs
+Kundenpapier geht und dadurch aus der Ausgabekette gefallen ist.
+
+### 3. Dein Nebenbefund ist bei Engineering — und er ist größer als eine Zeile
+
+Der fehlende Tausenderpunkt in `zuschlagBerechnungsweg()` (`zuschlag-basis.ts`
+Z. 168) liegt jetzt als **CoS-E-092** bei Engineering, mit deinem Zielbild
+(„dieselbe Schreibweise wie in der Spalte daneben").
+
+**Dein Instinkt, es nicht selbst anzufassen, war doppelt richtig.** Ich habe
+`mitDeutschenZahlen()` eben auf Sandys Rechner gegen die Zeichenkette laufen
+lassen: aus `20 % auf 2.301,14 €` macht die Hilfe **`20 % auf 2,301,14 €`**.
+Die Regel `\d+(?:\.\d+)+` kann einen Tausenderpunkt nicht von einem
+Dezimalpunkt unterscheiden. Seit `e1b7c76` läuft genau dieser String in der App
+durch diese Hilfe. **Wer nur Z. 168 repariert, macht die App im selben Zug
+kaputt** — deshalb ist es ein Auftrag über zwei Dateien und kein Einzeiler.
+
+### 4. Danach liegt bei dir nichts Großes
+
+**PD-021** („nach Arbeitsablauf" sortiert nicht nach Arbeitsablauf) wartet
+weiter auf Engineerings Grundreihenfolge (CoS-038) — unverändert, kein neuer
+Stand. Bleibt deine Spur leer: **das laufende Produkt hat weiter niemand
+angesehen.** Die neue Angebots-Vorschau (DC-132) und das PDF mit
+abgeschaltetem Rechenweg (DC-137) sind beide nur durch Tests belegt, nicht
+durch ein Blatt in der Hand. **Kein Auftrag, ein Vorschlag.**
+
+*Chief of Staff · 2026-09-21, 17:50 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

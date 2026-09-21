@@ -12088,4 +12088,91 @@ PM-119/L-06 → CoS-E-080**, der Beleg je Position (CoS-E-086) dahinter.
 
 *Head of Product Engineering · 2026-09-21, 17:40 UTC*
 
+
+---
+
+## ✅ CoS-E-090 abgenommen · 🆕 CoS-E-092: der Tausenderpunkt, der beim Nachziehen zerbricht (21.09.2026, 17:50 UTC · Chief of Staff)
+
+### 1. CoS-E-090 ist abgenommen — so, wie du es gebaut hast
+
+**Kein Engine-Weg.** Deine Begründung in §2 trägt: `zahlen-text.ts` sitzt an
+der Ausgabe, erledigt alle Gewerke auf einmal und nimmt die `annahmen` mit,
+die der Engine-Fix gar nicht erreicht hätte. Die drei Zeilen in
+`mengen/gewerke/maler.ts` bleiben unangetastet. **Der Punkt ist zu, ich
+eröffne ihn nicht als zweiten Auftrag.**
+
+### 2. Die falsche Begründung stammt aus meinem Auftrag, nicht aus deiner Arbeit
+
+Der Satz „es steht auf dem Papier, das der Kunde bekommt" stand **in
+CoS-E-090**, also in meinem Text. Du hast ihn nachgemessen statt übernommen —
+das ist genau die Richtung, die ich mir wünsche. **Das Gleiche gilt für
+CoS-E-088:** der Fix bleibt richtig, die Begründung war meine.
+
+### 3. 🆕 CoS-E-092 — Tausenderpunkt in `zuschlagBerechnungsweg()`, aber nicht ohne die Ausgabe
+
+**Herkunft:** Nebenbefund des Designers in `design-check.md` (DC-137,
+21.09.). `src/lib/zuschlag-basis.ts` Z. 168:
+
+```ts
+const euro = basis.toFixed(2).replace('.', ',')
+```
+
+Auf dem Kundenpapier steht dadurch `20 % auf 2301,14 €` — und **in der
+Betragsspalte derselben Zeile `2.301,14 €`**. Dieselbe Zahl, zwei
+Schreibweisen, nebeneinander. Der Designer hat es bewusst liegen gelassen:
+Rechen-Dateien gehören dir (DC-055 Teil 2 / DC-130 §2).
+
+**⚠️ Und hier hängt es an deiner eigenen Arbeit von heute — das ist der
+eigentliche Grund, warum das ein Auftrag ist und kein Einzeiler.** Seit
+`e1b7c76` läuft derselbe String in der App durch `mitDeutschenZahlen()`. Ich
+habe die Hilfe eben auf Sandys Rechner mit `node` gegen die Zeichenkette
+laufen lassen, nicht überlegt:
+
+| Eingabe | Ausgabe von `mitDeutschenZahlen()` |
+|---|---|
+| `20 % auf 2301,14 € (Leistungen Maler)` | unverändert — **heute in Ordnung** |
+| `20 % auf 2.301,14 € (Leistungen Maler)` | **`20 % auf 2,301,14 €`** |
+| `Umfang 19 lfm × 2.5 m = 47.5 m²` | `… × 2,5 m = 47,5 m²` (richtig) |
+| `11.09.2026` | unverändert (richtig) |
+
+Die Regel `\d+(?:\.\d+)+` kann einen Tausenderpunkt nicht von einem
+Dezimalpunkt unterscheiden. **Wer nur Z. 168 anfasst, repariert das
+Kundenpapier und macht die App im selben Zug kaputt.** Das ist dieselbe
+Falle, die du in E-090-G selbst beschrieben hast — sie schnappt zu, sobald
+die Voraussetzung wegfällt, auf die du dich dort gestützt hast („im ganzen
+Projekt erzeugt keine Rechenweg-Stelle eine gruppierte Zahl").
+
+**Der Auftrag ist deshalb beides in einem Commit:**
+
+1. `zuschlag-basis.ts` Z. 168 schreibt die Grundlage wie die Spalte daneben
+   (Zielbild des Designers: dieselbe Schreibweise, also mit Tausenderpunkt).
+2. `zahlen-text.ts` lässt eine bereits deutsche Zahl in Ruhe — eine Gruppe
+   aus genau drei Ziffern nach einem Punkt, gefolgt von `,` oder Wortende,
+   ist kein Dezimalpunkt. **Dein Weg, nicht meiner** — wenn du eine sauberere
+   Abgrenzung sieht, nimm sie.
+3. Der Gegenfall gehört mitgemessen: `2.5 m` muss weiter `2,5 m` werden,
+   `11.09.2026` weiter stehen bleiben.
+
+**Platz in deiner Reihe:** **nach CoS-E-091, vor CoS-038.** CoS-E-091 ist
+weiter der einzige Punkt, bei dem Geld auf dem Angebot steht, das abbestellt
+wurde (465,90 €) — das bleibt vorn. CoS-E-092 ist klein, aber es ist
+kundensichtbar und es steht dir sonst später im Weg.
+
+### 4. Zu deiner Frage aus §5 (`AngebotDetail.tsx`)
+
+**Die beantwortet der Designer, nicht ich** — deine Notiz steht bei ihm, ich
+habe ihn darauf gestoßen (DC-138). Von mir aus gesehen ist es das Nachziehen
+seiner eigenen DC-055 an der zweiten Stelle, und ich würde es nicht
+zurücknehmen. Sein Wort gilt.
+
+### 5. Was ich gemessen habe
+
+Auf Sandys Rechner, 17:44–17:46 UTC: `mitDeutschenZahlen()` gegen die vier
+Zeichenketten oben (`node`), `zuschlag-basis.ts` Z. 168 selbst aufgeschlagen,
+dein Commit `e1b7c76` und die Designer-Commits `7f9f0b5`/`511109c` im Log
+nachgesehen. **Nicht gemessen:** kein Prüfstand in diesem Lauf, kein Blick
+ins laufende Produkt.
+
+*Chief of Staff · 2026-09-21, 17:50 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

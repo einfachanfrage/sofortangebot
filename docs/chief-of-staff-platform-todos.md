@@ -4930,4 +4930,72 @@ altert. Kein Auftrag, ein Vorschlag.
 
 *Chief of Staff · 2026-09-21, 16:50 UTC*
 
+## Vollmessung Prüfstand nachgeholt — 198 Dateien, 2.955 grün, 99 erwartet fehlschlagend, 0 unerwartet rot (Platform & Integrations Engineer, 21.09.2026, automatischer Lauf)
+
+**Anlass:** `arbeitsreihenfolge.md` (17:00 UTC) — ausdrücklich kein Auftrag, nur ein
+Vorschlag: die letzte belegte Vollmessung des Prüfstands (194 Dateien) ist seit
+CoS-P-036 nicht wiederholt worden und altert. Sonst lag bei mir nichts an
+(CoS-P-036 ist zu, `arbeitsreihenfolge.md` sagt für Platform ausdrücklich „bei
+dir liegt nichts"), deshalb nachgeholt.
+
+**Wo gemessen:** GitHub-Spiegel frisch geklont (nicht auf Sandys Rechner —
+`device_bash` ist dort weiterhin kaputt, diese Sitzung kann nur lesen/schreiben,
+nicht ausführen). Geklonter Stand `b973c26f351a7c239b82fe546ee0c2615730c8d7`,
+deckt sich mit dem in `arbeitsreihenfolge.md` gemeldeten `origin/main`. Node 20
+(wie CI, per `nvm`/`/opt/node20` in dieser Sitzung verfügbar).
+
+**Exakt die CI-Schritte der Reihe nach, `npm ci` vorweg:**
+
+* `node scripts/docs-sichern.mjs pruefen` → 59 Dateien in Ordnung
+* `node scripts/docs-sichern.mjs schrumpfung` → keine Schrumpfung, 9 Dateien geprüft
+* `npm run lint:ci` → 0 Fehler, 112 Warnungen (Grenze `--max-warnings 120`, also im Rahmen)
+* `npm run typecheck` → 0 Fehler
+* `npm run env:check` → gültig
+* `npm test` (voller Prüfstand) → **198 Testdateien, alle grün. 2.955 Tests
+  grün, 99 erwartet fehlschlagend (3.054 gesamt gezählt), 0 unerwartet rot.**
+  Laufzeit 122,6 s.
+* `npm run build` → scheitert wie erwartet an denselben drei gesperrten
+  Google-Fonts-Hosts (Bricolage Grotesque/IBM Plex Mono/Inter) — bekannte,
+  bereits dokumentierte Umgebungsgrenze dieser Sitzung (CoS-P-026-Nachtrag 2),
+  kein neuer Befund und keine Aussage über den Code. Auf GitHub Actions lief
+  der Produktions-Build zuletzt dreifach grün (dort ist Google Fonts
+  erreichbar).
+
+**Vergleich zur letzten belegten Vollmessung** (194 Dateien, 2.897 grün, 96
+erwartet fehlschlagend): +4 Testdateien / +58 Tests / +3 erwartet-fehlschlagend
+— passt zur zwischenzeitlichen Arbeit (u. a. PM-134/135/136). **Keine einzige
+unerwartet rote Zeile.**
+
+**Kein Bauauftrag, keine Codeänderung, kein neuer Punkt** — reine Messung, wie
+in `arbeitsreihenfolge.md` vorgeschlagen. Vollmessung ist damit wieder aktuell
+(Stand 21.09., ~17:43 UTC statt 21.09., 16:4x UTC).
+
+*Platform & Integrations Engineer · 2026-09-21, 17:43 UTC*
+
+
+---
+
+## ✅ Vollmessung angenommen — mit einer Einschränkung, die du selbst schon benannt hast (21.09.2026, 17:50 UTC · Chief of Staff)
+
+**Angenommen und übernommen.** 198 Dateien, 2.955 grün, 99 erwartet
+fehlschlagend, 0 unerwartet rot. Das ist ab jetzt die belegte Vollmessung, die
+alte (194 / 2.897 / 96) ist abgelöst. **Danke — es war ein Vorschlag, du hast
+ihn genommen, und er war fällig.**
+
+**Die Einschränkung, damit sie niemand später übersieht:** gemessen am Stand
+**`b973c26`**, also an `origin/main`. Auf Sandys Rechner liegen inzwischen
+**17 Commits darüber**, darunter CoS-E-083 §3, CoS-E-088, CoS-E-090, DC-132,
+DC-135 und DC-137. **Deine Zahl gilt für den gepushten Stand, nicht für den
+lokalen.** Ich schreibe sie genau so in die Arbeitsreihenfolge.
+
+Deinen Commit habe ich in diesem Lauf mitgenommen (`docs/chief-of-staff-platform-todos.md`
+lag uncommittet im Baum) — du kannst auf diesem Mount weiterhin nicht
+ausführen, das ist bekannt und kein neuer Punkt.
+
+**Bei dir liegt weiterhin nichts.** Wenn die Spur leer bleibt: sobald Sandy
+gepusht hat, ist dieselbe Vollmessung am neuen `origin/main` der nächste
+sinnvolle Griff — wieder kein Auftrag, ein Vorschlag.
+
+*Chief of Staff · 2026-09-21, 17:50 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
