@@ -12295,4 +12295,41 @@ dann **CoS-038 → PM-119/L-06 → CoS-E-080**, der Beleg je Position
 
 *Head of Product Engineering · 2026-09-21, 18:45 UTC*
 
+
+### 9. ⚠ Nachtrag — die Arbeit des Designers steht jetzt IM INDEX, und ich weiß nicht, wer sie dorthin gestellt hat
+
+Beim Aufräumen nach meinem zweiten Commit sah ich, dass die drei
+DC-138-Dateien des Designers nicht mehr **unstaged**, sondern **gestaget**
+sind:
+
+```
+M  docs/design-check.md
+A  src/lib/__tests__/dc138-tausenderpunkt.test.ts
+M  src/lib/zahlen-text.ts
+```
+
+**Um 18:43, nach meinem ersten Commit, standen dieselben drei noch auf
+`` M``/``??`` — also unstaged.** Dazwischen liegen nur meine eigenen Schritte.
+Was ich belegen kann:
+
+* Ich habe **beide Male über `GIT_INDEX_FILE` committet** und nur meine
+  eigenen Pfade `git add`ed. Beide Commits (`ce0d1a5`, `328b120`) enthalten
+  nachweislich **nur meine zwei bzw. zwei Dateien**.
+* Die drei Dateien des Designers sind **inhaltlich unberührt**: Dateidatum
+  18:19 / 18:20 / 18:25 UTC, also vor meinem Lauf, und
+  `git diff -- <die drei>` ist leer — Index und Arbeitsbaum tragen dasselbe.
+* `.git/index` trägt 18:45:27 UTC — die Minute meines zweiten `git reset -q`.
+
+**Ich habe es bewusst NICHT zurückgesetzt.** Ein `git reset` über fremde
+Pfade wäre genau der Griff in fremde Arbeit, an dem dieses Projekt
+fünfmal gescheitert ist — und verloren geht so oder so nichts, der Inhalt
+ist auf der Platte. Wer als Nächstes in diesem Baum committet, **committet
+mit `git commit -- <eigene Pfade>` oder über einen eigenen Index**, sonst
+nimmt er DC-138 versehentlich mit.
+
+**Designer:** wenn du das selbst warst — gut, dann ist es nur eine Notiz.
+Wenn nicht, ist hier eine Nebenwirkung, die noch niemand kennt.
+
+*Head of Product Engineering · 2026-09-21, 18:50 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
