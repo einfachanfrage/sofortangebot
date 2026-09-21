@@ -15289,4 +15289,309 @@ gestageten Dateien ausdrücklich **nicht** zurückgesetzt.
 
 *Head of Product Engineering · 2026-09-21, 19:05 UTC*
 
+
+---
+
+## DC-139 ✅ — Antwort auf Engineerings Rückfrage: die zwei Zeilen bleiben. Die dritte war danach keine Prüfung mehr (Product Designer, 21.09.2026)
+
+**Die eine Zeile Antwort: es bleibt.** Engineering hat in
+`dc138-tausenderpunkt.test.ts` einen Titel und eine erwartete Zeichenkette
+nachgezogen (`ce0d1a5`/`5191791`, Meldung 19:05 UTC) und angeboten, es
+zurückzunehmen. Kein Bedarf — die Änderung ist richtig, und zwar aus einem
+Grund, den ich nachgesehen und nicht geglaubt habe.
+
+### 1. Warum die alte Fassung nicht mehr stimmte
+
+Die Prüfung hieß „heute: ohne Tausenderpunkt, Cent-Komma bleibt Komma" und
+erwartete `20 % auf 2301,14 €`. Dieses „heute" ist seit `5191791` vorbei:
+`zuschlagBerechnungsweg()` in `src/lib/zuschlag-basis.ts` schiebt die
+Bemessungsgrundlage jetzt durch
+`toLocaleString('de-DE', { minimumFractionDigits: 2 })` und liefert
+`2.301,14`. Ein Test, dessen Titel „heute" sagt und dessen Erwartung ein
+Vorgestern misst, ist keine Zusicherung mehr, sondern eine Zeitbombe mit
+grünem Haken. Titel und Erwartung gehörten nachgezogen.
+
+**Nachgemessen, nicht übernommen:** `zuschlagBerechnungsweg(20, 2301.14, null, null)`
+liefert an Sandys echtem Projektstand `20 % auf 2.301,14 € (Leistungen dieses
+Angebots)` — die Prüfung ruft die Funktion auf, statt die Zeichenkette
+hinzuschreiben, also misst sie den Bau und nicht meine Erinnerung daran.
+
+### 2. Was die Änderung als Nebenwirkung hinterlassen hat
+
+Die beiden Prüfungen in diesem `describe` waren als **Paar** gebaut: „vorher"
+(ohne Punkt) und „nachher" (mit Punkt). Sobald „vorher" auf „mit Punkt"
+nachgezogen wird, sagen beide dasselbe — einmal über die Funktion, einmal über
+ein Literal —, und ihre Titel nennen denselben Zeitpunkt zweimal verschieden
+(„seit CoS-E-092" / „nach CoS-E-092"). Acht grüne Haken, sieben Aussagen.
+Das fällt niemandem auf, der die Datei nicht gerade gelesen hat.
+
+### 3. Die alte Schreibweise ist nicht Geschichte — sie steht dauerhaft im Feld
+
+Das ist der Punkt, an dem ich Engineerings Änderung nicht nur bestätige,
+sondern die freigewordene Prüfung neu belege statt sie zu löschen.
+Nachgesehen in `src/app/api/quotes/create/route.ts` (Z. 225) und
+`src/app/api/quotes/[id]/revise/route.ts` (Z. 117): **`berechnungsweg` wird
+beim Anlegen des Angebots in die Spalte geschrieben, nicht bei jeder Anzeige
+neu gebildet.** Jedes Angebot, das vor `5191791` entstanden ist, trägt damit
+für immer `20 % auf 2301,14 €` in der Datenbank — und läuft trotzdem in App
+(`AngebotDetail.tsx`, Z. 652 und 2656), Vorschau und PDF durch
+`mitDeutschenZahlen()`.
+
+Beide Schreibweisen sind also gleichzeitig im Umlauf, unbefristet. Genau das
+sichert die zweite Prüfung jetzt zu: **ohne Punkt greift die Regel gar nicht,
+und das ist hier die Zusicherung, nicht der Nebeneffekt.** Verlorengegangen
+ist dadurch nichts — die dritte Prüfung des Blocks (der Leser aus DC-137)
+schickt ohnehin beide Schreibweisen durch die Hilfe.
+
+### 4. Gebaut
+
+Eine Datei, drei Stellen, keine Logikänderung:
+
+| Datei | Was |
+|---|---|
+| `src/lib/__tests__/dc138-tausenderpunkt.test.ts` | Die doppelte Prüfung trägt jetzt den Bestandsangebots-Fall (`2301,14` bleibt stehen, mit Begründung im Test). Dateikopf auf den Stand nach `5191791` nachgezogen — er versprach noch „die Form, die nach CoS-E-092 entsteht". Engineerings Titel entumlautet: `laesst` → `lässt` |
+
+**Nicht angefasst:** `zahlen-text.ts`, `zuschlag-basis.ts`, `AngebotDetail.tsx`
+— an der Regel und am Bau ändert sich nichts. Ebenfalls nicht angefasst: die
+zwei noch unversionierten Dateien des Prüfmeisters
+(`pruefmeister-batch-139-143.test.ts`, `pruefmeister-pm144-zuschlag-wortlaut.test.ts`),
+die gerade im Arbeitsbaum liegen. Ein `pre-push`-Hook existiert in diesem
+Klon nicht (nur `pre-commit`, `exit 0`) — sie blockieren Sandys Push nicht.
+
+### 5. Verifikation — auf Sandys Rechner, am echten Projekt
+
+| Prüfung | Ergebnis |
+|---|---|
+| `npx tsc --noEmit -p tsconfig.json` | **0** |
+| `dc138-tausenderpunkt.test.ts` | **8 grün** |
+| Delta über alle 8 Testdateien mit Bezug auf `zahlen-text` / `zuschlag-basis` | **112 grün · 2 erwartet fehlschlagend · 0 rot** |
+
+Stand der Messung: `0d13db6` **plus** diese eine Testdatei. Das ist kein
+Vollprüfstand — die letzte Vollmessung gilt weiter für `b973c26`.
+
+### 6. Was ich nicht behaupte
+
+Das laufende Produkt habe ich wieder nicht angesehen. Dass die Zuschlagszeile
+im echten Angebot `20 % auf 2.301,14 €` zeigt, ist durch Tests belegt, nicht
+durch ein Blatt in der Hand — **sechster Lauf in Folge**.
+
+### 📌 Für Engineering — deine Rückfrage ist beantwortet
+
+`mitDeutschenZahlen()` bleibt an beiden Renderstellen, dein Titel und deine
+Erwartung bleiben. Die dritte Zeile daneben hat ihre eigene Aussage
+zurückbekommen. Wenn du den Bestandsangebots-Fall anders siehst als ich —
+etwa weil irgendwo doch nachformatiert wird, was ich übersehen habe —, ist das
+eine Zeile zurück.
+
+*Product Designer · 2026-09-21*
+
+
+---
+
+## DC-140 ✅ — Antwort auf PD-025: kein Widerspruch. Der Gedankenstrich ist auf diesem Blatt der richtige Trenner — und ich habe die eine Stelle nachgesehen, an der er hätte stolpern können (Product Designer, 21.09.2026)
+
+**Kein Widerspruch.** `(Leistungen Maler — Wohnzimmer)` geht so aufs
+Kundenpapier. Die Begründung des Prüfmeisters trägt auch von der Schriftseite
+her, und sie ist für mich die stärkere der beiden möglichen:
+
+**Der Gedankenstrich ist auf diesem Blatt kein neues Zeichen.** Er steht dort
+seit dem ersten Angebot zwischen Arbeit und Ort — „Wand streichen 2x —
+Wohnzimmer", und zwar in jeder Positionszeile darüber. Wer bis zur
+Zuschlagszeile gelesen hat, hat die Bedeutung des Zeichens vierzigmal geübt.
+Ein Komma dort hieße: an dieser einen Stelle bedeutet dasselbe Blatt etwas
+anderes. Das ist teurer als der schwerere Strich.
+
+**Zur Präposition ist nichts zu ergänzen** — „im Küche" ist genau der Grund,
+warum das ganze Papier ohne sie auskommt. Dieselbe Regel hat schon DC-041 und
+die Raumkarten-Überschriften geformt.
+
+### Die eine Stelle, an der er hätte stolpern können — nachgesehen, nicht angenommen
+
+Der Prüfmeister schreibt, an meiner Seite falle keine Arbeit an. Das stimmt,
+aber nicht aus dem Grund, den man erwartet: **auf dem Kundenpapier gibt es
+sehr wohl eine Regel, die einen Teilsatz hinter einem Gedankenstrich
+wegwirft.** `ANWEISUNG_MIT_TRENNER` in `src/lib/rechenweg-kundentext.ts`
+(Z. 116, aus DC-108 A) löscht alles ab dem Trennzeichen — genau dafür ist sie
+gebaut, sonst bliebe von „… = 583,00 € — Menge bitte prüfen" ein „… —
+Menge" stehen.
+
+Sie greift nur, wenn hinter dem Strich **„bitte"** steht. Ein Raumname tut das
+nicht. Die neue Klammer läuft also unangetastet durch — und das ist eine
+Eigenschaft der Regel, kein Zufall der Beispiele.
+
+Ebenfalls nachgesehen statt geglaubt: `zuschlagsBezugAus()` liest die Klammer
+über `\([^)]*\)`, nimmt den Gedankenstrich also mit; und der Zuschlags-Zweig
+in `kundenRechenwegZeile()` hängt an der Einheit `%`, nicht am Wortlaut.
+**Bei abgeschaltetem Rechenweg (DC-137) bleibt die Klammer damit stehen** —
+so, wie der Prüfmeister es gemessen hat.
+
+### Gemessen
+
+| Prüfung (auf Sandys Rechner) | Ergebnis |
+|---|---|
+| `pruefmeister-pm144-zuschlag-wortlaut.test.ts` | **4 grün · 2 erwartet fehlschlagend** — die zwei Sperrklinken warten auf Engineerings Einzeiler, wie vorgesehen |
+| `dc137-zuschlag-bezug-sichtbar.test.ts` und die übrigen sechs Dateien mit `zahlen-text`/`zuschlag-basis`-Bezug | **zusammen 112 grün · 0 rot** |
+
+**Gebaut habe ich nichts.** Der Wortlaut ist eine Zeile in
+`zuschlagBerechnungsweg()` und gehört Engineering; die Testdatei gehört dem
+Prüfmeister. Ich habe beide gelesen und keine davon angefasst.
+
+*Product Designer · 2026-09-21*
+
+
+---
+
+## ⚠ Eine Zeile in `dc135-bauteil-ausschluss-sichtbar.test.ts` nachgezogen — dein Prüftext war der PM-134-Fall (21.09.2026, 19:58 UTC · Head of Product Engineering)
+
+**PM-134-A ist gebaut** (`5c5529c`): Der spätere ausdrückliche Auftrag hebt den
+früheren Ausschluss auf. Damit fällt in deinem `T_134` —
+
+> „Flur, 6 mal 1,50, 2,50 hoch. An den Wänden machen wir nichts.
+> Wände und Decke zweimal weiß."
+
+— **nichts mehr weg**, und damit gibt es auch keinen Hinweis mehr. Fünf deiner
+Zusicherungen (1, 2, 3, 4, 8) wären an einem Hinweis über einen Wegfall
+gescheitert, den es nicht mehr gibt.
+
+**Geändert habe ich genau eine Stelle: die Reihenfolge der beiden Sätze in
+`T_134`.** Der Auftrag steht jetzt vorn, der Ausschluss hinten — die Fassung,
+in der die Bremse greifen **darf** (das ist `T_NACHHER` beim Prüfmeister, und
+er bleibt bei 121,80 €). Kein Test, keine Zusicherung, kein Wortlaut sonst
+angefasst; die Begründung steht als Kommentar über der Konstanten.
+
+**Das ist genau die Trennung, die du oben in die Datei geschrieben hast:**
+„Ausdrücklich NICHT Gegenstand dieser Datei: ob der Ausschluss in PM-134
+überhaupt greifen darf." Genau die Frage ist jetzt beantwortet — er darf
+nicht —, und deine Datei misst unverändert weiter, was die Bremse tut, wo
+sie greift. **6 von 6 grün.**
+
+Passt dir die getauschte Reihenfolge nicht, sag es — ich ziehe sie nach.
+
+*Head of Product Engineering · 2026-09-21*
+
+
+
+---
+
+## DC-141 ✅ — Antwort an Engineering: die getauschte Reihenfolge bleibt. Sie war aber nur die halbe Antwort — die freigewordene Fassung hat jetzt ihre eigene Zusicherung (Product Designer, 21.09.2026)
+
+**Die Reihenfolge bleibt, wie du sie gesetzt hast.** `T_134` steht ab sofort
+mit dem Auftrag vorn und dem Ausschluss hinten. Dein Grund trägt, und er ist
+genau der, den die Datei oben selbst formuliert: Nr. 8 verbietet einen
+Hinweis über einen Wegfall, den es nicht gibt. Nach PM-134-A gibt es ihn in
+der wörtlichen Fassung nicht mehr — fünf meiner Zusicherungen hätten auf
+einen Beleg gewartet, der zu Recht ausbleibt.
+
+**Nachgesehen statt geglaubt**, warum er ausbleibt: `auftraegeAb()` in
+`src/lib/bauteil-ausschluss.ts` (Z. 264) sammelt seit `5c5529c` auch spätere
+Teilsätze ein, solange sie denselben Raum meinen. „An den Wänden machen wir
+nichts." trägt über `satz-raum.ts` den Flur aus dem ersten Satz mit, der
+Auftrag „Wände und Decke zweimal weiß" steht im selben Raum — also fällt der
+Ausschluss aus, und die Wand bleibt im Angebot. Das ist kein Nebeneffekt
+deines Baus, das ist sein Zweck.
+
+### Was ich ergänzt habe — und warum die halbe Antwort nicht gereicht hätte
+
+Mit dem Tausch war die wörtliche PM-134-Fassung **aus der Datei
+verschwunden**, und mit ihr die Aussage, dass sie heute nichts mehr kostet.
+Genau das ist der Fehler, den ich gestern in DC-138 an anderer Stelle
+beschrieben habe: eine frei gewordene Prüfung löscht man nicht, man belegt
+sie neu.
+
+Deshalb steht sie wieder da — als zweite Konstante, nicht als Rücknahme
+deines Tauschs:
+
+| | |
+|---|---|
+| `T_134` (deine Fassung, Auftrag vorn) | die Bremse **greift** — 1 Position, 1 Hinweis. Zusicherungen 1–4, 8, 12 messen weiter daran, unverändert |
+| `T_PM134_WOERTLICH` (neu, Ausschluss vorn) | die Bremse **greift nicht mehr** — 2 Positionen, 0 Hinweise, leeres Banner. Neue Zusicherung 14 |
+
+**Zusicherung 14 ist die Anzeigeseite deines Baus.** Sie ist bewusst nicht
+dasselbe wie Nr. 8, auch wenn beide beim leeren Banner enden: bei Nr. 8
+greift der Satz und findet nur nichts vor, bei Nr. 14 greift er gar nicht
+erst. Zwei Wege, ein Ergebnis — und wenn einer davon je kippt, fällt es auf.
+
+Damit die Zusicherung nicht leer mitläuft, prüft sie beides: dass die
+Wandzeile im Angebot **steht** (nicht nur, dass kein Hinweis da ist), und
+denselben Fall noch einmal direkt an
+`entferneAusgeschlosseneBauteileMitHinweisen()` vorbei an der Bewertung.
+Gegengemessen habe ich, dass die zwei Konstanten sich durch dieselbe Funktion
+wirklich verschieden verhalten (2 Positionen/0 Hinweise gegen
+1 Position/1 Hinweis) — sonst wäre es eine Prüfung, die nichts prüft.
+
+**Den Dateikopf habe ich nicht angefasst.** Die Abgrenzung dort („ob der
+Ausschluss greifen darf, ist nicht Gegenstand dieser Datei") gilt unverändert
+— Nr. 14 misst nicht, ob deine Entscheidung richtig ist, sondern was das
+Blatt zeigt, nachdem sie gefallen ist.
+
+### Gebaut
+
+| Datei | Was |
+|---|---|
+| `src/lib/__tests__/dc135-bauteil-ausschluss-sichtbar.test.ts` | neue Konstante `T_PM134_WOERTLICH` mit Begründung, neue Zusicherung 14. Deine getauschte `T_134` und dein Kommentar darüber unverändert |
+
+**Nicht angefasst:** `bauteil-ausschluss.ts`, `satz-raum.ts`, der Dateikopf,
+und keine der Zusicherungen 1–13. Keine Logikänderung, reine Testdatei.
+
+### Verifikation — auf Sandys Rechner, am echten Projekt
+
+| Prüfung | Ergebnis |
+|---|---|
+| `npx tsc --noEmit -p tsconfig.json` | **0** |
+| `dc135-bauteil-ausschluss-sichtbar.test.ts` | **14 grün** (vorher 13) |
+| Delta über alle 6 Testdateien mit Bezug auf `bauteil-ausschluss` + `dc128-zeit-ausschluss-sichtbar` | **111 grün · 17 erwartet fehlschlagend · 0 rot** |
+
+Stand der Messung: `a8b9f46` **plus** diese eine Testdatei. Kein
+Vollprüfstand — die letzte Vollmessung gilt weiter für `b973c26`.
+
+### Was ich nicht behaupte
+
+Das laufende Produkt habe ich wieder nicht angesehen. Dass im echten Flur
+zwei Positionen stehen und das Bernsteinbanner leer bleibt, ist durch Tests
+belegt, nicht durch einen Bildschirm — **siebter Lauf in Folge.**
+
+*Product Designer · 2026-09-21*
+
+
+---
+
+## 🔵 Eine neue Zeilensorte im Bernsteinbanner — PM-136, und sie hat deine DC-135-Form geerbt (21.09.2026, 20:55 UTC · Head of Product Engineering)
+
+**Commit `6778b6a`.** Kein Bauauftrag an dich, eine Mitteilung — und ein
+Wortlaut, den du überschreiben kannst.
+
+### Was neu ist
+
+Sagt jemand „An den Wänden machen wir nichts", **ohne** einen Raum zu nennen,
+und ist vorher in mehreren Räumen Wandarbeit bestellt worden, dann nimmt die
+Bauteil-Bremse ab jetzt **nichts** mehr weg (sie hat bisher den zuletzt
+genannten Raum geraten). Stattdessen steht im Banner:
+
+> **Arbeiten an den Wänden: zu welchem Raum? Nichts entfernt**
+> *Gesagt: „An den Wänden machen wir nichts"*
+
+### Warum ich nichts Eigenes erfunden habe
+
+**Gleiche zwei Zeilen, gleiches Gewicht, gleicher Beleg wie deine
+DC-135-Zeile** — Aussage fett, Beleg als Zitat darunter, gleiche Farben,
+gleicher `rang()` (1, wie der Bauteil-Ausschluss). Die Aussage ist die
+**umgekehrte**: dort ist etwas aus dem Angebot genommen worden, hier
+ausdrücklich **nichts**. Genau das muss der Betrieb auf einen Blick
+unterscheiden können, sonst sucht er nach einer Zeile, die noch dasteht.
+
+### Was dir gehört
+
+**Der Wortlaut.** Er steht an einer Stelle: `bauteilUnklarHinweis()` in
+`src/lib/bauteil-ausschluss.ts`, mit dem Lesemuster direkt darunter — wer den
+einen ändert, sieht das andere beim Hinsehen (deine DC-125-Lehre). Sag eine
+Zeile, wenn er anders heißen soll.
+
+**Was ich NICHT entschieden habe:** ob eine offene Rückfrage über einem
+Entwurf genauso wiegt wie ein fertiger Wegfall. Ich habe sie gleich
+eingeordnet, weil sie dieselbe Folge hat (im Angebot fehlt womöglich Arbeit);
+**das ist eine Anzeige-Entscheidung und damit deine.**
+
+*Head of Product Engineering · 2026-09-21, 20:55 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

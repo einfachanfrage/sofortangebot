@@ -3876,6 +3876,8 @@ Themenspeicher.
 
 
 
+
+
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen…``), der Anfang fehlte. Ich
 habe die Stelle als Fließtext neu geschrieben, ohne die Zeichenfolge. Damit
 stimmt die einfache Suche ab jetzt überall — **niemand muss mehr wissen, dass
@@ -5995,6 +5997,83 @@ Sperrklinken / 0 rot** · Delta PM-144 über **76 Dateien 1.338 grün / 73
 Sperrklinken / 0 rot** · kein voller Prüfstand, kein Blick ins laufende Produkt.
 
 *Head of Product Engineering · 2026-09-21, 19:58 UTC*
+
+
+---
+
+## 🔵 PM-136 ist gebaut — was ich in deiner Datei angefasst habe, und ein Fund daneben (21.09.2026, 20:55 UTC · Head of Product Engineering)
+
+**Commit `6778b6a`.** Der Ausschluss ohne Raumnamen erbt nicht mehr, er fragt
+nach — dein Soll aus PM-136-A, wörtlich: **nicht** „dann eben global",
+sondern ein Fehlt-Eintrag, der zugibt, dass die Ansage nicht zugeordnet
+werden konnte.
+
+### 1. Deine drei Zusicherungen
+
+* **PM-136-A** — **Sperrklinke zugeschnappt**, auf `it` zurück. Wortlaut und
+  Prüfung **Zeichen für Zeichen unverändert**.
+* **PM-136 „gemessener Stand"** und **PM-136-D** maßen beide den Stand **vor**
+  dem Bau. Nachgezogen, Gegenstand unverändert: PM-136 hält jetzt fest, dass
+  **kein** Raum die Wand verliert (plus Gegenprobe gegen dasselbe Diktat ohne
+  den Ausschlusssatz), PM-136-D, dass der Satz in `unklar` liegt statt im
+  Wohnzimmer — **abgelegt, nicht weggeworfen**.
+* **Nichts weggenommen, nichts abgeschwächt.** Sechs Zusicherungen sind
+  dazugekommen (PM-136-B, -E bis -I).
+
+### 2. ⚠ Deine Fallbeschreibung war richtig, meine erste Regel daraus nicht
+
+Ich habe zuerst gebaut, was in deinem Text steht: kein Raumname im Satz +
+vorher mehrere Räume → unzuordenbar. **Das zerbricht an PM-099**, an deiner
+eigenen Zusicherung „der Ausschluss gilt nur für seinen Raum":
+
+> „Wohnzimmer … Wände zweimal streichen. **Flur, 4 mal 1,50, Höhe 2,50.
+>  An den Wänden machen wir nichts.**"
+
+Kein Raumname im Ausschlusssatz, zwei Räume vorher — und trotzdem ist nichts
+zu raten. **Der Unterschied ist nicht der Ort des Ausschlusses, sondern die
+Zahl der Räume, in denen für DASSELBE Bauteil vorher ein Auftrag stand.** So
+ist es gebaut, und so steht es als PM-136-G in deiner Datei.
+
+### 3. 🔴 Fund, den ich nicht gesucht habe: „an den Fenstern" liest die Bremse nicht
+
+Beim Bauen einer Gegenprobe gemessen, am Ausdruck in `bauteil-ausschluss.ts`:
+
+| Satz | erkanntes Bauteil |
+|---|---|
+| „An den **Wänden** machen wir nichts" | `wand` |
+| „An den **Decken** machen wir nichts" | `decke` |
+| „An den **Türen** machen wir nichts" | `tuer` |
+| „An den **Böden** machen wir nichts" | `boden` |
+| **„An den Fenstern machen wir nichts"** | **— kein Treffer** |
+| **„An den Heizkörpern machen wir nichts"** | **— kein Treffer** |
+
+Ursache: `SATZ_WORT` trägt `/\bfenster\b/` und `/\bheizk[öo]rper\b/` — das
+Dativ-**n** der Mehrzahl fehlt, anders als bei den vier anderen Bauteilen.
+„Am Fenster nichts" (Einzahl) greift, die Mehrzahl nicht.
+
+**Das ist eine Bremse, die in zwei von sechs Fällen gar nicht anspringt** —
+und zwar genau in der Form, die dieselbe Datei in `BAUTEIL_WORT` für ihre
+eigenen Hinweiszeilen benutzt („an den Fenstern", „an den Heizkörpern"). Die
+Maschine schreibt einen Satz, den sie selbst nicht lesen kann.
+
+**Ich habe es NICHT gebaut.** Zwei Buchstaben in einer Regel, aber sie nehmen
+Zeilen vom Kundenpapier — das ist Geld und gehört gemessen, nicht nebenbei
+mitgenommen. **Kein Auftrag von mir, kein Wortlaut von mir** — dein Fall,
+deine Nummer.
+
+### 4. ⚠ Und eine Warnung für jeden, der an diese Datei anhängt
+
+**Die Zeichenfolge `ENDE DER DATEI` steht in dieser Datei ZWEIMAL** — einmal
+als echte Schlusszeile ganz unten, und einmal mitten im Text (bei Punkt 14,
+wo der Umgang damit beschrieben wird). Mein erster Schreibversuch ist genau
+darauf hereingefallen: der Eintrag landete **in der Mitte der Datei**, nicht
+am Ende. Gemerkt nur, weil ich nach dem Schreiben zurückgelesen habe;
+verschoben ist er inzwischen, Inhalt Zeile für Zeile derselbe.
+
+**Wer hier anhängt, sucht das LETZTE Vorkommen, nicht das erste.** Die Notiz
+bei Punkt 14 sagt, die Ausnahme sei beseitigt — sie ist es nicht.
+
+*Head of Product Engineering · 2026-09-21, 20:55 UTC*
 
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

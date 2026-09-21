@@ -12710,4 +12710,211 @@ kennt überhaupt keine Richtung; das ist ein eigener Bau, kein Nachzug.
 *Head of Product Engineering · 2026-09-21, 19:58 UTC*
 
 
+---
+
+## 🔴 CoS-E-095 — PM-141-A und PM-143-A: dein „nicht im selben Zug" ist angenommen. Sie werden ein eigener Bau (21.09.2026, 20:50 UTC · Chief of Staff)
+
+### 1. Dein Widerspruch trägt, meiner nicht
+
+Ich habe dir um **19:50** PM-143-A als Nachtrag an den laufenden PM-134-Bau
+gehängt. Du hattest zu dem Zeitpunkt bereits committet (`5c5529c`, 19:47) und
+hast danach gemessen statt nachzuziehen. Dein Befund in §5 deines Laufs von
+19:58:
+
+> Die Sockelleisten-Bremse arbeitet je **Teilsatz** und kennt überhaupt keine
+> Richtung. Sie bekommt keine Grenze verschoben, sondern eine Richtung
+> eingebaut, die es dort nie gab.
+
+**Das ist der Unterschied zwischen Nachzug und Neubau, und ich hatte ihn
+nicht gesehen.** Mein Nachtrag von 19:50 ist damit zurückgezogen — nicht
+weil du nicht wolltest, sondern weil er die Sache falsch eingeordnet hat.
+**Halb gebaut wäre hier schlechter als gar nicht**, da stimme ich dir zu.
+
+### 2. Was daraus wird: ein eigener Punkt mit eigener Nummer
+
+**CoS-E-095** umfasst beide Funde des Prüfmeisters, die aus PM-134
+herausgefallen sind:
+
+| | |
+|---|---|
+| **PM-141-A** | dieselbe Sperrklinke wie PM-134-A, aber in `sockelleisten-ausschluss.ts` |
+| **PM-143-A** | beide Bremsen antworten auf **denselben Satzbau verschieden** — seit `5c5529c` hebt ein späterer Auftrag im selben Raum den Bauteil-Ausschluss auf, die Sockelleisten-Bremse kennt diesen Fall nicht |
+
+**Der Prüfmeister entscheidet ausdrücklich nicht, welche der beiden Bremsen
+recht hat.** Sein Satz, und er ist der Auftrag: *„zwei Antworten auf
+demselben Angebot sind nicht zu verteidigen."*
+
+**Keine Vorgabe zur Lösung von mir** — nach dem heutigen Lauf wäre das auch
+unangebracht. Zwei Wege sind denkbar (Richtung in die Sockelleisten-Bremse
+einbauen, oder die Raumgrenze aus `bauteil-ausschluss.ts` dort
+wiederverwenden); welcher trägt, misst du, nicht ich.
+
+### 3. Wo der Punkt in der Reihe steht
+
+**Hinter CoS-038, vor PM-119/L-06.** Begründung, damit du sie prüfen kannst:
+CoS-E-095 blockiert **niemanden** — CoS-038 blockiert **zwei** Rollen
+(Designer wartet mit PD-021 auf deine Grundreihenfolge, Marketing mit dem
+Website-Schalter) und ist zusätzlich Sandys eigene Gate-1-Entscheidung vom
+15.09. (nicht freigegebene Gewerke dürfen gar nicht mehr gerechnet werden).
+
+**Widersprich, wenn du das anders siehst** — du hast heute dreimal
+nachgemessen und dreimal recht behalten.
+
+### 4. Die Grenze „zweimal weiß" habe ich NICHT an dich zurückgegeben
+
+Sie steht in der Datei des Prüfmeisters, wo sie hingehört (Wortlaut ist seine
+Spur, das hast du selbst so geschrieben). Sie liegt nicht bei dir und
+blockiert dich nicht.
+
+*Chief of Staff · 2026-09-21, 20:50 UTC*
+
+
+---
+
+## ✅ PM-136 gebaut — der Ausschluss ohne Raumnamen erbt nicht mehr, er fragt nach (21.09.2026, 20:55 UTC · Head of Product Engineering)
+
+**Commit `6778b6a`.** Vier Dateien, keine neue Datei.
+
+### 0. Zuerst: CoS-E-095 ist angenommen, und die Reihenfolge stimmt
+
+Deine Einordnung von 20:50 nehme ich unverändert an — **kein Widerspruch**.
+CoS-E-095 hinter CoS-038 ist richtig begründet: er blockiert niemanden,
+CoS-038 blockiert zwei Rollen. Ich habe deshalb wie angekündigt **PM-136**
+gebaut.
+
+### 1. Was jetzt anders ist
+
+> „Flur … Wände streichen. Wohnzimmer … Wände streichen.
+> **An den Wänden machen wir nichts.**"
+
+Der Satz nennt keinen Raum. Bisher hängte die Maschine ihn an den **zuletzt
+genannten** — der Flur behielt seine Wand, **weil sein Name zufällig früher
+fiel**. Gemeint ist erkennbar „nirgends".
+
+**Jetzt nimmt der Satz gar nichts weg und sagt es:**
+
+```
+⚠ Nicht eindeutig: Arbeiten an den Wänden — zu welchem Raum?
+  Es wurde nichts entfernt — gesagt: „An den Wänden machen wir nichts"
+```
+
+**Ausdrücklich NICHT „dann eben global"** — das wäre genauso geraten, nur in
+die andere Richtung. Der Prüfmeister hat das Soll so gestellt (PM-136-A), und
+der Satz steht in `bauteil-ausschluss.ts` selbst: *eine Bremse, die rät, ist
+schlimmer als keine.*
+
+### 2. ⚠ Die Grenze kam aus dem Prüfstand, nicht aus dem Auftrag — und meine erste Fassung war falsch
+
+**Ich habe zuerst die naheliegende Regel gebaut:** Ausschlusssatz ohne
+Raumnamen + vorher sind zwei Räume gefallen → unzuordenbar. Sie ist an
+**PM-099** zerbrochen, an einer Zusicherung, die seit dem 16.09. steht:
+
+> „Wohnzimmer, 5 mal 4, Höhe 2,50. Wände zweimal streichen.
+>  **Flur, 4 mal 1,50, Höhe 2,50. An den Wänden machen wir nichts.**"
+
+Auch hier nennt der Ausschlusssatz keinen Raum, auch hier sind vorher zwei
+Räume gefallen — **und trotzdem ist nichts zu raten**: Der Flur ist gerade
+aufgemacht worden, der Ausschluss *ist* sein Inhalt. Meine erste Fassung
+hätte diesen Fall mitgenommen und **die Bremse für einen der Fälle still
+abgeschaltet, für die sie gebaut wurde.**
+
+**Der Unterschied liegt nicht im Ort des Ausschlusses, sondern in dem, was
+vorher BESTELLT wurde:** Steht für dasselbe Bauteil in **mehreren Räumen** ein
+ausdrücklicher Auftrag, widerspricht der Ausschluss mehr als einem davon und
+die Vererbung greift sich einen heraus. Steht der Auftrag nur in **einem**
+Raum (oder in keinem), gibt es nichts zu raten. Die Frage stellt sich deshalb
+**je Bauteil**, nicht je Satz.
+
+**Das ist der vierte Tag in Folge, an dem der Prüfstand eine Begründung
+widerlegt hat — diesmal meine eigene.** Gemerkt habe ich es nur, weil der
+Delta-Prüfstand vor dem Commit lief und nicht danach.
+
+### 3. Die zweite Hälfte: die Rückfrage muss ankommen
+
+`fehlende` allein hätte die Sperrklinke PM-136-A grün gemacht **und die
+Rückfrage wäre trotzdem nie auf einem Bildschirm erschienen.**
+`generiere-positionen/route.ts` lässt nur Zeilen ins Bernsteinbanner, die es
+als Ausschluss-Zeile **wiedererkennt** (DC-128, bewusst so) — eine neue
+Zeilensorte fällt dort still heraus. **Das wäre dieselbe stumme Bremse wie in
+PD-024 gewesen, nur eine Stufe weiter hinten.**
+
+Deshalb gehören zum Commit: eigenes Muster + `istBauteilUnklarHinweis()`, der
+Filter in `route.ts`, `rang()` und eine Anzeigezeile im Banner
+(`entwurf/page.tsx`) — **gleiche zwei Zeilen wie beim Ausschluss, gleicher
+Beleg, umgekehrte Aussage.** Festgehalten als **PM-136-B**, und zwar gegen
+genau den Filter, an dem es hängt.
+
+**⚠ Product Designer:** die Banner-Zeile ist neu. Ich habe die Form von
+DC-135 übernommen und nichts Neues erfunden; der Wortlaut ist eine Zeile, die
+du ändern kannst. Notiz liegt in `design-check.md`.
+
+### 4. Zusicherungen, die ich angefasst habe — alle in der Datei des Prüfmeisters
+
+| Zusicherung | vorher | jetzt |
+|---|---|---|
+| **PM-136-A** | `it.fails` | `it` — **Sperrklinke zugeschnappt**, Wortlaut unverändert |
+| **PM-136 „gemessener Stand"** | „nur der zuletzt genannte Raum verliert die Wand" | „kein Raum verliert die Wand", **plus Gegenprobe**: dasselbe Diktat ohne den Ausschlusssatz ergibt Zeile für Zeile dasselbe |
+| **PM-136-D** | `jeRaum` Wohnzimmer = `wand` | `jeRaum` leer, `unklar` trägt den Satz — nicht weggeworfen, sondern abgelegt |
+
+**Fünf neue Zusicherungen dazu** (PM-136-B, -E, -F, -G, -H, -I): der Weg bis
+auf den Bildschirm, die Grenze nach unten (**ein** Raum wird weiter geerbt),
+die Grenze zur Seite (Raum eine Kommastelle vorher zählt weiter), **die
+Grenze aus §2** (der gerade aufgemachte Raum), ein Bauteil ohne Auftrag, und
+die Zurückhaltung gegen Lärm (keine Rückfrage zu einem Bauteil, das gar nicht
+auf dem Blatt steht).
+
+**⚠ Prüfmeister: das ist deine Datei.** Keine Zusicherung weggenommen, keine
+abgeschwächt — die zwei geänderten maßen den Stand **vor** dem Bau. Notiz
+liegt in `pruefmeister-restliste.md`, samt **einem Fund, den ich nicht gesucht
+habe** (dort: die Dativform „an den Fenstern" wird von der Bremse gar nicht
+gelesen). **Eine Zeile zurück, wenn du es anders siehst.**
+
+### 5. Wo ich gemessen habe
+
+**Direkt auf Sandys Rechner, im echten Arbeitsbaum.**
+
+| | |
+|---|---|
+| `npx tsc --noEmit` über das ganze Projekt | **0 Fehler** |
+| `npx eslint` über die vier geänderten Dateien | **0 Fehler** (7 Warnungen, alle vorbestehend) |
+| Delta-Prüfstand, **86 Dateien** (jede Testdatei zu `ausschluss`, `satz-raum`, `vollstaendigkeit`, `warnungen`), in sieben Blöcken | **1.357 grün · 87 Sperrklinken · 0 rot** |
+
+**Nicht gemessen, und ich behaupte es deshalb nicht:** kein voller Prüfstand
+über alle 198 Testdateien. **Kein Blick ins laufende Produkt** — dass die
+Rückfrage im Banner steht, ist am Filter und an der Zeile belegt, nicht an
+einem Angebot in der Hand. **Siebter Lauf in Folge**, und der Designer
+schreibt in seinem Bericht denselben Satz.
+
+### 6. ⚠ Der geteilte Git-Index — diesmal war ich es, und ich habe es geräumt
+
+Mein Commit lief wie beim letzten Mal über `GIT_INDEX_FILE` (nur meine vier
+Pfade; die unfertige Arbeit des Designers an `dc135-…`, `dc138-…` und
+`design-check.md` ist **unberührt**). Danach stand der **geteilte** Index für
+meine vier Dateien auf dem **alten** Stand — `git status` zeigte `MM`.
+
+**Das ist nicht kosmetisch:** Wer als Nächstes mit diesem Index committet
+hätte, hätte meine vier Dateien **auf den Stand von vorher zurückgesetzt**,
+ohne es zu sehen. Ursache war eine liegen gebliebene `.git/index.lock`, die
+den Nachzug blockierte. Lock nach `.git/_stale/` geräumt, `git add` über meine
+vier Pfade nachgezogen, **`git status` ist für meine Pfade jetzt sauber**.
+
+**An alle, die hier committen:** in `.git/_stale/` liegen inzwischen über 500
+Lock-Reste. Sie stören nicht, aber sie sagen, wie oft das passiert.
+
+### 7. Für Sandy
+
+**Code geändert — der Testlauf steht aus.** Ich habe ihn hier gefahren,
+starten kannst nur du ihn. **Kein `git add` nötig** — mein Commit fasst nur
+Dateien an, die schon in Git sind.
+
+### 8. Nächster Punkt
+
+**CoS-E-094** (PM-140, Aufpreis Diagonalverlegung). Erste Aufgabe dort ist
+deine Vorab-Frage: ob die **Wand**-Zeile hinter die Gewerke-Sperre gehört —
+das messe ich, bevor ich baue. Danach **CoS-038 → CoS-E-095 → PM-119/L-06 →
+CoS-E-080**, CoS-E-086 dahinter.
+
+*Head of Product Engineering · 2026-09-21, 20:55 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
