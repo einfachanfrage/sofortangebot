@@ -150,6 +150,12 @@ export interface BauteilAusschluss {
   belege: string[]
   /** Dieselben Sätze mit Raum und Bauteil (PD-024/DC-135). */
   hinweise: BauteilAusschlussStelle[]
+  /**
+   * PM-136: Ausschluss-Sätze, die KEINEM Raum zuzuordnen waren — sie haben
+   * nichts weggenommen und stehen deshalb weder in `global` noch in `jeRaum`.
+   * `raum` ist bei ihnen immer `null`; sie tragen nur Bauteil und Beleg.
+   */
+  unklar: BauteilAusschlussStelle[]
 }
 
 function bauteileImSatz(satz: string): Bauteil[] {
@@ -199,7 +205,8 @@ export function erkenneBauteilAusschluss(
   const jeRaum = new Map<string, Set<Bauteil>>()
   const belege: string[] = []
   const hinweise: BauteilAusschlussStelle[] = []
-  if (!text) return { global, jeRaum, belege, hinweise }
+  const unklar: BauteilAusschlussStelle[] = []
+  if (!text) return { global, jeRaum, belege, hinweise, unklar }
 
   // 1. Je TEILSATZ die Lage festhalten: Raum, und für welche Bauteile dort ein
   //    AUFTRAG steht. Ein Teilsatz ohne eigenes Bauteil trägt das zuletzt
@@ -229,6 +236,61 @@ export function erkenneBauteilAusschluss(
       }
       lagen.push({ ...stelle, auftraege })
     }
+  }
+
+  // ── PM-136 (21.09.2026) · Wann ist ein Ausschluss ohne Raumnamen GERATEN? ──
+  //
+  // „Flur … Wände streichen. Wohnzimmer … Wände streichen. An den Wänden
+  // machen wir nichts." — der letzte Satz nennt keinen Raum. Bis hierhin erbte
+  // er den zuletzt genannten (Wohnzimmer); der Flur behielt seine Wand.
+  // Gemeint ist erkennbar „nirgends", entschieden hat es die Reihenfolge der
+  // Räume im Diktat. Das ist geraten, und der Satz dieser Datei lautet:
+  // eine Bremse, die rät, ist schlimmer als keine.
+  //
+  // ⚠ Die Vererbung als solche ist RICHTIG und bleibt. Gemessen am echten
+  // Prüfstand (PM-099, „der Ausschluss gilt nur für seinen Raum"):
+  //
+  //   „Wohnzimmer … Wände zweimal streichen. Flur, 4 mal 1,50, Höhe 2,50.
+  //    An den Wänden machen wir nichts."
+  //
+  // Auch hier nennt der Ausschlusssatz keinen Raum und auch hier sind vorher
+  // zwei Räume gefallen — trotzdem ist nichts zu raten: der Flur ist gerade
+  // aufgemacht worden, der Ausschluss IST sein Inhalt. Eine Regel, die nur
+  // Sätze und Raumnamen zählt, hätte diesen Fall mitgenommen und die Bremse
+  // still abgeschaltet. (Erst beim Messen aufgefallen, nicht beim Lesen.)
+  //
+  // Der Unterschied liegt nicht im Ort des Ausschlusses, sondern in dem, was
+  // vorher BESTELLT wurde: Steht für dasselbe Bauteil in MEHREREN Räumen ein
+  // ausdrücklicher Auftrag, dann widerspricht der Ausschluss mehr als einem
+  // davon und die Vererbung greift sich einen heraus. Steht der Auftrag nur
+  // in einem Raum (oder in keinem), gibt es nichts zu raten.
+  //
+  // Zwei Grenzen also, und beide werden unten festgehalten:
+  //
+  //   1. Es zählt der ganze SATZ, nicht der Teilsatz. „Wohnzimmer, 4 mal 5,
+  //      an den Wänden nichts" nennt den Raum eine Kommastelle vorher — das
+  //      ist dieselbe Ansage, nicht eine zweite.
+  //   2. Für das fragliche BAUTEIL müssen vorher in mindestens ZWEI Räumen
+  //      Aufträge gefallen sein.
+  //
+  // Ausdrücklich NICHT „dann eben global": das wäre genauso geraten, nur in
+  // die andere Richtung. Der Satz nimmt dann gar nichts weg und wird als
+  // Rückfrage sichtbar (`unklar` → Hinweiszeile → Banner).
+  const satzNenntRaum = new Set<number>()
+  for (const lage of lagen) if (lage.raumImSatz) satzNenntRaum.add(lage.satzIndex)
+
+  /** In wie vielen verschiedenen Räumen ist `b` bis Teilsatz `bis` beauftragt? */
+  const raeumeMitAuftragBis = (bis: number, b: Bauteil): number => {
+    const gesehen = new Set<string>()
+    for (let k = 0; k <= bis; k += 1) {
+      const lage = lagen[k]
+      if (!lage.auftraege.has(b)) continue
+      const ziele = lage.raeumeImSatz.length > 0
+        ? lage.raeumeImSatz
+        : (lage.raum === null ? [] : [lage.raum])
+      for (const z of ziele) gesehen.add(z)
+    }
+    return gesehen.size
   }
 
   /**
@@ -281,8 +343,28 @@ export function erkenneBauteilAusschluss(
     if (!istVerneint(satz)) continue
 
     const istGlobal = UEBERALL.test(satz) || (!raumImSatz && raum === null)
-    const auftraege = auftraegeAb(i, istGlobal ? null : (raum as string))
-    const treffer = bauteileImSatz(satz).filter(b => !auftraege.has(b))
+    // PM-136: Ein geerbter Raum ist nur dann geraten, wenn für DIESES Bauteil
+    // vorher in mehreren Räumen ein Auftrag stand (siehe oben). Die Frage
+    // stellt sich deshalb je Bauteil, nicht je Satz.
+    const geerbt = !istGlobal && !raumImSatz && !satzNenntRaum.has(lagen[i].satzIndex)
+    // Ein unzuordenbarer Satz hat keinen Raum, gegen den sich die Gegenprobe
+    // prüfen ließe — sie bleibt deshalb beim eigenen Satz, wie beim globalen.
+    const auftraegeImSatz = auftraegeAb(i, null)
+    const auftraegeImRaum = istGlobal ? auftraegeImSatz : auftraegeAb(i, raum as string)
+
+    const treffer: Bauteil[] = []
+    const trefferUnklar: Bauteil[] = []
+    for (const b of bauteileImSatz(satz)) {
+      if (geerbt && raeumeMitAuftragBis(i, b) >= 2) {
+        if (!auftraegeImSatz.has(b)) trefferUnklar.push(b)
+      } else if (!auftraegeImRaum.has(b)) {
+        treffer.push(b)
+      }
+    }
+
+    if (trefferUnklar.length > 0) {
+      unklar.push({ raum: null, bauteile: [...trefferUnklar], satz: satz.trim() })
+    }
     if (treffer.length === 0) continue
 
     belege.push(satz.trim())
@@ -302,7 +384,7 @@ export function erkenneBauteilAusschluss(
   }
 
 
-  return { global, jeRaum, belege, hinweise }
+  return { global, jeRaum, belege, hinweise, unklar }
 }
 
 export interface PositionFuerAusschluss {
@@ -333,7 +415,11 @@ export function entferneAusgeschlosseneBauteileMitHinweisen<T extends PositionFu
   if (!transkript || positionen.length === 0) return { positionen, hinweise: [] }
   const namen = raumNamen.map(n => (n ?? '').trim()).filter(n => n.length >= 3)
   const a = erkenneBauteilAusschluss(transkript, namen)
-  if (a.global.size === 0 && a.jeRaum.size === 0) return { positionen, hinweise: [] }
+  // PM-136: `unklar` nimmt nichts weg, muss aber gesagt werden — deshalb
+  // steht es hier mit in der Abbruchbedingung.
+  if (a.global.size === 0 && a.jeRaum.size === 0 && a.unklar.length === 0) {
+    return { positionen, hinweise: [] }
+  }
 
   /** Welche Bauteile sind für diese Position abbestellt? */
   const verbotIn = (raum: string | null): Set<Bauteil> => {
@@ -404,6 +490,26 @@ export function entferneAusgeschlosseneBauteileMitHinweisen<T extends PositionFu
     })
     if (!hatGekostet) continue
     const zeile = bauteilAusschlussHinweis(stelle.raum, stelle.bauteile, stelle.satz)
+    if (!hinweise.includes(zeile)) hinweise.push(zeile)
+  }
+
+  // ── PM-136 · die Rückfrage ─────────────────────────────────────────────
+  //
+  // Dieselbe Zurückhaltung wie darüber: gefragt wird nur zu einem Bauteil,
+  // das im Angebot überhaupt vorkommt. Eine Rückfrage zu einer Wand, die auf
+  // keinem Blatt steht, wäre kein Hinweis, sondern Lärm — und Lärm im
+  // Bernsteinbanner macht die echten Hinweise unsichtbar (DC-128/PD-024).
+  //
+  // Geprüft wird gegen ALLE Positionen, nicht nur die gebliebenen: Ein
+  // unzuordenbarer Satz nimmt ja gerade nichts weg, `geblieben` und
+  // `positionen` tragen für ihn dasselbe.
+  for (const stelle of a.unklar) {
+    const betrifft = positionen.some(p => {
+      const titel = p.beschreibung ?? ''
+      return stelle.bauteile.some(bt => POSITION_WORT[bt].test(titel))
+    })
+    if (!betrifft) continue
+    const zeile = bauteilUnklarHinweis(stelle.bauteile, stelle.satz)
     if (!hinweise.includes(zeile)) hinweise.push(zeile)
   }
 
@@ -488,17 +594,62 @@ const BAUTEIL_REIHENFOLGE: Bauteil[] = ['wand', 'decke', 'boden', 'tuer', 'fenst
  * beurteilen, ob die Bremse richtig gegriffen hat. „Arbeiten an den Wänden
  * sind nicht im Angebot" allein lässt offen, ob das Absicht war.
  */
+function aufzaehlungDer(bauteile: Bauteil[]): string {
+  const teile = BAUTEIL_REIHENFOLGE.filter(b => bauteile.includes(b)).map(b => BAUTEIL_WORT[b])
+  return teile.length <= 1
+    ? (teile[0] ?? 'an diesem Bauteil')
+    : `${teile.slice(0, -1).join(', ')} und ${teile[teile.length - 1]}`
+}
+
 export function bauteilAusschlussHinweis(
   raum: string | null,
   bauteile: Bauteil[],
   satz: string,
 ): string {
-  const teile = BAUTEIL_REIHENFOLGE.filter(b => bauteile.includes(b)).map(b => BAUTEIL_WORT[b])
-  const aufzaehlung = teile.length <= 1
-    ? (teile[0] ?? 'an diesem Bauteil')
-    : `${teile.slice(0, -1).join(', ')} und ${teile[teile.length - 1]}`
   const ort = raum ? `„${raum}": ` : ''
-  return `⚠ ${ort}Arbeiten ${aufzaehlung} sind nicht im Angebot — gesagt: „${satz}"`
+  return `⚠ ${ort}Arbeiten ${aufzaehlungDer(bauteile)} sind nicht im Angebot — gesagt: „${satz}"`
+}
+
+// ── PM-136 · die zweite Sorte Zeile: die Rückfrage ─────────────────────────
+//
+// Sie sagt bewusst das GEGENTEIL der Zeile darüber: dort ist etwas aus dem
+// Angebot genommen worden, hier ist ausdrücklich NICHTS genommen worden. Der
+// Betrieb muss beides auf einen Blick unterscheiden können — sonst sucht er
+// nach einer Zeile, die noch dasteht.
+//
+// Warum das keine eigene Bauart bekommt, sondern die Form der Nachbarzeile
+// erbt: gleiche Herkunft, gleicher Ort, gleicher Beleg — die DC-128-Lehre
+// „zwei Bremsen, die dasselbe tun, dürfen sich nicht verschieden anfühlen".
+// Der Beleg-Satz steht auch hier hinten, und zwar unverzichtbar: ohne ihn
+// weiß niemand, WELCHE Ansage gemeint ist.
+
+export function bauteilUnklarHinweis(bauteile: Bauteil[], satz: string): string {
+  return `⚠ Nicht eindeutig: Arbeiten ${aufzaehlungDer(bauteile)} — zu welchem Raum? `
+    + `Es wurde nichts entfernt — gesagt: „${satz}"`
+}
+
+const BAUTEIL_UNKLAR_MUSTER =
+  /^⚠\s*Nicht eindeutig:\s*Arbeiten ((?:an|am)\s[\s\S]+?) — zu welchem Raum\? Es wurde nichts entfernt\s+—\s+gesagt:\s*„([\s\S]+)"$/
+
+export interface BauteilUnklarHinweis {
+  /** Die Aufzählung, fertig gesetzt: „an den Wänden und an der Decke". */
+  arbeiten: string
+  /** Der Beleg-Satz aus dem Diktat. */
+  satz: string
+}
+
+export function zerlegeBauteilUnklarHinweis(zeile: string): BauteilUnklarHinweis | null {
+  const m = BAUTEIL_UNKLAR_MUSTER.exec((zeile ?? '').trim())
+  if (!m) return null
+  const arbeiten = m[1].trim()
+  const satz = m[2].trim()
+  if (arbeiten.length === 0 || satz.length === 0) return null
+  return { arbeiten, satz }
+}
+
+/** Ist diese Hinweiszeile eine PM-136-Rückfrage? */
+export function istBauteilUnklarHinweis(zeile: string): boolean {
+  return zerlegeBauteilUnklarHinweis(zeile) !== null
 }
 
 /**

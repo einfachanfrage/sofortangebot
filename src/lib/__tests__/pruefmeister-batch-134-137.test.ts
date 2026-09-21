@@ -40,7 +40,11 @@ import { preisKategoriePasstZuGewerk } from '../default-price-selection'
 import { gewerkFuerPosition } from '@/lib/positions-gewerk'
 import { zaehleFenster, zaehleTueren } from '../extraktion-masse'
 import { ersetzeZahlenWorte } from '../zahlen-parser'
-import { erkenneBauteilAusschluss } from '../bauteil-ausschluss'
+import {
+  erkenneBauteilAusschluss,
+  istBauteilUnklarHinweis,
+  entferneAusgeschlosseneBauteileMitHinweisen,
+} from '../bauteil-ausschluss'
 import { saetze, teilsaetze } from '../satz-raum'
 
 const KATALOG = DEFAULT_PRICES.map((p, i) => ({
@@ -270,20 +274,61 @@ describe('PM-136 · der Ausschluss ohne Raumnamen', () => {
   const T_OHNE_RAUM = 'Flur, 6 mal 1,50, 2,50 hoch. Wände streichen. Wohnzimmer, 4 mal 5, 2,50 hoch. Wände streichen. An den Wänden machen wir nichts.'
   const T_UEBERALL = 'Flur, 6 mal 1,50, 2,50 hoch. Wände streichen. Wohnzimmer, 4 mal 5, 2,50 hoch. Wände streichen. An den Wänden machen wir überall nichts.'
 
-  it('PM-136 · gemessener Stand: nur der zuletzt genannte Raum verliert die Wand', () => {
+  // NACHGEZOGEN am 21.09. (PM-136, Engineering): Beide Zusicherungen hielten
+  // den Stand VOR dem Bau fest — damals erbte der Satz das Wohnzimmer. Der
+  // Gegenstand ist unverändert: wohin fällt ein Ausschluss ohne Raumnamen?
+  // Die Antwort ist jetzt: nirgendwohin, und er sagt es.
+  it('PM-136 · gemessener Stand: kein Raum verliert die Wand — geraten wird nicht mehr', () => {
     const pos = lauf(T_OHNE_RAUM, ZWEI())
-    expect(hat(pos, /^Wand streichen 2x — Wohnzimmer/)).toBe(false)
+    expect(hat(pos, /^Wand streichen 2x — Wohnzimmer/)).toBe(true)
     expect(hat(pos, /^Wand streichen 2x — Flur/)).toBe(true)
+    // Die Gegenprobe zur Gegenprobe: dasselbe Diktat OHNE den Ausschlusssatz
+    // ergibt Zeile für Zeile dasselbe. Ohne sie wäre nicht zu sehen, ob der
+    // Satz wirklich folgenlos blieb oder nur an anderer Stelle zugeschlagen hat.
+    const ohne = lauf(
+      'Flur, 6 mal 1,50, 2,50 hoch. Wände streichen. Wohnzimmer, 4 mal 5, 2,50 hoch. Wände streichen.',
+      ZWEI(),
+    )
+    expect(pos.map(p => p.beschreibung)).toEqual(ohne.map(p => p.beschreibung))
   })
 
-  it('PM-136-D · am Ausdruck: der Ausschluss ist nicht global, er hängt am Wohnzimmer', () => {
+  it('PM-136-D · am Ausdruck: der Ausschluss hängt an keinem Raum, er steht in `unklar`', () => {
     const a = erkenneBauteilAusschluss(
       'Flur Wände streichen. Wohnzimmer Wände streichen. An den Wänden machen wir nichts.',
       ['Flur', 'Wohnzimmer'],
     )
     expect(a.global.size).toBe(0)
+    expect(a.jeRaum.size).toBe(0)
+    // Nicht weggeworfen, sondern abgelegt — sonst wäre aus einer Bremse, die
+    // rät, eine geworden, die schweigt.
+    expect(a.unklar).toHaveLength(1)
+    expect(a.unklar[0].raum).toBe(null)
+    expect(a.unklar[0].bauteile).toEqual(['wand'])
+    expect(a.unklar[0].satz).toBe('An den Wänden machen wir nichts')
+  })
+
+  it('PM-136-E · die Grenze nach unten: EIN Raum im Diktat wird weiter geerbt', () => {
+    // Ohne diese Zeile wäre nicht zu sehen, ob die Vererbung an der Zahl der
+    // Räume hängt oder überhaupt abgeschafft wurde. Bei einem einzigen Raum
+    // gibt es nichts zu raten — PM-099 lebt davon.
+    const a = erkenneBauteilAusschluss(
+      'Flur Wände streichen. An den Wänden machen wir nichts.',
+      ['Flur'],
+    )
+    expect([...(a.jeRaum.get('Flur') ?? [])]).toEqual(['wand'])
+    expect(a.unklar).toHaveLength(0)
+  })
+
+  it('PM-136-F · die Grenze zur Seite: der Raum eine Kommastelle vorher zählt weiter', () => {
+    // Gezählt wird der ganze SATZ, nicht der Teilsatz. „Wohnzimmer, 4 mal 5,
+    // an den Wänden nichts" ist EINE Ansage — sonst hätte der Bau jeden
+    // Mehrraum-Ausschluss mit Komma stumm gestellt.
+    const a = erkenneBauteilAusschluss(
+      'Flur Wände streichen. Wohnzimmer 4 mal 5, an den Wänden machen wir nichts.',
+      ['Flur', 'Wohnzimmer'],
+    )
     expect([...(a.jeRaum.get('Wohnzimmer') ?? [])]).toEqual(['wand'])
-    expect(a.jeRaum.has('Flur')).toBe(false)
+    expect(a.unklar).toHaveLength(0)
   })
 
   it('PM-136-C · Kontrolle: mit „überall" wird derselbe Satz global', () => {
@@ -296,7 +341,7 @@ describe('PM-136 · der Ausschluss ohne Raumnamen', () => {
     expect(hat(pos, /^Wand streichen 2x/)).toBe(false)
   })
 
-  it.fails('PM-136-A · SOLL: ohne Raumnamen nach mehreren Räumen wird nachgefragt, nicht geerbt', () => {
+  it('PM-136-A · SOLL: ohne Raumnamen nach mehreren Räumen wird nachgefragt, nicht geerbt', () => {
     // Soll-Lösung — und bewusst NICHT „dann eben global": Beides ist geraten.
     // Richtig ist ein Fehlt-Eintrag / eine Rückfrage, der sagt, dass die
     // Ansage nicht zugeordnet werden konnte. Eine Bremse, die rät, ist
@@ -312,6 +357,71 @@ describe('PM-136 · der Ausschluss ohne Raumnamen', () => {
     // auf das, was PM-136-A wirklich verlangt.
     const { fehlende } = laufVoll(T_OHNE_RAUM, ZWEI())
     expect(fehlende.some(f => /nicht zugeordnet|welchem Raum|nicht eindeutig/i.test(f))).toBe(true)
+  })
+
+  it('PM-136-B · und die Rückfrage kommt bis auf den Bildschirm, nicht nur in die Liste', () => {
+    // NEU am 21.09. (Engineering, beim Bau von PM-136): `fehlende` allein
+    // reicht nicht. `generiere-positionen/route.ts` lässt nur Zeilen ins
+    // Banner, die es als Ausschluss- oder Rückfrage-Zeile WIEDERERKENNT —
+    // alles andere fällt dort still heraus (DC-128: „über einem frischen
+    // Entwurf ist eine Mängelliste kein Urteil"). Eine Rückfrage, die nur in
+    // der Liste steht, wäre dieselbe stumme Bremse wie in PD-024, nur eine
+    // Stufe weiter hinten. Diese Zusicherung prüft genau den Filter, an dem
+    // sie hängt.
+    const { fehlende } = laufVoll(T_OHNE_RAUM, ZWEI())
+    expect(fehlende.some(istBauteilUnklarHinweis)).toBe(true)
+  })
+
+  it('PM-136-G · die Grenze, die beim Messen kam: der gerade aufgemachte Raum erbt weiter', () => {
+    // ⚠ Der Fall, an dem die erste Fassung dieses Baus gescheitert ist
+    // (PM-099, „der Ausschluss gilt nur für seinen Raum“): Auch dort nennt der
+    // Ausschlusssatz keinen Raum und auch dort sind vorher ZWEI Räume
+    // gefallen — trotzdem ist nichts geraten. Der Flur ist gerade aufgemacht
+    // worden, der Ausschluss ist sein Inhalt, und der Auftrag „Wände
+    // streichen“ stand nur im Wohnzimmer.
+    //
+    // Eine Regel, die nur Sätze und Raumnamen zählt, hätte diesen Fall
+    // mitgenommen und die Bremse still abgeschaltet.
+    const a = erkenneBauteilAusschluss(
+      'Wohnzimmer 5 mal 4, Wände zweimal streichen. Flur 4 mal 1,50. '
+      + 'An den Wänden machen wir nichts.',
+      ['Flur', 'Wohnzimmer'],
+    )
+    expect([...(a.jeRaum.get('Flur') ?? [])]).toEqual(['wand'])
+    expect(a.unklar).toHaveLength(0)
+  })
+
+  it('PM-136-H · dieselbe Grenze für ein Bauteil, das nirgends beauftragt war', () => {
+    // „Am Boden machen wir nichts“ nach zwei Räumen: gestrichen wurden Wände,
+    // am Boden war nie etwas bestellt. Es gibt keine zwei Aufträge, zwischen
+    // denen der Satz sich entscheiden müsste — also keine Rückfrage, und die
+    // alte Vererbung bleibt.
+    const a = erkenneBauteilAusschluss(
+      'Flur Wände streichen. Wohnzimmer Wände streichen. Am Boden machen wir nichts.',
+      ['Flur', 'Wohnzimmer'],
+    )
+    expect(a.unklar).toHaveLength(0)
+    expect([...(a.jeRaum.get('Wohnzimmer') ?? [])]).toEqual(['boden'])
+  })
+
+  it('PM-136-I · kein Wort über ein Bauteil, das gar nicht auf dem Blatt steht', () => {
+    // Dieselbe Zurückhaltung wie bei den Ausschluss-Hinweisen (PD-024): Eine
+    // Rückfrage zu einer Wand, die in keiner Zeile vorkommt, wäre kein
+    // Hinweis, sondern Lärm — und Lärm im Bernsteinbanner macht die echten
+    // Hinweise unsichtbar. Der Satz selbst bleibt unzuordenbar (PM-136-D),
+    // nur gefragt wird nicht.
+    const T = 'Flur Wände streichen. Wohnzimmer Wände streichen. An den Wänden machen wir nichts.'
+    const ohneWand = entferneAusgeschlosseneBauteileMitHinweisen(
+      [{ beschreibung: 'Türen lackieren — Flur' }], T, ['Flur', 'Wohnzimmer'],
+    )
+    expect(ohneWand.hinweise).toHaveLength(0)
+
+    const mitWand = entferneAusgeschlosseneBauteileMitHinweisen(
+      [{ beschreibung: 'Wand streichen 2x — Flur' }], T, ['Flur', 'Wohnzimmer'],
+    )
+    // Gefragt — und die Zeile ist trotzdem nicht gefallen. Beides gehört zusammen.
+    expect(mitWand.hinweise.filter(istBauteilUnklarHinweis)).toHaveLength(1)
+    expect(mitWand.positionen).toHaveLength(1)
   })
 })
 

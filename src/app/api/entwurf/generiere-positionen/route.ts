@@ -10,7 +10,7 @@ import { uebernehmeGrundrisse, type RaumDetail } from '@/lib/mengen/raum-details
 import { ergaenzeAusAufnahmeHinweisen, normalisiereBodenPositionenAusAufnahme } from '@/lib/mengen/aufnahme-hinweise'
 import { pruefeMassPlausibilitaet } from '@/lib/mass-plausibilitaet'
 import { istZeitAusschlussHinweis } from '@/lib/zeit-ausschluss'
-import { istBauteilAusschlussHinweis } from '@/lib/bauteil-ausschluss'
+import { istBauteilAusschlussHinweis, istBauteilUnklarHinweis } from '@/lib/bauteil-ausschluss'
 import { filtereExakteDubletten } from '@/lib/quote-items-dedup'
 import { trenneGeschuetzte, handaenderungsHinweis } from '@/lib/manuelle-positionen'
 import { filtereErschwernis, type ErschwernisConfig } from '@/lib/erschwernis'
@@ -313,7 +313,13 @@ export async function POST(req: NextRequest) {
   // einem frischen Entwurf ist eine Mängelliste kein Hinweis, sondern ein
   // Urteil (DC-128).
   for (const zeile of extData.bewertung?.fehlende_angaben ?? []) {
-    const istHinweis = istZeitAusschlussHinweis(zeile) || istBauteilAusschlussHinweis(zeile)
+    // PM-136: die Rückfrage nimmt denselben Weg wie der Ausschluss selbst.
+    // Ohne diese Zeile stünde sie zwar in `fehlende_angaben`, käme aber nie
+    // auf den Bildschirm — und die Bremse wäre wieder stumm, nur an einer
+    // anderen Stelle als in PD-024.
+    const istHinweis = istZeitAusschlussHinweis(zeile)
+      || istBauteilAusschlussHinweis(zeile)
+      || istBauteilUnklarHinweis(zeile)
     if (istHinweis && !massWarnungen.includes(zeile)) {
       massWarnungen.push(zeile)
     }

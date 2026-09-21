@@ -26,7 +26,12 @@ import { gruppiereNachRaum } from '@/lib/angebot-gruppierung'
 import { istProzentZuschlag } from '@/lib/zuschlag-basis'
 import { nutzerFehler } from '@/lib/fehlertexte'
 import { istZeitAusschlussHinweis, zerlegeZeitAusschlussHinweis } from '@/lib/zeit-ausschluss'
-import { istBauteilAusschlussHinweis, zerlegeBauteilAusschlussHinweis } from '@/lib/bauteil-ausschluss'
+import {
+  istBauteilAusschlussHinweis,
+  zerlegeBauteilAusschlussHinweis,
+  istBauteilUnklarHinweis,
+  zerlegeBauteilUnklarHinweis,
+} from '@/lib/bauteil-ausschluss'
 
 /**
  * Reihenfolge im Bernsteinbanner (DC-128, erweitert um PD-024/DC-135).
@@ -40,6 +45,9 @@ import { istBauteilAusschlussHinweis, zerlegeBauteilAusschlussHinweis } from '@/
 function rang(zeile: string): number {
   if (istZeitAusschlussHinweis(zeile)) return 2
   if (istBauteilAusschlussHinweis(zeile)) return 1
+  // PM-136: dieselbe Sorte Folge wie ein Ausschluss — nur ist hier noch offen,
+  // WO er gilt. Eine offene Frage wiegt nicht weniger als eine beantwortete.
+  if (istBauteilUnklarHinweis(zeile)) return 1
   return 0
 }
 
@@ -1576,6 +1584,23 @@ export default function EntwurfPage() {
                   /* PD-024/DC-135: dieselbe Form eine Ebene tiefer — nicht
                      ein ganzer Raum, sondern ein Bauteil darin. Gleiche
                      zwei Zeilen, gleiches Gewicht, gleicher Beleg. */
+                  /* PM-136: die Rückfrage — gleiche zwei Zeilen, gleicher
+                     Beleg, aber die Aussage ist die umgekehrte: es ist
+                     NICHTS weggefallen, und der Betrieb muss sagen, wo der
+                     Satz gilt. */
+                  const offen = zerlegeBauteilUnklarHinweis(w)
+                  if (offen) {
+                    return (
+                      <div key={i} className="flex flex-col gap-0.5">
+                        <p className="text-amber-900 font-black text-[13px]">
+                          Arbeiten {offen.arbeiten}: zu welchem Raum? Nichts entfernt
+                        </p>
+                        <p className="text-amber-800/90 font-semibold text-[12px] italic leading-snug">
+                          Gesagt: „{offen.satz}"
+                        </p>
+                      </div>
+                    )
+                  }
                   const bauteil = zerlegeBauteilAusschlussHinweis(w)
                   if (bauteil) {
                     return (
