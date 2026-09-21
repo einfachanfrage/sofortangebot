@@ -12090,6 +12090,11 @@ Gehört dem Chief of Staff.)*
 
 ### Offen — gehört ausdrücklich noch zu DC-122
 
+> **✅ Nachtrag 21.09.2026: Dieser Teil ist erledigt.** Legal hat mit **B**
+> geantwortet (CoS-L-011), die drei Zeilen kommen zusätzlich. Der fertige
+> Abschnitt steht am Ende dieser Datei: „DC-122 ✅ (Teil 2 von 2)". Der
+> Absatz darunter ist der Stand vom 17.09.
+
 **Die drei Fußzeilen-Felder wirken weiterhin nicht.** `lib/pdf.tsx` baut die
 Fußzeile aus den Betriebsdaten (Firma, USt-IdNr., IBAN); ob freier Text diese
 Pflichtangaben ersetzen darf, ist **CoS-L-011 bei Head of Legal**. Bis die
@@ -13676,6 +13681,141 @@ dort im Wortlaut mitgegeben: was der Zeile fehlt, ist der Beleg, nicht das
 Gewicht.
 
 *Chief of Staff · 2026-09-21, 08:50 UTC*
+
+
+---
+
+## DC-122 ✅ (Teil 2 von 2) — Die drei Fußzeilen-Felder stehen jetzt auf dem Angebot. Zusätzlich, nicht anstelle (Product Designer, 21.09.2026)
+
+**Bezug:** DC-122 Teil 1 (17.09.) · Freigabe des Chief of Staff vom 21.09.,
+08:50 UTC · Antwort von Head of Legal in `chief-of-staff-legal-todos.md`,
+CoS-L-011 · LR-17/CoS-E-057 · L-35a-01
+
+Teil 1 hat die Akzentfarbe wahr gemacht und die Schriftauswahl abgeschafft.
+Übrig blieben die drei Felder **Fußzeile links / Mitte / rechts**: eingebbar,
+in der Mini-Vorschau sichtbar — und auf dem Kundendokument nicht vorhanden.
+Das war **keine Gestaltungsfrage**, deshalb wurde vier Tage nichts gebaut: Der
+feste Fuß trägt Pflichtangaben, und ob freier Text sie ersetzen darf,
+entscheidet kein Designer. **Legal hat am 21.09. mit B geantwortet** — die
+freien Zeilen kommen **zusätzlich** und ersetzen nichts. Damit ist es genau
+das kleine Ticket, das Teil 1 vorhergesagt hat: eine Fußzeilen-Quelle, drei
+Felder, eine Regel.
+
+### Die vier Grenzen von Legal — und wo jede einzelne im Code steht
+
+| Legal (CoS-L-011) | Umsetzung |
+|---|---|
+| 1. Die drei Zeilen kommen **zusätzlich**, in einer eigenen Zeile, und können nichts überschreiben | `briefpapier-fusszeile.ts` liefert **nur** den freien Teil und kennt den festen gar nicht. Im Dokument steht er als eigene Zeile **über** dem festen Fuß — oben, weil die Seitenzahl ganz unten bleiben muss |
+| 2. Der feste Fuß ist **nicht der von heute**, sondern der aus CoS-E-057; bis dahin bleibt der heutige | Am festen Fuß ist **keine Zeile geändert**. Rechtsform/Register/Vertretung baut Engineering, nicht dieses Ticket |
+| 3. **Kein Zeichenbudget, das den festen Fuß verdrängt** — zu langer Freitext wird gekürzt, nie der feste Teil | Zwei Riegel: `FUSSZEILE_MAX_ZEICHEN = 60` schneidet auf Zeilenbreite zu (sichtbar, mit „…"), und im PDF steht zusätzlich `maxLines: 1` + `textOverflow: 'ellipsis'`, falls eine Schrift breiter läuft als gerechnet |
+| 4. **Keine Prüfung des Freitextes** — nicht auf Pflichtangaben, nicht auf Dopplungen | Der Text wird nirgends inhaltlich angesehen. Nur Umbrüche werden zu Leerzeichen (der Fuß ist eine Zeile, kein Absatz) und die Länge wird geschnitten. Eine eigene Prüfung hält fest, dass eine doppelte IBAN durchkommt — **damit niemand später „hilfreich" filtert** |
+
+**Was ausdrücklich nicht hierher gehört:** die Steuernummer aus dem Fuß
+nehmen, sobald eine USt-IdNr. da ist. Das ist **L-35a-01** und gehört zu
+CoS-E-057. Nicht angefasst.
+
+### Die eine Entscheidung, die mir geblieben ist: 60 Zeichen
+
+Legal verbietet ein Budget, das den festen Fuß verdrängt — es verlangt aber
+ausdrücklich, dass zu langer Text gekürzt oder umbrochen wird. Beides zusammen
+heißt: Es muss eine Grenze geben, und sie darf nur vom Platz abhängen, nicht
+vom Inhalt.
+
+Gerechnet, nicht geschätzt: Der Fußbereich ist auf A4 **491 pt** breit
+(595 − 2 × 52 Rand), geteilt durch drei Spalten **~163 pt**. Bei 7 pt Inter
+sind das grob **45 Zeichen** je Spalte. Die Grenze steht trotzdem bei **60**,
+weil unter dem Fuß Platz für einen Umbruch ist (`paddingBottom` 72 pt,
+Fuß bei 24 pt — rund 20 pt Luft) und eine Kürzung bei 45 einen ehrlichen
+Eintrag wie „Handwerkskammer Münster, Betriebs-Nr. 12345678" abschneiden
+würde. **60 ist also der großzügigere Wert, bei dem Regel 3 noch garantiert
+hält** — nicht der engste.
+
+Gekürzt wird **sichtbar**, mit „…". Ein stilles Abschneiden wäre wieder ein
+Unterschied zwischen Eingabefeld und Papier — also genau der Fehler, den
+DC-122 von Anfang an behebt.
+
+### Und ein zweiter Befund, der beim Bauen aufgefallen ist
+
+Die **Mini-Vorschau** auf der Einstellungsseite hat bis heute **nur** den
+freien Text als Fußzeile gezeigt. Sie hat damit behauptet, die drei Felder
+**seien** die Fußzeile — das Gegenteil von Legals Antwort. Jetzt zeigt sie
+beides übereinander: den freien Text und darunter den festen Fuß aus den
+Betriebsdaten. Dieselbe Fehlerform wie das ganze Ticket, nur eine Ebene
+kleiner.
+
+Der Hinweistext an der Fußzeilen-Karte, der seit Teil 1 sagte „stehen noch
+nicht auf dem fertigen Angebot", ist ersetzt. Er verspricht bewusst **keine**
+Prüfung des Textes — Legal Regel 4 verbietet sie, also darf dort auch nicht
+stehen, dass wir aufpassen.
+
+### Gebaut
+
+| Datei | Was |
+|---|---|
+| `src/lib/briefpapier-fusszeile.ts` | **neu** — `freieFusszeile`, `freieFusszeileZeilen`, `FUSSZEILE_MAX_ZEICHEN`; die vier Legal-Regeln stehen als Begründung im Kopf |
+| `src/lib/pdf.tsx` | Import + Re-Export, `const freierFuss`, eigene Zeile über dem festen Fuß; `S.footer` ist jetzt eine Spalte, `S.footerZeile` der unveränderte feste Teil |
+| `src/components/AngebotVorschau.tsx` | dieselbe Zeile aus derselben Funktion |
+| `src/app/(app)/einstellungen/briefpapier/[id]/page.tsx` | Mini-Vorschau zeigt freien **und** festen Fuß; Hinweistext an der Karte ersetzt |
+| `src/lib/__tests__/dc122-fusszeile.test.tsx` | **neu**, 12 Tests |
+| `src/lib/__tests__/dc122-akzentfarbe.test.tsx` | nur Kopftext + ein Testtitel: die Datei behauptete weiter, der Fußzeilenteil sei offen |
+
+**Warum wieder eine eigene Datei und kein Import aus `lib/pdf.tsx`:** dieselbe
+Begründung wie bei `briefpapier-farbe.ts` (Teil 1) und `briefpapier-logo.ts`
+(DC-123/DC-124) — die beiden Vorschauen sind Client-Komponenten, ein Import
+aus `lib/pdf.tsx` zöge `@react-pdf/renderer` samt Schriftdateien ins
+Browser-Bündel. Die Alternative, die Regel an drei Stellen nachzubauen, ist
+der Fehler, der DC-049 und DC-055 verursacht hat. **Eine Quelle, drei Leser.**
+
+**Kein Datenbank-Eingriff.** Die drei Spalten existieren seit jeher und waren
+befüllbar; sie wurden nur nie gelesen.
+
+### Verifikation — auf Sandys Rechner, am echten Projekt
+
+| Prüfung | Ergebnis |
+|---|---|
+| `npx tsc --noEmit -p tsconfig.json` (voll, nicht scoped) | **Exit 0** |
+| `npx vitest run dc122-fusszeile` und die 12 Nachbardateien, die `lib/pdf`, `AngebotVorschau` oder ein Kunden-PDF erzeugen | **124 grün** (`dc122-fusszeile`, `dc122-akzentfarbe`, `dc121-logo-kopf`, `dc123-vorschau-briefpapier`, `dc125-preis-fehlt`, `dc127-tabellenkopf`, `dc050-rechenweg-pdf`, `pdf-rechenweg-render`, `pdf-uebermessung-render`, `uebermessung-pdf`, `cos-e-batch1-kundenpapier`, `wertersatz-g6`, `pd018-nullzeilen`) |
+| `npx eslint` über die sechs Dateien | **0 Fehler, 3 Warnungen** — alle drei Bestand, keine in einer von mir berührten Zeile |
+
+**Die Tests prüfen das Verbot, nicht nur die Funktion.** Von den 12 neuen
+prüfen fünf, dass **nichts verschwindet**: dass der feste Fuß vollständig
+danebensteht, dass er auch bei einem 400 Zeichen langen Eintrag vollständig
+danebensteht, dass eine doppelt eingetragene IBAN durchkommt **und** die feste
+trotzdem bleibt, und dass ein Betrieb ohne freien Text ein Zeichen für Zeichen
+unverändertes Dokument bekommt. Verbote sind der Teil, den ein späterer Umbau
+am leichtesten versehentlich aufhebt.
+
+**Beim Testen selbst gefunden und korrigiert:** Meine erste Fassung der Prüfung
+„freier Text steht über dem festen Fuß" hat mit `indexOf('IBAN: DE12')`
+gemessen — und damit die IBAN im **Briefkopf** erwischt, nicht die im Fuß. Der
+Test war rot und hatte recht: Die IBAN steht auf diesem Dokument zweimal.
+Jetzt misst er gegen `lastIndexOf` und zusätzlich gegen die Unterschriftszeile.
+
+**Nicht geprüft, also behaupte ich es nicht:** wie die zusätzliche Zeile mit
+einem echten, langen Betriebs-Eintrag auf **gedrucktem** Papier sitzt. Der
+Prüfstand misst, dass der Text im Dokument ankommt und nichts verdrängt, nicht
+wie eng es unten zugeht. Wenn Sandy das nächste Mal ohnehin ein Angebot als
+PDF öffnet, sieht sie es.
+
+### Zum Commit
+
+Im Arbeitsbaum liegen neben meinen sechs Dateien **fremde, noch laufende
+Arbeit**: Engineerings `cos-e-085-isoliergrund-alle-raeume.test.ts` und die
+zwei Prüfmeister-Testdateien (`pruefmeister-batch-47-56`,
+`pruefmeister-batch-79-88`). **Nicht angefasst, nicht im Block.** Der
+PowerShell-Block nennt meine sechs Pfade einzeln; `git add -A` bleibt
+abgeschafft (`AGENTS.md`). Die neue Datei liegt außerhalb von `docs/`, ist
+nach dem `git add` aber keine unbekannte Datei mehr — **kein `--no-verify`
+nötig, und es wäre hier auch nicht erlaubt** (CoS-P-014).
+
+**Ein Hinweis zum bekannten Schreibfehler, weil er heute wieder zugeschlagen
+hat:** `device_commit_files` hat eine der sechs Dateien als „written" gemeldet,
+ohne dass sie angekommen ist — aufgefallen nur, weil die Bytegröße nach dem
+Schreiben verglichen wurde und der Prüfstand danach noch den alten Stand
+ausführte. Zweiter Versuch, dann stimmte sie. **Alle sechs Größen sind nach
+dem Schreiben gegengeprüft.**
+
+*Product Designer · 2026-09-21*
 
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

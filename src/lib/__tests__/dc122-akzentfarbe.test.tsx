@@ -15,9 +15,11 @@
 //      DC-049, DC-055.)
 //
 // Die Schriftauswahl ist nicht nachgebaut, sondern abgeschafft worden; sie
-// hat deshalb hier nichts zu prüfen. Die drei Fußzeilen-Felder bleiben offen
-// (Rechtsfrage bei Legal, CoS-L-011) — die letzte Prüfung unten hält fest,
-// dass die Fußzeilen-Linie bis dahin keine Akzentlinie ist.
+// hat deshalb hier nichts zu prüfen. Die drei Fußzeilen-Felder sind seit dem
+// 21.09. gebaut (DC-122 Teil 2, Legal CoS-L-011: Antwort B) und haben ihre
+// eigene Datei: `dc122-fusszeile.test.tsx`. Hier bleibt davon nur die eine
+// Frage, die zur Farbe gehört — dass die Fußzeile trotzdem KEINE dritte
+// Akzentlinie bekommt.
 import { describe, it, expect } from 'vitest'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -173,10 +175,10 @@ describe('DC-122 — die Vorschau zieht genau zwei Linien', () => {
     expect(wieOft(markup(null), AKZENT_VORGABE)).toBe(2)
   })
 
-  it('die Fußzeilen-Linie bleibt grau — der Fußzeilen-Teil von DC-122 ist offen', () => {
-    // Solange nicht geklärt ist, ob freier Text die Pflichtangaben ersetzen
-    // darf (CoS-L-011), bekommt die Fußzeile keine dritte Akzentlinie. Die
-    // Zählung oben hält das fest; diese Zeile sagt, warum.
+  it('die Fußzeilen-Linie bleibt grau — auch jetzt, wo die freien Felder wirken', () => {
+    // Seit DC-122 Teil 2 steht der freie Text des Betriebs wirklich im Fuß.
+    // Eine dritte Akzentlinie bekommt er trotzdem nicht: Es sind genau zwei,
+    // und die Fußzeilen-Linie ist Struktur, keine Marke.
     const html = markup(briefpapier({ akzentfarbe: '#2563EB', fusszeile_links: 'IBAN DE00' }))
     expect(wieOft(html, '#2563eb')).toBe(2)
   })

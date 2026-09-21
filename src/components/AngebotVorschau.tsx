@@ -10,6 +10,7 @@ import { effektiveOptionen, gueltigBis } from '@/lib/angebot-optionen'
 import { uebermessungsHinweiseJePosition, UEBERMESSUNG_ERKLAERUNG } from '@/lib/mengen/gewerke/vob-uebermessung'
 import { logoKopfVorschau, logoQuelle } from '@/lib/briefpapier-logo'
 import { akzentLinie } from '@/lib/briefpapier-farbe'
+import { freieFusszeile } from '@/lib/briefpapier-fusszeile'
 import { idsOhnePreis, PREIS_FEHLT_KURZ, fehlendePreiseSatz } from '@/lib/versandbereit'
 
 interface Props {
@@ -176,6 +177,10 @@ export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRech
   // Gesamtsumme. Hier dieselben zwei, aus derselben Datei gerechnet, damit
   // die Vorschau ihr Versprechen hält (Regel: `lib/briefpapier-farbe.ts`).
   const akzent = akzentLinie(briefpapier)
+  // DC-122 Teil 2: der freie Fußzeilentext des Betriebs — dieselbe Quelle wie
+  // das Papier. `null` heißt: alle drei Felder leer, dann sieht der Fuß aus
+  // wie vor DC-122.
+  const freierFuss = freieFusszeile(briefpapier)
   const logoBild = logoSrc ? (
     // eslint-disable-next-line @next/next/no-img-element
     <img
@@ -521,15 +526,30 @@ export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRech
         </div>
 
         {/* FOOTER */}
-        <div className="mt-10 pt-3 border-t border-[#E0E0DE] flex justify-between text-[8px] text-[#999]">
-          <div>
-            {company.name} · {company.address?.split('\n')[0]}
-            {co.ust_id && ` · USt-IdNr.: ${co.ust_id}`}
-            {!co.ust_id && company.tax_number && ` · St.-Nr.: ${company.tax_number}`}
-          </div>
-          <div className="text-right">
-            {dokumentTitel} {quoteNumber}
-            {company.iban && ` · IBAN: ${company.iban}`}
+        <div className="mt-10 pt-3 border-t border-[#E0E0DE] text-[8px] text-[#999]">
+          {/* DC-122 Teil 2: Der freie Text aus Einstellungen → Briefpapier &
+              Design steht in einer eigenen Zeile ÜBER dem festen Fuß — er
+              kommt zusätzlich und ersetzt keine Pflichtangabe (Head of Legal,
+              CoS-L-011: Antwort B). Dieselbe Quelle wie das Papier
+              (`lib/briefpapier-fusszeile.ts`); nachgerechnet wird hier
+              nichts, sonst laufen Vorschau und PDF wieder auseinander. */}
+          {freierFuss && (
+            <div className="flex justify-between mb-0.5">
+              <span className="truncate">{freierFuss.links}</span>
+              <span className="truncate">{freierFuss.mitte}</span>
+              <span className="truncate text-right">{freierFuss.rechts}</span>
+            </div>
+          )}
+          <div className="flex justify-between">
+            <div>
+              {company.name} · {company.address?.split('\n')[0]}
+              {co.ust_id && ` · USt-IdNr.: ${co.ust_id}`}
+              {!co.ust_id && company.tax_number && ` · St.-Nr.: ${company.tax_number}`}
+            </div>
+            <div className="text-right">
+              {dokumentTitel} {quoteNumber}
+              {company.iban && ` · IBAN: ${company.iban}`}
+            </div>
           </div>
         </div>
 

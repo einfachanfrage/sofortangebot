@@ -8,6 +8,7 @@ import type { Briefpapier, Company } from '@/lib/types'
 import { Input } from '@/components/Input'
 import { akzentLinieAusFarbe, wirdAbgedunkelt } from '@/lib/briefpapier-farbe'
 import { logoKopfVorschau, logoQuelle, LOGO_PT_ZU_PX_MINI } from '@/lib/briefpapier-logo'
+import { freieFusszeile } from '@/lib/briefpapier-fusszeile'
 
 const FARB_CHIPS = ['#D9A400', '#2563EB', '#16A34A', '#DC2626', '#6B7280', '#1C1C1C']
 // DC-122 (17.09.2026): Hier stand eine Auswahl aus drei Schriften (Inter,
@@ -47,6 +48,10 @@ function BriefpapierVorschau({ bp, company }: { bp: Partial<Briefpapier>; compan
     <img src={logoSrc} alt="" className="object-contain mb-1"
       style={{ height: logo.hoehePx, maxWidth: logo.maxBreitePx }} />
   ) : null
+
+  // DC-122 Teil 2: der freie Fußzeilentext, aus derselben Datei wie Papier
+  // und große Vorschau. Gekürzt wird dort wie hier gleich.
+  const freierFuss = freieFusszeile(bp)
 
   const dummyItems = [
     { pos: 1, title: 'Malerarbeiten Innen', qty: 45, unit: 'm²', price: 18, total: 810 },
@@ -125,17 +130,30 @@ function BriefpapierVorschau({ bp, company }: { bp: Partial<Briefpapier>; compan
         </div>
 
         {/* Footer — DC-122: Die Fußzeilen-Linie ist auf dem Dokument grau,
-            nicht farbig; die Akzentfarbe zieht genau zwei Linien. Dass der
-            Text dieser drei Felder das Angebot bis heute gar nicht erreicht,
-            ist der noch offene Teil von DC-122 (Rechtsfrage bei Legal,
-            CoS-L-011) — der Hinweis dazu steht unten an der Fußzeilen-Karte. */}
-        {(bp.fusszeile_links || bp.fusszeile_mitte || bp.fusszeile_rechts) && (
-          <div className="flex justify-between mt-3 pt-1.5 border-t border-gray-200 text-[5px] text-gray-400">
-            <span>{bp.fusszeile_links}</span>
-            <span>{bp.fusszeile_mitte}</span>
-            <span>{bp.fusszeile_rechts}</span>
+            nicht farbig; die Akzentfarbe zieht genau zwei Linien.
+            DC-122 Teil 2: Bis zum 21.09. stand hier NUR der freie Text —
+            diese Vorschau hat also behauptet, die drei Felder SEIEN die
+            Fußzeile. Sie sind sie nicht: Sie kommen zusätzlich, über dem
+            festen Fuß aus den Betriebsdaten (Legal CoS-L-011, Antwort B).
+            Genau so steht es jetzt auch hier. */}
+        <div className="mt-3 pt-1.5 border-t border-gray-200 text-[5px] text-gray-400">
+          {freierFuss && (
+            <div className="flex justify-between mb-0.5">
+              <span className="truncate">{freierFuss.links}</span>
+              <span className="truncate">{freierFuss.mitte}</span>
+              <span className="truncate text-right">{freierFuss.rechts}</span>
+            </div>
+          )}
+          <div className="flex justify-between">
+            <span className="truncate">
+              {firmenname}{adresse ? ` · ${adresse.split('\n')[0]}` : ''}
+            </span>
+            <span className="truncate text-right">
+              {company?.tax_number ? `St.-Nr.: ${company.tax_number}` : ''}
+              {company?.iban ? ` · IBAN: ${company.iban}` : ''}
+            </span>
           </div>
-        )}
+        </div>
       </div>
     </div>
   )
@@ -399,17 +417,18 @@ function BriefpapierEditorInner() {
                 </button>
               ))}
             </div>
-            {/* DC-122, noch offener Teil: Diese drei Felder erreichen das
-                Kundendokument bis heute nicht — dort baut `lib/pdf.tsx` die
-                Fußzeile aus den Betriebsdaten (Firma, USt-IdNr., IBAN). Ob
-                freier Text diese Pflichtangaben ersetzen darf, liegt als
-                Rechtsfrage bei Head of Legal (CoS-L-011). Bis die Antwort da
-                ist, wird hier nichts gebaut — aber auch nichts behauptet. */}
+            {/* DC-122 Teil 2, erledigt am 21.09.2026: Head of Legal hat mit
+                B geantwortet (CoS-L-011) — die drei Zeilen kommen ZUSÄTZLICH
+                und ersetzen keine Pflichtangabe. Der Hinweis sagt jetzt
+                genau das, statt das Gegenteil zu behaupten. Ausdrücklich
+                nicht versprochen wird eine Prüfung des Textes: Legal Regel 4
+                verbietet sie, also darf hier auch nicht stehen, dass wir
+                aufpassen. */}
             <p className="text-[11px] text-anthracite/40 font-semibold leading-relaxed bg-bg rounded-xl px-3 py-2">
-              Diese drei Felder stehen noch nicht auf dem fertigen Angebot. Dort steht heute die
-              Fußzeile aus deinen Betriebsdaten (Firma, Steuer- und Bankangaben). Wir klären
-              gerade, welche davon durch eigenen Text ersetzt werden dürfen — bis dahin kannst du
-              hier eintragen, was später erscheinen soll.
+              Dein Text steht auf dem Angebot in einer eigenen Zeile über der festen Fußzeile —
+              zusätzlich, nicht anstelle. Die Pflichtangaben aus deinen Betriebsdaten (Firma,
+              Steuer- und Bankangaben) bleiben in jedem Fall stehen. Sehr lange Einträge werden
+              auf Zeilenbreite gekürzt, damit sie nichts verschieben.
             </p>
             {[
               { label: 'Links', field: 'fusszeile_links' as const },

@@ -16,6 +16,7 @@ import { kundenRechenweg } from './rechenweg-kundentext'
 import { fasseKleinbetraegeZusammen } from './kleinbetraege'
 import { logoKopf, logoQuelle, LOGO_MAX_BREITE_PT } from './briefpapier-logo'
 import { akzentLinie } from './briefpapier-farbe'
+import { freieFusszeile } from './briefpapier-fusszeile'
 
 // ── Marken-Schriften (CI-Handbuch, DC-049 "PDF-Schritt", 2026-09-10) ────────
 // react-pdf kennt von Haus aus nur die PDF-Standardschriften (Helvetica,
@@ -83,6 +84,11 @@ export { LOGO_HOEHE_PT, LOGO_MAX_BREITE_PT, logoKopf, logoQuelle } from './brief
 // importieren. Die Regel — genau zwei Linien, kein Text, keine Fläche —
 // steht in `lib/briefpapier-farbe.ts`.
 export { akzentLinie, AKZENT_VORGABE } from './briefpapier-farbe'
+
+// DC-122 Teil 2: Die drei freien Fußzeilen-Felder. Sie kommen ZUSÄTZLICH zum
+// festen Fuß und ersetzen nichts (Head of Legal, CoS-L-011: Antwort B). Regel
+// und Begründung in `lib/briefpapier-fusszeile.ts`.
+export { freieFusszeile, FUSSZEILE_MAX_ZEICHEN } from './briefpapier-fusszeile'
 
 // ── Styles ─────────────────────────────────────────────────────────────────
 const S = StyleSheet.create({
@@ -283,10 +289,22 @@ const S = StyleSheet.create({
     right: 52,
     borderTop: '0.5 solid #E5E5E5',
     paddingTop: 6,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    // DC-122 Teil 2: Der Fuß ist jetzt eine Spalte, weil über dem festen Teil
+    // eine eigene Zeile für den freien Text des Betriebs stehen kann. Ohne
+    // freien Text ist das Ergebnis Zeichen für Zeichen dasselbe wie vorher.
+    flexDirection: 'column',
   },
+  footerZeile: { flexDirection: 'row', justifyContent: 'space-between' },
   footerText: { fontSize: 7, color: '#AAAAAA', lineHeight: 1.5 },
+  // DC-122 Teil 2: die eigene Zeile für den freien Text des Betriebs, direkt
+  // ÜBER dem festen Fuß. Eigene Zeile, damit sie nichts verdrängen kann; die
+  // Seitenzahl bleibt dort, wo sie hingehört — ganz unten.
+  footerFreiZeile: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 2 },
+  // `maxLines` ist hier der zweite Riegel gegen Regel 3 (nie den festen Fuß
+  // verschieben): Die Längengrenze in `briefpapier-fusszeile.ts` schneidet
+  // schon auf Zeilenbreite zu, dies fängt den Rest ab, falls eine Schrift
+  // breiter läuft als gerechnet.
+  footerFreiText: { fontSize: 7, color: '#AAAAAA', lineHeight: 1.5, maxLines: 1, textOverflow: 'ellipsis' },
 })
 
 // ── Props ──────────────────────────────────────────────────────────────────
@@ -379,6 +397,12 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
   const footerLinks  = [firmenname, adresse?.split('\n')[0]].filter(Boolean).join(' · ')
   const footerMitte  = [ustId && `USt-IdNr.: ${ustId}`, steuernummer && `St.-Nr.: ${steuernummer}`].filter(Boolean).join('  ·  ')
   const footerRechts = iban ? `IBAN: ${iban}` : ''
+  // DC-122 Teil 2 (Legal CoS-L-011, Antwort B): der freie Text des Betriebs
+  // aus Einstellungen → Briefpapier & Design. `null`, wenn alle drei Felder
+  // leer sind — dann sieht der Fuß aus wie vorher, ohne leeres Band.
+  // Wichtig: Er wird den drei festen Angaben oben NICHT übergeben, sondern
+  // nur darüber gesetzt. Nichts hiervon kann eine Pflichtangabe verdrängen.
+  const freierFuss = freieFusszeile(briefpapier)
 
   // VOB-004 / Legal G5: Der Übermessungs-Hinweis steckt im annahmen-Array der
   // Position. Die Gruppierung (gruppiereNachStruktur) reicht `annahmen` nicht
@@ -732,17 +756,39 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
 
         {/* ── FOOTER ─────────────────────────────────────────────────────── */}
         <View style={S.footer} fixed>
-          <View style={{ flex: 1 }}>
-            <Text style={S.footerText}>{footerLinks}</Text>
-          </View>
-          {footerMitte ? (
-            <View style={{ flex: 1, alignItems: 'center' }}>
-              <Text style={S.footerText}>{footerMitte}</Text>
+          {/* DC-122 Teil 2: Der freie Text des Betriebs, eine eigene Zeile
+              über dem festen Fuß. Er ersetzt nichts und wird nicht geprüft
+              (Legal CoS-L-011, Regeln 1 und 4) — gekürzt wird nur auf
+              Zeilenbreite, damit die Pflichtangaben darunter stehen bleiben. */}
+          {freierFuss && (
+            <View style={S.footerFreiZeile}>
+              <View style={{ flex: 1 }}>
+                <Text style={S.footerFreiText}>{freierFuss.links}</Text>
+              </View>
+              <View style={{ flex: 1, alignItems: 'center' }}>
+                <Text style={S.footerFreiText}>{freierFuss.mitte}</Text>
+              </View>
+              <View style={{ flex: 1, alignItems: 'flex-end' }}>
+                <Text style={S.footerFreiText}>{freierFuss.rechts}</Text>
+              </View>
             </View>
-          ) : <View style={{ flex: 1 }} />}
-          <View style={{ flex: 1, alignItems: 'flex-end' }}>
-            {footerRechts && <Text style={S.footerText}>{footerRechts}</Text>}
-            <Text style={S.footerText} render={({ pageNumber, totalPages }) => `Seite ${pageNumber}/${totalPages}`} />
+          )}
+          {/* Der feste Fuß — unverändert. Die vollständige Pflichtzeile
+              (Rechtsform, Register, Vertretung) baut CoS-E-057, nicht dieses
+              Ticket; bis dahin bleibt diese Zeile stehen. */}
+          <View style={S.footerZeile}>
+            <View style={{ flex: 1 }}>
+              <Text style={S.footerText}>{footerLinks}</Text>
+            </View>
+            {footerMitte ? (
+              <View style={{ flex: 1, alignItems: 'center' }}>
+                <Text style={S.footerText}>{footerMitte}</Text>
+              </View>
+            ) : <View style={{ flex: 1 }} />}
+            <View style={{ flex: 1, alignItems: 'flex-end' }}>
+              {footerRechts && <Text style={S.footerText}>{footerRechts}</Text>}
+              <Text style={S.footerText} render={({ pageNumber, totalPages }) => `Seite ${pageNumber}/${totalPages}`} />
+            </View>
           </View>
         </View>
 
