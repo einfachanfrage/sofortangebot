@@ -32,10 +32,12 @@
  *   node scripts/docs-sichern.mjs wiederherstellen chief-of-staff-todos.md
  *   node scripts/docs-sichern.mjs schrumpfung
  */
-import { readdirSync, readFileSync } from 'node:fs'
+import { readdirSync, readFileSync, existsSync, mkdirSync, renameSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
+import { tmpdir } from 'node:os'
+import { randomBytes } from 'node:crypto'
 import { endmarkierungsZeilen } from './endmarkierung.mjs'
 
 const DOCS = 'docs'
@@ -87,6 +89,42 @@ function git(...args) {
   return execFileSync('git', args, { encoding: 'utf-8' }).trim()
 }
 
+// CoS-P-034: `status`/`add` auf dem geteilten `.git/index` hinterlassen auf
+// Sandys Mount manchmal eine leere `index.lock`, die sich per `unlink` nicht
+// entfernen lässt ("Operation not permitted") — der nächste `git add`
+// scheitert dann lautlos an genau dieser Sperre. Deshalb läuft `sichern()`
+// unten durchgängig über einen eigenen GIT_INDEX_FILE außerhalb des Repos
+// und fasst die geteilte Index-Datei gar nicht erst an. Diese Funktion ist
+// nur eine zusätzliche, defensive Aufräumaktion: eine bereits liegende Sperre
+// wird verschoben, nie gelöscht (AGENTS.md, Abschnitt „Fünf Rollen, ein
+// Arbeitsbaum", Punkt 3 — `rm`/`unlink` sind in geplanten Läufen ohnehin
+// nicht erlaubt und scheitern auf diesem Mount zusätzlich technisch).
+function fremdeSperreWegraeumen() {
+  const lockDatei = join('.git', 'index.lock')
+  if (!existsSync(lockDatei)) return
+  try {
+    const zielOrdner = join('.git', '_stale')
+    mkdirSync(zielOrdner, { recursive: true })
+    const ziel = join(zielOrdner, `index.lock.${Date.now()}.${randomBytes(3).toString('hex')}`)
+    renameSync(lockDatei, ziel)
+  } catch {
+    // Auch das Verschieben kann scheitern — dann ist das ein Befund für den
+    // nächsten Lauf, kein Grund, sichern() abzubrechen: die eigentliche
+    // Sicherung unten hängt nicht von der geteilten Index-Datei ab.
+  }
+}
+
+function eigenerIndex() {
+  return join(tmpdir(), `docs-sichern-index-${process.pid}-${randomBytes(6).toString('hex')}`)
+}
+
+function gitMitIndex(indexDatei, ...args) {
+  return execFileSync('git', args, {
+    encoding: 'utf-8',
+    env: { ...process.env, GIT_INDEX_FILE: indexDatei },
+  }).trim()
+}
+
 function sichern(grund) {
   const funde = pruefen()
   if (funde.length > 0) {
@@ -94,14 +132,44 @@ function sichern(grund) {
     console.error('\nEine einzelne Datei zurückholen:\n  node scripts/docs-sichern.mjs wiederherstellen <datei>')
     process.exit(1)
   }
-  const offen = git('status', '--porcelain', '--', DOCS)
-  if (!offen) {
-    console.log('Nichts zu sichern — docs/ ist unverändert.')
-    return
+
+  // CoS-P-034: eigener Index statt der geteilten `.git/index` — `read-tree
+  // HEAD` davor sorgt zusätzlich dafür, dass fremde uncommittete Dateien gar
+  // nicht erst mitrutschen können; der eigene Index startet exakt beim
+  // letzten Commit, nicht bei irgendeinem älteren Zwischenstand.
+  fremdeSperreWegraeumen()
+  const indexDatei = eigenerIndex()
+  try {
+    gitMitIndex(indexDatei, 'read-tree', 'HEAD')
+    const offen = gitMitIndex(indexDatei, 'status', '--porcelain', '--', DOCS)
+    if (!offen) {
+      console.log('Nichts zu sichern — docs/ ist unverändert.')
+      return
+    }
+    gitMitIndex(indexDatei, 'add', '--', DOCS)
+    gitMitIndex(indexDatei, 'commit', '-m', `docs: ${grund || 'Zwischenstand gesichert'}`)
+    const hash = gitMitIndex(indexDatei, 'rev-parse', 'HEAD')
+    console.log(`Gesichert (${hash}):\n${offen}\n\nNoch nicht auf dem Server — dafür einmal: git push`)
+
+    // AGENTS.md „Fünf Rollen, ein Arbeitsbaum", Punkt 4: wer mit eigenem Index
+    // committet, muss den geteilten Index danach nachziehen — sonst trägt er
+    // weiter die alten Blobs, und der nächste Commit über den geteilten Index
+    // (z. B. eine andere Rolle, die selbst docs/ anfasst) wirft diese
+    // Sicherung wieder weg. Best-effort: schlägt das fehl, bleibt die
+    // Sicherung selbst trotzdem committet, nur eine Warnung wird ausgegeben.
+    try {
+      fremdeSperreWegraeumen()
+      git('add', '--', DOCS)
+      const diff = git('diff', '--cached', 'HEAD', '--', DOCS)
+      if (diff) {
+        console.error('Warnung: geteilter Index nach dem Sichern nicht sauber nachgezogen — bitte vor dem nächsten Commit prüfen (siehe AGENTS.md, „Fünf Rollen, ein Arbeitsbaum").')
+      }
+    } catch (fehler) {
+      console.error(`Warnung: geteilter Index konnte nach dem Sichern nicht nachgezogen werden (${fehler.message}). Die Sicherung selbst ist trotzdem committet (${hash}) — nur ein späterer Commit einer anderen Rolle über den geteilten Index könnte sie sonst überschreiben, falls diese Rolle ebenfalls docs/-Dateien anfasst.`)
+    }
+  } finally {
+    rmSync(indexDatei, { force: true })
   }
-  git('add', '--', DOCS)
-  git('commit', '-m', `docs: ${grund || 'Zwischenstand gesichert'}`)
-  console.log(`Gesichert:\n${offen}\n\nNoch nicht auf dem Server — dafür einmal: git push`)
 }
 
 // ── Schrumpf-Prüfung (CoS-P-025) ────────────────────────────────────────────
