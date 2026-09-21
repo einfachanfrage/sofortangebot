@@ -52,9 +52,22 @@ const FLUR = () => raum('Flur', {
   arbeiten: ['wände streichen', 'decke streichen'], sockelleisten: true,
 })
 
-/** PM-134, wörtlich. */
-const T_134 = 'Flur, 6 mal 1,50, 2,50 hoch. An den Wänden machen wir nichts. '
-  + 'Wände und Decke zweimal weiß.'
+/**
+ * PM-134, wörtlich — aber in der Reihenfolge, in der die Bremse greifen DARF.
+ *
+ * ⚠ Nachgezogen am 21.09.2026 von Engineering (PM-134-A). Bis dahin stand
+ * hier die Fassung mit dem Ausschluss ZUERST („An den Wänden machen wir
+ * nichts. Wände und Decke zweimal weiß."). In der fällt seit PM-134-A gar
+ * nichts mehr weg — der spätere ausdrückliche Auftrag hebt den früheren
+ * Ausschluss auf —, und ein Hinweis über einen Wegfall, den es nicht gibt,
+ * wäre genau der Lärm, den Nr. 8 unten verbietet.
+ *
+ * Gegenstand dieser Datei bleibt unverändert, was oben steht: SICHTBAR wird,
+ * was die Bremse tut. Die Frage, ob sie greifen darf, ist PM-134 und gehört
+ * nicht hierher.
+ */
+const T_134 = 'Flur, 6 mal 1,50, 2,50 hoch. Wände und Decke zweimal weiß. '
+  + 'An den Wänden machen wir nichts.'
 
 /** Derselbe Auftrag ohne Ausschlusssatz — die Gegenprobe. */
 const T_OHNE = 'Flur, 6 mal 1,50, 2,50 hoch. Wände und Decke zweimal weiß.'

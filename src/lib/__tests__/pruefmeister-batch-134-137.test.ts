@@ -130,15 +130,24 @@ describe('PM-134 · der Ausschluss vor dem Auftrag', () => {
     expect(summe(pos)).toBe(478.05)
   })
 
-  it('PM-134 · gemessener Stand: vorher und nachher sind Zeile für Zeile gleich', () => {
-    // Das ist der Fund. Die Reihenfolge der zwei Sätze ändert nichts —
-    // 356,25 € fallen in beiden Fassungen weg.
-    expect(titel(lauf(T_VORHER, FLUR()))).toEqual(titel(lauf(T_NACHHER, FLUR())))
-    expect(summe(lauf(T_VORHER, FLUR()))).toBe(121.8)
+  it('PM-134 · GEBAUT: die Reihenfolge entscheidet — 478,05 € gegen 121,80 €', () => {
+    // Gemessener Stand bis zum 21.09., 19:05 UTC: beide Fassungen ergaben
+    // Zeile für Zeile dasselbe (121,80 €) — die Selbstkorrektur mitten im
+    // Diktat kostete 356,25 € Wandarbeit, egal in welcher Reihenfolge sie
+    // gesprochen wurde. Seit PM-134-A zählt das jüngere Wort.
+    expect(titel(lauf(T_VORHER, FLUR()))).not.toEqual(titel(lauf(T_NACHHER, FLUR())))
+    expect(summe(lauf(T_VORHER, FLUR()))).toBe(478.05)
     expect(summe(lauf(T_NACHHER, FLUR()))).toBe(121.8)
+    // Und zwar ganz: der spätere Auftrag ergibt Zeile für Zeile dasselbe wie
+    // ein Diktat ohne den Ausschlusssatz — nicht „fast dasselbe".
+    expect(titel(lauf(T_VORHER, FLUR()))).toEqual(titel(lauf(T_OHNE, FLUR())))
   })
 
   it('PM-134-B · der Wegfall ist nicht mehr stumm — seit DC-135 mit Beleg', () => {
+    // ⚠ Gemessen wird seit PM-134-A an T_NACHHER, nicht mehr an T_VORHER:
+    // in T_VORHER fällt gar nichts mehr weg, also gibt es dort auch nichts
+    // zu belegen. Die Zusicherung selbst ist dieselbe geblieben — wo die
+    // Bremse greift, sagt sie, worauf sie sich stützt.
     // Gemessen am 21.09. war er stumm: kein Fehlt-Eintrag, das Blatt sagte
     // nicht, warum die Wand fehlt — genau daran konnte Manfred den Fehler
     // nicht sehen. DC-135 (Antwort auf PD-024) reicht den Satz mit, auf den
@@ -147,7 +156,7 @@ describe('PM-134 · der Ausschluss vor dem Auftrag', () => {
     //
     // Diese Zusicherung ist damit von „so ist es" zu „so soll es bleiben"
     // geworden. Wer den Hinweis wieder entfernt, sieht es hier.
-    const { fehlende } = laufVoll(T_VORHER, FLUR())
+    const { fehlende } = laufVoll(T_NACHHER, FLUR())
     const spur = fehlende.find(f => /wand|wänd/i.test(f))
     expect(spur, 'kein Fehlt-Eintrag zur Wand').toBeDefined()
     expect(spur!).toMatch(/^⚠/)
@@ -157,7 +166,12 @@ describe('PM-134 · der Ausschluss vor dem Auftrag', () => {
     expect(spur!).toMatch(/gesagt: „An den Wänden machen wir nichts"/)
   })
 
-  it.fails('PM-134-A · SOLL: der spätere ausdrückliche Auftrag hebt den früheren Ausschluss auf', () => {
+  it('PM-134-A · GEBAUT: der spätere ausdrückliche Auftrag hebt den früheren Ausschluss auf', () => {
+    // Gebaut am 21.09.2026 (Engineering). Zwei Hälften, beide nötig: die
+    // Gegenprobe sieht jetzt über die Satzgrenze — und sie erkennt
+    // „zweimal weiß" überhaupt erst als Auftrag. Ohne die zweite Hälfte
+    // hätte die erste in genau diesem Satz nichts gefunden.
+    //
     // Soll-Lösung: Wer nach dem Ausschluss dasselbe Bauteil ausdrücklich
     // beauftragt, hat es sich anders überlegt. Der Auftrag ist das jüngere
     // Wort und gewinnt. (Der umgekehrte Fall — erst Auftrag, dann Ausschluss
@@ -341,15 +355,27 @@ describe('PM-137 · der Umfang der Verneinungsmaschine', () => {
     expect(wand('Flur, Wände weiß.\n\nAn den Wänden machen wir nichts.')).toEqual(['wand'])
   })
 
-  it('PM-137-4 · die Gegenprobe wirkt nur im selben Satz — das ist die ganze Bremse', () => {
+  it('PM-137-4 · die Gegenprobe wirkt im selben RAUM — seit PM-134 nicht mehr im selben Satz', () => {
     const wand = (t: string) =>
       [...(erkenneBauteilAusschluss(t, ['Flur']).jeRaum.get('Flur') ?? [])]
     // Auftrag im selben Satz für dasselbe Bauteil → kein Ausschluss.
     expect(wand('Flur. Die Wände nicht tapezieren, nur streichen.')).toEqual([])
     // Auftrag im selben Satz für ein ANDERES Bauteil → Ausschluss bleibt.
     expect(wand('Flur. Decke streichen, an den Wänden machen wir nichts.')).toEqual(['wand'])
-    // Auftrag im NÄCHSTEN Satz → zählt nicht mehr (das ist PM-134).
-    expect(wand('Flur. An den Wänden machen wir nichts. Wände streichen.')).toEqual(['wand'])
+    // Auftrag im NÄCHSTEN Satz → zählte bis zum 21.09. nicht. Seit PM-134-A
+    // zählt er, solange er DENSELBEN Raum meint.
+    expect(wand('Flur. An den Wänden machen wir nichts. Wände streichen.')).toEqual([])
+    // Und die Grenze, die an die Stelle der Satzgrenze getreten ist: ein
+    // Auftrag im Flur lässt den Ausschluss im Wohnzimmer stehen.
+    const wohnzimmer = (t: string) =>
+      [...(erkenneBauteilAusschluss(t, ['Flur', 'Wohnzimmer']).jeRaum.get('Wohnzimmer') ?? [])]
+    expect(wohnzimmer('Wohnzimmer. An den Wänden machen wir nichts. Flur, Wände streichen.'))
+      .toEqual(['wand'])
+    // Gegenprobe dazu: derselbe spätere Auftrag, diesmal im Wohnzimmer —
+    // jetzt greift er, und der Ausschluss ist weg. Ohne diese Zeile wäre
+    // oben nicht zu sehen, ob der Raum oder der Satz getrennt hat.
+    expect(wohnzimmer('Wohnzimmer. An den Wänden machen wir nichts. Wohnzimmer, Wände streichen.'))
+      .toEqual([])
     // CoS-E-091 (PM-135), 21.09.: innerhalb des Satzes hat die Gegenprobe
     // seitdem eine RICHTUNG. Sie zählt den Teilsatz des Ausschlusses und
     // alles dahinter — ein Auftrag DAVOR hebt ihn nicht mehr auf.

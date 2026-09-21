@@ -27,7 +27,8 @@
 // dieselbe Zuordnung braucht, steht sie in `satz-raum.ts` — zwei Kopien waeren
 // zwei Wahrheiten, und sie waeren genau an der Stelle auseinandergedriftet,
 // an der die Raumnamen im Positionstitel stehen.
-import { saetzeMitRaum, teilsaetze, saetze, raumDerPosition } from './satz-raum'
+import { saetzeMitRaum, raumDerPosition } from './satz-raum'
+import type { SatzMitRaum } from './satz-raum'
 
 export type Bauteil = 'wand' | 'decke' | 'boden' | 'tuer' | 'fenster' | 'heizkoerper'
 
@@ -81,6 +82,44 @@ const BLEIBT_NICHT = /bleib(?:t|en)\s+(?:aber\s+|leider\s+)?nicht|nicht\s+bleib/
 const TAETIGKEIT = /streich|lackier|tapezier|spachtel|schleif|grundier|verputz|verleg|montier|erneuer|tapete|anstrich|beschicht|f[üu]llen|glätten|glaetten/i
 /** Ausschluss gilt für den ganzen Auftrag, nicht für einen Raum. */
 const UEBERALL = /[üu]berall|generell|insgesamt|nirgend|in allen r[äa]umen|\bwohnung\b/i
+
+/**
+ * Der Anstrich ohne das Wort dafür: „Wände und Decke zweimal weiß."
+ *
+ * Gemessen (PM-134, 21.09.2026, am echten Projektstand): In diesem Teilsatz
+ * findet `TAETIGKEIT` oben NICHTS — kein „streichen", kein „Anstrich". Die
+ * Mengen-Erkennung eine Stufe davor sieht den Auftrag sehr wohl
+ * (`extraktion-pipeline.ts`: `/streich|anstrich|weiß|weiss/`) und schreibt
+ * `Wand streichen 2x` auf das Blatt — nur die Gegenprobe hier kannte ihn
+ * nicht. Ohne diese Zeile hätte die Satzgrenze unten nichts zu finden.
+ *
+ * Bewusst ENGER als dort: `weiß` allein ist auch die Gegenwart von „wissen"
+ * („ich weiß nicht, ob die Wände drankommen"). Verlangt wird deshalb die
+ * Zahlangabe unmittelbar davor — „zweimal weiß", „2x weiß", „dreimal in
+ * Weiß". Vor dem Verb „weiß" steht nie ein Zahlwort, und genau das trennt
+ * die beiden Fälle. Andere Farben bleiben draußen, bis sie gemessen sind.
+ *
+ * `\b` steht hier NICHT hinter `weiß` — ß ist ohne u-Flag kein Wortzeichen,
+ * die Grenze gäbe es also nach „weiß " gar nicht (dieselbe Falle wie oben bei
+ * `SATZ_WORT`). Der Negativ-Ausblick tut, was gemeint ist.
+ */
+const ANSTRICH_OHNE_TAETIGKEITSWORT =
+  /(?:\b(?:ein|zwei|drei|vier)\s*-?\s*mal|\b\d+\s*(?:x|mal))\s+(?:in\s+)?wei(?:ß|ss)(?![a-zäöüß])/i
+
+/** Verneint dieser Teilsatz — egal auf welchem der drei Wege? */
+function istVerneint(teil: string): boolean {
+  return STARKE_NEGATION.test(teil) || SCHWACHE_NEGATION.test(teil) || BLEIBT.test(teil)
+}
+
+/** Steht in diesem Teilsatz eine Arbeit — egal ob beauftragt oder verneint? */
+function istTaetigkeit(teil: string): boolean {
+  return TAETIGKEIT.test(teil) || ANSTRICH_OHNE_TAETIGKEITSWORT.test(teil)
+}
+
+/** Ein Teilsatz samt Raum und den Bauteilen, für die dort ein Auftrag steht. */
+interface TeilsatzLage extends SatzMitRaum {
+  auftraege: Set<Bauteil>
+}
 
 /**
  * Eine einzelne Ausschluss-Stelle: WO, WAS, und WORAUF sie sich stützt.
@@ -162,67 +201,91 @@ export function erkenneBauteilAusschluss(
   const hinweise: BauteilAusschlussStelle[] = []
   if (!text) return { global, jeRaum, belege, hinweise }
 
-  // 1. Je TEILSATZ sammeln, für welche Bauteile dort ein AUFTRAG dasteht. Ein
-  //    Teilsatz ohne eigenes Bauteil trägt das zuletzt genannte weiter.
+  // 1. Je TEILSATZ die Lage festhalten: Raum, und für welche Bauteile dort ein
+  //    AUFTRAG steht. Ein Teilsatz ohne eigenes Bauteil trägt das zuletzt
+  //    genannte weiter; über die Satzgrenze hinweg wird nichts getragen.
   //
-  //    PM-135: bis hierhin wurde je SATZ EINE Menge gebildet. Sie sagte, DASS
-  //    im Satz ein Auftrag steht, aber nicht mehr, WO — und damit ließ sich
-  //    ein Auftrag vor der Verneinung nicht von einem dahinter unterscheiden.
-  //    Die Mengen stehen deshalb jetzt einzeln, in Lesereihenfolge.
-  const beauftragt = new Map<number, Set<Bauteil>[]>()
-  saetze(text).forEach((satz, i) => {
-    const jeTeilsatz: Set<Bauteil>[] = []
+  //    PM-135: bis dahin wurde je SATZ EINE Menge gebildet. Sie sagte, DASS im
+  //    Satz ein Auftrag steht, aber nicht mehr, WO — und damit ließ sich ein
+  //    Auftrag vor der Verneinung nicht von einem dahinter unterscheiden.
+  //
+  //    PM-134: der Text wird nur noch EINMAL zerlegt. Bis hierhin lief er
+  //    zweimal durch — hier durch `saetze()`/`teilsaetze()`, unten durch
+  //    `saetzeMitRaum()` — und die Stelle im Satz wurde unten mitgezählt, um
+  //    beide Listen wieder zur Deckung zu bringen. Zwei Zerlegungen sind zwei
+  //    Wahrheiten; und die Gegenprobe braucht ab jetzt den RAUM des Auftrags,
+  //    den es nur in `saetzeMitRaum()` gibt.
+  const lagen: TeilsatzLage[] = []
+  {
     let getragen: Bauteil[] = []
-    for (const teil of teilsaetze(satz)) {
-      const eigene = bauteileImSatz(teil)
+    let letzterSatz = -1
+    for (const stelle of saetzeMitRaum(text, raumNamen)) {
+      if (stelle.satzIndex !== letzterSatz) { getragen = []; letzterSatz = stelle.satzIndex }
+      const eigene = bauteileImSatz(stelle.satz)
       if (eigene.length > 0) getragen = eigene
-      const verneint = STARKE_NEGATION.test(teil) || SCHWACHE_NEGATION.test(teil) || BLEIBT.test(teil)
-      const menge = new Set<Bauteil>()
-      if (!verneint && TAETIGKEIT.test(teil)) for (const b of getragen) menge.add(b)
-      jeTeilsatz.push(menge)
+      const auftraege = new Set<Bauteil>()
+      if (!istVerneint(stelle.satz) && istTaetigkeit(stelle.satz)) {
+        for (const b of getragen) auftraege.add(b)
+      }
+      lagen.push({ ...stelle, auftraege })
     }
-    beauftragt.set(i, jeTeilsatz)
-  })
+  }
 
   /**
-   * Aufträge aus diesem Teilsatz und allen dahinter — die Gegenprobe zu
-   * einem Ausschluss, der an Stelle `teilIndex` steht.
+   * Die Gegenprobe: welche Bauteile sind ab der Stelle `ab` noch ausdrücklich
+   * beauftragt? Was hier steht, wird nicht ausgeschlossen — das jüngere Wort
+   * gewinnt.
    *
    * Der eigene Teilsatz ist bewusst mitgezählt und kostet nichts: er ist
-   * verneint (sonst stünde dort kein Ausschluss), und ein verneinter
-   * Teilsatz trägt oben eine leere Menge bei.
+   * verneint (sonst stünde dort kein Ausschluss), und ein verneinter Teilsatz
+   * trägt oben eine leere Menge bei.
+   *
+   * ── PM-134 (21.09.2026) · zwei Grenzen statt einer ──────────────────────
+   *
+   * Bis hierhin endete die Gegenprobe am Satzende. „An den Wänden machen wir
+   * nichts. Wände und Decke zweimal weiß." — die Selbstkorrektur mitten im
+   * Diktat — verlor deshalb 356,25 € Wandarbeit, obwohl der Handwerker sie
+   * einen Satz später ausdrücklich bestellt hat.
+   *
+   * Die Satzgrenze fällt, aber sie fällt nicht ersatzlos: An ihre Stelle tritt
+   * die RAUMGRENZE. Ein Auftrag im Flur darf einen Ausschluss im Wohnzimmer
+   * nicht aufheben — ohne diese zweite Grenze wäre die erste nicht zu haben,
+   * weil ein Diktat mit mehreren Räumen sonst jeden Ausschluss von hinten
+   * aufräumt. Gezählt wird ein späterer Teilsatz deshalb nur, wenn er
+   * DENSELBEN Raum meint (`raeumeImSatz` deckt „in Flur und Wohnzimmer" mit ab).
+   *
+   * ⚠ Ein GLOBALER Ausschluss („überall", oder gar kein Raum bekannt) behält
+   * die alte Satzgrenze. Grund: Er hat keinen Raum, gegen den sich prüfen
+   * ließe, und ein Auftrag für EINEN Raum würde ihn sonst für ALLE aufheben —
+   * aus einer Bremse, die zu viel nimmt, würde eine, die zu wenig nimmt.
+   * Die richtige Antwort dafür ist ein Teil-Aufheben, und das ist nicht
+   * gemessen. Hier ist davon bewusst nichts vorweggenommen.
    */
-  const auftraegeAb = (satzIndex: number, teilIndex: number): Set<Bauteil> => {
-    const jeTeilsatz = beauftragt.get(satzIndex) ?? []
+  const auftraegeAb = (ab: number, zielRaum: string | null): Set<Bauteil> => {
     const menge = new Set<Bauteil>()
-    for (let k = teilIndex; k < jeTeilsatz.length; k += 1) {
-      for (const b of jeTeilsatz[k]) menge.add(b)
+    const nurEigenerSatz = zielRaum === null
+    for (let k = ab; k < lagen.length; k += 1) {
+      const lage = lagen[k]
+      if (nurEigenerSatz && lage.satzIndex !== lagen[ab].satzIndex) break
+      if (!nurEigenerSatz && lage.raum !== zielRaum && !lage.raeumeImSatz.includes(zielRaum)) continue
+      for (const b of lage.auftraege) menge.add(b)
     }
     return menge
   }
 
-  // 2. Ausschlusssätze lesen — mit Raumzuordnung aus `satz-raum.ts`.
-  //
-  //    `saetzeMitRaum` zerlegt mit demselben `saetze()`/`teilsaetze()` wie
-  //    Schritt 1 und gibt die Teilsätze in Lesereihenfolge zurück, nach Satz
-  //    gruppiert. Die Stelle im Satz lässt sich deshalb mitzählen — der
-  //    Zähler springt auf 0 zurück, sobald ein neuer Satz beginnt.
-  let laufenderSatz = -1
-  let teilIndex = -1
-  for (const { satz, raum, raumImSatz, satzIndex } of saetzeMitRaum(text, raumNamen)) {
-    if (satzIndex === laufenderSatz) teilIndex += 1
-    else { laufenderSatz = satzIndex; teilIndex = 0 }
+  // 2. Ausschluss-Teilsätze lesen — mit der Raumzuordnung aus `satz-raum.ts`.
+  for (let i = 0; i < lagen.length; i += 1) {
+    const { satz, raum, raumImSatz } = lagen[i]
 
     if (BLEIBT_NICHT.test(satz)) continue
-    const verneint = STARKE_NEGATION.test(satz) || SCHWACHE_NEGATION.test(satz) || BLEIBT.test(satz)
-    if (!verneint) continue
+    if (!istVerneint(satz)) continue
 
-    const auftraege = auftraegeAb(satzIndex, teilIndex)
+    const istGlobal = UEBERALL.test(satz) || (!raumImSatz && raum === null)
+    const auftraege = auftraegeAb(i, istGlobal ? null : (raum as string))
     const treffer = bauteileImSatz(satz).filter(b => !auftraege.has(b))
     if (treffer.length === 0) continue
 
     belege.push(satz.trim())
-    const istGlobal = UEBERALL.test(satz) || (!raumImSatz && raum === null)
     hinweise.push({
       raum: istGlobal ? null : (raum as string),
       bauteile: [...treffer],
@@ -237,6 +300,7 @@ export function erkenneBauteilAusschluss(
       }
     }
   }
+
 
   return { global, jeRaum, belege, hinweise }
 }
