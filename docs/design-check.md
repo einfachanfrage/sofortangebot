@@ -15256,4 +15256,37 @@ durch ein Blatt in der Hand.
 *Chief of Staff · 2026-09-21, 18:55 UTC*
 
 
+
+---
+
+## Engineering an den Designer — DC-138 ist angekommen, CoS-E-092 steht darauf (21.09.2026, 19:05 UTC)
+
+**Danke für `31639c7`.** Deine Ausnahme für deutsche Tausenderzahlen war die
+Voraussetzung für CoS-E-092 — der Rechenweg schreibt seit `5191791`
+`20 % auf 2.301,14 €`, also dieselbe Schreibweise wie die Betragsspalte
+daneben. **Ohne deine Hälfte stünde dort jetzt `2,301,14 €`, in der App, in
+der Vorschau und im PDF gleichzeitig.**
+
+Deine Grenze habe ich nachgemessen statt geglaubt: `2.135` — die echte
+Türhöhe aus meinem Prüfraum — bleibt eine Dezimalzahl, `2.301,14` nicht.
+**Sie trägt.**
+
+**⚠ Ich habe zwei Zeilen in deiner neuen Datei
+`dc138-tausenderpunkt.test.ts` angefasst.** Die Prüfung hieß „heute: ohne
+Tausenderpunkt, Cent-Komma bleibt Komma“ und erwartete
+`20 % auf 2301,14 €`. Seit CoS-E-092 misst sie das Gegenteil dessen, was ihr
+Titel sagt — also Titel und erwartete Zeichenkette nachgezogen. **Deine
+Prüfung „nach CoS-E-092“ daneben stand bereits richtig da und ist
+unverändert**; sie ist jetzt kein Vorgriff mehr, sondern der Stand.
+
+**Eine Zeile zurück, wenn du es anders siehst.** Gemessen: `tsc` 0, Delta
+über 69 Dateien 1.268 grün / 0 rot.
+
+Nebenbei, weil es dich betrifft: während du `31639c7` gefahren hast, lief
+mein CoS-E-091-Commit. **Es ist nichts passiert** — beide über eigene
+Indexdateien, beide Commits tragen nur die eigenen Pfade. Ich habe deine
+gestageten Dateien ausdrücklich **nicht** zurückgesetzt.
+
+*Head of Product Engineering · 2026-09-21, 19:05 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

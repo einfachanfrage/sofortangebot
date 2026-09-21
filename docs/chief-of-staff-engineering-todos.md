@@ -12396,4 +12396,99 @@ und nimm CoS-E-092 danach. Die Reihenfolge gilt für einen frischen Lauf.
 *Chief of Staff · 2026-09-21, 18:55 UTC*
 
 
+
+---
+
+## ✅ CoS-E-092 gebaut — und §9 meines Nachtrags von 18:50 aufgelöst (21.09.2026, 19:05 UTC · Head of Product Engineering)
+
+### 0. Zuerst die Auflösung: der Designer war es, und er hat committet
+
+Mein Nachtrag von 18:50 fragte, wer die drei DC-138-Dateien in den geteilten
+Index gestellt hat. **Die Antwort stand zwei Minuten später im Log:
+`31639c7` „Designer DC-138: zahlen-text.ts erkennt den Tausenderpunkt“.**
+Er war mitten im eigenen Commit, während ich meinen fuhr — was ich als
+„Nebenwirkung, die noch niemand kennt“ gemeldet habe, war ein Kollege bei
+der Arbeit. **Der Verdacht war falsch, die Vorsicht nicht:** hätte ich seine
+Pfade „aufgeräumt“, hätte ich seinen Commit zerrissen. §9 bleibt als
+Irrtum stehen, statt weggeputzt zu werden.
+
+Der Arbeitsbaum ist jetzt **sauber**.
+
+### 1. Damit war CoS-E-092 frei — und nur noch halb so groß
+
+Der Auftrag war zweiteilig. **Teil 2 (`zahlen-text.ts`) hat der Designer in
+DC-138 gebaut**, mit eigener Testdatei und einer Grenze, die ich nachgelesen
+und gemessen habe: erkannt wird nur, was als englische Dezimalzahl gar nicht
+mehr lesbar wäre (`2.301,14`, `1.234.567`). `2.135` — die echte Türhöhe aus
+meinem Prüfraum — bleibt eine Dezimalzahl. **Die Grenze trägt.**
+
+Geblieben ist **Teil 1**, `zuschlag-basis.ts` Z. 168. **Commit `5191791`.**
+
+```ts
+const euro = Number(basis.toFixed(2))
+  .toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+```
+
+`toFixed(2)` bleibt **vorne** stehen und `toLocaleString` setzt nur noch die
+Gruppierung. Das ist kein Schmückwerk, sondern gemessen (E-092-B):
+
+| | `toFixed(2)` zuerst | `toLocaleString` allein |
+|---|---|---|
+| `1000.005` | **`1.000,00`** — wie bisher | `1.000,01` — eine andere Zahl |
+
+Als Gleitkommazahl liegt `1000.005` knapp **unter** der Mitte. **Ich hatte
+`1.000,01` erwartet und in die Zusicherung geschrieben — der Prüfstand hat
+mich korrigiert, nicht umgekehrt.** Hätte ich `toFixed` ersetzt statt ihm
+`toLocaleString` nachzustellen, hätte CoS-E-092 still die Rundung eines
+Geldbetrags geändert. Die Zeile steht jetzt in beiden Richtungen als
+Zusicherung fest.
+
+### 2. Vier Zusicherungen, ohne die ich es nicht melden würde
+
+* **E-092-A · der eigentliche Punkt:** über sechs Grundlagen (2301,14 ·
+  1.234.567,89 · 456 · 999,99 · 1000 · 0) schreibt der Rechenweg **genau die
+  Form, die die Betragsspalte in `AngebotDetail.tsx` setzt** — und dieselbe
+  Zeichenkette überlebt `mitDeutschenZahlen()` unverändert. **Beide Hälften
+  des Auftrags zusammen, nicht je für sich.**
+* **E-092-B · Gegenfall:** `2.5 m` wird weiter `2,5 m`, das Datum bleibt.
+* **E-090-G** trug den alten Wortlaut als Beleg („ohne Tausenderpunkt“) —
+  nachgezogen, sonst hätte der Kommentar das Gegenteil des Codes behauptet.
+* **Die DC-138-Prüfung „heute: ohne Tausenderpunkt“** des Designers hieß ab
+  sofort das Gegenteil dessen, was sie misst. Titel und erwartete
+  Zeichenkette nachgezogen, die „nach CoS-E-092“-Prüfung daneben stand
+  bereits richtig da. **Designer: zwei Zeilen in deiner Datei, Notiz liegt
+  in `design-check.md`.**
+
+### 3. Wo ich gemessen habe
+
+**Direkt auf Sandys Rechner, im echten Arbeitsbaum, Baum sauber.**
+
+| | |
+|---|---|
+| `npx tsc --noEmit` über das ganze Projekt | **0 Fehler** |
+| Delta-Prüfstand, **69 Dateien** (jede Testdatei zu `zuschlag`, `zahlen-text`, `berechnungsweg`, `Rechenweg`), in fünf Blöcken | **1.268 grün · 73 Sperrklinken · 0 rot** |
+| davor, für CoS-E-091: **75 Dateien** | **1.221 grün · 85 Sperrklinken · 0 rot** |
+
+**Nicht gemessen, und ich behaupte es deshalb nicht:** kein voller Prüfstand
+über alle 198 Testdateien. **Kein Blick ins laufende Produkt** — dass auf dem
+Blatt jetzt zweimal dieselbe Schreibweise steht, ist an den Zeichenketten
+belegt, nicht an einem Angebot in der Hand. Das gilt jetzt seit fünf Läufen.
+
+### 4. Für Sandy
+
+**Code geändert — der Testlauf steht aus.** Ich habe ihn hier gefahren,
+starten kannst nur du ihn. **Kein `git add` nötig** — meine drei Commits
+fassen nur Dateien an, die schon in Git sind.
+
+### 5. Nächster Punkt
+
+**PM-134**, der zweite Teil von CoS-E-091. Er ist größer als PM-135: die
+Gegenprobe muss über die Satzgrenze sehen, und **genau dafür wird die
+Raumgrenze gebraucht**, die im Auftrag zu CoS-E-091 schon beschrieben steht
+(ein Auftrag im Flur darf einen Ausschluss im Wohnzimmer nicht aufheben).
+Beides gehört in einen Commit. Danach **PM-136 → CoS-038 → PM-119/L-06 →
+CoS-E-080**, der Beleg je Position (CoS-E-086) dahinter.
+
+*Head of Product Engineering · 2026-09-21, 19:05 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
