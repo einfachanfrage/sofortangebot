@@ -99,6 +99,8 @@
 // nichts: sie greift auf Zeichenfolgen, die heute nirgends vorkommen.
 // ──────────────────────────────────────────────────────────────────────────
 
+import { istProzentZuschlag, zuschlagsBezugAus } from './zuschlag-basis'
+
 /**
  * Anweisung an den Betrieb („… bitte manuell ergänzen", „… — Menge bitte
  * prüfen"). Zwei Fassungen, in dieser Reihenfolge angewandt:
@@ -168,4 +170,52 @@ export function kundenRechenweg(text: string | null | undefined): string {
   if (ergebnis.includes('√')) return ''
 
   return ergebnis
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// DC-137 (aus PD-018 §3, Prüfmeister, 16.09.2026) — ein Prozentsatz ohne
+// Bemessungsgrundlage ist auf dem Kundenpapier keine Zahl.
+//
+// Der Prüfmeister: „15 % von der Wandfläche? Von den Anstricharbeiten? Von
+// der Angebotssumme? Auf dem Kundenpapier muss das dastehen, sonst ist es der
+// Posten, über den der Kunde anruft — und der Handwerker kann es selbst nicht
+// beantworten.“
+//
+// Die Grundlage steht seit CoS-E-083 §3 im Rechenweg der Zuschlagszeile
+// (`zuschlagBerechnungsweg()`). Sie hängt damit aber am selben Schalter wie
+// jeder andere Rechenweg: `zeige_rechenweg_auf_pdf` (DC-050). Steht der auf
+// „aus“, liest der Kunde in der Zuschlagszeile
+//
+//     Erschwerniszuschlag Altbau     20 %   ×   23,01 €   =   460,23 €
+//
+// und die 23,01 € sind nichts, was er nachmessen kann: Euro je
+// Prozentpunkt, eine Rechenhilfe aus `zuschlag-basis.ts`. Bei jeder anderen
+// Position ist der Rechenweg eine Zugabe — hier ist er die Bedeutung der
+// Zahl daneben.
+//
+// Deshalb gilt für Prozentzuschläge eine Ausnahme vom Schalter, und nur für
+// sie: die Grundlage bleibt stehen, der Rest des Rechenwegs („Altbau im
+// Aufmaß erkannt“) fällt mit dem Schalter weg wie überall sonst. Wer den
+// Rechenweg abschaltet, will sein Papier ruhiger, nicht unverständlich.
+//
+// Ausdrücklich NICHT geändert: der Wortlaut der Grundlage. Ob dort
+// „(Leistungen Wohnzimmer)“ oder die Leistungsgruppe steht, liegt beim
+// Prüfmeister (Engineerings Frage vom 21.09.) — diese Stelle zeigt, was
+// dasteht, sie erfindet es nicht.
+
+/**
+ * Die graue Zeile unter einer Position auf dem Kundenpapier — oder `null`,
+ * wenn dort nichts steht.
+ *
+ * `null` statt Leerstring, damit die Aufrufer die Zeile ganz weglassen und
+ * nicht einen leeren Absatz setzen.
+ */
+export function kundenRechenwegZeile(
+  berechnungsweg: string | null | undefined,
+  einheit: string | null | undefined,
+  rechenwegSichtbar: boolean,
+): string | null {
+  if (rechenwegSichtbar) return kundenRechenweg(berechnungsweg) || 'Pauschale'
+  if (!istProzentZuschlag(einheit)) return null
+  return zuschlagsBezugAus(berechnungsweg)
 }

@@ -174,6 +174,29 @@ export function zuschlagBerechnungsweg(
   return `${prozent} % auf ${euro} € ${bezug}`
 }
 
+/**
+ * Der Leser zu `zuschlagBerechnungsweg()` — bewusst direkt daneben, nach der
+ * Lehre aus DC-125/DC-135: wer einen Satz zusammensetzt, schreibt auch den,
+ * der ihn wieder auseinandernimmt. Sonst entsteht die zweite, leicht andere
+ * Fassung derselben Bedingung an einer fremden Stelle.
+ *
+ * Gebraucht wird er auf dem Kundenpapier (DC-137 / PD-018 §3): dort darf ein
+ * Prozentsatz nie ohne seine Bemessungsgrundlage stehen. Der Handwerker kann
+ * den Rechenweg je Angebot abschalten (DC-050) — dann bliebe von einer
+ * Zuschlagszeile „15 % × 4,56 €“ übrig, und 4,56 € ist für den Kunden keine
+ * nachvollziehbare Zahl: es sind Euro je Prozentpunkt, eine reine
+ * Rechenhilfe (siehe Kopf dieser Datei).
+ *
+ * Gibt `null` zurück, wenn der Satz keine Grundlage nennt — dann steht nichts
+ * da, statt etwas Erfundenem.
+ */
+const ZUSCHLAG_BEZUG_MUSTER = /\d+(?:[.,]\d+)?\s*%\s+auf\s+[\d.,]+\s*€\s+\([^)]*\)/
+
+export function zuschlagsBezugAus(berechnungsweg: string | null | undefined): string | null {
+  const treffer = (berechnungsweg ?? '').match(ZUSCHLAG_BEZUG_MUSTER)
+  return treffer ? treffer[0] : null
+}
+
 export interface ZuschlagsItem extends ZuschlagsZeile {
   berechnungsweg?: string | null
 }

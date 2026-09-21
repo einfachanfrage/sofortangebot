@@ -2,7 +2,7 @@
 
 import type { Quote, QuoteItem, Company, Customer, Briefpapier } from '@/lib/types'
 import { mitDeutschenZahlen } from '@/lib/zahlen-text'
-import { kundenRechenweg } from '@/lib/rechenweg-kundentext'
+import { kundenRechenwegZeile } from '@/lib/rechenweg-kundentext'
 import { fasseKleinbetraegeZusammen } from '@/lib/kleinbetraege'
 import { gruppiereNachStruktur } from '@/lib/angebot-struktur'
 import { raeumeAusQuote, istAllgemeinPosition, ohneNullzeilen } from '@/lib/angebot-gruppierung'
@@ -84,6 +84,11 @@ function PositionsZeile({
    */
   ohnePreis: boolean
 }) {
+  // DC-137: Bei einem Prozentzuschlag bleibt die Bemessungsgrundlage stehen,
+  // auch wenn der Rechenweg abgeschaltet ist — Begründung in
+  // lib/rechenweg-kundentext.ts. Diese Vorschau MUSS aussehen wie das PDF,
+  // deshalb dieselbe Funktion wie dort.
+  const rechenwegZeile = kundenRechenwegZeile(berechnungsweg, unit, zeigeRechenweg)
   return (
     <div className={`flex px-2.5 py-2 text-[9px] border-b border-[#F0F0EE] ${idx % 2 !== 0 ? 'bg-[#FAFAF8]' : ''}`}>
       <span style={{ width: '5%' }} className="text-[#999]">{position}</span>
@@ -96,9 +101,9 @@ function PositionsZeile({
         {/* DC-055 (2026-09-11, Manfred/TN-007): `font-mono` ist raus und die
             Zahlen laufen durch den deutschen Formatter — diese Vorschau MUSS
             aussehen wie das PDF (lib/pdf.tsx), sonst ist sie keine Vorschau. */}
-        {zeigeRechenweg && (
+        {rechenwegZeile && (
           <div className="text-[8px] text-[#666] mt-1 leading-relaxed">
-            {mitDeutschenZahlen(kundenRechenweg(berechnungsweg)) || 'Pauschale'}
+            {mitDeutschenZahlen(rechenwegZeile)}
           </div>
         )}
       </div>

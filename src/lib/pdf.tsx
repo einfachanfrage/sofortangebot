@@ -12,7 +12,7 @@ import {
 import { effektiveOptionen, skontoText, gueltigBis, DOKUMENT_TYP_LABEL } from './angebot-optionen'
 import { uebermessungsHinweiseJePosition, UEBERMESSUNG_ERKLAERUNG } from './mengen/gewerke/vob-uebermessung'
 import { mitDeutschenZahlen } from './zahlen-text'
-import { kundenRechenweg } from './rechenweg-kundentext'
+import { kundenRechenwegZeile } from './rechenweg-kundentext'
 import { fasseKleinbetraegeZusammen } from './kleinbetraege'
 import { logoKopf, logoQuelle, LOGO_MAX_BREITE_PT } from './briefpapier-logo'
 import { akzentLinie } from './briefpapier-farbe'
@@ -307,6 +307,26 @@ const S = StyleSheet.create({
   footerFreiText: { fontSize: 7, color: '#AAAAAA', lineHeight: 1.5, maxLines: 1, textOverflow: 'ellipsis' },
 })
 
+// ── Rechenweg-Zeile ────────────────────────────────────────────────────────
+// DC-137: Die graue Zeile unter einer Position. Sie steht hier als eigene
+// Komponente, weil sie an zwei Stellen gebraucht wird (flache Liste und
+// Raum-Gruppen) und beide dieselbe Zeile zeigen müssen — dieselbe Lehre wie
+// bei `PositionsZeile` in AngebotVorschau.tsx (DC-049).
+//
+// Was gezeigt wird, entscheidet `kundenRechenwegZeile()` an einer Stelle für
+// PDF und Vorschau gemeinsam. Hier steht nur, wie es aussieht.
+function RechenwegZeile({
+  berechnungsweg, einheit, sichtbar,
+}: {
+  berechnungsweg?: string | null
+  einheit: string
+  sichtbar: boolean
+}) {
+  const zeile = kundenRechenwegZeile(berechnungsweg, einheit, sichtbar)
+  if (!zeile) return null
+  return <Text style={S.rechenwegText}>{mitDeutschenZahlen(zeile)}</Text>
+}
+
 // ── Props ──────────────────────────────────────────────────────────────────
 interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null }
@@ -565,9 +585,11 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
                   {hinweisJeItem.get(item.id) && (
                     <Text style={S.uebermessungText}>{mitDeutschenZahlen(hinweisJeItem.get(item.id))} ¹</Text>
                   )}
-                  {rechenwegSichtbar && (
-                    <Text style={S.rechenwegText}>{mitDeutschenZahlen(kundenRechenweg(rechenwegJeItem.get(item.id)?.berechnungsweg)) || 'Pauschale'}</Text>
-                  )}
+                  <RechenwegZeile
+                    berechnungsweg={rechenwegJeItem.get(item.id)?.berechnungsweg}
+                    einheit={item.unit}
+                    sichtbar={rechenwegSichtbar}
+                  />
                 </View>
                 <Text style={{ ...S.mengeText, ...S.cMenge }}>{fmtMenge(item.quantity)}</Text>
                 <Text style={{ ...S.einheitText, ...S.cEinh }}>{item.unit}</Text>
@@ -604,9 +626,11 @@ export function AngebotPDF({ quote, company, quoteNumber, briefpapier, logoBase6
                     {hinweisJeItem.get(gi.id) && (
                       <Text style={S.uebermessungText}>{mitDeutschenZahlen(hinweisJeItem.get(gi.id))} ¹</Text>
                     )}
-                    {rechenwegSichtbar && (
-                      <Text style={S.rechenwegText}>{mitDeutschenZahlen(kundenRechenweg(rechenwegJeItem.get(gi.id)?.berechnungsweg)) || 'Pauschale'}</Text>
-                    )}
+                    <RechenwegZeile
+                      berechnungsweg={rechenwegJeItem.get(gi.id)?.berechnungsweg}
+                      einheit={gi.unit}
+                      sichtbar={rechenwegSichtbar}
+                    />
                   </View>
                   <Text style={{ ...S.mengeText, ...S.cMenge }}>{fmtMenge(gi.quantity)}</Text>
                   <Text style={{ ...S.einheitText, ...S.cEinh }}>{gi.unit}</Text>

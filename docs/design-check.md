@@ -14863,4 +14863,127 @@ Entscheidung ist gebaut.
 
 *Product Designer · 2026-09-21*
 
+## DC-137 ✅ — Antwort auf PD-018 §3: Die Bemessungsgrundlage hing am Rechenweg-Schalter. Jetzt nicht mehr (Product Designer, 21.09.2026)
+
+**Bezug:** PD-018 §3 (Prüfmeister, 16.09.2026, nach Sandys Live-Lauf) · PM-104 ·
+CoS-E-083 §3 (`81e6ee0`, Engineering, 21.09.) · DC-050 (der Schalter) ·
+DC-107/DC-108 (derselbe Ausgang) · DC-125 (Leser neben Schreiber)
+
+### Der Punkt war nicht mehr der, der er im September war
+
+Der Prüfmeister hat gefragt: *„15 % von der Wandfläche? Von den
+Anstricharbeiten? Von der Angebotssumme? Auf dem Kundenpapier muss das
+dastehen, sonst ist es der Posten, über den der Kunde anruft — und der
+Handwerker kann es selbst nicht beantworten."*
+
+**Die Hälfte davon hat Engineering heute schon gebaut.** Seit CoS-E-083 §3
+schreibt `zuschlagBerechnungsweg()` die Grundlage in den Rechenweg der
+Zuschlagszeile: `15 % auf 456,00 € (Leistungen Wohnzimmer)`. Ich habe deshalb
+nicht gebaut, was schon dasteht, sondern nachgesehen, **ob es auf dem
+Kundenpapier ankommt.** Es kommt nicht immer an.
+
+### Gemessen, nicht überlegt
+
+Die Zeile hängt am selben Schalter wie jeder andere Rechenweg —
+`zeige_rechenweg_auf_pdf`, den der Handwerker je Angebot umlegen kann (DC-050,
+`VorschauUndVersand.tsx` Z. 417–423). Steht er auf „aus", liest der Kunde in
+der Zuschlagszeile **nur noch die Tabellenspalten**:
+
+```
+Erschwerniszuschlag Altbau        20  %  ×  23,01 €  =  460,23 €
+```
+
+**Die 23,01 € sind nichts, was er nachmessen kann.** Es sind Euro je
+Prozentpunkt — eine Rechenhilfe, mit der `zuschlag-basis.ts` einen Prozentsatz
+in das vorhandene „Menge × Einzelpreis"-Schema bringt (Kopf jener Datei, seit
+Sandys Entscheidung vom 31.08.). Bei jeder anderen Position ist der Rechenweg
+eine **Zugabe**. Bei dieser ist er die **Bedeutung der Zahl daneben**.
+
+Das ist genau der Befund aus PD-018 §3, nur eine Ebene tiefer als vermutet:
+nicht „die Grundlage fehlt", sondern „die Grundlage ist abschaltbar, und
+abgeschaltet bleibt eine unverständliche Zahl stehen".
+
+### Gebaut
+
+| Datei | Was |
+|---|---|
+| `src/lib/zuschlag-basis.ts` | `zuschlagsBezugAus()` — der Leser **direkt neben** `zuschlagBerechnungsweg()`, dem Schreiber (DC-125/DC-135-Lehre: sonst entsteht die zweite, leicht andere Fassung derselben Bedingung woanders). Holt aus dem Rechenweg genau den Teil, der die Grundlage nennt; findet er keinen, gibt er `null` und es steht nichts da |
+| `src/lib/rechenweg-kundentext.ts` | `kundenRechenwegZeile(weg, einheit, sichtbar)` — **die eine Stelle**, die entscheidet, was unter einer Position auf dem Kundenpapier steht. Sichtbar: unverändert wie vor DC-137. Abgeschaltet: bei Einheit `%` die Grundlage, sonst nichts |
+| `src/lib/pdf.tsx` | Neue Komponente `RechenwegZeile` für **beide** Ausgabewege (flache Liste und Raum-Gruppen) — dieselbe Lehre wie `PositionsZeile` aus DC-049, wo genau diese Verdopplung die Raumtrennung gekostet hat |
+| `src/components/AngebotVorschau.tsx` | Dieselbe Funktion wie das PDF. Die Vorschau MUSS aussehen wie das Blatt, sonst ist sie keine (DC-055, DC-132) |
+| `src/lib/__tests__/dc137-zuschlag-bezug-sichtbar.test.ts` | **12 Prüfungen**, darunter der Rundlauf Schreiber → Leser für alle drei Fassungen (Raum, Gewerk, ganzes Angebot) und der Fall am **gerechneten** Angebot statt am Beispielsatz |
+
+**Der Anlass fällt mit dem Schalter weg, die Grundlage nicht.** Aus
+`Raumhöhe 3,2m > 3m · 15 % auf 456,00 € (Leistungen Wohnzimmer)` bleibt bei
+abgeschaltetem Rechenweg der zweite Teil stehen. Wer den Rechenweg abschaltet,
+will sein Blatt ruhiger — nicht unverständlich.
+
+**Drei Grenzen, bewusst gezogen:**
+
+* **Nur `%`-Zeilen.** Jede andere Position verhält sich bei abgeschaltetem
+  Rechenweg exakt wie vorher. Per Test festgehalten, in beide Richtungen.
+* **Alte Angebote erfinden nichts.** Steht im gespeicherten Rechenweg keine
+  Grundlage (Angebote von vor CoS-E-083 §3), bleibt die Zeile leer statt halb.
+* **Der Wortlaut ist nicht meiner.** Ob dort `(Leistungen Wohnzimmer)` oder die
+  Leistungsgruppe steht, ist Engineerings Frage an den **Prüfmeister** vom
+  21.09. — diese Stelle **zeigt**, was dasteht, sie formuliert es nicht um.
+  Ändert der Prüfmeister den Wortlaut, ändert sich diese Zeile von selbst mit.
+
+### Verifikation — auf Sandys Rechner, am echten Projekt
+
+| Prüfung | Ergebnis |
+|---|---|
+| `npx tsc --noEmit -p tsconfig.json` | **Exit 0, fehlerfrei** |
+| `npx eslint` über die fünf angefassten Dateien | **0 Fehler**, 1 Warnung (`jsx-a11y/alt-text` in `pdf.tsx` Z. 836, Bestand, nicht aus meinen Zeilen) |
+| `dc137-zuschlag-bezug-sichtbar.test.ts` | **12 grün** |
+| Delta-Prüfstand über **20 Testdateien** (alles, was `rechenweg-kundentext`, `zuschlag-basis`, `pdf.tsx` oder `AngebotVorschau` anfasst) | **271 grün · 8 Sperrklinken · 0 rot** |
+
+**Nicht geprüft und deshalb nicht behauptet:** wie das fertige PDF mit
+abgeschaltetem Rechenweg auf Papier aussieht. Der Weg ist durch die
+Komponenten-Tests abgedeckt, ein echtes Blatt hat niemand in der Hand gehabt.
+
+### Nebenbefund für Engineering: die Grundlage steht ohne Tausenderpunkt
+
+`src/lib/zuschlag-basis.ts`, `zuschlagBerechnungsweg()`:
+
+```ts
+const euro = basis.toFixed(2).replace('.', ',')
+```
+
+Bei einem Angebot über 2.301,14 € steht auf dem Kundenpapier **`20 % auf
+2301,14 €`** — und **direkt daneben in der Betragsspalte `2.301,14 €`**,
+weil die Spalten durch den deutschen Formatter laufen (`pdf.tsx` Z. 51–61).
+Dieselbe Zahl, zwei Schreibweisen, eine Zeile auseinander. Unter 1.000 € fällt
+es nicht auf — die Prüfräume aus CoS-E-083 liegen alle darunter.
+
+**Warum ich es nicht selbst repariere:** Am Ausgang (`mitDeutschenZahlen`)
+wäre es keine Reparatur, sondern eine Regel für **jede** Zahl in **jedem**
+Rechenweg — inklusive Mengen, Maßen und Stückzahlen. Das ist eine eigene
+Messung wert und nicht der Nebensatz eines anderen Tickets. In der
+Rechen-Datei ist es eine Zeile, aber dort gilt die Grenze aus DC-055 Teil 2 /
+DC-130 §2: Rechen-Dateien gehören Engineering. **Zielbild:** dieselbe
+Schreibweise wie in der Spalte daneben.
+
+### 📌 Für den Prüfmeister — PD-018 §3 ist beantwortet
+
+Deine Bitte war eine graue Zeile in der Machart der Fassaden-Rechenweg-Zeile.
+**Die gibt es jetzt, und sie überlebt den Schalter.** Zwei Abweichungen von
+deinem Vorschlag, beide bewusst:
+
+1. **Die Reihenfolge ist Engineerings, nicht deine.** Du hattest `15 % auf
+   Anstricharbeiten Wand (456,00 €)` vorgeschlagen, dasteht
+   `15 % auf 456,00 € (Leistungen Wohnzimmer)`. Ich habe den Wortlaut nicht
+   angefasst, weil er dir gehört — Engineering hat dir dazu am 21.09. genau
+   diese Frage gestellt (`(Leistungen Wohnzimmer)` ist ungenauer als die
+   Rechnung, seit die Grundlage auch aufs Gewerk eingeengt ist). Was immer du
+   dort entscheidest, erscheint ohne weitere Arbeit auch in der abgeschalteten
+   Fassung.
+2. **Der Anlass steht bei abgeschaltetem Rechenweg nicht mehr da.** „Raumhöhe
+   3,2m > 3m" ist eine Begründung, keine Rechnung — die fällt mit dem Schalter,
+   wie jede andere Begründung auf dem Blatt auch.
+
+**Status: ✅ erledigt.**
+
+*Product Designer · 2026-09-21*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
