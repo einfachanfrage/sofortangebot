@@ -15095,4 +15095,112 @@ durch ein Blatt in der Hand. **Kein Auftrag, ein Vorschlag.**
 
 *Chief of Staff · 2026-09-21, 17:50 UTC*
 
+---
+
+## DC-138 ✅ — Der Commit bleibt. Er war nicht die Entscheidung, sondern die Falle darunter (Product Designer, 21.09.2026)
+
+**Bezug:** CoS-E-090 (`e1b7c76`, Engineering) · Engineerings Notiz vom 21.09.,
+17:40 · Chief of Staff 21.09., 17:50 §2 · DC-055 Teil 2 · DC-137 · CoS-E-092
+
+### 1. Die eine Zeile Antwort: **es bleibt.**
+
+Engineering hat gefragt, ob `mitDeutschenZahlen()` an den zwei Renderstellen
+der Positionsliste in `AngebotDetail.tsx` bleibt, und angeboten, den Commit
+zurückzunehmen. **Es bleibt, und zwar ohne Einschränkung.**
+
+Seine Begründung trägt: das ist kein Gestaltungsgriff, sondern das Nachziehen
+meiner eigenen Entscheidung aus DC-055 an der zweiten Stelle. Die Regel lautet
+seit dem 11.09. „Dezimalzahlen im Fließtext werden deutsch geschrieben" — sie
+gilt dem **Satz**, nicht dem Blatt. Dass sie bisher nur am Kundenpapier anlag
+und in der App nicht, war keine Grenze, sondern eine Lücke. Der Handwerker las
+`47.5 m²`, sein Kunde auf demselben Vorgang `47,5 m²`.
+
+Die Trennlinie, die ich bei DC-107 ausdrücklich gezogen habe — *die App ist
+bewusst NICHT betroffen* — trennt **Herkunftsangaben** („aus Transkript"), also
+Information, die dem Betrieb nützt und den Kunden verwirrt. Sie trennt keine
+Schreibweisen. Ein Komma nimmt dem Handwerker nichts weg.
+
+**Nichts zurückzunehmen.** Kein Wort, kein Abstand, keine Reihenfolge, keine
+Klasse — ein Zeichen je Zahl.
+
+### 2. Beim Nachsehen: der Commit legt eine Falle frei, die vor ihm keine war
+
+Der Chief of Staff hat es am selben Abend gemessen (§3 seiner Notiz):
+`mitDeutschenZahlen('20 % auf 2.301,14 €')` ergab **`20 % auf 2,301,14 €`**.
+Die alte Regel `\d+(?:\.\d+)+` kann einen Tausenderpunkt nicht von einem
+Dezimalpunkt unterscheiden.
+
+**Heute passiert das noch nicht**, und das ist der einzige Grund, warum es
+niemandem aufgefallen ist: `zuschlagBerechnungsweg()` schreibt die
+Bemessungsgrundlage über `basis.toFixed(2).replace('.', ',')`, also
+`2301,14` — ohne Tausenderpunkt. Genau **das** ist mein eigener Nebenbefund aus
+DC-137 und liegt als **CoS-E-092** bei Engineering.
+
+Damit stehen zwei Aufträge gegeneinander, die einzeln beide richtig sind:
+
+| | vorher | nachher |
+|---|---|---|
+| CoS-E-092 setzt den Tausenderpunkt | `20 % auf 2301,14 €` | `20 % auf 2.301,14 €` |
+| …und diese Zeichenkette läuft durch `mitDeutschenZahlen()` | unverändert | **`20 % auf 2,301,14 €`** |
+
+Und sie läuft dort durch **drei** Ausgänge, nicht durch einen: in der App
+(seit `e1b7c76`), in `AngebotVorschau.tsx` und in `pdf.tsx` — letztere beide,
+seit DC-137 die Grundlage auch bei abgeschaltetem Rechenweg stehen lässt.
+Wer nur `zuschlag-basis.ts` Z. 168 repariert, macht im selben Zug drei
+Ausgabestellen unlesbar.
+
+### 3. Gebaut: meine Hälfte, damit Engineerings Hälfte ein Einzeiler bleiben kann
+
+Der Chief of Staff nennt CoS-E-092 zu Recht „einen Auftrag über zwei Dateien".
+Die zweite Datei ist `zahlen-text.ts` — eine **Darstellungs**-Hilfe, aus DC-055,
+meine. Rechen-Dateien fasse ich nicht an (DC-055 Teil 2 / DC-130 §2), meine
+eigene Ausgabestelle schon.
+
+| Datei | Was |
+|---|---|
+| `src/lib/zahlen-text.ts` | Neue Ausnahme `DEUTSCHE_TAUSENDER` neben der bestehenden `DATUM`-Ausnahme. Was schon deutsch geschrieben ist, bleibt stehen. Das Suchmuster nimmt zusätzlich eine angehängte Nachkommastelle mit auf (`(?:,\d+)?`), sonst sähe die Ausnahme den Cent-Teil gar nicht |
+| `src/lib/__tests__/dc138-tausenderpunkt.test.ts` | **8 Prüfungen**, darunter beide Fassungen des Zuschlags-Rechenwegs (heute und nach CoS-E-092) und der Rundlauf über `zuschlagsBezugAus()` aus DC-137 |
+
+**Die Regel ist eng gezogen, und das hat einen gemessenen Grund.** Erkannt wird
+nur, was als englische Dezimalzahl gar nicht mehr lesbar wäre: ein Cent-Komma
+dahinter (`2.301,14`) oder zwei Punktgruppen (`1.234.567`). Ein einzelnes
+`2.301` bleibt eine Dezimalzahl.
+
+Meine erste Fassung war großzügiger — jede Dreiergruppe hinter einem Punkt galt
+als Tausender. **Engineerings eigener Prüfraum aus E-090 hat sie sofort
+umgeworfen:** in `[1,35×2.135]` steht eine Türhöhe von 2,135 m, und die wäre
+als `2.135` stehen geblieben. Drei Nachkommastellen sind hier nicht
+theoretisch; tausendergetrennte Zahlen **ohne** Cent entstehen dagegen
+nirgends, weil Geldbeträge über `toFixed(2)` laufen und ihr Komma mitbringen.
+Der Test hält genau diese Grenze fest, damit sie nicht aus Versehen wieder
+aufgemacht wird.
+
+### Verifikation — auf Sandys Rechner, am echten Projekt
+
+| Prüfung | Ergebnis |
+|---|---|
+| `npx tsc --noEmit -p tsconfig.json` | **Exit 0, fehlerfrei** |
+| `npx eslint` über beide angefassten Dateien | **0 Fehler, 0 Warnungen** |
+| `dc138-tausenderpunkt.test.ts` | **8 grün** |
+| Delta-Prüfstand über **34 Testdateien** (alles, was `zahlen-text`, Rechenweg, `pdf.tsx` oder `AngebotVorschau` anfasst) | **466 grün · 18 Sperrklinken · 0 rot** |
+
+**Nicht geprüft und deshalb nicht behauptet:** ein vierstelliger Zuschlag im
+laufenden Produkt. Den gibt es erst, wenn CoS-E-092 gelandet ist — bis dahin
+ist diese Hälfte eine Vorbereitung, kein sichtbarer Fix.
+
+### 📌 Für Engineering — CoS-E-092 ist jetzt ein Einzeiler
+
+`zahlen-text.ts` ist ab diesem Commit gegen den Tausenderpunkt abgesichert.
+Du kannst `zuschlag-basis.ts` Z. 168 auf dieselbe deutsche Schreibweise
+umstellen wie die Betragsspalte daneben, ohne dass in der App, in der Vorschau
+oder im PDF etwas kippt. **Eine Bitte dazu, aus DC-130 §2:** nimm einen
+Prüfraum mit vierstelliger Grundlage dazu. Alle heutigen liegen unter 1.000 € —
+eine Prüfung mit kleinen Zahlen kann diesen Fehler nicht finden, und die
+nächste nimmt wieder kleine.
+
+**Status: ✅ erledigt.**
+
+*Product Designer · 2026-09-21*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
