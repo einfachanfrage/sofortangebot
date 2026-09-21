@@ -14176,4 +14176,158 @@ sinnvoll erst nach Engineerings Umstellung.
 
 *Chief of Staff · 2026-09-21, 14:50 UTC*
 
+---
+
+## DC-132 ✅ — Die Vorschau war kein Maßstabsmodell des Blattes. Jetzt ist sie eins, und die Spaltenbreiten passen von selbst (Product Designer, 21.09.2026)
+
+**Bezug:** der von DC-127 ausdrücklich liegen gelassene Befund („Gemeldet,
+nicht gebaut … es ist ein eigener Befund und gehört in ein eigenes Ticket") ·
+DC-121/DC-123/DC-124 (Logo) · DC-125 · DC-049
+
+**Vorab, zur Reihenfolge:** In `arbeitsreihenfolge.md` (10:05 UTC) und in der
+Rückmeldung von 14:50 UTC steht **DC-127** noch als mein nächster Punkt. Der
+ist seit **17.09.** erledigt und committet (`dc127-tabellenkopf.test.tsx` liegt
+in `HEAD`, `AngebotVorschau.tsx` ist im Arbeitsbaum unverändert). Ich habe
+deshalb den Punkt genommen, den DC-127 selbst offen gelassen hat. **PD-018 §3**
+bleibt unangetastet — Engineering hat die Bemessungsgrundlage noch nicht
+umgestellt (steht in `chief-of-staff-engineering-todos.md` weiter in der
+Warteschlange hinter PM-106/107 und PM-105).
+
+### Der Befund war richtig. Die Ursache lag eine Ebene tiefer
+
+DC-127 hat gemeldet: die Vorschau rechnet mit `6/40/12/10/16/16`, das Papier
+mit `5/44/9/14/14/14`. Die naheliegende Reparatur — „eine Zahl in zwei Stellen
+einer Datei" — **wäre falsch gewesen.** Ich habe sie vor dem Bauen gemessen,
+und sie macht es schlimmer.
+
+**Warum:** Die Vorschau war nie ein verkleinertes A4. Sie lief in **Panelbreite**
+(`width: 133%` mit `scale(0.75)` in `VorschauUndVersand.tsx`) — bei 375 px
+Gerätebreite rund **477 px Seitenbreite** statt der **595 pt**, die ein A4-Blatt
+hat. Die **Schriftgrößen** hat sie dabei unverändert vom Papier übernommen
+(7 / 9 / 10). Also: eine A4-Seite auf **78 % ihrer Breite** mit **100 % ihrer
+Typografie**. Auf so einem Blatt können die Prozente des Papiers gar nicht
+aufgehen — die eigenen Breiten der Vorschau waren die Krücke dafür.
+
+### Gemessen, nicht gerechnet
+
+Kopfzeile (7 px, 600, Versalien, `tracking .08em`) und Zeilenwerte in echtem
+Inter, im Browser gerendert, über die Gerätebreiten 320–430 px. Die
+Tabellenbreite folgt aus `w-full` → `px-2` → `133 %` → `px-12`.
+
+| Fall | Ergebnis |
+|---|---|
+| **heutige Breiten**, Gerät 430 / 414 / 390 px | alles passt |
+| **heutige Breiten**, Gerät 375 px | **„GESAMTPREIS" läuft über seine Spalte** (61,2 px Platz, 62 px Text) |
+| **heutige Breiten**, Gerät 360 px | „GESAMTPREIS" fehlen 4,0 px |
+| **heutige Breiten**, Gerät 320 px | **fünf Zellen zu eng** (Kopf „Einheit"/„Einzelpreis"/„Gesamtpreis", Zeile „Menge"/„Gesamtpreis") |
+| **PDF-Prozente auf der alten Breite**, Gerät 375 px | Kopf „Einzelpreis" −3,4 px, „Gesamtpreis" −8,4 px, Zeile „Menge" −5,6 px |
+| **PDF-Prozente auf Papierbreite (491,3 px Satzspiegel)** | **alles passt, mit Luft** |
+
+Zwei Dinge fallen damit auf, die vorher niemand sehen konnte:
+
+1. **Es gab bereits einen echten Fehler, nicht nur eine Abweichung.** DC-127 hat
+   die Kopfbreite an **„EINZELPREIS"** nachgerechnet. **„GESAMTPREIS" ist 5 px
+   breiter** (G/S/A/M/T gegen E/I/N/Z/L) — es ist das engste Wort, nicht das
+   andere. Auf einem iPhone SE oder einem 360-px-Android stand der Spaltentitel
+   schon über den Blattrand hinaus.
+2. **Die Prozente einfach anzugleichen hätte den Fehler auf vier weitere Zellen
+   ausgedehnt.** Genau deshalb war das Liegenlassen in DC-127 richtig.
+
+### Gebaut: das Blatt ist so breit wie das Blatt
+
+* **`src/components/AngebotVorschau.tsx`** — die Seite rendert mit fester
+  Breite **595 px = 595 pt = A4**, Ränder **52** wie `page` in `lib/pdf.tsx`
+  (statt `px-12 py-10`). Damit gilt auf dieser Vorschau **1 px = 1 pt**.
+  Spaltenbreiten in Kopf **und** Positionszeile auf **5/44/9/14/14/14** — die
+  des Papiers.
+* **`src/components/VorschauUndVersand.tsx`** — die feste 133-/0,75-Annahme ist
+  raus. Neuer Rahmen `BlattInPanelbreite`: misst die tatsächlich verfügbare
+  Breite (`ResizeObserver`) und rechnet den Maßstab daraus aus, statt ihn zu
+  raten. **Nebenbei mitbehoben:** `transform` verkleinert das Bild, nicht den
+  Platz im Layout — unter der Vorschau stand bisher ein leerer Streifen von
+  rund einem Viertel der Blatthöhe. Der Rahmen rechnet die Höhe jetzt mit.
+* **`src/lib/briefpapier-logo.ts`** — `LOGO_PT_ZU_PX` war `48/42`. Dieser
+  Faktor war **kein Maß, sondern ein Hilfsmittel** für genau den Zustand, den
+  es nicht mehr gibt; DC-123 schreibt das an der Stelle selbst hin: *„Die
+  Live-Vorschau ist kein maßstäbliches A4 … es gibt deshalb keinen ,richtigen'
+  pt→px-Faktor."* Jetzt gibt es ihn, und er ist **1**. Das Logo stand in der
+  Vorschau rund **14 % zu groß** (48 px, wo 42 pt hingehören) — auf dem PDF war
+  es immer schon 42 pt.
+
+### Was Sandy auf dem Bildschirm anders sieht
+
+**Das Blatt bleibt genauso breit wie bisher** — es füllt weiter das Panel, der
+Maßstab wird außen ausgerechnet. **Die Schrift darauf wird rund ein Fünftel
+kleiner**, und das ist nicht der Preis der Änderung, sondern ihr Inhalt: So
+groß steht sie auf dem Papier, das beim Kunden auf dem Tisch liegt. Bisher zeigte
+die Vorschau eine A4-Seite, deren Typografie 25 % zu groß für ihre eigene Breite
+war — deshalb passten die Spalten des Papiers dort nicht und deshalb brauchte das
+Logo eine erfundene Umrechnung. **Wer die Positionen im Detail lesen will, tut
+das im Angebot selbst; diese Ansicht beantwortet die Frage „wie sieht das Blatt
+aus", und sie beantwortet sie ab jetzt richtig.**
+
+### Prüfungen — auf Sandys Rechner am echten Projekt
+
+* **Neu: `src/lib/__tests__/dc132-spaltenbreiten.test.tsx`** — 7 Prüfungen.
+  Die tragende darunter: die sechs Spaltenbreiten werden **aus `lib/pdf.tsx`
+  gelesen**, nicht abgeschrieben, und gegen Kopf und Zeile der Vorschau
+  gehalten. Läuft eine Seite weg, schlägt sie an — egal welche. Dazu: das Blatt
+  ist 595 breit, die Summe der sechs ist 100 %, die alten Breiten sind weg,
+  `LOGO_PT_ZU_PX` ist 1, und der Rahmen rät den Maßstab nicht mehr.
+* `npx vitest run` über die acht betroffenen Dateien (dc121…dc127, dc132) →
+  **83 grün**, keine Regression.
+* `npx tsc --noEmit` scoped auf die sechs geänderten Dateien → **fehlerfrei**.
+* `npx eslint` auf die drei Quelldateien → **0 Fehler**, 1 Warnung in
+  `VorschauUndVersand.tsx` Z. 258 (`loadPublicUrl` in einem `useEffect`) —
+  **alt, nicht aus dieser Änderung**.
+
+### Zwei fremde Tests angefasst — mit Grund, nicht nebenbei
+
+`dc123-vorschau-briefpapier.test.tsx` und `dc124-logo-quelle.test.ts` hielten
+**„mittel = 48 px"** fest. Das waren Wächter für einen **gesetzten
+Bezugspunkt** (DC-121), nicht für ein gemessenes Maß — beide Dateien sagen das
+in ihrem Kommentar selbst. Die Voraussetzung dieses Bezugspunkts ist mit DC-132
+weggefallen, deshalb stehen dort jetzt **42 px = 42 pt**, mit der Begründung an
+der Stelle. **Die Wächterfunktion bleibt:** `LOGO_HOEHE_PT.mittel` wird weiter
+geprüft, und die Mini-Vorschau der Briefpapier-Seite behält ihren eigenen
+Faktor (`LOGO_PT_ZU_PX_MINI`) — sie ist kein Maßstabsmodell und soll keins
+werden.
+
+### Nicht angefasst
+
+* **`lib/pdf.tsx`** — die Auflage aus DC-127 gilt weiter: geändert wird die
+  Vorschau, nicht das Papier. Die letzte Prüfung in der neuen Testdatei hält
+  ausdrücklich fest, dass dort unverändert `5/44/9/14/14/14` steht.
+* **Die Briefpapier-Kachel** (`einstellungen/briefpapier/[id]/page.tsx`) —
+  Daumennagel bei 5–6 px, bewusst kein Maßstabsmodell, siehe DC-127.
+* **PD-018 §3** — wartet auf Engineerings Bemessungsgrundlage.
+* **Fremde, laufende Arbeit im Arbeitsbaum:** `src/lib/vollstaendigkeit/
+  maler-sonder.ts`, `boden.ts`, `boden-vorarbeiten.ts` und die Testdateien
+  `cos-e-088-deutsche-zahl-rechenweg.test.ts`, `cos-e-083-schiene-je-tuer.test.ts`,
+  `zz-probe.test.ts` standen während meines Laufs geändert bzw. neu da — das ist
+  Engineerings Arbeit an CoS-E-088 (mein DC-130 §2). Nicht meine, nicht
+  angefasst, nicht im PowerShell-Block.
+
+### Aufräumen
+
+`tsconfig.dc132.json` liegt **nicht** im Projektwurzelverzeichnis — Löschen ist
+auf diesem Rechner nicht erlaubt, deshalb nach
+`_to_delete/designer-dc132-2026-09-21/` verschoben. **Dabei mitgenommen:**
+**21 liegen gebliebene `*.tsbuildinfo`** aus früheren Designer-Läufen
+(`tsconfig.dc036/dc039/dc041/dc051/designer-tmp1…7/…`). Die waren von `git`
+ignoriert und haben deshalb nie den Pre-Push-Hook ausgelöst, lagen aber seit
+Wochen in der Wurzel. Sandy kann den Ordner löschen.
+
+### Was ich nicht behaupte
+
+Ich habe die neue Vorschau **nicht im laufenden Produkt gesehen** — dafür
+bräuchte es ein Angebot auf `sofortangebot.app` und einen Blick auf den
+Vorschau-Schirm. Gemessen ist die Geometrie (Browser, echtes Inter, sechs
+Gerätebreiten), geprüft sind Verträge und Typen. **Was ein Live-Blick noch
+zeigen müsste:** ob der Maßstab beim Öffnen des Sheets sofort sitzt (der Rahmen
+misst nach dem ersten Bild) und ob die kleinere Schrift auf einem echten Handy
+so wirkt, wie sie soll.
+
+*Product Designer · 2026-09-21*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

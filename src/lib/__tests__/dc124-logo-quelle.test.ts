@@ -73,11 +73,14 @@ describe('DC-124 — welches Bild in den Kopf kommt', () => {
 })
 
 describe('DC-124 — beide Vorschauen, ein Verhältnis', () => {
-  it('die große Vorschau bleibt unverändert: mittel = 48 px', () => {
-    // Der Bezugspunkt aus DC-121. Der Faktor ist jetzt ein Parameter mit
-    // Vorgabewert — die bestehenden Aufrufe dürfen sich dadurch nicht ändern.
+  it('die große Vorschau trägt die Höhe des Papiers: mittel = 42 px = 42 pt', () => {
+    // Bis DC-132 stand hier 48 px, der gesetzte Bezugspunkt aus DC-121 für
+    // ein Blatt, das kein maßstäbliches A4 war. Seit DC-132 ist es eins
+    // (595 px = 595 pt), damit ist LOGO_PT_ZU_PX = 1 und die Vorschau zeigt
+    // dieselbe Logohöhe wie das PDF. Der Faktor bleibt ein Parameter mit
+    // Vorgabewert — die Mini-Vorschau unten hat weiterhin ihren eigenen.
     expect(logoKopfVorschau(bp({}))).toEqual({
-      hoehePx: 48,
+      hoehePx: 42,
       maxBreitePx: Math.round(LOGO_MAX_BREITE_PT * LOGO_PT_ZU_PX),
       position: 'links',
     })

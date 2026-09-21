@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import AngebotVorschau from './AngebotVorschau'
 import { createClient } from '@/lib/supabase/client'
@@ -8,6 +8,67 @@ import { anredeZeile } from '@/lib/anrede'
 import { getActiveIntegrations } from '@/lib/integrations'
 import type { Quote, QuoteItem, Company, Customer, Briefpapier } from '@/lib/types'
 import { nutzerFehler } from '@/lib/fehlertexte'
+
+/**
+ * DC-132 (2026-09-21) — das Blatt wird EINMAL verkleinert, außen.
+ *
+ * Vorher stand hier `width: 133%` mit `scale(0.75)`. Das hat die Vorschau
+ * nicht auf A4 gebracht, sondern auf Panelbreite: bei 375 px Gerätebreite
+ * rund 477 px Seitenbreite statt der 595 pt, die das Blatt hat — mit den
+ * Schriftgrößen des Papiers (7/9/10) unverändert darauf. Eine A4-Seite auf
+ * 78 % ihrer Breite, aber 100 % ihrer Typografie: dieselben Prozente wie im
+ * PDF konnten dort gar nicht aufgehen, und genau deshalb hatte die Vorschau
+ * eigene Spaltenbreiten (DC-127, offen gelassen).
+ *
+ * Jetzt rendert `AngebotVorschau` ein echtes Blatt (595 px = 595 pt) und
+ * dieser Rahmen rechnet den Maßstab aus der tatsächlich verfügbaren Breite
+ * aus, statt ihn zu raten. Zwei Dinge fallen damit weg: die feste
+ * 133/0,75-Annahme (sie stimmte nur bei einer Panelbreite) und der leere
+ * Streifen unter der Vorschau — `transform` verkleinert das Bild, nicht den
+ * Platz, den das Element im Layout belegt, deshalb wird die Höhe hier
+ * mitgerechnet.
+ */
+const BLATT_BREITE = 595
+
+function BlattInPanelbreite({ children }: { children: React.ReactNode }) {
+  const rahmen = useRef<HTMLDivElement>(null)
+  const blatt = useRef<HTMLDivElement>(null)
+  const [mass, setMass] = useState({ skala: 1, hoehe: 0 })
+
+  useEffect(() => {
+    const r = rahmen.current
+    const b = blatt.current
+    if (!r || !b) return
+    const messen = () => {
+      const breite = r.clientWidth
+      if (!breite) return
+      const skala = breite / BLATT_BREITE
+      const hoehe = b.scrollHeight * skala
+      // Gleiche Werte => gleiches Objekt zurückgeben. Sonst setzt dieser
+      // Effekt die Höhe, die Höhenänderung weckt den Beobachter, und das
+      // läuft im Kreis.
+      setMass(alt =>
+        Math.abs(alt.skala - skala) < 0.0001 && Math.abs(alt.hoehe - hoehe) < 0.5 ? alt : { skala, hoehe },
+      )
+    }
+    messen()
+    const beobachter = new ResizeObserver(messen)
+    beobachter.observe(r)
+    beobachter.observe(b)
+    return () => beobachter.disconnect()
+  }, [])
+
+  return (
+    <div ref={rahmen} style={{ height: mass.hoehe, overflow: 'hidden' }}>
+      <div
+        ref={blatt}
+        style={{ transform: `scale(${mass.skala})`, transformOrigin: 'top left', width: BLATT_BREITE }}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
 
 interface Props {
   quote: Quote & { items: QuoteItem[]; customer?: Customer | null }
@@ -367,9 +428,9 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
             {/* Skalierte Vorschau */}
             <div className="px-2 py-3">
               <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-                <div style={{ transform: 'scale(0.75)', transformOrigin: 'top left', width: '133%' }}>
+                <BlattInPanelbreite>
                   <AngebotVorschau quote={quote} company={company} quoteNumber={quoteNumber} zeigeRechenweg={zeigeRechenweg} briefpapier={briefpapier} />
-                </div>
+                </BlattInPanelbreite>
               </div>
             </div>
 

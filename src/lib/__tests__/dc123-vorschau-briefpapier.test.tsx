@@ -51,11 +51,15 @@ describe('DC-123 — die Vorschau rechnet dieselben Stufen wie das PDF', () => {
     for (const s of stufen) expect(Math.abs(s.px - s.pt * faktor)).toBeLessThanOrEqual(1)
   })
 
-  it('der Bezugspunkt aus DC-121 bleibt stehen: mittel = 48 px', () => {
-    // 42 pt ↔ max-h-12. Ändert jemand LOGO_HOEHE_PT, fällt diese Zeile auf —
-    // und zwar bevor Vorschau und PDF auseinanderlaufen.
+  it('die Vorschau zeigt die Logohöhe des Papiers: mittel = 42 px = 42 pt', () => {
+    // Bis DC-132 stand hier 48 px. Das war kein Maß, sondern ein gesetzter
+    // Bezugspunkt (DC-121/DC-123) für ein Blatt, das kein maßstäbliches A4
+    // war. Seit DC-132 ist es eins — 595 px = 595 pt —, damit ist 1 pt = 1 px
+    // und das Logo genau so groß wie auf dem PDF. Ändert jemand
+    // LOGO_HOEHE_PT, fällt diese Zeile auf, bevor Vorschau und PDF
+    // auseinanderlaufen.
     expect(LOGO_HOEHE_PT.mittel).toBe(42)
-    expect(logoKopfVorschau(null).hoehePx).toBe(48)
+    expect(logoKopfVorschau(null).hoehePx).toBe(42)
   })
 
   it('die Breitenbremse gilt in der Vorschau auch', () => {
@@ -155,7 +159,7 @@ describe('DC-123 — die Vorschau setzt das Logo wirklich um', () => {
   it('ohne Briefpapier bleibt es beim Firmenlogo, links und in der Vorgabegröße', () => {
     const html = markup(null)
     expect(html).toContain('firmen-logo.png')
-    expect(html).toContain('height:48px')
+    expect(html).toContain('height:42px')
     expect(bildStelle(html)).toBeLessThan(html.indexOf('Holm GmbH'))
   })
 

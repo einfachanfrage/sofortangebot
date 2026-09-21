@@ -86,8 +86,8 @@ function PositionsZeile({
 }) {
   return (
     <div className={`flex px-2.5 py-2 text-[9px] border-b border-[#F0F0EE] ${idx % 2 !== 0 ? 'bg-[#FAFAF8]' : ''}`}>
-      <span style={{ width: '6%' }} className="text-[#999]">{position}</span>
-      <div style={{ width: '40%' }}>
+      <span style={{ width: '5%' }} className="text-[#999]">{position}</span>
+      <div style={{ width: '44%' }}>
         <span className="font-bold">{title}</span>
         {description && <div className="text-[#666] mt-0.5">{description}</div>}
         {uebermessungsHinweis && (
@@ -105,15 +105,15 @@ function PositionsZeile({
       {/* DC-055, dabei mitgefunden: die Menge stand hier als rohe JS-Zahl
           („46.64"), während das PDF sie längst deutsch formatiert (fmtMenge).
           Dieselbe Zahl, zwei Schreibweisen, je nachdem wo man hinsieht. */}
-      <span style={{ width: '12%', textAlign: 'right' }}>{fmtMenge(quantity)}</span>
-      <span style={{ width: '10%', textAlign: 'center' }}>{unit}</span>
+      <span style={{ width: '9%', textAlign: 'right' }}>{fmtMenge(quantity)}</span>
+      <span style={{ width: '14%', textAlign: 'center' }}>{unit}</span>
       {/* DC-125: „0,00 €" behauptet, diese Arbeit koste nichts. Hier steht
           deshalb, was wahr ist. Bewusst in derselben Zeile und nicht als
           Fußnote: der Blick fällt beim Überfliegen auf die Betragsspalte. */}
-      <span style={{ width: '16%', textAlign: 'right' }} className={ohnePreis ? 'text-[#B00020]' : undefined}>
+      <span style={{ width: '14%', textAlign: 'right' }} className={ohnePreis ? 'text-[#B00020]' : undefined}>
         {ohnePreis ? PREIS_FEHLT_KURZ : fmt(unitPrice)}
       </span>
-      <span style={{ width: '16%', textAlign: 'right' }} className={ohnePreis ? 'font-bold text-[#B00020]' : 'font-bold'}>
+      <span style={{ width: '14%', textAlign: 'right' }} className={ohnePreis ? 'font-bold text-[#B00020]' : 'font-bold'}>
         {ohnePreis ? PREIS_FEHLT_KURZ : fmt(totalPrice)}
       </span>
     </div>
@@ -238,9 +238,23 @@ export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRech
     // `body` geerbte Inter-Schrift mit Tailwinds System-Sans-Stack — diese
     // Vorschau lief nie auf einer Marken-Schrift. Jetzt einfach weglassen und
     // von `body` erben (siehe globals.css), wie der Rest der App.
-    <div className="bg-white text-anthracite text-[10px] leading-normal min-h-full">
-      {/* A4-artiges Paper-Layout */}
-      <div className="px-12 py-10">
+    // DC-132 (2026-09-21): Diese Vorschau war bis heute KEIN Maßstabsmodell
+    // des Blattes. Sie lief in Panelbreite (bei 375 px Gerätebreite rund
+    // 477 px Seitenbreite) und trug dabei die Schriftgrößen des Papiers
+    // (7/9/10) unverändert — also eine A4-Seite auf 78 % ihrer Breite mit
+    // 100 % ihrer Typografie. Genau daher kommt der Unterschied in den
+    // Spaltenbreiten, den DC-127 gemeldet und bewusst offen gelassen hat:
+    // auf der zu schmalen Seite passten die Prozente des Papiers nicht.
+    // Jetzt ist das Blatt so breit wie das Blatt — 595 px = 595 pt = A4,
+    // Ränder 52 wie `page` in lib/pdf.tsx — und die Verkleinerung auf die
+    // verfügbare Breite passiert EINMAL außen (VorschauUndVersand).
+    // Damit gelten hier dieselben Prozente wie dort, und sie tragen auch.
+    <div
+      className="bg-white text-anthracite text-[10px] leading-normal"
+      style={{ width: 595 }}
+    >
+      {/* A4: 595 pt breit, Ränder wie lib/pdf.tsx (`page`) */}
+      <div style={{ paddingLeft: 52, paddingRight: 52, paddingTop: 52, paddingBottom: 72 }}>
 
         {/* HEADER */}
         {/* DC-123 (2026-09-17): Position „mitte" — eigene, mittige Zeile ÜBER
@@ -336,16 +350,20 @@ export default function AngebotVorschau({ quote, company, quoteNumber, zeigeRech
               „Einzelpr."/„Gesamt" waren Abkürzungen, die das Dokument nicht
               kennt; ausgeschrieben passen sie in dieselben Spalten, weil der
               Kopf jetzt kleiner ist als die Zeilen darunter.
-              Die Spaltenbreiten bleiben bewusst die dieser Vorschau: sie
-              gehören den Zeilen genauso wie dem Kopf, und die Zeilen sind
-              nicht Gegenstand dieses Tickets. */}
+              DC-132 (2026-09-21): Die Spaltenbreiten sind jetzt die des
+              Papiers (5/44/9/14/14/14 statt 6/40/12/10/16/16) — möglich
+              geworden, weil das Blatt oben auf seine echte Breite gestellt
+              ist. Gemessen bei 320–430 px Gerätebreite: auf der alten,
+              zu schmalen Seite lief „GESAMTPREIS" schon bei 375 px über
+              seine Spalte hinaus, bei 320 px fünf Zellen; auf der
+              Papierbreite passt jede Spalte mit Luft. */}
           <div className="flex px-2.5 pb-1.5 mb-0.5 border-b border-[#AAAAAA] text-[7px] font-semibold uppercase tracking-[0.08em] text-[#999999]">
-            <span style={{ width: '6%' }}>Pos</span>
-            <span style={{ width: '40%' }}>Bezeichnung</span>
-            <span style={{ width: '12%', textAlign: 'right' }}>Menge</span>
-            <span style={{ width: '10%', textAlign: 'center' }}>Einheit</span>
-            <span style={{ width: '16%', textAlign: 'right' }}>Einzelpreis</span>
-            <span style={{ width: '16%', textAlign: 'right' }}>Gesamtpreis</span>
+            <span style={{ width: '5%' }}>Pos</span>
+            <span style={{ width: '44%' }}>Bezeichnung</span>
+            <span style={{ width: '9%', textAlign: 'right' }}>Menge</span>
+            <span style={{ width: '14%', textAlign: 'center' }}>Einheit</span>
+            <span style={{ width: '14%', textAlign: 'right' }}>Einzelpreis</span>
+            <span style={{ width: '14%', textAlign: 'right' }}>Gesamtpreis</span>
           </div>
 
           {/* Zeilen — DC-049 PDF-Schritt Nachtrag Teil 2 (2026-09-11): jetzt

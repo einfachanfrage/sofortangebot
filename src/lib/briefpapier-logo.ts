@@ -34,18 +34,23 @@ export function logoKopf(briefpapier?: Briefpapier | null) {
   }
 }
 
-// DC-123: Die Live-Vorschau ist kein maßstäbliches A4 — sie ist eine
-// CSS-Nachbildung, die in der Breite mitläuft. Es gibt deshalb keinen
-// „richtigen" pt→px-Faktor, den man ausrechnen könnte, sondern nur einen
-// gesetzten Bezugspunkt. Der ist in DC-121 bereits gefallen: die Vorgabestufe
-// „mittel" (42 pt) steht dort als `max-h-12` = 48 px. Genau dieser eine Wert
-// ist hier festgehalten, damit die anderen beiden Stufen NICHT frei gewählt
-// werden, sondern im selben Verhältnis zueinander stehen wie im PDF.
+// DC-132 (21.09.2026): Dieser Faktor war ein Hilfsmittel für einen Zustand,
+// den es nicht mehr gibt. DC-123 hat hier zu Recht geschrieben: „Die
+// Live-Vorschau ist kein maßstäbliches A4 — es gibt deshalb keinen
+// ,richtigen' pt→px-Faktor, sondern nur einen gesetzten Bezugspunkt" (48 px
+// für 42 pt, aus DC-121). Seit DC-132 ist die große Vorschau ein
+// maßstäbliches A4: `AngebotVorschau` rendert das Blatt mit 595 px = 595 pt,
+// die Verkleinerung auf die Panelbreite passiert einmal außen. Damit gibt es
+// den richtigen Faktor doch, und er ist 1.
 //
-//   klein  28 pt → 32 px
-//   mittel 42 pt → 48 px   (der gesetzte Bezugspunkt aus DC-121)
-//   groß   60 pt → 69 px
-export const LOGO_PT_ZU_PX = 48 / 42
+// Was das ändert: das Logo stand auf dem zu schmalen Blatt rund 14 % zu groß
+// (48 px, wo 42 hingehören). Auf dem PDF war es immer schon 42 pt — die
+// Vorschau zeigt ab jetzt dasselbe Bild, nicht ein größeres.
+//
+//   klein  28 pt → 28 px
+//   mittel 42 pt → 42 px
+//   groß   60 pt → 60 px
+export const LOGO_PT_ZU_PX = 1
 
 // DC-124: Dieselbe Rechnung noch einmal, für die Mini-Vorschau auf der
 // Briefpapier-Seite. Sie ist kleiner als die große Vorschau (Fließtext 7 px
