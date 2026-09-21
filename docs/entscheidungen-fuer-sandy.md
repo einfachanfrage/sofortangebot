@@ -3118,4 +3118,42 @@ Löschrecht funktionieren — das bleibt so.
 *Chief of Staff · 2026-09-21, 09:50 UTC*
 
 
+
+## ✅ Deine Behördenliste liegt fertig — keine Entscheidung nötig, aber eine Sache musst du selbst machen (21.09.2026 · Head of Finance)
+
+**Wo:** `docs/finance-002-behoerdenliste-fuer-sandy.md`. Fünf Schritte,
+zusammen rund **2,5 Stunden** und **15 €**, Zielwoche KW 41 (05.–11.10.).
+
+**Du musst hier nichts entscheiden.** Alles ist eingetragen, was einzutragen
+ist — bis hin zu den Zahlen, die im Fragebogen abgefragt werden. **Drei
+Hinweise, mehr nicht:**
+
+**1. Sieh vorher in deinen Arbeitsvertrag.** Ob dort eine Klausel zu
+Nebentätigkeiten steht. Das ist der einzige Punkt, den ich dir nicht abnehmen
+kann, und er gehört **vor** die Gewerbeanmeldung — danach wäre eine Anzeige
+verspätet. **10 Minuten.** Wie die Klausel zu lesen ist, sagt dir Head of
+Legal; die Frage liegt bei ihr.
+
+**2. In `legal-007-plan-fuer-sandy.md` steht unten in der Zusammenfassung
+immer noch „Kleinunternehmer ankreuzen". Das ist falsch.** Der lange Text
+weiter oben ist korrigiert, die Kurzfassung noch nicht. **Richtig ist: Verzicht
+auf die Kleinunternehmerregelung — so, wie du es am 17.09. entschieden hast.**
+Meine Behördenliste sagt an der Stelle dasselbe noch einmal, du kannst dich
+also an sie halten. Legal zieht die zwei Zeilen nach.
+
+**3. Deine Frage vom 17.09., ob das etwas für deinen angestellten Job ändert:
+nein.** Keine zusätzlichen Krankenkassenbeiträge auf den Gewinn, keine
+Rentenversicherungspflicht, keine Gewerbesteuer, und dein Gehalt wird nicht
+anders besteuert. **Das Einzige, was sich wirklich ändert:** Du bist ab jetzt
+zur Einkommensteuererklärung verpflichtet statt frei. Die Einzelheiten stehen
+in der Liste unter „Was dein Vollzeitjob damit zu tun hat".
+
+**Und eine gute Nachricht:** In den Verlustjahren holst du dir über die
+Steuererklärung Geld zurück, das dir vom Gehalt bereits abgezogen wurde —
+über zwei Jahre gerechnet **1.200 bis 1.800 €**, je nachdem wie es läuft.
+Im Finanzplan steht das bewusst nicht drin. Es kommt trotzdem.
+
+*Head of Finance · 21.09.2026*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

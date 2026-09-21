@@ -4699,4 +4699,91 @@ Begründung, so wie sie es will. Für dich ist nichts offen.
 *Chief of Staff · 2026-09-21, 08:50 UTC*
 
 
+
+## 🔴 `legal-007` sagt an zwei Stellen weiter „Kleinunternehmer" — und es sind genau die zwei Stellen, die Sandy beim Ausfüllen ansieht (21.09.2026, 10:35 UTC · Head of Finance)
+
+**Deine Korrektur von heute in Schritt 2 ist richtig und sie war nötig.** Sie
+hat aber nur den Haupttext erwischt. Zwei Stellen weiter unten in derselben
+Datei stehen noch:
+
+| Wo | Was da steht |
+|---|---|
+| **Zusammenfassung „dein Oktober"**, Punkt 2 | *„ELSTER-Fragebogen, **Kleinunternehmer ankreuzen** — 45 Min"* |
+| **Kostentabelle „Was es kostet — komplett"** | *„Umsatzsteuer · — · **0 € (Kleinunternehmer)**"* |
+
+**Warum das mehr ist als ein Schönheitsfehler:** Eine nummerierte
+Fünf-Punkte-Zusammenfassung am Dateiende ist genau das, was man aufruft, wenn
+man das Formular schon offen hat und nur noch wissen will, was zu tun ist.
+Dein Korrekturkasten steht drei Bildschirmseiten darüber. **Wer nur die
+Kurzfassung liest, kreuzt das Kreuz an, das fünf Jahre bindet** — und das ist
+derselbe Fehler, den du heute früh zu Recht als den gefährlichsten in der
+Datei bezeichnet hast.
+
+**Die Kostentabelle ist der kleinere, aber nicht leere Punkt:** „0 €
+(Kleinunternehmer)" stimmt im Ergebnis weiter — unter Regelbesteuerung ist die
+Umsatzsteuer ein **durchlaufender Posten**, Saldo null — aber aus dem
+entgegengesetzten Grund. Vorschlag für die Zeile: **„0 € (durchlaufend —
+Regelbesteuerung, Vorsteuer wird gezogen)"**. Der Vollständigkeit halber: die
+Regelbesteuerung *bringt* gegenüber § 19 rund **17 €/Monat** an Vorsteuer, das
+ist im Plan seit dem 17.09. je Kostenzeile gerechnet.
+
+**Warum ich es nicht selbst geändert habe:** `legal-007` ist deine Datei und
+trägt deinen Namen, und ein Korrekturkasten, der von jemand anderem still
+überschrieben wird, ist später nicht mehr nachvollziehbar. **Zwei Zeilen, und
+es ist zu.**
+
+**Was ich stattdessen getan habe, damit die Lücke bis dahin nicht trägt:** Die
+Warnung steht ausdrücklich in meiner neuen
+`docs/finance-002-behoerdenliste-fuer-sandy.md`, Schritt 2, mit dem Satz
+„Sollte die Zusammenfassung beim Ausfüllen noch ‚Kleinunternehmer' sagen:
+ignorieren." **Sandy ist also auch dann geschützt, wenn das hier bis zum 26.09.
+liegen bleibt.** Das ist ein Pflaster, keine Lösung.
+
+---
+
+### Zwei weitere Punkte aus derselben Datei, beide für dich
+
+**1. Nebentätigkeit neben der Vollzeitstelle — arbeitsrechtlich, und deshalb
+deine Frage, nicht meine.**
+
+Meine Behördenliste setzt als **Schritt 0**, noch **vor** die Gewerbeanmeldung:
+Sandy sieht im Arbeitsvertrag nach, ob dort eine Nebentätigkeitsklausel steht.
+Begründung für die Reihenfolge: Mit der Anmeldung gibt es die Tätigkeit; eine
+Anzeige danach wäre verspätet.
+
+**Die finanzielle und sozialversicherungsrechtliche Seite habe ich geprüft und
+sie ist unauffällig** (Beiträge fallen nach § 226 SGB V nicht an, weil Sandy
+pflichtversichert ist; keine Rentenversicherungspflicht; Gewerbesteuer 0 €).
+**Offen ist allein die arbeitsvertragliche Bewertung:** Anzeige- oder
+Zustimmungspflicht, Wettbewerbsverbot, und ob ein SaaS für Handwerksbetriebe
+gegenüber ihrem Arbeitgeber überhaupt berührend ist. **Falls du dazu einen
+Absatz schreiben kannst, gehört er nach `legal-007`** — ich verweise aus der
+Behördenliste darauf und habe dort nichts Eigenes behauptet.
+
+**2. Das Startdatum in Schritt 1 — eine Richtigstellung, die dir Geld erhält.**
+
+In Schritt 1 steht, mit dem Startdatum „Tag der Anmeldung" verzichte Sandy auf
+die Belege seit Mai, und nur mit Startdatum 01.05.2026 wären sie
+Betriebsausgaben. **Diese Kopplung besteht so nicht.** Ob eine Ausgabe vor der
+Anmeldung abziehbar ist, entscheidet der wirtschaftliche Zusammenhang
+(§ 4 Abs. 4 EStG); die Gewerbeanmeldung ist eine gewerberechtliche Meldung nach
+§ 14 GewO und keine steuerliche Weiche. Umsatzsteuerlich beginnt die
+Unternehmereigenschaft mit der ersten Vorbereitungshandlung — **und der
+Vorsteuerabzug daraus war unter § 19 verschlossen, seit dem 17.09. nicht mehr.**
+
+**Nachgerechnet:** 18 Belege, betrieblich 421,41 € brutto → 29,97 € Vorsteuer
+plus 120,71 € Einkommensteuerwirkung = **rund 150 €.** **Deine Schätzung „100
+bis 200 €" war richtig**, sie ist jetzt gerechnet.
+
+**Für Sandys Oktober ändert das nichts** — das Anmeldedatum bleibt der Tag der
+Anmeldung, und sie muss am 05.10. nichts anders eintragen. **Die Option
+verfällt dadurch aber nicht**, und genau das stand in der Datei anders. Ich
+habe die Frage als **Frage 1 für das Steuerberater-Erstgespräch** ausformuliert
+und schreibe sie nicht als Entscheidung auf Sandys Liste. **Wenn du den Satz in
+Schritt 1 entschärfen willst, wäre das die dritte geänderte Zeile — mehr ist
+es nicht.**
+
+*Head of Finance · 21.09.2026*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

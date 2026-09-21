@@ -2978,5 +2978,181 @@ eigene Auswertung der 18 Belege im `Rechnungsjournal`
 
 ---
 
+
+## ✅ Behördenliste für Sandy ist fertig — fünf Tage vor Termin, und mit zwei Funden, die nicht in der Aufgabe standen (21.09.2026, 10:35 UTC · Head of Finance)
+
+**Auftrag war:** die Liste Gewerbeanmeldung → Fragebogen → Geschäftskonto →
+Steuerberater bis zum **26.09.** fertig hinlegen, passend zum korrigierten
+Schritt 2 in `legal-007-plan-fuer-sandy.md`. **Liegt als
+`docs/finance-002-behoerdenliste-fuer-sandy.md`** (18.365 Byte, Größe nach dem
+Schreiben gegengeprüft).
+
+### 1. Was drinsteht — und was ich bewusst nicht wiederholt habe
+
+Fünf Schritte statt vier: **Schritt 0 ist der Arbeitsvertrag**, und der gehört
+*vor* die Gewerbeanmeldung. Wenn dort eine Nebentätigkeitsklausel steht, ist
+die Anmeldung der Moment, ab dem es die Tätigkeit gibt — eine Anzeige danach
+wäre verspätet. **Die arbeitsrechtliche Bewertung habe ich nicht gemacht**,
+sie liegt bei Legal; die Frage steht in deren Datei.
+
+**Das Inhaltliche zur Gewerbeanmeldung habe ich nicht abgeschrieben**, sondern
+auf `legal-007` verwiesen — eine Wahrheit pro Sache. Ergänzt habe ich nur die
+drei Felder, über die man stolpert (Nebenerwerb, Beschäftigte 0, Beginndatum).
+
+**Der Kern ist Schritt 2**, und dort sechs Angaben statt einer:
+
+| | Angabe | Warum sie in die Liste musste |
+|---|---|---|
+| 1 | **Verzicht nach § 19 Abs. 2 UStG — ja** | Das eine Kreuz, das fünf Jahre bindet |
+| 2 | **Istversteuerung (§ 20 UStG) beantragen** | **Stand bisher nirgends.** Kostenlos, Grenze 800.000 €, USt erst fällig bei Zahlungseingang. Wer das Kreuz vergisst, bekommt automatisch die schlechtere Sollversteuerung |
+| 3 | **USt-IdNr. beantragen** | Wird mit genau diesem Formular beantragt, sonst gar nicht |
+| 4 | **Umsatz 2026: 100 € · 2027: 4.500 €** | Aus dem eigenen Plan, realistisches Szenario, aufgerundet. Damit erfindet sie keine Zahl und schätzt nicht „sicherheitshalber" hoch — die Schätzung steuert den Voranmeldungsrhythmus |
+| 5 | **Gewinn 2026: −2.700 € · 2027: −1.200 €** | Ebenfalls aus dem Plan. Folge: keine ESt-Vorauszahlungen |
+| 6 | **EÜR** | Buchführungspflicht erst über 800.000 €/80.000 € (§ 141 AO), und auch dann erst nach Aufforderung |
+
+Dazu vierteljährlich statt monatlich (die Begründung aus meinem Eintrag von
+16:10 am 17.09.), SEPA-Mandat erteilen, und der Arbeitslohn gehört in den
+Fragebogen.
+
+### 2. 🔴 Fund 1 — `legal-007` sagt an zwei Stellen immer noch „Kleinunternehmer"
+
+Legals Korrektur vom 21.09. hat **Schritt 2 im Haupttext** erwischt, aber nicht:
+
+* die **Zusammenfassung „dein Oktober"** ganz unten, Punkt 2:
+  *„ELSTER-Fragebogen, Kleinunternehmer ankreuzen — 45 Min"*
+* die **Kostentabelle**: *„Umsatzsteuer — 0 € (Kleinunternehmer)"*
+
+**Das ist genau die Stelle, die jemand liest, der sich den Ablauf schnell in
+Erinnerung rufen will** — also mit hoher Wahrscheinlichkeit die Stelle, die
+Sandy beim Ausfüllen vor Augen hat. Ein Korrekturkasten im Haupttext hilft
+nicht, wenn die Kurzfassung weiter das Gegenteil sagt und dasselbe Kreuz fünf
+Jahre bindet.
+
+**Gemeldet an Legal, in deren Datei.** In meiner Behördenliste steht die
+Warnung ausdrücklich drin, damit sie auch dann trägt, wenn `legal-007` bis zum
+26.09. nicht nachgezogen ist.
+
+### 3. 🟡 Fund 2 — das Startdatum der Gewerbeanmeldung entscheidet weniger als angenommen
+
+`legal-007` stellt es als Wahl dar: Startdatum „Tag der Anmeldung" **oder**
+01.05.2026, und nur im zweiten Fall seien die Altbelege Betriebsausgaben.
+
+**So trifft das nicht zu.** Ob eine Ausgabe vor der Anmeldung abziehbar ist,
+entscheidet der **wirtschaftliche Zusammenhang** (§ 4 Abs. 4 EStG), nicht das
+Datum auf dem Gewerbeschein — die Gewerbeanmeldung ist eine gewerberechtliche
+Meldung nach § 14 GewO, keine steuerliche Weiche. Solche Ausgaben sind
+**vorweggenommene Betriebsausgaben**; anerkannt wird üblicherweise ein Zeitraum
+von Jahren. Sandys älteste Belege sind **fünf Monate** alt. Umsatzsteuerlich
+gilt dasselbe in eigener Begründung: die Unternehmereigenschaft beginnt mit
+der ersten Vorbereitungshandlung, nicht mit der Anmeldung — **und der
+Vorsteuerabzug daraus war unter § 19 verschlossen und ist es seit dem 17.09.
+nicht mehr.**
+
+**Nachgerechnet statt geschätzt**, aus dem `Rechnungsjournal`:
+
+| | |
+|---|---|
+| 18 Belege, betrieblicher Anteil | **421,41 € brutto** |
+| Vorsteuer daraus, unstrittig | **29,97 €** |
+| Einkommensteuerwirkung (Grenzsteuersatz 30,84 %) | **120,71 €** |
+| **zusammen** | **rund 150 €** |
+
+**Legals Schätzung „100 bis 200 €" war richtig** — sie ist jetzt gerechnet.
+
+**Das eigentlich Neue ist nicht die Zahl, sondern die Kostenseite der
+Entscheidung.** Das Gegenargument war „kostet dich eine kompliziertere
+Steuererklärung". Diese Arbeit ist inzwischen getan: Eingangsbuch,
+Prüfsummenliste, Rechnungsjournal, Verfahrensdokumentation — der Steuerberater
+bekommt eine fertige Aufstellung. **Damit steht einem Aufwand von praktisch
+null ein Betrag von 150 € gegenüber.**
+
+**Was ich daraus NICHT gemacht habe: eine Entscheidungsvorlage für Sandy.**
+Sie muss am 05.10. nichts anders eintragen — das Anmeldedatum bleibt der Tag
+der Anmeldung, genau wie geplant. **Die Option verfällt dadurch nicht**, und
+deshalb ist die Frage dort, wo sie hingehört: als **Frage 1 im
+Steuerberater-Gespräch**, ausformuliert. Das Einzige, was jetzt zählt: die
+Altbelege nicht als erledigt abhaken.
+
+### 4. CoS-F-008 ist damit beantwortet — nein, und zwar in sechs Punkten
+
+Du hattest um „einen kurzen, klaren Abschnitt statt eines ‚frag den
+Steuerberater'" gebeten. Er steht in der Behördenliste unter **„Was dein
+Vollzeitjob damit zu tun hat"**. Kurz hier:
+
+* **Krankenkassenbeiträge auf den Gewinn: fallen nicht an.** Sandy ist über
+  den Arbeitgeber **pflichtversichert**, die Beiträge bemessen sich allein
+  nach dem Arbeitsentgelt (§ 226 SGB V). **Das ist der Punkt, an dem der
+  Status entscheidet, nicht die Höhe des Gewinns** — bei *freiwillig*
+  Versicherten wäre es umgekehrt. Die Tätigkeit ist der Kasse trotzdem zu
+  melden, Formalie.
+* **Rentenversicherung:** keine Versicherungspflicht ausgelöst.
+* **Das Gehalt wird nicht anders besteuert.** Der Gewinn kommt oben darauf,
+  Grenzsteuersatz rund 31 %.
+* **Steuererklärung: hier ändert sich wirklich etwas** — ab jetzt Pflicht,
+  mit Anlage G und EÜR. Der einzige echte Punkt der ganzen Liste.
+* **Gewerbesteuer:** 0 €, Freibetrag 24.500 € im Planhorizont nicht erreicht.
+* **Nebentätigkeitsklausel:** der einzige offene Punkt, **arbeitsrechtlich,
+  bei Legal.**
+
+**Deine Zusatzfrage, ob die Gewerbeanmeldung in KW 41 daran etwas ändert:
+nein.** Keiner der sechs Punkte hängt am Anmeldetermin.
+
+### 5. Eine Reserve, die im Plan bewusst fehlt — und jetzt beziffert ist
+
+Beim Rechnen für Feld 5 des Fragebogens ist mir aufgefallen, was in
+`Plan-Annahmen` Zeile 82 als Nebensatz steht: *„Verlustverrechnung mit dem
+Gehalt ist NICHT eingerechnet — vorsichtig gerechnet."*
+
+Der Plan legt auf **positive Monatsergebnisse** Steuer zurück, schreibt aber
+für **negative** nichts gut. Tatsächlich mindert der Gewerbeverlust das zu
+versteuernde Einkommen — auch das aus dem Gehalt, von dem längst Lohnsteuer
+abgeführt wurde. Das kommt als Erstattung zurück.
+
+| Szenario | Vorteil über 24 Monate |
+|---|---|
+| Vorsichtig | **1.761 €** |
+| Realistisch | **1.328 €** |
+| Optimistisch | **1.214 €** |
+
+**Bemerkenswert ist die Richtung: der Vorteil ist im vorsichtigen Szenario am
+größten.** Er wirkt genau dort, wo es eng wird — am Liquiditäts-Tiefpunkt.
+
+**Ich habe die Tabellendatei dafür nicht angefasst.** Die Vorsicht ist eine
+bewusste Entscheidung und nicht meine allein; und eine Zahl, die ich in einem
+Lauf einbaue, dessen Termin woanders liegt, ist genau die Art Eingriff, die
+sich später niemand erklären kann. **Vorschlag für den nächsten Lauf:** als
+benannte Reserve auf das `Plan-Deckblatt`, nicht in die Szenarien. Sag, wenn
+du es anders willst.
+
+### 6. Was bei mir offen bleibt
+
+* **Plan-Deckblatt** um die bezifferte Reserve aus Abschnitt 5 ergänzen.
+* **F-004, Quba-Viewer** — bei Sandy, weiterhin der teuerste offene Punkt in
+  4.7. **Bewertung 4.7 unverändert 85**, dieser Lauf hat die Empfangsstrecke
+  nicht berührt.
+* **Zwei Zeilen im Kostenkatalog auf „netto"** (Apple Developer 99 €/Jahr,
+  Marketing-Sachkosten 1.430 €), die jemand gegen einen echten Beleg prüfen
+  sollte — rund 230 € Vorsteuer hängen daran.
+* **Archivkopie** der Belege, Jahresausleitung geplant Januar 2027.
+
+**Geprüft, nicht behauptet:** `node scripts/belege-pruefen.mjs` und
+`node scripts/docs-sichern.mjs pruefen` vor dem Commit gelaufen, Ergebnis
+unten im Commit-Lauf. Alle Zahlen dieses Eintrags sind aus
+`kostenuebersicht-finance.xlsx` gerechnet (Blätter `Rechnungsjournal`,
+`Plan-24M`, `Plan-Annahmen`), nicht aus früheren Einträgen abgeschrieben.
+**Die Tabellendatei ist in diesem Lauf nur gelesen worden, nicht geändert** —
+keine Neuberechnung nötig, keine Zahl kann sich verschoben haben.
+
+**Quellen:** [BMWK-Existenzgründungsportal — Nebenberufliche Selbständigkeit](https://www.existenzgruendungsportal.de/Redaktion/DE/BMWK-Infopool/Antworten/Gruendungsplanung/Teilzeit-Unternehmen/Rechtl-Voraussetzungen/Nebenberufliche-Selbstaendigkeit-Zustimmung-des-Arbeitgebers-Anmeldung) ·
+[BARMER — Nebenberuflich selbstständig: Krankenversicherung](https://www.barmer.de/unsere-leistungen/beitraege-tarife/krankenversicherung-berufstaetige/nebenberuflich-selbststaendig-1522448) ·
+[firma.de — Fragebogen zur steuerlichen Erfassung, Einzelunternehmen](https://www.firma.de/firmengruendung/fragebogen-zur-steuerlichen-erfassung-einzelunternehmen-ausfuellhilfe/) ·
+[selbststaendig.de — Vorweggenommene Betriebsausgaben](https://www.selbststaendig.de/wissen/vorweggenommene-betriebsausgaben) ·
+[WHK Controlling — Ausgaben vor der Gewerbeanmeldung](https://www.whk-controlling.de/wissen/ausgaben-vor-gewerbe) ·
+[Steuerschröder — Buchführungspflicht 2026 (§ 141 AO)](https://www.steuerschroeder.de/Buchfuehrungspflicht.html) ·
+§ 4 Abs. 4 EStG · § 14 GewO · § 19 Abs. 2 / § 20 UStG · § 141 AO · § 226 SGB V
+
+*Head of Finance · 21.09.2026*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
