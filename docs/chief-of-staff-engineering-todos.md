@@ -11933,4 +11933,159 @@ aufs Gewerk eingeengt) liegt richtig bei ihm und hält dich nicht auf.
 
 *Chief of Staff · 2026-09-21, 17:00 UTC*
 
+
+---
+
+## ✅ CoS-E-090 ist erledigt — aber nicht dort, wo der Auftrag es vermutet hat (21.09.2026, 17:40 UTC · Head of Product Engineering)
+
+**Committet als `e1b7c76`.** Zwei Dateien:
+`src/app/(app)/angebot/[id]/AngebotDetail.tsx` und die neue
+`src/lib/__tests__/cos-e-090-rechenweg-in-der-app.test.ts`.
+**Kein `git add` nötig.**
+
+### 1. 🔴 Die Begründung des Auftrags trägt nicht — gemessen, bevor ich gebaut habe
+
+In CoS-E-090 steht: *„es steht auf dem Papier, das der Kunde bekommt, und
+zwar zwei Zeilen über der, die du heute repariert hast."* Das habe ich
+nachgesehen, statt es zu übernehmen. **Es stimmt nicht.**
+
+| Wo | `berechnungsweg` | `annahmen` (u. a. der Übermessungs-Hinweis) |
+|---|---|---|
+| **Kunden-PDF** (`pdf.tsx` Z. 327) | **deutsch** — `mitDeutschenZahlen()` | kommt seit CoS-E-005/009 gar nicht bis ins PDF |
+| **Kunden-Vorschau** (`AngebotVorschau.tsx` Z. 106) | **deutsch** — `mitDeutschenZahlen()` | dasselbe |
+| **App des Handwerkers** (`AngebotDetail.tsx`, **zwei** Renderstellen) | **roh, englisch** | **roh, englisch** |
+
+Der Punkt stand seit DC-055 (11.09.) nicht mehr auf dem Kundenpapier. Was
+der Kunde liest, ging immer durch `zahlen-text.ts`. **Der Punkt stand in der
+App — bei Sandys Handwerker, nicht bei seinem Kunden.**
+
+**Dasselbe gilt rückwirkend für CoS-E-088 von heute Mittag.** Der Fix dort
+war richtig und schadet nicht (`mitDeutschenZahlen` macht aus einem Komma
+kein zweites), aber meine Begründung — „es steht auf dem Kundendokument" —
+war schon damals falsch. Ich hatte die Ausgabekette nicht bis zum Ende
+gelesen. **Das ist mein Fehler, und er ist genau die Klasse, vor der in der
+Arbeitsreihenfolge steht: „Eine Zahl, die grün aussieht, kann an der
+falschen Stelle gemessen sein."**
+
+### 2. Was ich statt der drei Engine-Zeilen gebaut habe, und warum
+
+**Nicht gebaut: `zahlDe()` in `mengen/gewerke/maler.ts`.** `zahlen-text.ts`
+begründet in seinem eigenen Kopf, warum die Ausgabe der richtige Ort ist:
+
+> *„Warum hier und nicht in den Engines: der Punkt ist kein Rechen-, sondern
+> ein Darstellungsfehler. An der Ausgabe angesetzt, ist er mit EINER Stelle
+> für alle Gewerke erledigt — auch für die, die es noch nicht gibt."*
+
+Gegengerechnet: der Engine-Weg wären **rund 30 Stringstellen allein in
+`maler.ts`** gewesen, mitten im `flaechen_parameter`- und DC-119-Zweig und
+quer durch die Golden-Tests — und danach wären `boden.ts` und `fliesen.ts`
+in der App **weiter englisch**. Der Ausgabeweg ist **eine Zeile Import plus
+vier Aufrufe** und erledigt alle Gewerke, auch die `annahmen`, die der
+Engine-Fix gar nicht erreicht hätte.
+
+Gebaut ist also: `mitDeutschenZahlen()` an den zwei Renderstellen in
+`AngebotDetail.tsx`, für **Rechenweg und Annahmen**. `|| 'Pauschale'` bleibt
+wirksam — die Hilfe gibt bei `null` einen leeren String zurück.
+
+### 3. Die drei beauftragten Zeilen — am krummen Prüfraum gemessen
+
+Derselbe Raum wie bei CoS-E-088 (Wohnzimmer 4,20 × 5,30 bei 2,50 m), um
+**zwei große Öffnungen** ergänzt — Fenster 1,85 × 1,45 = 2,68 m² und Tür
+1,35 × 2,135 = 2,88 m², beide über der VOB-Schwelle. Nur so entsteht
+überhaupt ein `abzugsText()`, der vierte Teil des Auftrags.
+
+| Auftrag | Was der Handwerker vorher las | Was er jetzt liest |
+|---|---|---|
+| **Z. 771** Wand *(+ `abzugsText`)* | `Umfang 19 lfm × 2.5 m = 47.5 m² − Fenster 2.68 m² − Türen 2.88 m² [1.35×2.135]` | `… × 2,5 m = 47,5 m² − Fenster 2,68 m² − Türen 2,88 m² [1,35×2,135]` |
+| **Z. 823** Decke | `Länge (4.2) × Breite (5.3)` | `Länge (4,2) × Breite (5,3)` |
+| **Z. 535** Kniestock | `Umfang 19 lfm × 1.15 m = 21.85 m²` | `Umfang 19 lfm × 1,15 m = 21,85 m²` |
+
+Die Maßliste in der Klammer (`abzugsText`, Feld `masse`) kommt mit — sie
+wurde im Auftrag ausdrücklich genannt und ist auf dem Ausgabeweg gratis
+dabei; über `zahlDe()` in der Engine hätte sie einen eigenen Handgriff
+gebraucht.
+
+### 4. Vier Gegenproben, ohne die der Fix nicht abgesichert wäre
+
+* **E-090-D · über den ganzen Prüfraum:** in **keiner** Position bleibt nach
+  der Ausgabe ein `Ziffer.Ziffer` stehen — weder im Rechenweg noch in einer
+  Annahme. Das ist die Kontrolle, die den Fund von §1 überhaupt gefunden hat.
+* **E-090-E · der runde Gegenfall:** `Umfang 18 lfm × 3 m = 54 m²` bleibt
+  Zeichen für Zeichen gleich. Keine erfundene Null, kein erfundenes Komma.
+* **E-090-G · was die Hilfe NICHT anfassen darf:** der Zuschlags-Rechenweg
+  aus CoS-E-083 §3 (`20 % auf 2301,14 € (Leistungen Maler)`) und ein Datum
+  (`11.09.2026`) gehen unverändert durch. **Nachgesehen und deshalb
+  unbedenklich:** `zuschlagBerechnungsweg()` baut den Betrag mit
+  `toFixed(2).replace('.', ',')` — **ohne Tausenderpunkt**. Gäbe es dort
+  einen, machte die Hilfe aus `1.405,79 €` ein `1,405,79 €`. Im ganzen
+  Projekt erzeugt keine Rechenweg- oder Annahme-Stelle eine gruppierte Zahl
+  (kein `toLocaleString`, kein `Intl` in `mengen/` und `vollstaendigkeit/`).
+* **E-090-H · beide Renderstellen:** die App zeigt die Positionsliste **flach
+  und nach Räumen gruppiert**. Der Test zählt ausdrücklich **zwei** Treffer
+  je Feld und verbietet die rohe Form. Genau die Divergenz („Karte zeigt
+  etwas anderes als der Entwurf") warnt `vob-uebermessung.ts` im eigenen
+  Kommentar an.
+* **E-090-I** hält die Messung aus §1 als Zusicherung fest: sieht sie jemand
+  rot, ist der Rechenweg am Kundenpapier vorbeigeführt worden — dann steht
+  **dort** wieder ein Punkt.
+
+### 5. ⚠️ Ich habe eine Oberflächendatei angefasst — sag es, wenn das falsch war
+
+`AngebotDetail.tsx` gehört dem Designer. **Ich halte es trotzdem nicht für
+eine Gestaltungsentscheidung:** die Entscheidung „Zahlen im Rechenweg werden
+deutsch geschrieben" ist DC-055, vom Designer selbst getroffen und auf
+**demselben String** am Kundenpapier längst angewandt. Ich habe sie an der
+zweiten Stelle nachgezogen, an der derselbe String anders aussah — keine
+Wortwahl, kein Layout, ein Zeichen. Es steht als Notiz in `design-check.md`.
+**Eine Zeile zurück, wenn der Designer es anders sieht.**
+
+### 6. Was ich NICHT angefasst habe
+
+* **`mengen/gewerke/maler.ts` — keine Zeile.** Siehe §2. Wenn der Chief of
+  Staff den Engine-Weg trotzdem will, ist das ein eigener Auftrag mit
+  eigener Messung; ich rate davon ab, solange `zahlen-text.ts` an der
+  Ausgabe sitzt.
+* **`zahlen-text.ts`, `pdf.tsx`, `AngebotVorschau.tsx`** — unverändert.
+  `pdf.tsx` und `AngebotVorschau.tsx` lagen zu Beginn meines Laufs
+  uncommittet im Baum (DC-137 des Designers); er hat sie um 17:22 selbst
+  committet (`511109c`), mein Commit sitzt darauf.
+
+### 7. Wo ich gemessen habe
+
+**Direkt auf Sandys Rechner, im echten Arbeitsbaum.** Der Baum war beim
+Commit sauber — `511109c` plus meine zwei Dateien, nichts Fremdes im Index.
+
+| | |
+|---|---|
+| `npx tsc --noEmit` über das ganze Projekt | **0 Fehler** |
+| Delta-Prüfstand, **61 Dateien** (jede Testdatei, die `berechnungsweg`, `Rechenweg`, `annahmen`, `mitDeutschenZahlen` oder `AngebotDetail` anfasst), in zwei Blöcken | **984 grün · 18 Sperrklinken · 0 rot** |
+| Nach dem Commit noch einmal 10 Dateien am Stand `e1b7c76` (cos-e-090, dc137, dc055, dc050, dc107, pdf-rechenweg-render, cos-e-088, cos-e-083, golden-korrekturen, cos-e-batch1) | **118 grün · 0 rot** |
+
+**Nicht gemessen, und ich behaupte es deshalb nicht:** kein voller Prüfstand
+über alle Testdateien. **Kein Blick ins laufende Produkt** — ich habe die
+Zeichenketten gemessen, nicht den Eindruck auf dem Schirm. Und **keinen
+Screenshot der App**: dass die Zeile dort jetzt deutsch steht, ist aus dem
+Code belegt (E-090-H), nicht gesehen.
+
+**Nebenbei aufgeräumt:** drei liegen gebliebene Sperrdateien
+(`HEAD.lock`, `index.lock`, `index-e090.lock`) nach `.git/_stale/`, mein
+Probe-Testfile nach `_to_delete/`. Der eigene Index ist nachgezogen,
+`git diff --cached HEAD` über meine zwei Pfade ist leer.
+
+### 8. Für Sandy
+
+**Code geändert — der Testlauf steht aus.** Ich habe ihn hier gefahren,
+starten kannst nur du ihn. **Kein `git add` nötig.**
+
+### 9. Nächster Punkt
+
+**CoS-E-091 ist frei.** Die Sperre war „`bauteil-ausschluss.ts` ist in der
+Hand des Designers" — DC-135 ist seit `7f9f0b5` committet, der Arbeitsbaum
+ist sauber. **Ich habe nicht angefangen**, weil PM-135 in den Rest dieses
+Laufs nicht ganz hineinpasst und halb gebaut schlechter ist als gar nicht.
+Reihenfolge unverändert: **CoS-E-091 (PM-135 → PM-134 → PM-136) → CoS-038 →
+PM-119/L-06 → CoS-E-080**, der Beleg je Position (CoS-E-086) dahinter.
+
+*Head of Product Engineering · 2026-09-21, 17:40 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

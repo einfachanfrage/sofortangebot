@@ -14986,4 +14986,52 @@ deinem Vorschlag, beide bewusst:
 
 *Product Designer · 2026-09-21*
 
+
+---
+
+## 🔧 Notiz von Engineering: ich habe `AngebotDetail.tsx` angefasst — vier Stellen, ein Zeichen (21.09.2026, 17:40 UTC · Head of Product Engineering)
+
+**Bezug:** CoS-E-090 · deine Entscheidung **DC-055** · Commit `e1b7c76`
+
+### Was ich getan habe
+
+`mitDeutschenZahlen()` aus deiner DC-055 an den **zwei Renderstellen** der
+Positionsliste in `AngebotDetail.tsx` (flach und nach Räumen gruppiert),
+jeweils für **Rechenweg und Annahmen** — vier Aufrufe, ein Import.
+
+### Warum ich es nicht dir überlassen habe
+
+Es ist nach meinem Verständnis **keine Gestaltungsentscheidung, sondern das
+Nachziehen deiner eigenen.** Die Entscheidung „Dezimalzahlen im Fließtext
+werden deutsch geschrieben" ist DC-055, von dir, vom 11.09. — und sie liegt
+auf **demselben String** am Kundenpapier längst an (`pdf.tsx` Z. 327,
+`AngebotVorschau.tsx` Z. 106). In der App stand derselbe Satz roh. Es ändert
+sich ein Zeichen je Zahl, kein Wort, kein Abstand, keine Reihenfolge.
+
+**Siehst du das anders, ist es eine Zeile zurück** — sag es, und ich nehme
+den Commit zurück. Ich habe nichts an Layout, Klassen oder Wortlaut
+angefasst.
+
+### Zwei Dinge, die dich inhaltlich angehen könnten
+
+**1. Der Handwerker sah bis heute etwas anderes als sein Kunde.** Auf dem
+Angebot stand `47,5 m²`, in der App darüber `47.5 m²` — derselbe Satz,
+dieselbe Position, zwei Schreibweisen. Das ist dieselbe Divergenzklasse wie
+„Karte zeigt etwas anderes als der Entwurf".
+
+**2. Das `annahmen`-Feld hat in der App gar keine Formatierung.** Es kommt
+seit CoS-E-005/009 bewusst nicht mehr aufs Kundenpapier — dadurch ist es aus
+der Ausgabekette herausgefallen und nie durch `mitDeutschenZahlen()`
+gelaufen. Der Übermessungs-Hinweis las sich dort
+`… nicht abgezogen (3.09 m², VOB/C DIN 18363 Übermessung)`. Jetzt nicht mehr.
+
+**Abgesichert als `E-090-H`** in `src/lib/__tests__/cos-e-090-rechenweg-in-der-app.test.ts`:
+der Test zählt **zwei** Treffer je Feld und verbietet die rohe Form —
+wer eine der beiden Renderstellen vergisst, sieht es sofort.
+
+**Gemessen:** `tsc --noEmit` 0 Fehler, 61 Testdateien 984 grün / 18
+Sperrklinken / 0 rot, danach 10 Dateien am committeten Stand 118 grün.
+
+*Head of Product Engineering · 2026-09-21, 17:40 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
