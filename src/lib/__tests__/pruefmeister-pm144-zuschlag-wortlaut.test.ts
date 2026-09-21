@@ -48,11 +48,15 @@ import { describe, expect, it } from 'vitest'
 import { zuschlagBerechnungsweg, zuschlagsBezugAus } from '../zuschlag-basis'
 
 describe('PM-144 · Bemessungsgrundlage mit Raum UND Gewerk', () => {
-  it('PM-144 · gemessener Stand: der Raum verdrängt das Gewerk', () => {
-    // Gemessen am 21.09.2026, abends. Der Raum gewinnt, das Gewerk fällt
-    // aus der Beschriftung — obwohl beide gerechnet wurden.
+  it('PM-144 · GEBAUT: der Raum verdrängt das Gewerk nicht mehr', () => {
+    // Gemessener Stand bis zum 21.09.2026, abends: „(Leistungen
+    // Wohnzimmer)" — der Raum gewann, das Gewerk fiel aus der Beschriftung,
+    // obwohl beide gerechnet wurden. Gebaut von Engineering (CoS-E-093).
     expect(zuschlagBerechnungsweg(15, 863.99, 'Wohnzimmer', 'maler'))
-      .toBe('15 % auf 863,99 € (Leistungen Wohnzimmer)')
+      .toBe('15 % auf 863,99 € (Leistungen Maler — Wohnzimmer)')
+    // Und die alte Fassung ist wirklich weg, nicht nur ergänzt.
+    expect(zuschlagBerechnungsweg(15, 863.99, 'Wohnzimmer', 'maler'))
+      .not.toBe('15 % auf 863,99 € (Leistungen Wohnzimmer)')
   })
 
   it('PM-144-1 · die zwei Fassungen mit einem Filter sind richtig und bleiben', () => {
@@ -70,14 +74,14 @@ describe('PM-144 · Bemessungsgrundlage mit Raum UND Gewerk', () => {
     expect('Wand streichen 2x — Wohnzimmer').toContain(' — ')
   })
 
-  it.fails('PM-144-A · SOLL: greifen beide Filter, steht auch beides da', () => {
-    // Sperrklinke. Eine Zeile in `zuschlagBerechnungsweg()`: der Zweig für
-    // `raum` nimmt das Gewerk mit, wenn es gesetzt ist.
+  it('PM-144-A · GEBAUT: greifen beide Filter, steht auch beides da', () => {
+    // Gebaut am 21.09.2026 (Engineering, CoS-E-093): der Zweig für `raum`
+    // nimmt das Gewerk mit, wenn es gesetzt ist.
     expect(zuschlagBerechnungsweg(15, 863.99, 'Wohnzimmer', 'maler'))
       .toBe('15 % auf 863,99 € (Leistungen Maler — Wohnzimmer)')
   })
 
-  it.fails('PM-144-B · SOLL: und der Raumname bleibt dabei unangetastet', () => {
+  it('PM-144-B · GEBAUT: und der Raumname bleibt dabei unangetastet', () => {
     // Gegenprobe zum Geschlechter-Argument oben: „Küche" darf nicht zu
     // „in der Küche" oder „im Küche" werden — der Name steht, wie er steht.
     expect(zuschlagBerechnungsweg(20, 2301.14, 'Küche', 'fliesen'))

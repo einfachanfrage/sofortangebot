@@ -183,11 +183,29 @@ export function zuschlagBerechnungsweg(
   // gehören zusammen — wer eine davon zurücknimmt, nimmt beide zurück.
   const euro = Number(basis.toFixed(2))
     .toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-  const bezug = raum
-    ? `(Leistungen ${raum})`
-    : gewerk
-      ? `(Leistungen ${gewerk.charAt(0).toLocaleUpperCase('de-DE')}${gewerk.slice(1)})`
-      : '(Leistungen dieses Angebots)'
+  // PM-144 (21.09.2026) · greifen BEIDE Filter, steht auch beides da.
+  //
+  // `bemessungsgrundlage()` oben filtert nacheinander — erst den Raum, dann
+  // das Gewerk. Die Beschriftung nannte bis hierhin nur den Raum: aus den
+  // MALERleistungen im Wohnzimmer wurde „(Leistungen Wohnzimmer)", und die
+  // Fliesenarbeit daneben sah aus, als wäre sie mitgerechnet.
+  //
+  // Der Gedankenstrich ist auf diesem Blatt kein neues Zeichen: er trennt in
+  // jeder raumbezogenen Positionszeile darüber Arbeit und Ort („Wand
+  // streichen 2x — Wohnzimmer"). Kein Komma (läse sich als Aufzählung
+  // zweier Dinge statt als zwei Filter) und keine Präposition (bräuchte das
+  // Geschlecht des Raumnamens — „im Bad" ✓, „im Küche" ✗). Der Raumname
+  // bleibt unangetastet, wie überall sonst auf dem Papier.
+  const gewerkWort = gewerk
+    ? `${gewerk.charAt(0).toLocaleUpperCase('de-DE')}${gewerk.slice(1)}`
+    : null
+  const bezug = raum && gewerkWort
+    ? `(Leistungen ${gewerkWort} — ${raum})`
+    : raum
+      ? `(Leistungen ${raum})`
+      : gewerkWort
+        ? `(Leistungen ${gewerkWort})`
+        : '(Leistungen dieses Angebots)'
   return `${prozent} % auf ${euro} € ${bezug}`
 }
 
