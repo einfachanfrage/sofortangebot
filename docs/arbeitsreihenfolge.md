@@ -16,9 +16,9 @@ gemessen um 17:44: `origin/main` = **`b973c26`**, GitHub-Actions **CI auf
 `b973c26` completed/success** (15:44:15 UTC, Lauf 228), Vercel-Produktion
 **`b973c26` READY**, zehn von zehn Produktions-Deploys READY.
 
-**🟡 Siebzehn Commits liegen ungepusht** (vor fünf Stunden waren es fünf, um
-17:00 zwölf). Sandy muss einmal pushen — Block steht im Chat. **Keiner der
-siebzehn war in der CI.**
+**🟡 Neunzehn Commits liegen ungepusht** (um 17:00 waren es zwölf; siebzehn
+um 17:44 gemessen, dazu die zwei Commits dieses Laufs). Sandy muss einmal
+pushen — Block steht im Chat. **Keiner der neunzehn war in der CI.**
 
 **🟢 Die Vollmessung des Prüfstands ist wieder aktuell — aber am gepushten
 Stand.** Platform hat sie nachgeholt: **198 Dateien, 2.955 grün, 99 erwartet
@@ -104,7 +104,7 @@ CoS-E-092 ist der Punkt, an dem diese Voraussetzung wegfällt.
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | 🔵 **Einmal pushen.** Siebzehn Commits liegen lokal, keiner war in der CI. Block steht im Chat | ein Befehl |
+| 1 | 🔵 **Einmal pushen.** Neunzehn Commits liegen lokal, keiner war in der CI. Block steht im Chat | ein Befehl |
 | 2 | 🔴 **Beim ELSTER-Fragebogen nicht der Kurzfassung in `legal-007` folgen.** Dort steht weiter „Kleinunternehmer ankreuzen" — **falsch**, und das Kreuz bindet fünf Jahre. Richtig ist **Verzicht auf die Kleinunternehmerregelung**. **Halte dich an Finances Behördenliste.** Legal zieht die zwei Zeilen nach (CoS-L-014, seit 08:14 unverändert) | nichts jetzt |
 | 3 | 🔵 **Vor der Gewerbeanmeldung in den Arbeitsvertrag sehen** — Klausel zu Nebentätigkeiten. Muss **davor** passieren | 10 Min |
 | 4 | 🔵 **Löschrecht für den Projektordner.** Nur in einer **normalen** Unterhaltung möglich, nicht in einem geplanten Lauf. **Nicht dringend** — und wenn es kommt, reicht `git gc` allein nicht, es braucht vorher einen Aufräumschritt (Platform) | ein Klick |
@@ -125,7 +125,7 @@ CoS-E-092 ist der Punkt, an dem diese Voraussetzung wegfällt.
 | **Designer** | **🆕 DC-138: eine Zeile Antwort an Engineering.** Er hat `AngebotDetail.tsx` angefasst (vier Aufrufe `mitDeutschenZahlen()`, Commit `e1b7c76`) und bietet an, es zurückzunehmen. **Deine Datei, dein Wort.** DC-135 und DC-137 sind abgenommen, deine Spur ist sonst leer. **PD-021** wartet unverändert auf Engineerings Grundreihenfolge (CoS-038). Vorschlag, kein Auftrag: **das laufende Produkt hat weiter niemand angesehen** | niemanden |
 | **Prüfmeister** | **Unverändert zwei fremde Punkte in deiner Datei:** (1) Finance hat deine `pruefmeister-fall7-soll.test.ts` mitcommittet und vorher gemessen (7 grün). (2) Engineering fragt nach dem **Wortlaut** des Zuschlags-Rechenwegs (`(Leistungen Wohnzimmer)` ist ungenauer als die Rechnung, seit die Grundlage auch aufs Gewerk eingeengt ist). **Neu dazu:** der Designer hat in DC-137 bewusst **nichts** am Wortlaut geändert — was immer du entscheidest, erscheint ohne weitere Arbeit auch in der abgeschalteten Fassung. Danach deine eigene Spur: **Punkt 12** und **Punkt 21** | niemanden |
 | **Marketing** | **Unverändert CoS-M-020: DC-134 ist da, der Bau liegt bei dir** — `pb-4` **ans letzte Kind** von `#scrRes`, nicht an den Container, nicht als `off + 16`. Danach: **Artefakt nachziehen** → **Zustelltest `support@`** → **CoS-M-018** nur mitnehmen, wenn die Preiszeile ohnehin drankommt. Website-Schalter bleibt hinter **CoS-038** | Engineering (CoS-038) |
-| **Platform** | **Bei dir liegt nichts.** Deine Vollmessung ist angenommen und abgelegt. Vorschlag, kein Auftrag: **sobald Sandy gepusht hat, dieselbe Messung am neuen `origin/main`** — deine Zahl gilt für `b973c26`, nicht für die siebzehn Commits darüber | Sandy (Push) |
+| **Platform** | **Bei dir liegt nichts.** Deine Vollmessung ist angenommen und abgelegt. Vorschlag, kein Auftrag: **sobald Sandy gepusht hat, dieselbe Messung am neuen `origin/main`** — deine Zahl gilt für `b973c26`, nicht für die neunzehn Commits darüber | Sandy (Push) |
 | **Legal** | **Unverändert CoS-L-014, Platz 1 und mit Datum.** Ich habe `legal-007` auch in diesem Lauf aufgeschlagen: Zeile 342 und Zeile 276 stehen unverändert da, Datei seit 08:14 unangetastet. Danach: wie die Nebentätigkeitsklausel in Sandys Arbeitsvertrag zu lesen ist | niemanden |
 | **Finance** | **Unverändert: Plan-Deckblatt** (bezifferte Verlustverrechnungs-Reserve 1.761 € / 1.328 € / 1.214 €, Deckblatt überschreiben, Begründung in die Koordinationsdatei). Danach die **26 unbearbeiteten Belege** → die zwei „netto"-Zeilen (Apple Developer hängt am Fragebogen, bis 26.09. geparkt; Marketing-Sachkosten 1.430 € ohne Beleg) | niemanden |
 
@@ -135,7 +135,7 @@ CoS-E-092 ist der Punkt, an dem diese Voraussetzung wegfällt.
 
 * **🟡 Die Vollmessung gilt für `b973c26`, nicht für den lokalen Stand.** 198
   Dateien / 2.955 grün / 99 erwartet fehlschlagend / 0 rot. Darüber liegen
-  siebzehn ungemessene Commits, darunter CoS-E-083 §3, CoS-E-088, CoS-E-090,
+  neunzehn ungemessene Commits, darunter CoS-E-083 §3, CoS-E-088, CoS-E-090,
   DC-132, DC-135, DC-137. **Wer „alles grün" sagt, sagt dazu, an welchem Stand.**
 * **🔴 Zwei Begründungen des Chief of Staff waren falsch, die Fixes nicht.**
   CoS-E-088 und CoS-E-090 behaupteten beide, der englische Rechenweg stünde
