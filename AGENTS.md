@@ -88,14 +88,25 @@ Bitte des Head of Product Engineering):
    ```bash
    # 1. fremde Sperrdateien wegräumen (verschieben, nicht löschen)
    # 2. den geteilten Index nachziehen
-   git add -- <dieselben Dateien>
+   git reset -q -- <dieselben Dateien>
    # 3. nachsehen, nicht annehmen — diese Ausgabe MUSS leer sein
    git diff --cached HEAD -- <dieselben Dateien>
    ```
    **Schritt 3 ist der eigentliche Punkt:** liegt eine fremde `index.lock`
-   daneben, scheitert `git add` **lautlos** und sieht wie ein Erfolg aus.
+   daneben, scheitert der Nachzug **lautlos** und sieht wie ein Erfolg aus.
    „Eigener Index" ohne Schritt 3 ist eine Anleitung zum Löschen fremder
    Einträge — halb ist hier schlechter als gar nicht.
+
+   **Schritt 2 bitte als `git reset -q`, nicht als `git add`** (CoS-P-035,
+   21.09.2026): `add` merkt den aktuellen ARBEITSBAUM-Stand des Pfads vor,
+   nicht den gerade committeten HEAD-Stand — liegt darunter noch uncommittete
+   fremde Arbeit einer anderen Rolle, landet die als vorgemerkt im geteilten
+   Index. `reset -q` stellt stattdessen exakt HEAD wieder her: keine alten
+   Blobs, nichts Fremdes vorgemerkt.
+
+   **Praktisch, statt aller drei Schritte von Hand:**
+   `node scripts/docs-sichern.mjs nachziehen <dieselben Dateien>` macht genau
+   das in einem Aufruf, an einer einzigen Stelle für alle Rollen gepflegt.
 5. **Gemeldet wird, was man selbst committet hat.** Findet eine Rolle ihre
    Arbeit in einem fremden Commit wieder, ist das ein Befund für den Chief of
    Staff, kein Anlass, den Commit zu wiederholen.

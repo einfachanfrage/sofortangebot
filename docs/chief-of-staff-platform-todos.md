@@ -95,6 +95,7 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 
 | ID | Thema | Status | Quelle |
 |---|---|---|---|
+| CoS-P-035 | 🔴 **Nachzug in `docs-sichern.mjs` (Z. 160–166) setzt den geteilten Index auf den Arbeitsbaum statt auf `HEAD`, deckt nur `docs/` ab** | ✅ **erledigt, 21.09.** — `git add -- docs` durch `git reset -q -- docs` ersetzt (Sandbox-Nachweis: fremde uncommittete Datei landet mit `add` im geteilten Index, mit `reset -q` nicht, Arbeitsbaum bleibt unverändert). Zusätzlich neue, exportierte Funktion `geteilterIndexNachziehen(pfade)` + CLI-Befehl `nachziehen <pfade...>` für alle Rollen und beliebige Pfade, nicht nur `docs/`. `AGENTS.md` Punkt 4 entsprechend korrigiert. `typecheck`/`lint:ci` (0 Fehler)/`pruefen` (58 Dateien)/`npm test` (194 Dateien, 2.897 grün, 96 erwartet fehlschlagend) im GitHub-Spiegel grün, identisch auf Sandys Rechner geschrieben. Fix-Update am Dateiende | Chief of Staff, 2026-09-21 |
 | CoS-P-034 | 🔴 **`docs-sichern.mjs sichern` sichert seit unbekannter Zeit nichts** — stolpert auf Sandys Mount über die eigene `.git/index.lock` (Legal-Fund, 21.09.) | ✅ **erledigt, 21.09.** — `sichern()` läuft jetzt durchgängig über einen eigenen `GIT_INDEX_FILE` außerhalb des Repos (`git read-tree HEAD` davor), fasst die geteilte `.git/index` nicht mehr an; eine bereits liegende Sperre wird defensiv verschoben, nie gelöscht. Nach dem Commit wird der geteilte Index zusätzlich nachgezogen (AGENTS.md, „Fünf Rollen, ein Arbeitsbaum“, Punkt 4), damit kein späterer Commit einer anderen Rolle die Sicherung überschreibt. Im GitHub-Spiegel mit simuliertem Lock geprüft: Commit entsteht trotz Sperre, Hash wird ausgegeben, geteilter Index bleibt sauber. `typecheck`/`lint:ci` (0 Fehler)/`npm test` (194 Dateien, 2.897 grün, 96 erwartet fehlschlagend)/`pruefen`/`schrumpfung` alle grün. Fix-Update am Dateiende | Chief of Staff, 2026-09-21 |
 | CoS-P-033 | 🟡 **„geprüft" ist nicht „gelöscht"** — für die vier Aufnahmen aus dem 19.09.-Lauf geprüft, ob Audiodatei/Datenbankzeile noch da sind | ✅ **beantwortet, 21.09.** — Zusage vollständig erfüllt: Audiodatei ist weg (Storage + Datenbank-Verweis), Datenbankzeile bleibt bewusst (Transkript/Positionen), das ist Absicht laut Code, nicht die versprochene Löschung. Fix-Update am Dateiende | Chief of Staff, 2026-09-21 |
 | CoS-P-028 | 🟡 **`sandra@` und `support@` leiten jetzt auf `hallo@` (eingerichtet 16.09., Zustelltest offen)** — vorher: BEFUND: genau EIN Postfach (`hallo@`), null Weiterleitungen** — sieben von acht Absenderadressen empfangen nichts, darunter `sandra@`, der Absender aller Anmelde- und Passwort-Mails. Antworten von Nutzern gehen verloren, ohne Fehlermeldung. Umsetzung offen. Vorher: Acht Absender, keiner nachweislich empfangsfähig** — MX zeigt auf IONOS (selbst geprüft), aber ob dort Postfächer existieren, weiß niemand. `hallo@` steht im Impressum, § 5 DDG. Dazu: Resend zeigt „No sent emails yet" trotz nachweislich versendeter Mails — vermutlich falsches Team | ❌ offen, vor Gate 1 | Sandys Frage, 2026-09-16 |
@@ -4729,5 +4730,61 @@ diesem Projekt fertige Arbeit still verschwinden kann. Aus meiner Sicht dein
 Platz 1.
 
 *Chief of Staff · 2026-09-21, 14:50 UTC*
+
+---
+
+## ✅ CoS-P-035 erledigt — `git reset` statt `git add`, plus ein gemeinsamer Nachzug für alle Rollen (21.09.2026, Platform & Integrations Engineer)
+
+**Beide Befunde behoben, im GitHub-Spiegel geprüft, identisch auf Sandys
+Rechner geschrieben.**
+
+**(a) Die eigentliche Ursache — Zeile 160–166 in `docs-sichern.mjs`:** der
+Nachzug nach dem Sichern lief über `git add -- docs` auf dem geteilten Index.
+`add` merkt den aktuellen Arbeitsbaum-Stand vor, nicht den gerade committeten
+`HEAD`-Stand — liegt unter `docs/` noch fremde uncommittete Arbeit, landet die
+mit im geteilten Index, genau wie am 21.09. um 14:45 UTC beobachtet. Ersetzt
+durch `git reset -q -- docs`: stellt den Index exakt auf `HEAD`, ohne fremde
+Arbeitsbaum-Stände vorzumerken.
+
+**Nachgewiesen, nicht nur behauptet:** in einer isolierten Sandbox nachgebaut
+— eigener Commit über eigenen Index (simuliert `HEAD`-Fortschritt), danach
+eine fremde uncommittete Änderung im Arbeitsbaum unter demselben Verzeichnis.
+Mit der alten `git add`-Zeile landet die fremde Änderung nachweislich im
+geteilten Index (`git diff --cached HEAD` zeigt sie). Mit der neuen
+`git reset -q`-Zeile bleibt der geteilte Index sauber (`git diff --cached
+HEAD` leer) **und** die fremde Änderung bleibt unangetastet im Arbeitsbaum
+stehen (`git status` zeigt sie weiterhin als `M`, nichts geht verloren).
+
+**(b) Der zweite Befund — der Nachzug deckte nur `docs/` ab:** neue,
+exportierte Funktion `geteilterIndexNachziehen(pfade)` (dieselbe Logik, für
+beliebige Pfade) plus neuer CLI-Befehl `node scripts/docs-sichern.mjs
+nachziehen <pfade...>`. Jede Rolle, die mit eigenem `GIT_INDEX_FILE`
+committet (nicht nur `docs/`), kann jetzt diesen einen Befehl aufrufen statt
+die drei Schritte aus `AGENTS.md` von Hand nachzubauen — genau die
+„sieben Abschriften", die Chief of Staff als Ursache für den zweiten,
+unbeobachteten Fund (die zwei stillen `D`-Einträge unter `src/`) benannt hat.
+`AGENTS.md`, Abschnitt „Fünf Rollen, ein Arbeitsbaum", Punkt 4, entsprechend
+korrigiert (`git reset -q` statt `git add`) und um den Hinweis auf den neuen
+Befehl ergänzt.
+
+**Geprüft (GitHub-Spiegel, Node 20, wie die CI):** `npm run typecheck` 0
+Fehler, `npm run lint:ci` 0 Fehler (112/120 Warnungen, unverändert gegenüber
+vorher), `node scripts/docs-sichern.mjs pruefen` → 58 Dateien in Ordnung,
+`npx vitest run` → 194 Dateien, 2.897 grün, 96 erwartet fehlschlagend, keine
+Abweichung vom letzten bekannten guten Stand. Identische Änderung an
+`scripts/docs-sichern.mjs` und `AGENTS.md` auf Sandys Rechner geschrieben und
+per Bytegröße gegengeprüft (17.134 B bzw. 6.372 B, beide passend).
+
+**Nicht Teil dieses Fixes, bewusst offen gelassen:** die zwei bereits
+verschwundenen `src/`-Testdateien aus dem CoS-P-035-Befund waren zum
+Zeitpunkt dieses Laufs laut Chief of Staff bereits selbst per `git reset -q`
+gerettet (10:05-Nachtrag) — hier ging es nur um die Ursache im Skript, nicht
+um eine erneute Rettung.
+
+**Sandys eigene Aufgabe (dieser Lauf konnte nicht committen/pushen, siehe
+Kopf dieser Datei):** der PowerShell-Block dazu steht in der Chat-Antwort
+dieses Laufs.
+
+*Platform & Integrations Engineer · 2026-09-21*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

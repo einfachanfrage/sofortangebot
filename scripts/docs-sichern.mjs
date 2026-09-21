@@ -25,12 +25,19 @@
  *                   Vergleicht jede überwachte Datei mit ihrem Stand im
  *                   vorherigen Commit; läuft in der CI, nicht als Hook
  *                   (CoS-P-024: nichts im Push-Weg, das abbrechen kann).
+ *   5. `nachziehen <pfade...>` — CoS-P-035: der gemeinsame Nachzug für den
+ *                   GETEILTEN Index nach einem Commit mit eigenem
+ *                   GIT_INDEX_FILE (AGENTS.md, „Fünf Rollen, ein
+ *                   Arbeitsbaum", Punkt 4). Gilt für JEDE Rolle und JEDEN
+ *                   Pfad, nicht nur für `docs/` — ein Ort statt sieben
+ *                   Abschriften desselben Codes.
  *
  * Aufruf (PowerShell oder Terminal, im Projektordner):
  *   node scripts/docs-sichern.mjs pruefen
  *   node scripts/docs-sichern.mjs sichern "CoS-025 Erledigung"
  *   node scripts/docs-sichern.mjs wiederherstellen chief-of-staff-todos.md
  *   node scripts/docs-sichern.mjs schrumpfung
+ *   node scripts/docs-sichern.mjs nachziehen src/lib/foo.ts src/lib/bar.ts
  */
 import { readdirSync, readFileSync, existsSync, mkdirSync, renameSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
@@ -125,6 +132,34 @@ function gitMitIndex(indexDatei, ...args) {
   }).trim()
 }
 
+// CoS-P-035: gemeinsamer Nachzug für den GETEILTEN Index, nach einem Commit
+// mit eigenem GIT_INDEX_FILE (AGENTS.md, „Fünf Rollen, ein Arbeitsbaum",
+// Punkt 4). Bewusst EIN Ort für alle Rollen statt sieben Abschriften
+// desselben Codes — genau das Fehlen davon hat CoS-P-035 ausgelöst (die zwei
+// stillen `D`-Einträge unter `src/`, weil niemand für diese Pfade nachzog).
+//
+// Wichtig, und der eigentliche Fund von CoS-P-035: `git add -- <pfad>` ist
+// hier FALSCH, obwohl frühere Fassungen dieser Datei und von AGENTS.md genau
+// das taten. `add` merkt den aktuellen ARBEITSBAUM-Stand des Pfads vor, nicht
+// den gerade committeten HEAD-Stand — liegt unter demselben Pfad noch
+// uncommittete fremde Arbeit (z. B. eine andere Rolle mitten in `docs/`),
+// landet die als vorgemerkt im geteilten Index. Am 21.09. tatsächlich so
+// aufgetreten: vier fremde `docs/`-Dateien standen danach als `M` im
+// geteilten Index. `git reset -q -- <pfad>` stellt stattdessen exakt HEAD
+// wieder her: keine alten Blobs (HEAD ist durch den eigenen Commit gerade
+// weitergerückt), und nichts Fremdes vorgemerkt.
+//
+// Rückgabe `{ sauber, diff }`: `sauber` ist nur dann `true`, wenn der
+// geteilte Index für genau diese Pfade jetzt HEAD entspricht — das ist der
+// eigentliche Nachweis, nicht die Abwesenheit eines Fehlers (siehe AGENTS.md
+// Punkt 4, Schritt 3: „nachsehen, nicht annehmen").
+export function geteilterIndexNachziehen(pfade) {
+  fremdeSperreWegraeumen()
+  git('reset', '-q', '--', ...pfade)
+  const diff = git('diff', '--cached', 'HEAD', '--', ...pfade)
+  return { sauber: diff.length === 0, diff }
+}
+
 function sichern(grund) {
   const funde = pruefen()
   if (funde.length > 0) {
@@ -158,11 +193,9 @@ function sichern(grund) {
     // Sicherung wieder weg. Best-effort: schlägt das fehl, bleibt die
     // Sicherung selbst trotzdem committet, nur eine Warnung wird ausgegeben.
     try {
-      fremdeSperreWegraeumen()
-      git('add', '--', DOCS)
-      const diff = git('diff', '--cached', 'HEAD', '--', DOCS)
-      if (diff) {
-        console.error('Warnung: geteilter Index nach dem Sichern nicht sauber nachgezogen — bitte vor dem nächsten Commit prüfen (siehe AGENTS.md, „Fünf Rollen, ein Arbeitsbaum").')
+      const { sauber, diff } = geteilterIndexNachziehen([DOCS])
+      if (!sauber) {
+        console.error('Warnung: geteilter Index nach dem Sichern nicht sauber nachgezogen — bitte vor dem nächsten Commit prüfen (siehe AGENTS.md, „Fünf Rollen, ein Arbeitsbaum").\n' + diff)
       }
     } catch (fehler) {
       console.error(`Warnung: geteilter Index konnte nach dem Sichern nicht nachgezogen werden (${fehler.message}). Die Sicherung selbst ist trotzdem committet (${hash}) — nur ein späterer Commit einer anderen Rolle über den geteilten Index könnte sie sonst überschreiben, falls diese Rolle ebenfalls docs/-Dateien anfasst.`)
@@ -307,8 +340,31 @@ if (alsSkriptGestartet) {
       }
       break
     }
+    case 'nachziehen': {
+      // CoS-P-035: der gemeinsame Nachzug aus AGENTS.md „Fünf Rollen, ein
+      // Arbeitsbaum", Punkt 4 — für JEDE Rolle, nicht nur für docs/. Nach
+      // einem Commit mit eigenem GIT_INDEX_FILE hier die exakt selben Pfade
+      // angeben, die gerade committet wurden.
+      if (rest.length === 0) {
+        console.error('Bitte mindestens einen Pfad angeben — genau die Pfade, die gerade mit eigenem Index committet wurden.\nBeispiel: node scripts/docs-sichern.mjs nachziehen src/lib/foo.ts src/lib/bar.ts')
+        process.exit(1)
+      }
+      try {
+        const { sauber, diff } = geteilterIndexNachziehen(rest)
+        if (sauber) {
+          console.log(`Geteilter Index nachgezogen, entspricht HEAD: ${rest.join(', ')}`)
+        } else {
+          console.error('Warnung: geteilter Index nach dem Nachziehen nicht sauber — bitte prüfen:\n' + diff)
+          process.exit(1)
+        }
+      } catch (fehler) {
+        console.error(`Nachziehen fehlgeschlagen: ${fehler.message}`)
+        process.exit(1)
+      }
+      break
+    }
     default:
-      console.log('Befehle: pruefen | sichern "<Grund>" | wiederherstellen <datei> | schrumpfung')
+      console.log('Befehle: pruefen | sichern "<Grund>" | wiederherstellen <datei> | schrumpfung | nachziehen <pfade...>')
       process.exit(1)
   }
 }
