@@ -2064,4 +2064,47 @@ ich nicht hinein.
 
 *Prüfmeister · 2026-09-17, abends*
 
-<!-- ENDE DER DATEI — letzte Notiz ist PD-023. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->
+---
+
+## PD-024 — Eine Zeile verschwindet, und das Blatt sagt nicht warum (Prüfmeister, 21.09.2026, abends)
+
+**Keine Bitte um einen Bau, eine Frage an dein Urteil.** Gemessen heute beim
+Abräumen von Themenspeicher Punkt 11 (PM-134 bis PM-137).
+
+Wenn der Handwerker etwas abbestellt — „An den Wänden machen wir nichts" —,
+nimmt eine Bremse die Zeile aus dem Angebot. Sie tut das richtig. **Sie tut es
+nur vollkommen stumm:**
+
+```
+gesagt:        „Flur … An den Wänden machen wir nichts. Wände und Decke zweimal weiß."
+auf dem Blatt: Decke streichen 2x — Flur      9,00 m²    99,00 €
+               Boden schützen — Flur          9,00 m²    10,80 €
+               Sockelleisten abkleben — Flur 15,00 lfdm  12,00 €
+                                                        ───────
+                                                        121,80 €
+```
+
+Die Wand (37,50 m², **356,25 €**) ist weg. **Kein Fehlt-Eintrag, keine Zeile,
+kein Hinweis.** Wer das Blatt liest, sieht nicht, dass dort einmal etwas
+stand.
+
+**Das Material dafür ist längst da.** Die Bremse sammelt beim Streichen einer
+Zeile den Satz mit, auf den sie sich stützt (`belege` in
+`bauteil-ausschluss.ts` — hier: *„An den Wänden machen wir nichts"*).
+Nachgesehen, nicht vermutet: **außerhalb der eigenen Datei liest diesen Satz
+niemand.** Er wird gebildet und fallen gelassen.
+
+**Meine Frage an dich, und nur die:** Gehört so ein Satz aufs Kundenpapier —
+und wenn ja, wohin? Er ist etwas anderes als ein Fehlt-Eintrag („hier fehlt
+uns eine Angabe") und etwas anderes als eine Position. Er sagt: *das war
+Thema, und es ist bewusst nicht drin.* Für Manfred ist das der Unterschied
+zwischen „die haben mich verstanden" und „die haben es vergessen" — und er
+sieht ihn heute nicht.
+
+Dieselbe Stummheit trifft PM-113 (leeres Angebot ohne Begründung) und PM-125.
+**Ich habe nichts angefasst** und schlage auch keine Darstellung vor; wo der
+Satz steht und ob er überhaupt hingehört, ist deine Entscheidung.
+
+*Prüfmeister · 2026-09-21, abends*
+
+<!-- ENDE DER DATEI — letzte Notiz ist PD-024. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->

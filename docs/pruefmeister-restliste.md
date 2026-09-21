@@ -22,6 +22,18 @@ rechnet er 37,50 × 6,00 = 225,00 € und 9,00 × 6,00 = 54,00 €, also exakt d
 279,00 €, die ich am 17.09. live gesehen habe. **Kein Treffer-Fehler des
 Matchers, eine Katalogfrage.** Kein Bauauftrag.
 
+**Danach weitergearbeitet: Themenspeicher Punkt 11 ist zu.** „Die
+Verneinungsmaschine hat einen Umfang, und den kennt niemand" — jetzt kennt
+ihn jemand, und es sind **drei verschiedene Grenzen statt einer**: die
+Gegenprobe wirkt je **Satz**, die Raumzuordnung je **Teilsatz**, die
+Reichweite des Ausschlusses gilt für den **ganzen Text**. Aus dem
+Auseinanderfallen dieser drei fallen drei neue Fälle:
+**PM-134** (der Ausschluss kennt keine Reihenfolge — 356,25 € stumm weg),
+**PM-135** (Komma statt Punkt hebelt den Ausschluss aus — 465,90 € zu viel
+auf dem Blatt, diesmal gegen den Kunden) und **PM-136** (der Ausschluss ohne
+Raumnamen erbt den zuletzt genannten Raum statt zu fragen). **PM-137** hält
+die drei Grenzen selbst fest. **Fallbasis jetzt 137.**
+
 **Der Abgleich steht weiter still:** 184 Engine-Titel · 25 ohne Preis · 3
 knapp · 156 gute Treffer · 0 nicht prüfbar — unverändert gegenüber dem
 Vormittagslauf, auch nach `6bdf895` (CoS-E-088 hat `maler-sonder.ts`
@@ -5492,5 +5504,144 @@ noch abschließen wolltest: sag es, dann nehme ich den Commit zurück.** Ich
 habe an der Datei nichts geändert — nur `git add`.
 
 *Head of Finance · 2026-09-21, 16:25 UTC*
+
+---
+
+## PM-134 bis PM-137 — der Umfang der Verneinungsmaschine, gemessen (21.09.2026, 16:25 UTC · Prüfmeister)
+
+**Themenspeicher Punkt 11, seit 17.09. offen und dort als „vor allen dreien zu
+messen" markiert** (vor PM-101, PM-105, PM-125). Hinterlegt als
+`src/lib/__tests__/pruefmeister-batch-134-137.test.ts` — **17 Zusicherungen,
+14 grün, 3 Sperrklinken**, `npx tsc --noEmit` 0 Fehler, eslint sauber.
+Gemessen am Ausdruck (`bauteil-ausschluss.ts`, `satz-raum.ts`) **und** am
+Geldweg über die volle Vollständigkeitsprüfung. Auf Sandys Rechner.
+
+### Die Antwort: es sind drei Grenzen, nicht eine
+
+| wofür | Einheit | Trenner |
+|---|---|---|
+| Gegenprobe „steht für dasselbe Bauteil ein Auftrag?" | **Satz** | `. ! ? ;` **und Zeilenumbruch** |
+| Raumzuordnung des Ausschlusses | **Teilsatz** | **Komma** |
+| Reichweite des Ausschlusses selbst | **der ganze Text** | keine Entfernung, keine Richtung |
+
+**Ein Absatz ist keine eigene Einheit** — der Zeilenumbruch ist derselbe
+Trenner wie der Punkt. Dass die drei Grenzen auseinanderfallen, ist nicht
+Theorie; jeder der drei Fälle unten kommt genau aus einer Naht zwischen
+zweien davon.
+
+### PM-134 · Der Ausschluss kennt keine Reihenfolge — 356,25 € stumm weg
+
+> „Flur, 6 mal 1,50, 2,50 hoch. **An den Wänden machen wir nichts. Wände und
+> Decke zweimal weiß.**"
+
+Die Selbstkorrektur mitten im Diktat — erst nichts, dann doch. **Gemessen:
+Vorher und nachher ergeben Zeile für Zeile dasselbe Angebot** (121,80 € statt
+478,05 €). Der spätere ausdrückliche Auftrag hebt den früheren Ausschluss
+nicht auf, weil die Gegenprobe nur innerhalb DESSELBEN Satzes wirkt
+(`beauftragt.get(satzIndex)`). **Und der Wegfall ist stumm:** kein
+Fehlt-Eintrag, das Blatt sagt nicht, warum die Wand fehlt — dieselbe Klasse
+wie PM-113 und PM-125.
+
+**Soll (Sperrklinke PM-134-A):** Das jüngere Wort gewinnt. Wer nach dem
+Ausschluss dasselbe Bauteil ausdrücklich beauftragt, hat es sich anders
+überlegt.
+
+### PM-135 · Komma statt Punkt hebelt den Ausschluss aus — 465,90 € zu viel
+
+> „… Wohnzimmer, 4 mal 5, 2,50 hoch. **Wände streichen, im Wohnzimmer an den
+> Wänden nichts.**"
+
+Mit **Punkt** greift der Ausschluss sauber (379,05 €). Mit **Komma** fällt er
+**ganz** aus (844,95 €) — der Auftrag im ersten Teilsatz (Flur) hebt den
+Ausschluss im zweiten (Wohnzimmer) auf, weil die Gegenprobe den ganzen Satz
+liest. Am Ausdruck nachgemessen: `belege` ist leer, die Maschine sieht gar
+keinen Ausschluss.
+
+**Das ist der einzige der drei Fälle, bei dem das Geld GEGEN DEN KUNDEN
+läuft** — es steht Arbeit auf dem Blatt, die abbestellt wurde. Und es ist
+dieselbe Naht, vor der `satz-raum.ts` im eigenen Kommentar warnt: „Der Punkt
+trennt Gedanken, das Komma trennt im Diktat die Räume." Die Raumzuordnung
+hält sich daran, die Gegenprobe nicht.
+
+**Soll (Sperrklinke PM-135-A):** Die Gegenprobe braucht dieselbe Raumgrenze,
+die die Zuordnung schon hat.
+
+### PM-136 · Der Ausschluss ohne Raumnamen erbt den zuletzt genannten Raum
+
+> „Flur … Wände streichen. Wohnzimmer … Wände streichen. **An den Wänden
+> machen wir nichts.**"
+
+Der Satz nennt keinen Raum; gemeint ist erkennbar „nirgends". Die Maschine
+hängt ihn an den **zuletzt genannten** Raum — der Flur behält seine Wand
+(356,25 €). Global wird ein Ausschluss nur mit einem Wort aus `UEBERALL`
+(„überall", „generell", „in allen Räumen", „Wohnung") oder wenn gar kein Raum
+bekannt ist; die Kontrolle mit „überall" greift sauber.
+
+**Gegenrichtung zu PM-105:** dort nimmt die Verneinung zu viel mit, hier zu
+wenig — aus derselben Stelle.
+
+**Soll (Sperrklinke PM-136-A):** **nicht** „dann eben global" — das wäre
+genauso geraten. Richtig ist ein Fehlt-Eintrag, der sagt, dass die Ansage
+nicht zugeordnet werden konnte. Der Satz dafür steht in
+`bauteil-ausschluss.ts` selbst: *eine Bremse, die rät, ist schlimmer als
+keine.*
+
+### Nebenbefund ohne Auftrag: die Belege werden gesammelt und nirgends gezeigt
+
+`erkenneBauteilAusschluss` führt `belege` — die Sätze, auf die sich die Bremse
+stützt. **Außerhalb der eigenen Datei liest sie niemand** (nachgesehen, nicht
+vermutet: der einzige Aufrufer ist `vollstaendigkeit/index.ts` Z. 112, und der
+nimmt nur die gefilterten Positionen). Deshalb ist jeder Wegfall stumm. **Wo
+dieser Satz auf dem Blatt hingehört, entscheidet der Designer, nicht ich** —
+notiert in `pruefmeister-notizen-fuer-designer.md`.
+
+### Was ich ausdrücklich NICHT geprüft habe
+
+* **Die anderen zwei Bremsen.** `sockelleisten-ausschluss.ts` (PM-033) und
+  `raum-ausschluss.ts` (PM-034) haben dieselbe Satzmechanik aus
+  `satz-raum.ts`. Ob PM-134 bis PM-136 dort genauso sitzen, halte ich für
+  wahrscheinlich — **gemessen habe ich es nicht.**
+* **PM-101, PM-105, PM-125 selbst.** Die drei Grenzen stehen jetzt fest; ob
+  die drei Fälle damit erklärt sind, ist eine eigene Messung.
+* **Kein voller Prüfstand.** Gelaufen sind meine zwei Dateien und der
+  Abgleich.
+
+*Prüfmeister · 2026-09-21, 16:25 UTC*
+
+
+---
+
+## PM-138 — Punkt 20 ist gemessen: 16 Titel, bei denen die Katalogreihenfolge den Preis entscheidet (21.09.2026, 16:20 UTC · Prüfmeister)
+
+**Anschluss an die Antwort von 16:10 UTC.** Dort steht als offen: „wie viele
+solcher Paare es gibt, weiß ich nicht und behaupte ich nicht." Jetzt gemessen,
+committet als `93f67d2`.
+
+* **Gebaut:** `scripts/vokabular-abgleich.mjs --zweittreffer`.
+* **Ergebnis: 16 Engine-Titel.** Bedingung: mehrere Katalogzeilen teilen sich
+  den höchsten Score, verschieden teuer, **und keine heißt so wie der Titel** —
+  dann entscheidet nur noch die Reihenfolge im Katalog des Betriebs.
+* **Der weite Zuschnitt taugt nicht:** „zwei Zeilen, zwei Preise" trifft 51 von
+  159 bepreisten Titeln und sammelt fast nur Harmloses ein.
+* **Eine eigene Vermutung widerlegt:** `Wände spachteln Q4` (22,00 €) kippt
+  **nicht** auf `Fläche spachteln` (9,00 €), obwohl beide Score 1,00 tragen.
+  Die gleichlautende Katalogzeile schützt. Steht als Gegenprobe im Test.
+* **Die Spitze ist nicht die Grundierung** (33 %, unteres Drittel), sondern
+  `Wände spachteln / glätten` (**+144 %**) und `Schleifen` (**+138 %**) — dort
+  sagt die Engine die Ausführungsstufe (Q2/Q3/Q4, Hand/Maschine) gar nicht mit,
+  obwohl der Katalog sie als eigene Zeilen führt. **Das ist kein
+  Matcher-Problem, dem Titel fehlt eine Angabe, die der Preis braucht.**
+* **Kein Bauauftrag von mir** — der Zuschnitt der Engine-Titel gehört
+  Engineering und Manfred. Liste und Herleitung: `vokabular-abgleich.md`,
+  Nachtrag 16:20 UTC. Sperrklinke:
+  `pruefmeister-gleichstand-katalog.test.ts` (PM-138, 8 grün).
+* **Nicht gemessen:** der echte Katalog von Sandys Testbetrieb, und die
+  **Richtung** — ob die Reihenfolge eher die billige oder die teure Zeile nach
+  oben stellt. Nur für `Grundierung` nachgesehen (heute gewinnt die billige).
+  Die Richtung ist die Frage, die Manfreds „systematisch zu billig" beantworten
+  würde, und sie ist eine eigene Messung.
+
+*Prüfmeister · 2026-09-21, 16:20 UTC*
+
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

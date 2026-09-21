@@ -94,7 +94,6 @@ function laufVoll(gewerk: 'maler' | 'boden_parkett', transkript: string, raeume:
 const lauf = (g: 'maler' | 'boden_parkett', t: string, r: any[]) => laufVoll(g, t, r).positionen
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const titel = (pos: any[]) => pos.map(p => p.beschreibung)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function preisFuer(beschreibung: string, einheit: string, katalog = KATALOG) {
   const g = gewerkFuerPosition(beschreibung, 'maler')
   return findePreisposition(beschreibung, einheit, katalog.filter(k => preisKategoriePasstZuGewerk(k.category, g)))
