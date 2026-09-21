@@ -862,4 +862,54 @@ gemessen hat:**
 
 *Prüfmeister · 2026-09-17, abends*
 
+
+---
+
+## Nachtrag 21.09.2026 — Punkt 14 ist zu, und ein Sammelpunkt Trockenbau macht auf
+
+**Abgeräumt:**
+
+* **Punkt 14 — die behauptete Herkunft** → gemessen, Ergebnis in
+  `pruefmeister-restliste.md` (Lauf vom 21.09.), hinterlegt als
+  `pruefmeister-herkunft-transkript.test.ts` (12 Prüfungen, grün).
+  **40 Stellen schreiben „aus Transkript", kein einziger unbelegter
+  Rechenweg.** PM-131/132/133 sind gebaut; die drei Fälle stehen jetzt als
+  Gegenproben in der Messung statt als Funde.
+  **Was der Punkt darüber hinaus gelehrt hat, gehört zu H** (Regeln für die
+  Fallbasis selbst): *eine Messung, die nur nach der Ziffer sucht, misst
+  nichts* — bei PM-132 stand die 50 im Text, nur am falschen Bauteil. Und:
+  *jede Messung braucht eine Gegenprobe an sich selbst*, sonst ist „0 Funde"
+  nicht von „misst nicht" zu unterscheiden.
+
+**Offen bleiben** aus den älteren Abschnitten: **M.1** (teilweise), **M.3**,
+**M.5**, Mittags-Punkt 7, Nachmittags-**Punkte 10, 11, 12, 13** — Punkt 11
+(Umfang der Verneinungsmaschine) bleibt der mit dem größten Hebel — sowie die
+**Punkte 15, 16, 17, 18** vom 17.09. abends. **Punkt 10 ist ausdrücklich
+nicht** mit 14 miterledigt: eine Zeile, die „angenommen" sagt, sagt damit noch
+nicht, ob die Annahme stimmt.
+
+---
+
+**19. Sammelpunkt Trockenbau** *(Nebenprodukt, kein Auftrag — Auftrag des
+Chief of Staff vom 21.09., 07:58 UTC: auffallen lassen, nicht suchen)*
+
+* **Sieben der 25 preislosen Engine-Titel sind Trockenbau**, gemessen im
+  Abgleichslauf vom 21.09.: `Abgehängte Decke` · `Abgehängte Decke (GK)` ·
+  `Dämmung Ständerwand einlegen` · `Doppelbeplankung (2× GK)` ·
+  `Ständerwand errichten (GK)` · `Ständerwerk CW-Profil`. Solange das Gewerk
+  gesperrt ist, kostet das nichts. Wird es aufgemacht, ist es der erste
+  Stolperstein: **0,00 €-Zeilen sperren den Versand.**
+* **Zwei Einheiten treffen aufeinander**, die der Maler nicht kennt: `lfdm`
+  für Profile neben `m²` für Fläche — dieselbe Wand ergibt zwei Mengen aus
+  einer Aufnahme. Ungemessen, ob die Pipeline das trägt.
+* **Doppeldeutig gegen Maler:** „Wand" heißt beim Maler eine Fläche zum
+  Streichen, im Trockenbau ein Bauteil zum Errichten. Dieselbe
+  Verwechslungsklasse wie „ab-DECKE-n" (PM-017), nur teurer.
+* **Die Gewerke-Sperre selbst ist ungemessen.** Ein Diktat mit Trockenbau muss
+  sauber „noch nicht möglich" sagen. Ob es das tut, weiß ich nicht — das wäre
+  der erste Prüffall, wenn jemand ihn haben will.
+
+*Prüfmeister · 2026-09-21*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

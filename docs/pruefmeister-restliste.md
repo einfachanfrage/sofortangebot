@@ -3656,7 +3656,123 @@ Markierung, 33 haben jetzt genau eine.
 **Dein „Fehlalarm ausgeschlossen" zu `pruefmeister-testfaelle.md` war richtig —
 und ich habe den Fehlalarm trotzdem beseitigt.** Zeile 1183 war nicht nur ein
 Zitat, sie war ein **Bruchstück**: der Satz begann mitten in einem Wort
-(``<!-- ENDE DER DATEI -->`). Taucht beim Lesen…``), der Anfang fehlte. Ich
+(``
+---
+
+## Lauf vom 21.09.2026 — meine Testdatei ist sauber, die A/B/C-Frage ist beantwortet, Punkt 14 ist gemessen (Prüfmeister)
+
+### 1. `pruefmeister-batch-47-56.test.ts` — sechs rot sind null rot
+
+**Gemessen vor dem Anfassen:** 6 rot · 39 grün · 8 Sperrklinken. Die sechs
+waren, was Engineering am 17.09. geschrieben hat: fünf zugeschnappte
+Sperrklinken (PM-098, PM-099) und ein Beleg-Test, der seine eigene Behauptung
+widerlegt.
+
+**Nachgerechnet, bevor ich entsperrt habe — und zwar an der ganzen
+Positionsliste, nicht am Ausbleiben einer Zeile.** Das ist der Unterschied,
+der zählt: ein Angebot, das komplett leer wird, besteht jede
+`toBeUndefined`-Prüfung. Gemessen:
+
+| Fall | mit Satz | ohne Satz |
+|---|---|---|
+| **PM-098** „Ein Fenster, eine Tür" | Wand 45 m² · Boden schützen · Sockelleisten · Heizkörper 3×2 | **Zeile für Zeile dasselbe** |
+| **PM-099** „An den Wänden machen wir nichts" | nur die vier Türzeilen (4×) | zusätzlich Wand streichen 2x 27,50 m² · Boden schützen · Sockelleisten abkleben |
+
+**Damit ist beides echt erfüllt:** bei PM-098 verschwinden die sieben nicht
+bestellten Lackzeilen (280,00 €), ohne dass sonst etwas verschwindet; bei
+PM-099 fällt **genau** der Wandblock weg (277,25 €), und die Türarbeit bleibt
+vollständig stehen. Auch die Variante „Die Wände bleiben wie sie sind."
+greift.
+
+**Fünf `it.fails` stehen jetzt auf `it`.** Der Beleg-Test ist umgeschrieben:
+Gegenstand und Zählweise bleiben, die Richtung dreht sich — er prüft nicht
+mehr, dass der Satz wirkungslos ist, sondern dass er **genau den Wandblock**
+nimmt und sonst nichts (Differenz in beide Richtungen, plus die
+Türliste als Ganzes). Damit kann ein leergeräumtes Angebot ihn nicht mehr
+bestehen.
+
+**Stand der Datei: 45 grün · 8 Sperrklinken · 0 rot.** Committet.
+
+### 2. Die A/B/C-Frage: **B** — und warum nicht A und nicht C
+
+Hinterlegt als Test, nicht als Prosa:
+`src/lib/__tests__/pruefmeister-pm103-altbau-grenze.test.ts`. Dort steht die
+Begründung in voller Länge; hier die Kurzfassung.
+
+**Gemessen** (über `pruefeAltbau`, Fall für Fall, 21.09.):
+
+```
+ZUSCHLAG  | Ist ein Altbau, Kalkputz, alles krumm.
+ZUSCHLAG  | Wir sind hier im Altbau.
+ZUSCHLAG  | Altgebäude, alles krumm.
+kein      | Altbauwohnung, dritter Stock, Kalkputz.
+kein      | Altbauhaus von 1910.
+kein      | Altbauwohnzimmer / Altbaufenster / Altbautür
+kein      | Im Altbau streichen.        [Raum heißt „Altbau"]
+```
+
+* **Gegen A:** die heutige Grenze trennt nicht Zustand von Name, sondern
+  einfaches Wort von zusammengesetztem. „Wir sind hier im Altbau" ist genauso
+  wenig eine Zustandsaussage wie „Altbauwohnung" — beides sagt etwas über das
+  **Objekt**, das eine feuert, das andere nicht. **`Altgebäude` zeigt es am
+  schärfsten:** löst aus, ohne jedes Zustandswort. Das ist Typografie als
+  Preisgrenze, und sie hält der Rückfrage eines Kunden nach 460,20 € nicht
+  stand.
+* **Gegen C:** C schaltet „Wir sind hier im Altbau" ab — den heute tragenden
+  Auslöser. Und C braucht eine Liste von Zustandswörtern; jedes fehlende Wort
+  ist ein **stiller** Verlust gegen den Betrieb, weil eine fehlende Zeile
+  niemandem auffällt. Eine Whitelist, die man nur durch Schaden pflegt, ist
+  der teurere Bau.
+* **Für B:** die zweite Schranke bleibt unangetastet — Raumnamen werden vor
+  der Prüfung aus dem Text geschnitten, ganze Wörter. Heißt ein Raum
+  „Altbauwohnung", ist das Wort weg, bevor geprüft wird; **gemessen, grün,
+  heute schon.** „Wohnung" und „Haus" sind in einer Aufnahme nie ein Raum;
+  „Zimmer", „Fenster", „Tür", „Wand", „Decke" sind es — und die bleiben
+  draußen.
+
+**Bauauftrag, so eng wie möglich: geschlossene Liste, kein Präfix.** Es zählen
+genau `Altbauwohnung(en)` und `Altbauhaus`/`Altbauhäuser` zusätzlich zu allem,
+was heute schon zählt. Ein Präfix `altbau*` holte „Altbauwohnzimmer" und
+„Altbaufenster" zurück und machte PM-103 rückgängig — zwei grüne Gegenproben
+im Test halten das fest.
+
+**Drei Sperrklinken liegen bereit** (Altbauwohnung · Altbauhaus · Mehrzahl).
+Bis B gebaut ist, gilt A, und die Datei ist trotzdem grün.
+
+### 3. Themenspeicher-Punkt 14 — gemessen, und die Messung hat sich selbst korrigiert
+
+`src/lib/__tests__/pruefmeister-herkunft-transkript.test.ts`, 12 Prüfungen,
+alle grün. **40 Stellen im Produkt schreiben „aus Transkript"** (`grep -rn
+"aus Transkript" src/lib --include=*.ts`, ohne Tests); neun Diktate decken die
+tragenden ab und laufen über die volle Pipeline.
+
+**Ergebnis: kein einziger unbelegter Rechenweg.** Die drei bekannten Familien
+sind gebaut und stehen jetzt als Gegenproben in der Datei — am Zähler
+nachgemessen: `zaehleTueren` gibt bei „Wir liefern 50 Stück Fliesen dazu"
+heute **0 statt 50**, bei „Fenster 3 ist kaputt" **0 statt 3**. PM-131/132/133
+sind grün, alle 21 Prüfungen.
+
+**Die eigentliche Lehre steht im Bau der Messung, nicht im Ergebnis:**
+
+1. **Eine Prüfung „steht die Ziffer irgendwo im Text?" misst nichts.** Bei
+   PM-132 stand die 50 im Text — nur eben an den Fliesen. Meine erste Fassung
+   fand null Funde und war dabei wertlos. Geprüft wird jetzt die Zahl **neben
+   ihrem Ding**; das Ding liest die Prüfung aus dem Rechenweg selbst
+   („4 Tür(en) …" → Tür).
+2. **Die Messung braucht eine Gegenprobe an sich selbst.** Zwei Selbsttests
+   stellen je einen Rechenweg hin, einen falschen und einen richtigen. Ohne
+   sie ist „0 Funde" nicht von „misst nicht" zu unterscheiden — genau der
+   Fehler, den die Datei beim Produkt sucht.
+
+**Damit ist Punkt 14 zu.** Was offen bleibt, ist die Gegenrichtung von
+Punkt 10: eine Zeile, die „angenommen" sagt, sagt damit noch nicht, ob die
+Annahme stimmt. Das ist nicht dieselbe Messung und steht weiter im
+Themenspeicher.
+
+*Prüfmeister · 2026-09-21*
+
+
+<!-- ENDE DER DATEI -->`). Taucht beim Lesen…``), der Anfang fehlte. Ich
 habe die Stelle als Fließtext neu geschrieben, ohne die Zeichenfolge. Damit
 stimmt die einfache Suche ab jetzt überall — **niemand muss mehr wissen, dass
 diese eine Datei eine Ausnahme ist.** Das war der eigentliche Mangel: eine

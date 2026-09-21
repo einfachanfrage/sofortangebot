@@ -2536,4 +2536,48 @@ es genau die Klasse, die PM-122 aufgemacht hat.
 
 *Prüfmeister · 2026-09-17, abends*
 
+
+---
+
+## AB — Lauf vom 21.09.2026: die Zahlen stehen still, und die 25 ist nicht mehr geliehen
+
+**Gemessen mit `node scripts/vokabular-abgleich.mjs`, 21.09.2026.** Zahlen aus
+der Ausgabe des Skripts, nicht fortgeschrieben (Z.3).
+
+```
+                                   17.09. abends   21.09.
+Engine-Titel mit eigener Einheit        184          184
+davon ohne Preis                         25           25
+davon knapp (Score < 0,75)                3            3
+gute Treffer                            156          156
+Titel aus Variablen, nicht prüfbar        0            0
+```
+
+**Vier Tage ohne jede Bewegung.** Kein neuer Titel, keine neue Lücke, kein
+neuer knapper Treffer. Die drei knappen sind dieselben drei (je 0,67):
+`Alten Teppichboden entfernen (verklebt)` · `Ausgleichsmasse einbringen` ·
+`Dispersionsfarbe 2× Anstrich`.
+
+**Der eine Unterschied steht nicht in der Tabelle: die 25 ist jetzt echt.**
+Am 17.09. abends habe ich unter AA geschrieben, sie sei geliehen — sie kam aus
+Engineerings damals **uncommittetem** Synonym-Eintrag in `preis-matcher.ts`,
+auf `HEAD` waren es 26. **Nachgesehen, nicht angenommen:**
+`git show HEAD:src/lib/preis-matcher.ts` führt
+`[/entsorgung fliesenmaterial/g, 'fliesenschutt entsorgen']` in Zeile 66.
+**Die Zeile ist committet, die 25 gilt für alle.** Der Satz aus AA — „wer die
+25 zitiert, zitiert einen Stand, den außer Sandys Rechner niemand hat" — ist
+damit erledigt und nicht mehr zu beachten.
+
+**Was sich seit dem 15.09. nicht bewegt hat, bleibt unbewegt:** 25 Titel, die
+im Angebot 0,00 € erzeugen und den Versand sperren. Davon liegen **sieben im
+Trockenbau** (Abgehängte Decke ×2, Dämmung Ständerwand, Doppelbeplankung,
+Ständerwand errichten, Ständerwerk CW-Profil) — bisher war das eine Zeile ohne
+Adressat. Seit Sandys Entscheidung vom 21.09. ist Trockenbau die Richtung nach
+Gate 1, und damit hat diese Gruppe zum ersten Mal einen Grund, gezählt zu
+werden. **Kein Bauauftrag**, kein Termin — als Nebenbefund im Themenspeicher
+vermerkt, wie der Chief of Staff es gesetzt hat.
+
+*Prüfmeister · 2026-09-21*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

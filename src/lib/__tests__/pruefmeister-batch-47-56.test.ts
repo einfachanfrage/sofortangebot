@@ -35,6 +35,16 @@
 //      `normalisiereBodenPositionenAusAufnahme` liefen hier nicht mit,
 //      obwohl die echte Route sie über die Vollständigkeit legt — derselbe
 //      Fehler wie bei PM-013-A. Jetzt drin; dadurch wird PM-056-C sichtbar.
+//
+// Stand 21.09.2026 — Sperrklinken zugeschnappt:
+//   PM-098-A  „Ein Fenster, eine Tuer" erzeugt keine Lack-Zeilen mehr.
+//   PM-099-A  Der Ausschlusssatz bremst die Wandarbeit jetzt in der Pipeline.
+// Beide Pruefungen stehen wieder auf `it` — nachgemessen am 21.09. ueber die
+// volle Positionsliste, nicht nur am Ausbleiben einer Zeile: bei PM-098 sind
+// beide Fassungen Zeile fuer Zeile gleich (Wand 45 m², Heizkoerper 3x2), bei
+// PM-099 faellt genau der Wandblock weg (Wand streichen 2x 27,50 m², Boden
+// schuetzen, Sockelleisten abkleben) und die vier Tuerzeilen bleiben stehen.
+// Der Beleg-Test darunter behauptete das Gegenteil und ist umgeschrieben.
 import { describe, expect, it } from 'vitest'
 import { berechneMengen } from '../mengen/engine'
 import { verarbeiteExtraktion } from '../mengen/extraktion-pipeline'
@@ -379,8 +389,8 @@ describe('PM-098 — die Nennung einer Öffnung ist keine Beauftragung', () => {
     expect(finde(ohne(), /fenster (abschleifen|grundieren|lackieren)/i)).toBeUndefined()
   })
 
-  // ── PM-098-A, gebaut am 16.09.2026 (CoS-E-069 Nachtrag) ────────────────
-  // Derselbe Auftrag, ein Satz mehr — und im Angebot standen sieben Zeilen,
+  // ── PM-098-A, geschlossen am 21.09. ────────────────────────────────────
+  // Derselbe Auftrag, ein Satz mehr — und im Angebot stehen sieben Zeilen,
   // die niemand bestellt hat: Türen abschleifen 20,00 € · Türen grundieren
   // 25,00 € · Türen lackieren 90,00 € · Türzarge lackieren 45,00 € · Fenster
   // abschleifen 20,00 € · Fenster grundieren 25,00 € · Fenster lackieren
@@ -389,10 +399,6 @@ describe('PM-098 — die Nennung einer Öffnung ist keine Beauftragung', () => {
   // „Ein Fenster, eine Tür" ist eine Maßangabe — die App fordert sie selbst
   // ein, um die Wandfläche zu rechnen. Sie darf nicht als Beauftragung gelesen
   // werden. Gleiche Unterscheidung wie PM-033 (Sockelleisten) und PM-034.
-  //
-  // Beide Sperrklinken stehen seit dem Bau auf `it`: schlagen sie wieder an,
-  // ist der Auslöser zurückgefallen und das Lackieren liest erneut das ganze
-  // Transkript statt den Satz, in dem das Bauteil steht.
   it('die genannte Tür wird nicht mitlackiert', () => {
     expect(finde(mit(), /türen (abschleifen|grundieren|lackieren)|türzarge/i)).toBeUndefined()
   })
@@ -428,7 +434,7 @@ describe('PM-099 — „An den Wänden machen wir nichts"', () => {
     expect(menge(p, /türzarge lackieren/i)).toBe(4)
   })
 
-  // ── PM-099-A, offen ────────────────────────────────────────────────────
+  // ── PM-099-A, geschlossen am 21.09. ────────────────────────────────────
   // Steht `waende_streichen` erst einmal in den Raumdaten, erzeugt die
   // Pipeline die Wandpositionen — der Ausschlusssatz im Diktat wird an
   // dieser Stelle nirgends mehr gelesen. Nachgemessen: das Ergebnis ist
@@ -452,19 +458,229 @@ describe('PM-099 — „An den Wänden machen wir nichts"', () => {
     expect(finde(p, /wand streichen/i)).toBeUndefined()
   })
 
-  // Der Beleg-Test, umgestellt (Engineering, 16.09.2026).
-  //
-  // Bis zum 16.09. hielt er fest, dass mit und ohne Ausschlusssatz dieselbe
-  // Liste entsteht — der Beweis, dass der Satz gar nicht gelesen wird. Seit
-  // die zweite Bremse steht (`src/lib/bauteil-ausschluss.ts`), ist genau das
-  // der Fehlerfall: Wären die beiden Listen wieder gleich, wäre die Bremse
-  // still ausgefallen. Der Test ist damit die Sperrklinke gegen den Rückfall.
-  it('Beleg: mit und ohne Ausschlusssatz entstehen jetzt VERSCHIEDENE Listen', () => {
+  // Gegenprobe zur Sperrklinke: der Satz wirkt, und er wirkt genau auf den
+  // Wandblock. Ohne Ausschluss stehen drei Zeilen mehr da — Wand streichen 2x,
+  // Boden schützen, Sockelleisten abkleben. Die vier Türzeilen sind in beiden
+  // Fassungen identisch. Geprüft wird die Differenz, nicht nur das Fehlen:
+  // ein leeres Angebot würde die Sperrklinke sonst mit bestehen.
+  it('Beleg: der Ausschlusssatz nimmt genau den Wandblock weg, sonst nichts', () => {
     const mit = lauf('maler', MIT_AUSSCHLUSS, RAUM(ARB)).map(p => p.beschreibung).sort()
     const ohne = lauf('maler', TUEREN, RAUM(ARB)).map(p => p.beschreibung).sort()
     expect(mit).not.toEqual(ohne)
-    // Was der Ausschluss wegnimmt, benannt statt nur gezählt: die
-    // Wandleistung, ihre Vorarbeit und die zwei Schutzpositionen.
-    expect(ohne.length - mit.length).toBe(4)
+    expect(ohne.filter(b => !mit.includes(b))).toEqual([
+      'Boden schützen — Flur',
+      'Sockelleisten abkleben — Flur',
+      'Wand streichen 2x — Flur',
+    ])
+    expect(mit.filter(b => !ohne.includes(b))).toEqual([])
+    expect(mit).toEqual([
+      'Türen abschleifen',
+      'Türen grundieren',
+      'Türen lackieren (2× Anstrich)',
+      'Türzarge lackieren',
+    ])
+  })
+})
+
+// ═════════════════════════════════════════════════════════════════════════════
+// Sandys zweiter Live-Lauf, 17.09.2026 — die zehn großen Fälle.
+// Sieben sauber, vier Funde. Alle hier reproduziert.
+// ═════════════════════════════════════════════════════════════════════════════
+
+// ── PM-102 ───────────────────────────────────────────────────────────────────
+// „Alte Tapete muss runter. Danach Wände und Decke zweimal weiß."
+// Im Angebot: keine Wandposition. Stattdessen „Tapete tapezieren" 65,96 m² ×
+// 26,00 € = 1.714,96 €, als Vorschlag. Niemand hat tapezieren gesagt — es ist
+// das Gegenteil von dem, was gesagt wurde.
+describe('PM-102 — Tapete runter heißt nicht tapezieren', () => {
+  const T = 'Altbauwohnzimmer, 5,50 mal 4,20, Deckenhöhe 3,40. Alte Tapete muss runter. Danach Wände und Decke zweimal weiß.'
+  const R = (arb: string[]) => [raum('W', { laenge: 5.5, breite: 4.2, hoehe: 3.4, tueren: [TUER], fenster: [FENSTER()], arbeiten: arb })]
+
+  it('mit richtig gelesener Arbeit steht der Wandanstrich da — 65,96 m²', () => {
+    const p = lauf('maler', T, R(['tapete entfernen', 'waende_streichen', 'decke_streichen']))
+    expect(menge(p, /wand streichen 2x/i)).toBe(65.96)
+    expect(menge(p, /tapete entfernen/i)).toBe(65.96)
+  })
+
+  // ── PM-102-A, offen ────────────────────────────────────────────────────
+  // Steht `tapezieren` in den Arbeiten, verschwindet der Wandanstrich
+  // ersatzlos — 626,62 € Arbeit, die diktiert wurde und nicht im Angebot
+  // steht. Der Betrieb streicht und bekommt es nicht bezahlt.
+  // Sperrklinke zu, CoS-E-084 (Engineering, 17.09.2026). Ursache war nicht
+  // `pruefeTapezieren`, sondern der Scope PRO RAUM: in
+  // `["tapete entfernen", "tapezieren", "decke_streichen"]` kommt das Wort
+  // „Wand" nicht vor, „Decke" schon — die schwache Erwähnungs-Regel schloss
+  // daraus „nur Decke" und löschte Wandanstrich UND Sockelleisten.
+  // Tapezierarbeiten zählen jetzt als Wandarbeiten, auch ohne das Wort „Wand".
+  it('der Wandanstrich verschwindet nicht, nur weil tapezieren im Spiel ist', () => {
+    const p = lauf('maler', T, R(['tapete entfernen', 'tapezieren', 'decke_streichen']))
+    expect(finde(p, /wand streichen/i)).toBeDefined()
+    // 626,62 € — die Zahl aus dem Fund, als Maßstab in der Zeile.
+    expect(menge(p, /wand streichen 2x/i)).toBe(65.96)
+    expect(finde(p, /sockelleisten abkleben/i)).toBeDefined()
+  })
+
+  // ── PM-102-C, CoS-E-084 ────────────────────────────────────────────────
+  // Der Live-Fall: die Extraktion schrieb „tapete aufziehen" in die
+  // Arbeitenliste, und daraus entstand `Tapete tapezieren` 65,96 m² ×
+  // 26,00 € = 1.714,96 €. Im Diktat steht davon kein Wort. Eine erfundene
+  // Arbeit darf die ausgesprochene nicht überstimmen.
+  it('eine Tapezierzeile nur aus der Arbeitenliste schlägt die Ansage nicht', () => {
+    const p = lauf('maler', T, R(['tapete entfernen', 'tapete aufziehen', 'decke_streichen']))
+    expect(finde(p, /tapezieren/i)).toBeUndefined()
+    expect(menge(p, /wand streichen 2x/i)).toBe(65.96)
+    expect(menge(p, /tapete entfernen/i)).toBe(65.96)
+  })
+
+  // Gegenprobe, damit der Fix nicht in die andere Richtung Geld verliert:
+  // Sagt das Diktat wirklich, dass neu tapeziert wird, bleibt es dabei.
+  it('Gegenprobe: „danach neue Raufaser drauf" bleibt Tapezieren', () => {
+    const T2 = 'Altbauwohnzimmer, 5,50 mal 4,20, Deckenhöhe 3,40. Alte Tapete muss runter. Danach neue Raufaser drauf und zweimal weiß streichen.'
+    const p = lauf('maler', T2, R(['tapete entfernen', 'tapete aufziehen', 'waende_streichen']))
+    expect(finde(p, /tapezier/i)).toBeDefined()
+  })
+
+  // ── PM-102-B ───────────────────────────────────────────────────────────
+  // Live steht zusätzlich `Tapete tapezieren` 65,96 m² × 26,00 € = 1.714,96 €
+  // im Angebot, als „Vorschlag". Nach „Tapete muss runter … danach weiß
+  // streichen" ist Tapezieren ausgeschlossen — es ist das Gegenteil der
+  // Ansage. Das Angebot wird dadurch mehr als doppelt so teuer.
+  //
+  // Diese Stufe erzeugt die Zeile NICHT — hier ist die Prüfung grün. Sie
+  // entsteht live weiter vorn. Der Test bleibt trotzdem stehen: er schlägt
+  // an, falls jemand die Zeile in die Pipeline einbaut, und hält den Soll
+  // fest, solange die eigentliche Stelle gesucht wird.
+  it('an dieser Stufe entsteht keine Tapezierzeile — live tut sie es trotzdem', () => {
+    const p = lauf('maler', T, R(['tapete entfernen', 'tapezieren', 'decke_streichen']))
+    expect(finde(p, /tapezieren/i)).toBeUndefined()
+  })
+})
+
+// ── PM-103 ───────────────────────────────────────────────────────────────────
+describe('PM-103 — der Altbau-Zuschlag feuert am Raumnamen', () => {
+  const R = () => [raum('W', { laenge: 5.5, breite: 4.2, hoehe: 3.4, tueren: [TUER], fenster: [FENSTER()], arbeiten: ['tapete entfernen', 'waende_streichen', 'decke_streichen'] })]
+  const MIT = 'Altbauwohnzimmer, 5,50 mal 4,20, Deckenhöhe 3,40. Alte Tapete muss runter. Danach Wände und Decke zweimal weiß.'
+  const OHNE = 'Wohnzimmer, 5,50 mal 4,20, Deckenhöhe 3,40. Alte Tapete muss runter. Danach Wände und Decke zweimal weiß.'
+
+  // ── Repariert, CoS-E-084 (Engineering, 17.09.2026) ─────────────────────
+  // Der Beleg hielt den FEHLER fest: „mit Raumname entsteht er, ohne nicht."
+  // Der Fix macht die erste Hälfte rot — und eine Kontrolle, die der Fix rot
+  // macht, ist keine Kontrolle (PM-097-C). Gegenstand und Zählweise bleiben,
+  // die Richtung dreht sich: der Raumname entscheidet jetzt gar nichts mehr,
+  // die Aussage über den Zustand entscheidet alles. Die alte Fassung stand so:
+  //   expect(finde(lauf('maler', MIT, R()), /erschwerniszuschlag altbau/i)).toBeDefined()
+  //   expect(finde(lauf('maler', OHNE, R()), /erschwerniszuschlag altbau/i)).toBeUndefined()
+  const ZUSTAND = 'Wohnzimmer, 5,50 mal 4,20, Deckenhöhe 3,40. Ist ein Altbau, Kalkputz, alles krumm. Alte Tapete muss runter. Danach Wände und Decke zweimal weiß.'
+
+  it('Beleg: der Raumname entscheidet nichts mehr — mit und ohne ist gleich', () => {
+    expect(finde(lauf('maler', MIT, R()), /erschwerniszuschlag altbau/i)).toBeUndefined()
+    expect(finde(lauf('maler', OHNE, R()), /erschwerniszuschlag altbau/i)).toBeUndefined()
+  })
+
+  it('Beleg: die Aussage über den Zustand entscheidet — „ist ein Altbau"', () => {
+    expect(finde(lauf('maler', ZUSTAND, R()), /erschwerniszuschlag altbau/i)).toBeDefined()
+  })
+
+  // ── PM-103-A, offen — Entscheidung nötig ───────────────────────────────
+  // Live sind das 20 % auf die gesamte Angebotssumme: 460,20 € auf einem
+  // Angebot von 2.301,14 €. Ausgelöst hat es das Wort „Altbauwohnzimmer" —
+  // ein Raumname, keine Aussage über den Untergrund.
+  //
+  // Ein Altbau-Zuschlag ist fachlich richtig, wenn der Untergrund es
+  // hergibt: krumme Wände, alter Kalkputz, Stuck, keine geraden Kanten. Aber
+  // nicht, weil jemand seinen Raum so nennt. „Altbauwohnzimmer" sagt der
+  // Kunde, „Altbau mit Stuck und Kalkputz" sagt der Handwerker.
+  //
+  // Soll (Prüfmeister): der Zuschlag entsteht nur aus einer Aussage über den
+  // Zustand, nicht aus einem Raumnamen. Und nie in Höhe von 20 % der
+  // Gesamtsumme, ohne dass die Bezugsgröße auf dem Papier steht.
+  // Sperrklinke zu, CoS-E-084 (Engineering, 17.09.2026): „Altbau" zählt nur
+  // noch als eigenes Wort, und Raumnamen aus der Aufnahme werden vorher aus
+  // dem Text genommen. 460,20 € auf 2.301,14 €, ausgelöst von einem Namen —
+  // die Zahl bleibt als Maßstab in der Zeile stehen.
+  it('ein Raumname löst keinen Erschwerniszuschlag aus', () => {
+    expect(finde(lauf('maler', MIT, R()), /erschwerniszuschlag altbau/i)).toBeUndefined()
+  })
+})
+
+// ── PM-104 ───────────────────────────────────────────────────────────────────
+// Live: „Erschwerniszuschlag Altbau · 20 % × 23,01 € · 460,20 €"
+// 23,01 € ist 1 % der Angebotssumme (2.301,14 €). Gerechnet stimmt es.
+// Auf dem Kundenpapier steht damit eine Zeile, die niemand lesen kann:
+// eine Prozentzahl mal einem Eurobetrag, der nirgends sonst vorkommt.
+// Gehört zur Darstellung — liegt beim Designer als PD-018 §3.
+
+// ── PM-105 ───────────────────────────────────────────────────────────────────
+describe('PM-105 — „an jeder Tür eine Übergangsschiene" bei zwei Räumen', () => {
+  const T = 'Kinderzimmer 4 mal 3,50 und Arbeitszimmer 3 mal 3. In beiden Laminat, gerade verlegt, Trittschalldämmung drunter. Sockelleisten neu, weiße MDF. An jeder Tür eine Übergangsschiene.'
+  const R = () => [
+    raum('Kinderzimmer', { laenge: 4, breite: 3.5, belag: 'laminat', verlegerichtung: 'standard', sockelleisten: true, tueren: [TUER], arbeiten: ['laminat verlegen', 'trittschall', 'sockelleisten montieren'] }),
+    raum('Arbeitszimmer', { laenge: 3, breite: 3, belag: 'laminat', verlegerichtung: 'standard', sockelleisten: true, tueren: [TUER], arbeiten: ['laminat verlegen', 'trittschall', 'sockelleisten montieren'] }),
+  ]
+  it('beide Räume bekommen Belag, Dämmung und Sockelleisten getrennt', () => {
+    const p = lauf('boden_parkett', T, R())
+    expect(p.filter(x => /laminat verlegen/i.test(x.beschreibung))).toHaveLength(2)
+    expect(p.filter(x => /sockelleisten montieren/i.test(x.beschreibung))).toHaveLength(2)
+  })
+  // ── PM-105-A, offen ────────────────────────────────────────────────────
+  // Zwei Räume, je eine Tür, „an JEDER Tür eine Übergangsschiene" — im
+  // Angebot steht Menge 1. Die zweite Schiene wird eingebaut und nicht
+  // bezahlt: 15,00 € plus die Arbeit.
+  // ✅ CoS-E-083 Platz 5 / PM-105 (21.09.2026, Engineering): gebaut. Die
+  // Sperrklinke ist gelöst — dieselbe Zusicherung steht als Gegenprobe in
+  // `cos-e-083-schiene-je-tuer.test.ts` (E-088-1), mit dem Geldweg daneben.
+  it('zwei Türen ergeben zwei Übergangsschienen', () => {
+    expect(menge(lauf('boden_parkett', T, R()), /übergangsschiene/i)).toBe(2)
+  })
+})
+
+// ── PM-106 ───────────────────────────────────────────────────────────────────
+describe('PM-107 — die Anstrichzahl der Decke gilt nur für einen Raum', () => {
+  // „Wände zweimal und Decken einmal streichen" — beide Räume.
+  const T = 'Büro 5 mal 4 und Besprechungsraum 4 mal 4, beide 2,60 hoch. In beiden die alte Tapete runter, dann vollflächig spachteln Q3 wegen Streiflicht, danach Wände zweimal und Decken einmal streichen.'
+  const R = () => [
+    raum('Büro', { laenge: 5, breite: 4, hoehe: 2.6, tueren: [TUER], fenster: [FENSTER(2)], arbeiten: ['tapete entfernen', 'spachteln', 'waende_streichen', 'decke_streichen'] }),
+    raum('Besprechungsraum', { laenge: 4, breite: 4, hoehe: 2.6, tueren: [TUER], fenster: [FENSTER(2)], arbeiten: ['tapete entfernen', 'spachteln', 'waende_streichen', 'decke_streichen'] }),
+  ]
+  it('die Wände stehen in beiden Räumen richtig auf 2x', () => {
+    const p = lauf('maler', T, R())
+    expect(menge(p, /wand streichen 2x — Büro/i)).toBe(46.8)
+    expect(menge(p, /wand streichen 2x — Besprechungsraum/i)).toBe(41.6)
+  })
+  it('der Besprechungsraum bekommt die Decke richtig mit 1x', () => {
+    expect(finde(lauf('maler', T, R()), /decke streichen 1x — Besprechungsraum/i)).toBeDefined()
+  })
+  // ── PM-107-A, offen ────────────────────────────────────────────────────
+  // Das Büro bekommt `Decke streichen 2x` (11,00 €) statt 1x (7,00 €),
+  // obwohl „Decken einmal" für beide Räume gesagt wurde. 20,00 m² × 4,00 € =
+  // 80,00 € zu viel, und auf dem Papier stehen zwei verschiedene
+  // Anstrichzahlen für dieselbe Ansage. Sandy hat es selbst gefunden.
+  // ✅ CoS-E-083 / PM-107 (21.09.2026, Engineering): gebaut. Die Sperrklinke
+  // ist gelöst — dieselbe Zusicherung steht als Gegenprobe in
+  // `cos-e-083-ansage-gilt-fuer-alle.test.ts` (E-087-3 / E-087-4).
+  it('„Decken einmal" gilt für alle Räume, nicht nur für den letzten', () => {
+    const p = lauf('maler', T, R())
+    expect(finde(p, /decke streichen 2x/i)).toBeUndefined()
+    expect(finde(p, /decke streichen 1x — Büro/i)).toBeDefined()
+  })
+})
+
+// ── PM-079-A, WIEDER OFFEN ───────────────────────────────────────────────────
+describe('PM-079-A — der Isoliergrund deckt nicht alle verrauchten Räume', () => {
+  // Gestern als erledigt gemeldet, weil ein Ein-Raum-Fall live 65,00 m²
+  // lieferte. Sandys Zwei-Raum-Fall vom 17.09. zeigt: das waren die 65 m²
+  // des ERSTEN Raums, nicht die Summe.
+  const T = 'Wohnzimmer 5 mal 4 und Schlafzimmer 4 mal 3,50, beide 2,50 hoch. Wände und Decken streichen, alles verraucht, da muss Sperrgrund drauf.'
+  const R = () => [
+    raum('Wohnzimmer', { laenge: 5, breite: 4, hoehe: 2.5, tueren: [TUER], fenster: [FENSTER()], arbeiten: ['waende_streichen', 'decke_streichen', 'nikotinsperre'] }),
+    raum('Schlafzimmer', { laenge: 4, breite: 3.5, hoehe: 2.5, tueren: [TUER], fenster: [FENSTER()], arbeiten: ['waende_streichen', 'decke_streichen', 'nikotinsperre'] }),
+  ]
+  // Soll: Wohnzimmer 45 + 20, Schlafzimmer 37,5 + 14 = 116,50 m².
+  // Live: 65,00 m². Fehlbetrag 51,50 m² × 9,00 € = 463,50 €.
+  // ✅ CoS-E-085 (21.09.2026, Engineering): gebaut und committet. Die
+  // Sperrklinke ist gelöst — dieselbe Zusicherung steht als Gegenprobe in
+  // `cos-e-085-isoliergrund-alle-raeume.test.ts`.
+  it('der Isoliergrund läuft über alle verrauchten Flächen — 116,50 m²', () => {
+    expect(menge(lauf('maler', T, R()), /isoliergrund/i)).toBe(116.5)
   })
 })
