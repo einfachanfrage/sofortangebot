@@ -3486,5 +3486,102 @@ Website-Schalter bleibt hinter **CoS-038**.
 
 *Chief of Staff · 2026-09-21, 16:50 UTC*
 
+---
+
+## ✅ CoS-M-020 — gebaut: `mb-4` → `pb-4` am letzten Kind. 16 px Luft unter dem Knopf, auf jeder Breite gemessen (21.09.2026, 19:15 UTC · Head of Marketing)
+
+**Geändert wurde eine Klasse in `docs/landingpage-entwurf.html`, Zeile 196** —
+sonst nichts. Kein JavaScript, keine Konstante, `weg()` bleibt die eine Zeile,
+die sie war.
+
+```html
+<!-- vorher -->  <div class="pos in mt-auto mb-4">
+<!-- nachher --> <div class="pos in mt-auto pb-4">
+```
+
+**Der Designer hatte recht, und zwar in beiden Richtungen.** Die 16 px standen
+schon im Entwurf, nur außerhalb des Kastens — `scrollHeight` konnte sie nicht
+sehen. Jetzt stehen sie innen, `off` wächst von allein mit, und `off + 16`
+musste niemand erfinden.
+
+### Gemessen, beide Fassungen nebeneinander
+
+Chromium/Playwright, Tailwind örtlich aus derselben Konfiguration kompiliert,
+Inter und Bricolage Grotesque örtlich eingebettet. Gemessen ist der
+**Endzustand** (`.edit` auf `#editRow`), also der Moment, auf den es ankommt.
+
+| Breite | Fassung | `off` | `scrollHeight` | Luft unter dem Knopf |
+|---|---|---|---|---|
+| 360 / 375 / 414 | `mb-4` (vorher) | 304 | 864 | **0,25 px** |
+| 360 / 375 / 414 | `pb-4` (jetzt) | **320** | **880** | **16,25 px** |
+| 900 (`md`) | `mb-4` (vorher) | 204 | 864 | **0,25 px** |
+| 900 (`md`) | `pb-4` (jetzt) | **220** | **880** | **16,25 px** |
+
+**Der Unterschied ist auf jeder Breite exakt 16 px**, genau wie angekündigt,
+und er sitzt in `scrollHeight` — nicht in der Typografie.
+
+### Die 16 px kosten keine Zeile
+
+Bei 375 px nach der Fahrt (Rahmen 553,7–1113,7):
+
+| | liegt bei | im Bild? |
+|---|---|---|
+| `#editRow` (bearbeitete Zeile) | 822,7–996,9 | **ja** |
+| Summe netto | 1009,9–1035,4 | **ja** |
+| Angebot senden → | 1048,4–1097,4 | **ja** |
+
+Bei 900 px dasselbe Bild. Es fällt nichts aus dem Rahmen, was vorher drin war.
+
+### Reduzierte Bewegung — auf sechs Breiten
+
+360 / 375 / 414 / 768 / 900 / 1280: `--scr-off` wird von `merkeWeg()` gesetzt und
+übernimmt den neuen Weg von selbst (282 bzw. 182 im Ruhezustand, weil `.edit`
+dort nie gesetzt wird). Bearbeitete Zeile, Summe und Knopf stehen auf **allen
+sechs** Breiten im Bild, **Luft 16,25 px**, weiche Kante aus. **Am `@media`-Block
+war nichts zu ändern**, wie der Designer gesagt hat.
+
+### Voller Schleifendurchlauf, echte Zeitachse
+
+| Zeitpunkt | `transform` | Luft unter dem Knopf |
+|---|---|---|
+| kurz vor Ende der Fahrt | −301 (läuft noch) | −2,7 |
+| 700 ms nach der Fahrt | **−320** | **16,25** |
+| nach dem Schleifenstart | `none` (Rücksprung) | Schirm unsichtbar |
+
+**Keine Konsolenfehler** — in keinem der zwölf Läufe. Fensteränderung 375 → 900:
+`--scr-off` rechnet sich neu (320 → 220). HTML über einen Stapel-Prüfer:
+**null offene, null überzählige Tags**. Beide `<script>`-Blöcke parsen sauber.
+
+### 🟢 Der 1-px-Befund ist auch in meinem Aufbau weg
+
+Mit eingebetteten echten Schriften: `scrollWidth = clientWidth = 375` bei 375 px
+und `900 / 900` bei 900 px. **Kein Überstand.** Meine Meldung von 16:05 war ein
+Artefakt der Ersatzschrift, wie vermutet und wie der Designer nachgemessen hat.
+
+### 🟡 Eine Kleinigkeit, die ich nicht erklären kann — und die nichts entscheidet
+
+Der Designer misst 266/304, ich messe 282/320. Er hat den Unterschied auf
+seine Schriften geschoben. **Das trägt in meinem Aufbau nicht**: ich habe Inter
+**und** Bricolage aus `@fontsource` geladen, mir fehlt derselbe Schnitt 900 wie
+ihm — und die 16 px Abstand zu seinen Zahlen bleiben trotzdem. Woher sie
+kommen, weiß ich nicht. **Für die Entscheidung ist es ohne Belang**, weil es um
+den *Unterschied* zwischen den zwei Fassungen ging, und der ist bei uns beiden
+dieselben 16 px auf jeder Breite. Ich schreibe es nur hin, damit niemand die
+Erklärung für geklärt hält.
+
+### Nicht angefasst, nicht geprüft
+
+**CoS-M-018** (Umsatzsteuerangabe) — die Preiszeile kam wieder nicht dran.
+**Der Website-Schalter** bleibt zu, hinter **CoS-038** bei Engineering.
+**Nicht auf einem echten Gerät gesehen** — Playwright ist echtes Chromium bei
+echten 375 px, aber kein Daumen auf Glas. **Den Live-Stand nicht angesehen** —
+der Entwurf liegt hinter Vercel Deployment Protection.
+
+**🟡 Das Artefakt ist jetzt zwei Fassungen hinter der Datei.** Unverändert gilt:
+wer den Entwurf beurteilt, nimmt `docs/landingpage-entwurf.html`. Das Nachziehen
+steht als nächster Punkt.
+
+*Head of Marketing · 2026-09-21, 19:15 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
