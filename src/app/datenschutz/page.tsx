@@ -42,7 +42,7 @@ export default function DatenschutzPage() {
                 </div>
                 <div>
                   <strong className="font-black">Spracheingaben</strong>
-                  <p className="mt-1">Aufgenommene Spracheingaben werden zur Transkription an OpenAI (Whisper) übermittelt. Die Audiodatei wird zusätzlich auf unseren Servern in der EU (Supabase, Frankfurt) gespeichert, damit Sie die Aufnahme erneut anhören und die Auswertung wiederholen können. Sie können jede Aufnahme in der App löschen; die Audiodatei wird dann unwiderruflich entfernt. Spätestens 30 Tage nach der Aufnahme löschen wir die Audiodatei automatisch. Transkript und die daraus erzeugten Positionen bleiben als Teil des Angebots erhalten. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.</p>
+                  <p className="mt-1">Aufgenommene Spracheingaben werden zur Transkription an OpenAI (Whisper) übermittelt. Die Audiodatei wird zusätzlich auf unseren Servern in der EU (Supabase, Frankfurt) gespeichert, damit Sie die Aufnahme erneut anhören und die Auswertung wiederholen können. Sie können jede Aufnahme in der App löschen; die Audiodatei wird dann unwiderruflich von unseren Servern entfernt; eine bei OpenAI zur Missbrauchserkennung vorgehaltene Kopie wird dort spätestens nach 30 Tagen gelöscht. Spätestens 30 Tage nach der Aufnahme löschen wir die Audiodatei automatisch. Transkript und die daraus erzeugten Positionen bleiben als Teil des Angebots erhalten. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.</p>
                 </div>
                 <div>
                   <strong className="font-black">Kundendaten</strong>

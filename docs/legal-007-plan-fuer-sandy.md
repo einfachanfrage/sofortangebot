@@ -109,18 +109,35 @@ Steuererklärung. Ich würde es lassen.)*
 Kommt automatisch nach der Gewerbeanmeldung. Du füllst ihn online über
 **ELSTER** aus (Papier geht nicht mehr, § 138 AO). Frist: einen Monat.
 
-**Das einzige Kreuz, auf das es ankommt:** *Kleinunternehmerregelung nach
-§ 19 UStG — ja.* Damit weist du keine Umsatzsteuer aus, musst keine
-Voranmeldungen machen, und die ganze Umsatzsteuer-Welt geht dich erstmal
-nichts an. Der Finanzplan zeigt, dass du im ganzen Zwei-Jahres-Horizont unter
-der Grenze bleibst.
+> **🔴 Korrigiert am 21.09.2026 (Head of Legal & Compliance).** Hier stand bis
+> heute: *„Das einzige Kreuz, auf das es ankommt: Kleinunternehmerregelung nach
+> § 19 UStG — ja."* **Das ist seit deiner Entscheidung vom 17.09.2026 das
+> falsche Kreuz.** Du hast dich für die **Regelbesteuerung** entschieden
+> (freiwilliger Verzicht nach § 19 Abs. 2 UStG, Heimat `preismodell.md`,
+> Vorgang CoS-L-012). Der Satz stand vom 03.09. und kannte diese Entscheidung
+> noch nicht. Ich lasse ihn nicht stehen, weil genau dieses Kreuz **fünf Jahre
+> bindet** und du diese Datei in der Hand hast, wenn du den Fragebogen
+> ausfüllst.
 
-*Der Vollständigkeit halber: Es gibt ein Gegenargument — als
-Kleinunternehmerin kannst du dir die Umsatzsteuer auf Vercel, Supabase,
-OpenAI usw. nicht zurückholen. Bei deinen Beträgen sind das grob 25 € im
-Monat. Ob sich der freiwillige Verzicht lohnt, ist eine Frage für die
-Steuerberaterin, nicht für mich. Bis dahin: Kleinunternehmer ankreuzen, das
-lässt sich später ändern.*
+**Das einzige Kreuz, auf das es ankommt:** *Verzicht auf die
+Kleinunternehmerregelung nach § 19 Abs. 2 UStG — ja.* Das ist deine
+Entscheidung vom 17.09.2026.
+
+**Was dieses Kreuz bedeutet, damit du es beim Ausfüllen wiedererkennst:**
+
+- Du weist auf deinen Rechnungen **Umsatzsteuer aus** (19 %).
+- Du gibst **Umsatzsteuer-Voranmeldungen** ab. In welchem Rhythmus
+  (monatlich/vierteljährlich), ist eine Frage an die Steuerberaterin — Finance
+  führt sie unter CoS-F-009.
+- Du holst dir im Gegenzug die **Vorsteuer** auf Vercel, Supabase, OpenAI,
+  Sentry, Resend und Domain zurück.
+- **Fünf Jahre Bindung** (§ 19 Abs. 2 S. 2 UStG). Der Verzicht lässt sich
+  **nicht** wie die ursprünglich empfohlene Variante „später ändern".
+- **Die USt-IdNr.** wird mit genau diesem Fragebogen beantragt, nicht vorher.
+  Du brauchst sie für die Reverse-Charge-Leistungen (Supabase, OpenAI).
+
+**Bis zu dem Moment, in dem du den Fragebogen absendest, ist nichts
+unwiderruflich.** Der Verzicht wird erst dort gesetzt.
 
 ### Schritt 3 · Versicherung — 30 Minuten, dann warten
 
@@ -183,9 +200,13 @@ darum kümmern.
   geschäftlich getrennt sind. Kann warten, bis wirklich Geld reinkommt.
 - **Keine Rechnungen umschreiben.** Vercel, Supabase, OpenAI, Sentry,
   Resend, Domain: Du bist dieselbe Person wie vorher, es ändert sich nichts.
-  Als Kleinunternehmerin ziehst du ohnehin keine Vorsteuer, und für den
-  Betriebsausgabenabzug zählt der betriebliche Zweck, nicht der Name auf der
-  Rechnung. Wo es leicht geht, kannst du die Rechnungsadresse auf
+  Für den Betriebsausgabenabzug zählt der betriebliche Zweck, nicht der Name
+  auf der Rechnung. *(Korrigiert 21.09.2026: Hier stand „Als
+  Kleinunternehmerin ziehst du ohnehin keine Vorsteuer". Mit der
+  Regelbesteuerung ziehst du sie — für den **Vorsteuerabzug** verlangt § 15
+  Abs. 1 UStG eine Rechnung, die auf **dich** als Leistungsempfängerin lautet.
+  Das macht das Umschreiben der Rechnungsadressen aus einem „wo es leicht
+  geht" ein „lohnt sich jetzt".)* Wo es leicht geht, kannst du die Rechnungsadresse auf
   „Sandra Holm — Sofortangebot" ändern. Wo nicht: egal.
   *Eine Ausnahme:* Die OpenAI-Rechnung läuft laut Head of Finance auf einen
   fremden Namen (runningwithhugo@outlook.de). Das solltest du auf deinen

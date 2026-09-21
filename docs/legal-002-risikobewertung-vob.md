@@ -1301,4 +1301,184 @@ Abs. 1 lit. a, b, Art. 17, Art. 28 Abs. 3 lit. e DSGVO; LG München I,
 25.02.2025 — 33 O 3721/24; OpenAI Services Agreement Ziff. 4.2 und 5.3,
 OpenAI Data Processing Addendum, OpenAI Enterprise Privacy*
 
+## Nachtrag 2026-09-21 — L-KI-01 gebaut, L-KI-02 neu, LR-21 neu (Head of Legal & Compliance)
+
+---
+
+### ✅ L-KI-01 erledigt — der Abschnitt „Angrenzend … Reichweite unserer Löschzusage" oben ist überholt
+
+Der Abschnitt weiter oben in dieser Datei endet mit „**Nicht eingebaut** —
+Rechtstexte gehen nach der Team-Regel nur mit Sandys Freigabe raus, und anders
+als bei LR-18 liegt für diesen Satz keine vor." **Die Freigabe ist am
+17.09.2026 erteilt** („ja darf rein!"), und der Halbsatz ist am **21.09.2026**
+in `src/app/datenschutz/page.tsx` Z. 45 eingebaut — im freigegebenen Wortlaut,
+ohne Abweichung. `rechtstexte-hygiene.test.ts` 15/15 grün.
+
+Ich lasse den alten Abschnitt stehen und streiche ihn nicht, weil er die
+Bewertung trägt; er ist ab hier als erledigt zu lesen. Fundstellen und der
+vollständige Ablauf: `chief-of-staff-legal-todos.md`, Abschnitt „Lauf vom
+21.09.2026".
+
+**Die zweite Hälfte des damaligen Befundes bleibt, wie sie war:** Die
+30-Tage-Löschfrist auf unseren *eigenen* Servern ist weiterhin nicht von mir
+nachgemessen. Der erste Lauf, der wirklich löschen musste, war der vom
+19.09.2026, 03:30 UTC. Platform meldet für ihn **4 geprüfte Aufnahmen,
+`fehler: 0`** — aber der Zähler heißt `geprueft` und nicht `geloescht`, und
+genau das ist bei Platform als CoS-P-033 offen. **Solange das offen ist, ist
+die Zusage in Datenschutzerklärung Z. 117 und AGB § 8.3 gemessen, aber nicht
+belegt.** Fällt CoS-P-033 auf „nur geprüft", sind zwei veröffentlichte
+Rechtstexte unrichtig, und dann ist es ein eigener Risikoeintrag und kein
+Nebensatz mehr.
+
+---
+
+### 🟡 L-KI-02 — der Löschen-Dialog in der App verspricht dieselbe Reichweite wie der korrigierte Satz
+
+**Kein eigener Risikoeintrag. Severity 1, Likelihood gering.**
+
+`src/app/(app)/angebot/[id]/entwurf/page.tsx`, Z. 1852: „Die Aufnahme wird
+endgültig gelöscht. Bereits berechnete Positionen im Angebot bleiben
+erhalten."
+
+Das ist derselbe Mangel wie L-KI-01 — eine Tatsachenbehauptung über die
+**Reichweite** einer Löschung, während OpenAI dieselbe Audiodatei bis zu
+30 Tage zur Missbrauchserkennung vorhalten darf — nur an der schärferen
+Stelle: im Bestätigungsdialog, den der Nutzer in dem Moment liest, in dem er
+löscht. Art. 13 DSGVO verlangt nicht, dass dieser Dialog die OpenAI-Frist
+wiederholt; er verlangt, dass er nicht mehr verspricht, als wir halten.
+
+**Warum nur Severity 1:** kurze Frist, saubere Rechtsgrundlage, Datei liegt
+beim Auftragsverarbeiter unter Standardvertragsklauseln. Gleiche Begründung
+wie bei L-KI-01, und dort hat sie auch keinen eigenen Eintrag getragen.
+
+**Vorschlag:** „Die Aufnahme wird von unseren Servern endgültig gelöscht."
+
+**Nicht eingebaut**, und der Grund ist kein rechtlicher: Die Datei ist eine der
+vier DC-128-Dateien, die seit dem 17.09. uncommittet im Arbeitsbaum liegen.
+Eine Legal-Zeile in einen fremden, unfertigen Stand zu schreiben, ist genau
+der Fall, vor dem `AGENTS.md` warnt. **Gehört zu DC-128, sobald der Designer
+committet hat.** Geführt in `chief-of-staff-legal-todos.md`.
+
+---
+
+### 🟡 LR-21 — AGB § 4.2 wird mit dem Verzicht auf die Kleinunternehmerregelung unrichtig
+
+#### Risikobeschreibung
+
+`src/app/agb/page.tsx` Z. 38, veröffentlicht:
+
+> „4.2 Alle Preise verstehen sich als Nettopreise. Der Anbieter handelt als
+> Kleinunternehmer gemäß § 19 UStG — es wird keine Umsatzsteuer ausgewiesen."
+
+Sandy hat am **17.09.2026** den freiwilligen Verzicht auf die
+Kleinunternehmerregelung nach **§ 19 Abs. 2 UStG** entschieden
+(Heimat: `preismodell.md`, Vorgang CoS-L-012). Ab dem Wirksamwerden des
+Verzichts steht in den veröffentlichten AGB eine **unrichtige Aussage über die
+eigene Besteuerung** — und zwar in demselben Absatz, der die Preise regelt.
+
+**Es ist heute noch richtig.** Der Verzicht wird erst im Fragebogen zur
+steuerlichen Erfassung gesetzt (KW 41 ff.). Das Risiko ist deshalb nicht
+eingetreten, sondern **terminiert**: Es beginnt in dem Moment, in dem sie das
+Formular absendet, und es hat dann keine Übergangsfrist.
+
+**Die einzige Stelle ihrer Art.** Im veröffentlichten Code habe ich die
+Aussage „Sofortangebot ist Kleinunternehmer" genau einmal gefunden. Alle
+übrigen 27 `Kleinunternehmer`-Fundstellen hängen an `company.vat_rate === 0`
+und betreffen den Steuerstatus **des Handwerksbetriebs** — eine
+Produktfunktion, die bleibt. Das Impressum ist unbetroffen (es nennt keine
+Besteuerungsform; die USt-IdNr. steht dort korrekt als „wird nach steuerlicher
+Registrierung ergänzt").
+
+#### Severity 2 — gering bis moderat
+
+Es ist eine Angabe über die eigene Umsatzbesteuerung gegenüber
+Geschäftskunden, keine Irreführung über Leistung oder Preis**höhe**. Der
+angegebene Preis bleibt derselbe Nettopreis; es ändert sich nur, was
+obendrauf kommt. Abmahnfähig als irreführende geschäftliche Handlung
+(**§ 5 Abs. 1 Nr. 2 UWG**, Preis und Art der Preisberechnung) — praktisch aber
+erst, wenn jemand nach dem Preis abrechnet und die Umsatzsteuer nicht erwartet
+hat.
+
+**Ausdrücklich nicht § 14c Abs. 2 UStG.** § 14c setzt einen gesondert
+ausgewiesenen Steuerbetrag **in einer Rechnung** voraus. AGB sind keine
+Rechnung, eine Preisangabe auf einer Website auch nicht. Ich halte das hier
+fest, weil § 14c in der Akte an mehreren Stellen für Preisangaben herangezogen
+wurde und eine falsche Norm beim nächsten Mal an der falschen Stelle Entwarnung
+gibt.
+
+#### Likelihood 1 heute — 3 ab dem Absenden des Fragebogens
+
+Es gibt keine echten Betriebe und keine zahlenden Kunden; heute liest den
+Absatz niemand, für den er falsch wäre. Der Anstieg ist **nicht zufällig,
+sondern kalendarisch**: Er tritt mit dem Fragebogen ein und bleibt bestehen,
+bis der Satz geändert ist.
+
+#### Mitigation
+
+**Fertiger Ersatz, ein Satz:**
+
+> „4.2 Alle Preise verstehen sich als Nettopreise zuzüglich der gesetzlichen
+> Umsatzsteuer."
+
+**Nicht eingebaut.** Rechtstexte gehen nach der Team-Regel nur mit Sandys
+Freigabe raus, und für diesen Satz liegt keine vor — dieselbe Regel, die auch
+bei L-KI-01 galt, bis sie am 17.09. freigegeben hat.
+
+**Und er soll auch noch nicht eingebaut werden.** Solange der Verzicht nicht
+gesetzt ist, ist der **alte** Satz der richtige; ein vorgezogener Einbau würde
+das Risiko nicht mindern, sondern von der einen Seite auf die andere
+verschieben. **Der Einbau gehört in dieselbe Woche wie der Fragebogen.** Als
+Termin führen, nicht als offenen Punkt.
+
+**Mitzuerledigen, wenn der Absatz ohnehin angefasst wird:** Die Preiszeile der
+Landingpage (`src/components/landing/PreiseSection.tsx` Z. 52, 86, 90) nennt
+„0 €" und den Monatspreis **ohne jede Umsatzsteuerangabe** — weder „netto"
+noch „zzgl. MwSt.". Für ein B2B-Angebot ist die Nettoangabe zulässig, muss
+aber gekennzeichnet sein (**§ 5a UWG**; gegenüber Verbrauchern zusätzlich
+PAngV). Severity 1, kein eigener Eintrag — aber dieselbe Änderungswoche.
+
+#### Restrisiko nach Umsetzung: gering
+
+Es bleibt der Zeitraum zwischen dem Absenden des Fragebogens und dem Deploy
+der geänderten AGB. Der ist steuerbar, wenn beides in dieselbe Woche gelegt
+wird.
+
+---
+
+### Nicht als Risiko geführt, und warum: die freien Fußzeilen (CoS-L-011)
+
+Die Frage, ob ein Betrieb mit drei freien Fußzeilen die heutigen Angaben im
+Fuß des Angebots-PDF **ersetzen** darf, ist am 21.09.2026 mit **B** beantwortet
+— freier Text zusätzlich, fester Teil bleibt stehen. Ausführlich in
+`chief-of-staff-legal-todos.md`.
+
+**Kein eigener Risikoeintrag**, weil der heutige Fuß (`src/lib/pdf.tsx`
+Z. 379–381: Firmenname mit erster Adresszeile, USt-IdNr./Steuernummer, IBAN)
+**keine Angabe enthält, die auf einem Angebot Pflicht wäre** — § 14 Abs. 4 UStG
+gilt für Rechnungen, ein Angebot ist ein Antrag nach § 145 BGB. Es kann also
+durch freien Text auch keine Pflichtangabe verloren gehen.
+
+**Das eigentliche Risiko an dieser Stelle ist und bleibt LR-17**: Die Angaben,
+die auf einem Angebot wirklich Pflicht sind, stehen dort gar nicht. Am
+21.09.2026 in der Produktionsdatenbank erneut bestätigt — `companies` hat
+weiterhin keine Spalte für Rechtsform, Registergericht, Registernummer oder
+Vertretungsberechtigte; im Repo gibt es zu `rechtsform`, `handelsregister`,
+`registergericht`, `geschaeftsfuehrer` keine einzige Fundstelle. **LR-17
+unverändert 🟠, Mitigation weiterhin CoS-E-057.**
+
+**Für DC-122 folgt daraus die Reihenfolge:** Der feste Teil, den die freien
+Zeilen nicht verdrängen dürfen, ist nicht der von heute, sondern die Zeile aus
+CoS-E-057. Bis dahin bleibt der heutige stehen — er ist nicht falsch, nur
+unvollständig. In `briefpapiere` sind heute 4 Zeilen, **keine** mit gefüllter
+Fußzeile; es geht kein Bestand verloren.
+
+*Head of Legal & Compliance · 2026-09-21 · Geprüfte Normtexte: § 14 Abs. 4,
+§ 14c Abs. 2, § 15 Abs. 1, § 19 Abs. 1 und Abs. 2 UStG; § 145 BGB; § 5 Abs. 1
+Nr. 2 und § 5a UWG; PAngV; § 5 DDG; Art. 13 DSGVO. Code an der Quelle:
+`src/app/agb/page.tsx` Z. 38, `src/app/datenschutz/page.tsx` Z. 45,
+`src/app/(app)/angebot/[id]/entwurf/page.tsx` Z. 1852, `src/lib/pdf.tsx`
+Z. 379–381, `src/components/landing/PreiseSection.tsx`, `src/lib/types.ts`,
+`supabase/migrations/`. Produktionsdatenbank (`yqlledouhfovytifeekd`):
+`information_schema.columns` für `companies`, Zählung `briefpapiere`.*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

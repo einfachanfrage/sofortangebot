@@ -4119,4 +4119,414 @@ braucht beides ab der ersten Eintragung.
 
 ---
 
+## Lauf vom 21.09.2026 — L-KI-01 gebaut, CoS-L-011 beantwortet, CoS-L-012 abgearbeitet (Head of Legal & Compliance)
+
+---
+
+### 1. ✅ L-KI-01 ist drin — im freigegebenen Wortlaut, unverändert
+
+`src/app/datenschutz/page.tsx`, Z. 45. Ersetzt wurde genau der eine Satz,
+nichts sonst:
+
+> **vorher:** „Sie können jede Aufnahme in der App löschen; die Audiodatei wird
+> dann unwiderruflich entfernt."
+>
+> **jetzt:** „Sie können jede Aufnahme in der App löschen; die Audiodatei wird
+> dann unwiderruflich von unseren Servern entfernt; eine bei OpenAI zur
+> Missbrauchserkennung vorgehaltene Kopie wird dort spätestens nach 30 Tagen
+> gelöscht."
+
+Kein Nachformulieren, keine Abweichung. `rechtstexte-hygiene.test.ts`: 15 von
+15 grün nach der Änderung.
+
+**Eine sprachliche Anmerkung, wie verabredet — kein Änderungswunsch.** Der
+freigegebene Halbsatz endet auf „spätestens nach 30 Tagen gelöscht", und der
+*nächste* Satz im selben Absatz beginnt mit „Spätestens 30 Tage nach der
+Aufnahme löschen wir die Audiodatei automatisch." Zwei 30-Tage-Aussagen
+hintereinander, die **verschiedene Fristen bei verschiedenen Stellen**
+bezeichnen: die erste bei OpenAI, die zweite bei uns. Inhaltlich ist beides
+richtig und beides muss dort stehen. Es liest sich nur einen Moment lang wie
+eine Wiederholung. **Ich habe nichts daran geändert** — ein freigegebener
+Rechtstext ist im freigegebenen Wortlaut freigegeben. Wenn du es Sandy
+vorlegen willst, wäre die kleinste denkbare Änderung, den zweiten Satz mit
+„Auf unseren Servern löschen wir die Audiodatei ohnehin spätestens 30 Tage
+nach der Aufnahme automatisch." zu beginnen. **Das ist ein Angebot, keine
+Empfehlung, und es hat keine Eile.**
+
+#### Der zweite Auftrag: steht dieselbe Zusage noch woanders?
+
+Gesucht habe ich nicht nach dem Wort, sondern nach der **Aussage** — über alle
+`.ts`/`.tsx` unter `src/`: „unwiderruflich", „endgültig gelöscht", „vollständig
+gelöscht", „dauerhaft entfernt", „restlos". Neun Fundstellen. Acht davon sind
+in Ordnung. **Eine ist es nicht:**
+
+**🟡 L-KI-02 — der Löschen-Dialog in der App sagt dasselbe zu wie der alte
+Satz in der Datenschutzerklärung.**
+`src/app/(app)/angebot/[id]/entwurf/page.tsx`, Z. 1852:
+
+> „Die Aufnahme wird endgültig gelöscht. Bereits berechnete Positionen im
+> Angebot bleiben erhalten."
+
+Das ist **derselbe Satztyp an der schärferen Stelle**: nicht im Rechtstext,
+den man einmal liest, sondern in dem Bestätigungsdialog, den der Nutzer genau
+in dem Moment sieht, in dem er die Löschung auslöst. Er sagt „endgültig",
+solange OpenAI dieselbe Datei bis zu 30 Tage vorhalten darf. Severity 1, wie
+L-KI-01 — aber die Begründung, die L-KI-01 zur Korrektur gebracht hat
+(Art. 13 DSGVO: Tatsachenbehauptungen über die Reichweite einer Löschung
+müssen stimmen), trifft hier genauso.
+
+**Ich habe es nicht eingebaut, und zwar aus zwei getrennten Gründen:**
+
+1. **Die Datei liegt seit dem 17.09. uncommittet im Arbeitsbaum** — sie ist
+   eine der vier DC-128-Dateien des Designers. Eine Legal-Änderung
+   hineinzuschreiben würde meine Zeile in seinen unfertigen Stand mischen. Das
+   ist genau der Fall, vor dem `AGENTS.md` warnt.
+2. Es ist **Nutzeroberfläche, nicht Rechtstext** — ich halte es für keinen
+   Freigabefall von Sandy, aber das ist deine Entscheidung, nicht meine.
+
+**Vorschlag, wieder ein Halbsatz:** „Die Aufnahme wird von unseren Servern
+endgültig gelöscht." — Der Dialog braucht die OpenAI-Frist nicht zu
+wiederholen; sie steht in der Datenschutzerklärung. Es reicht, die
+Behauptung auf das einzuschränken, was wir tatsächlich kontrollieren.
+**Gehört zu DC-128, sobald der Designer sie committet hat** — nicht vorher.
+
+**Die acht unbeanstandeten Fundstellen, damit niemand nachsuchen muss:** AGB
+§ 6.5, AVV § 10, `datenschutz` Z. 144 (Kontolöschung), `AccountDeleteModal`
+Z. 40, `email.ts` Z. 157/161, `konto-loeschung.ts` Z. 171,
+`api/account/delete` Z. 44 — alle betreffen die **Kontolöschung nach 30 Tagen
+Karenz**. Bis dahin ist jede Aufnahme, die es betreffen könnte, bei OpenAI
+ohnehin über die 30 Tage hinaus. Die Zusage deckt sich dort mit der Wirklichkeit.
+`AngebotDetail.tsx` Z. 3233 („Das Angebot wird endgültig gelöscht") betrifft
+das Angebot, nicht die Audiodatei — kein OpenAI-Bezug.
+
+**AGB § 8.3 ist ausdrücklich in Ordnung** und war meine Hauptsorge: Der
+Absatz sagt „spätestens 30 Tage nach der Aufnahme automatisch gelöscht —
+vorher jederzeit auf Wunsch des Nutzers". Er behauptet **keine Reichweite**,
+sondern nur eine Frist. Nichts zu ändern.
+
+---
+
+### 2. ✅ CoS-L-011 — Antwort: **B.** Und der Grund ist ein anderer als der, den die Frage vermutet
+
+**Antwort in einem Satz: Der Pflichtteil bleibt immer stehen, die drei freien
+Zeilen kommen zusätzlich.**
+
+Aber **B** wird hier aus einem Grund gewählt, der in der Frage nicht vorkommt,
+und deshalb muss ich zuerst etwas geraderücken:
+
+#### Vorab: Was heute im Fuß steht, ist kein Pflichtteil
+
+`src/lib/pdf.tsx` Z. 379–381, an der Quelle nachgesehen. Der Fuß besteht aus:
+
+| Feld | Pflicht auf einem **Angebot**? |
+|---|---|
+| Firmenname + erste Adresszeile | ja — aber steht ohnehin **dreimal** im Dokument |
+| USt-IdNr. / Steuernummer | **nein** |
+| IBAN | **nein** |
+
+**Keine der drei Zeilen enthält eine Angabe, die auf einem Angebot Pflicht
+wäre.** Die Pflichtangabenliste des § 14 Abs. 4 UStG, die hier intuitiv
+mitgedacht wird, gilt für **Rechnungen**. Ein Angebot ist keine Rechnung — es
+ist ein Antrag nach § 145 BGB. Die USt-IdNr. steht im Fuß, weil sie auf
+Rechnungen hingehört, nicht weil ein Angebot sie verlangt.
+
+Und umgekehrt: **Die Angaben, die auf einem Angebot wirklich Pflicht sind,
+stehen dort nicht** — Rechtsform, Registergericht, Registernummer,
+Vertretungsberechtigte, je nach Rechtsform. Das ist **LR-17**, und das Produkt
+kennt die Felder bis heute nicht. In der Produktionsdatenbank heute erneut
+geprüft: `companies` hat keine Spalte für Rechtsform, Registergericht,
+Registernummer oder Geschäftsführer. Im Repo findet sich zu `rechtsform`,
+`handelsregister`, `registergericht`, `geschaeftsfuehrer` **keine einzige
+Fundstelle** — weder in `src/` noch in `supabase/migrations/`.
+
+**Der heutige Fuß druckt also das Unverbindliche und lässt das Pflichtige
+weg.** Wer ihn „den Pflichtteil" nennt, benennt ihn falsch — und eine
+A/B/C-Entscheidung über das Ersetzen eines Pflichtteils, den es noch gar nicht
+gibt, würde die eigentliche Lücke zudecken.
+
+#### Warum trotzdem B, und nicht A
+
+Die Pflicht trifft den **Betrieb**, nicht uns — das steht in LR-17 und ändert
+sich nicht. Man könnte daraus A ableiten: volle Freiheit, volle Verantwortung.
+**Ich halte A trotzdem für falsch**, aus einem Grund, der nichts mit Haftung
+zu tun hat:
+
+Die drei Felder heißen in der Oberfläche „Fußzeile links / mitte / rechts".
+Ein Malermeister, der dort „Vielen Dank für Ihr Vertrauen" einträgt, trifft
+damit **keine Entscheidung über seine handelsrechtlichen Pflichtangaben** — er
+schreibt einen Gruß. Wenn dieser Gruß seine Registerangaben still verschwinden
+lässt, hat das Produkt ihm eine Falle gestellt, in die er nicht sehenden Auges
+gelaufen ist. Der Fehler ist dann rechtlich seiner und praktisch unserer. **Der
+Preis von B ist eine zusätzliche Zeile; der Preis von A ist ein
+pflichtwidriges Dokument, das sich nach dem Versand nicht mehr heilen lässt**
+(LR-17, „der Mangel ist nicht heilbar").
+
+#### Warum C keine dritte Option ist, sondern schon entschieden
+
+C — „die Anwendung prüft und weigert sich sonst" — ist **für die Pflichtfelder
+bereits beschlossen**: LR-17, Mitigation 3, und CoS-L-008 Punkt 3 sagen, dass
+der **Versand blockiert** wird, wenn die Rechtsform eingetragen und ein
+Pflichtfeld leer ist. Das ist gebaut in CoS-E-057, nicht in DC-122.
+
+C auf die **freien Fußzeilen** anzuwenden hieße, einen Freitext gegen eine
+Feldliste zu prüfen — also zu raten, ob „Holm GmbH · HRB 12345 B · AG
+Charlottenburg" dieselbe Angabe ist wie das, was im Profil steht. Das kann die
+Anwendung nicht, und eine Prüfung, die es vortäuscht, ist schlechter als keine
+(gleiche Begründung wie im Restrisiko von LR-17). **C: nein.**
+
+#### Was das für DC-122 konkret heißt — die Grenze, um die gebeten wurde
+
+1. **Die drei freien Zeilen kommen zusätzlich, in einer eigenen Zeile über oder
+   unter dem festen Fuß.** Sie ersetzen nichts und können nichts überschreiben.
+2. **Der feste Fuß ist nicht der von heute**, sondern die Zeile aus CoS-E-057.
+   Bis die gebaut ist, bleibt der heutige stehen — er ist nicht falsch, nur
+   unvollständig.
+3. **Kein Zeichenbudget, das den festen Fuß verdrängt.** Wenn der freie Text zu
+   lang wird, wird der freie Text umbrochen oder gekürzt, nie der feste Teil.
+4. **Keine Prüfung des Freitextes.** Nicht auf Pflichtangaben, nicht auf
+   Dopplungen. Wenn ein Betrieb seine Registerangaben zusätzlich in die freie
+   Zeile schreibt, stehen sie zweimal da. Das ist hässlich und nicht unser
+   Problem.
+5. **Die Steuernummer** gehört bei dieser Gelegenheit aus dem Fuß heraus,
+   sobald eine USt-IdNr. da ist — das ist L-35a-01, unverändert, und gehört zu
+   CoS-E-057, nicht zu DC-122.
+
+**In der Produktionsdatenbank heute geprüft:** 4 Zeilen in `briefpapiere`,
+**keine einzige** mit einer gefüllten Fußzeile. Es geht also kein Bestand
+verloren, egal wie entschieden wird.
+
+#### Deine Rückfrage: ändert sich die Antwort bei Regelbesteuerung?
+
+**Nein, und zwar aus einem grundsätzlicheren Grund als „F-006 ist jetzt
+entschieden".**
+
+Der Fuß des Angebots-PDF trägt die Daten **des Handwerksbetriebs**, nicht
+unsere. Ob dort eine USt-IdNr. steht, hängt an `companies.ust_id` und
+`companies.vat_rate` — also am Steuerstatus des Malerbetriebs. **Sandys eigener
+Steuerstatus kommt auf diesem Dokument überhaupt nicht vor.**
+
+**DC-122 hing damit nie an Sandy.** Das war in CoS-L-011 anders vermutet, und
+ich sage es ausdrücklich, weil du geschrieben hast, du müsstest es wissen: Der
+Designer war an dieser Stelle **nie** von ihrer Entscheidung abhängig — nur von
+dieser Antwort hier. Er ist jetzt frei.
+
+---
+
+### 3. CoS-L-012 — abgearbeitet, mit einem roten Fund
+
+#### 3.1 🔴 `legal-007-plan-fuer-sandy.md` sagte Sandy das falsche Kreuz — korrigiert
+
+Du hast mich gebeten nachzuzählen, wo der Kleinunternehmer-Hinweis überall
+steht. Der wichtigste Fund steht nicht im Code, sondern in **meiner eigenen
+Datei für Sandy**.
+
+`legal-007-plan-fuer-sandy.md`, Schritt 2 („Fragebogen zur steuerlichen
+Erfassung"), Stand 03.09.2026, wörtlich:
+
+> „**Das einzige Kreuz, auf das es ankommt:** *Kleinunternehmerregelung nach
+> § 19 UStG — ja.* … Bis dahin: Kleinunternehmer ankreuzen, das lässt sich
+> später ändern."
+
+**Das ist seit dem 17.09. das falsche Kreuz.** Und es ist die Datei, die Sandy
+in der Hand hat, wenn sie den Fragebogen ausfüllt — die Reihenfolge in der
+`arbeitsreihenfolge.md` verweist genau auf diesen Schritt.
+
+Drei Dinge machen den Fund rot und nicht gelb:
+
+1. **Die Bindung ist fünf Jahre** (§ 19 Abs. 2 S. 2 UStG). Der alte Text
+   behauptet das Gegenteil („lässt sich später ändern") — das stimmt für die
+   *Kleinunternehmerregelung*, aber nicht für den *Verzicht* darauf.
+2. **Der Fragebogen ist der Ort, an dem es unwiderruflich wird.** Vorher ist
+   nichts passiert, nachher ist es für fünf Jahre entschieden.
+3. **Termin KW 41.** Es ist der nächste echte Termin, den sie hat.
+
+**Korrigiert am 21.09.2026.** Schritt 2 nennt jetzt den Verzicht nach § 19
+Abs. 2 UStG, sagt, was das Kreuz praktisch bedeutet (USt-Ausweis,
+Voranmeldungen, Vorsteuerabzug, USt-IdNr. mit demselben Formular), und trägt
+die Fünf-Jahres-Bindung an der Stelle, an der sie gebraucht wird. Der alte
+Wortlaut steht als sichtbarer Korrekturkasten darüber, nicht gelöscht.
+**In Teil 2 derselben Datei** war aus demselben Grund der Satz „Als
+Kleinunternehmerin ziehst du ohnehin keine Vorsteuer" falsch geworden —
+ebenfalls korrigiert, mit dem Hinweis auf § 15 Abs. 1 UStG (Vorsteuerabzug
+verlangt eine auf sie lautende Rechnung, was das Umschreiben der
+Rechnungsadressen von „nice to have" zu „lohnt sich" macht).
+
+**Das ist keine Entscheidung, die ich getroffen habe** — es ist Sandys eigene
+Entscheidung vom 17.09., in die Datei nachgezogen, die ihr widersprach.
+
+#### 3.2 🟡 AGB § 4.2 wird unrichtig — und das liegt bei Sandy, nicht bei mir
+
+`src/app/agb/page.tsx` Z. 38, wörtlich:
+
+> „4.2 Alle Preise verstehen sich als Nettopreise. Der Anbieter handelt als
+> Kleinunternehmer gemäß § 19 UStG — es wird keine Umsatzsteuer ausgewiesen."
+
+**Das ist die einzige Stelle im veröffentlichten Code, an der *Sofortangebot
+selbst* sich als Kleinunternehmer bezeichnet.** Mit dem Verzicht wird der Satz
+falsch — nicht heute, sondern in dem Moment, in dem der Fragebogen abgesendet
+ist.
+
+**Fertiger Vorschlag für den Ersatz** (zur Freigabe, nicht zum Einbauen):
+
+> „4.2 Alle Preise verstehen sich als Nettopreise zuzüglich der gesetzlichen
+> Umsatzsteuer."
+
+**Ich baue das nicht ein.** Rechtstext, keine Freigabe — dieselbe Regel wie bei
+L-KI-01. **Und es ist auch noch nicht dran:** Solange der Verzicht nicht
+gesetzt ist, ist der *alte* Satz der richtige. Der Einbau gehört in dieselbe
+Woche wie der Fragebogen, nicht vorher. Bitte als Termin führen, nicht als
+offenen Punkt.
+
+#### 3.3 Die 27 übrigen `Kleinunternehmer`-Fundstellen sind **richtig so**
+
+Damit niemand sie „mit aufräumt": Alle anderen Fundstellen
+(`AngebotDetail.tsx`, `AngebotVorschau.tsx`, `pdf.tsx`, `einstellungen`,
+`onboarding`, `unterschreiben`, `zugferd/generateXML.ts`, `FAQSection.tsx`,
+die vier API-Routen) hängen ausnahmslos an `company.vat_rate === 0` — dem
+Steuerstatus **des Handwerksbetriebs**. Das ist eine Produktfunktion für
+Kunden, die Kleinunternehmer sind, und die gibt es weiterhin. **Sandys
+Entscheidung berührt keine einzige davon.** Wer hier „Kleinunternehmer" sucht
+und löscht, baut einen Fehler.
+
+#### 3.4 § 14c Abs. 2 UStG — bestätigt, aber die Norm war nie die richtige
+
+Du hast um Bestätigung gebeten, nicht um eine Neuausarbeitung. Bestätigt:
+**§ 14c Abs. 2 UStG ist für die Preiszeile auf der Landingpage kein Stopper.**
+
+Ich muss allerdings dazusagen, dass er es **nie** war, und das ist ein
+Unterschied. § 14c setzt einen **Steuerbetrag in einer Rechnung** voraus
+(§ 14c Abs. 2 S. 1: „wer in einer Rechnung einen Steuerbetrag gesondert
+ausweist"). Eine Preisangabe auf einer Website ist keine Rechnung im Sinne des
+§ 14 UStG — sie weist keinen Steuerbetrag gegenüber einem Leistungsempfänger
+für eine konkrete Leistung aus. **§ 14c konnte durch eine Landingpage gar nicht
+ausgelöst werden.**
+
+Die Normen, die dort wirklich greifen, sind andere: **§ 5 Abs. 1 Nr. 2 UWG**
+(irreführende Angabe über den Preis) und, gegenüber Verbrauchern, die
+**PAngV**. Ob die Seite gegen sie verstößt, hängt am Wortlaut der Preiszeile
+und nicht an der Rechtsform — siehe 4.
+
+**Praktische Folge ist trotzdem dieselbe:** Der Stopper fällt weg. Ich
+korrigiere nur die Begründung, weil eine falsche Norm in der Akte beim
+nächsten Mal an der falschen Stelle Entwarnung gibt. **Das ist keine
+Beanstandung an Finance** — der wirtschaftliche Befund war richtig, nur die
+Fundstelle nicht.
+
+#### 3.5 Der Einzelunternehmen-Weg existiert bereits als eigene kurze Liste
+
+Gefragt war, ob der Weg Gewerbeanmeldung → Fragebogen → Geschäftskonto →
+Steuerberater irgendwo als eigene Liste steht, und ob es dafür eine neue Datei
+braucht.
+
+**Er steht bereits da: `legal-007-plan-fuer-sandy.md`, Teil 1, Schritte 1–5.**
+Gewerbeanmeldung (20 Min, 15 €) → Fragebogen über ELSTER (45 Min) →
+Versicherung → Marken-Check → Impressum. **Keine neue Datei.** Sandys stehende
+Regel gilt, und eine zweite Liste desselben Wegs wäre genau die
+Parallel-Datei, die sie nicht will.
+
+**Zwei Abweichungen zwischen deiner Reihenfolge und meiner Datei, damit sie
+nicht als Widerspruch stehen bleiben:**
+
+- **Geschäftskonto:** steht in `legal-007` unter Teil 2 („Was du NICHT
+  machst") — rechtlich **nicht vorgeschrieben** für ein Einzelunternehmen,
+  praktisch empfohlen als zweites kostenloses Girokonto. Deine Reihenfolge
+  führt es als Schritt. **Beides ist richtig**; es ist ein Schritt, den sie
+  machen sollte und nicht machen muss. Ich habe daran nichts geändert.
+- **Steuerberater:** in `legal-007` kein eigener Schritt. Mit der
+  Regelbesteuerung wird er einer — der Voranmeldungsrhythmus ist die erste
+  Frage an ihn (Finance, CoS-F-009). **Das ist Finance' Punkt, nicht meiner**,
+  und ich lege ihn nicht ungefragt in meine Datei.
+
+---
+
+### 4. ❌ Nicht erledigt: die zwei rechtlichen Stopper der Entwurfs-Landingpage
+
+Auftrag vom 17.09.: die Mehrwertsteuer-Angabe und die Knappheits-Zeile („18 von
+25 Plätzen frei") auf der Entwurfsseite ansehen und sagen, ob ich Finance'
+Einschätzung teile — und prüfen, ob die Entwurfsseite Impressum und
+Datenschutzerklärung erreichbar hat.
+
+**Ich komme nicht an die Seite.** Beide Wege heute versucht:
+
+* **`WebFetch`** auf `sofortangebot-landingpage-entwurf-einfachanfrages-projects.vercel.app`
+  → **HTTP 302 auf `vercel.com/login`**.
+* **Browser in der Claude-App** → dieselbe Weiterleitung, angezeigt wird
+  „Login – Vercel".
+
+Die Entwurfsseite steht hinter **Vercel Deployment Protection**. Ohne
+Anmeldung ist sie nicht lesbar, und ich melde mich nicht mit fremden
+Zugangsdaten an.
+
+**Zwei Dinge folgen daraus, und beide gehören dir:**
+
+1. **Der Satz „der Browser in der Claude-App kommt an beide Adressen" stimmt
+   nicht** — er stimmt für `sofortangebot.app`, nicht für den Entwurf. Er steht
+   in derselben Nachricht auch bei Marketing, Finance und beim Designer. Wer
+   ihm folgt, landet bei einem Vercel-Login und hält das womöglich für einen
+   Fehler auf seiner Seite.
+2. **Die Prüfung „hat der Entwurf Impressum und Datenschutz?" ist heute
+   gegenstandslos** und wird mit dem Livegang fällig. § 5 DDG knüpft an das
+   **Bereithalten für die Öffentlichkeit** an — eine Seite hinter einem Login
+   der Plattform hält nichts für die Öffentlichkeit bereit. Auch das
+   E-Mail-Feld löst nichts aus, solange niemand ohne Vercel-Konto es erreicht.
+
+**Was ich brauche, um es abzuschließen:** entweder die Protection für diese
+Deployment abschalten, oder mir den Text der drei fraglichen Stellen
+(Preiszeile, Knappheits-Zeile, „echte Aufnahmen, echte Angebote") hier
+hereinkopieren. **Eine Einschätzung nach Beschreibung gebe ich nicht ab** —
+bei § 5 UWG hängt alles am Wortlaut, und zum Wortlaut habe ich heute keinen
+Zugang. Der Punkt bleibt offen und liegt bei dir, nicht bei Sandy.
+
+**Vorab, unabhängig vom Wortlaut und ohne Zugang belegbar:** Die *heute live*
+ausgelieferte `PreiseSection.tsx` im Repo nennt „0 €" und
+„{PRICING.proJahresabo} €/Monat" **ohne jede Umsatzsteuerangabe** — weder
+„netto", noch „zzgl. MwSt.", noch „inkl.". Für ein reines B2B-Angebot ist eine
+Nettoangabe zulässig, sie muss aber **als solche gekennzeichnet** sein; die
+Kennzeichnung fehlt ganz. Das ist ein eigener, kleiner Punkt (§ 5a UWG), er
+betrifft die **alte** Seite und nicht den Entwurf, und er wird mit dem
+Wechsel auf die Regelbesteuerung ohnehin angefasst werden müssen. **Kein
+Gate-1-Blocker, kein eigener Risikoeintrag** — ich vermerke ihn, damit er beim
+Umbau der Preiszeile nicht zum zweiten Mal übersehen wird.
+
+---
+
+### Was ich in diesem Lauf nicht angefasst habe
+
+* **Die Löschfrist / CoS-P-029** — nichts zu tun, der Lauf vom 19.09. hat
+  geprüft, der Nein-Fall ist nicht eingetreten. **Ungeprüft übernommen habe
+  ich das nicht**, aber ich habe es auch nicht nachgemessen: `system_laeufe`
+  gehört zu CoS-P-033 bei Platform, und zwei Rollen, die dieselbe Zeile
+  auslegen, ist genau die Doppelarbeit, die du abgeschafft hast. **Wenn
+  Platform auf „nur geprüft, nicht gelöscht" kommt, liegt der Punkt sofort
+  wieder bei mir** — dann sind Datenschutzerklärung Z. 117 und AGB § 8.3
+  unrichtig, und das ist kein kleiner Punkt.
+* **CoS-E-057 / LR-17** — liegt bei Engineering, nicht bei mir.
+* **Die vier uncommitteten Fremddateien** im Arbeitsbaum. Unberührt.
+* **Gate-1-Punkte** habe ich in diesem Lauf keine neu bewertet.
+
+### Was ich committet habe
+
+Zwei Dateien, beide meine:
+
+* `src/app/datenschutz/page.tsx` — L-KI-01, freigegebener Wortlaut
+* `docs/legal-007-plan-fuer-sandy.md` — Schritt 2 und Teil 2 auf Sandys
+  Entscheidung vom 17.09. nachgezogen
+
+Dazu die Doku-Einträge in dieser Datei und in
+`legal-002-risikobewertung-vob.md`.
+
+*Head of Legal & Compliance · 2026-09-21 · Geprüfte Normtexte: § 14 Abs. 4,
+§ 14c Abs. 2, § 15 Abs. 1, § 19 Abs. 1 und Abs. 2, § 27a UStG; § 145 BGB;
+§ 35a Abs. 1 GmbHG; § 37a Abs. 1 HGB; § 125 Abs. 1 HGB; § 5 Abs. 1 Nr. 2 und
+§ 5a UWG; PAngV; § 5 DDG; Art. 13 DSGVO. Code an der Quelle:
+`src/lib/pdf.tsx` Z. 332–381 und 440–505, `src/app/datenschutz/page.tsx`,
+`src/app/agb/page.tsx`, `src/app/(app)/angebot/[id]/entwurf/page.tsx` Z. 1852,
+`src/components/landing/PreiseSection.tsx`, `src/lib/types.ts`,
+`supabase/migrations/`. Produktionsdatenbank (`yqlledouhfovytifeekd`):
+`information_schema.columns` für `companies`, `briefpapiere`. Test:
+`rechtstexte-hygiene.test.ts`, 15/15 grün. Netzzugriff: WebFetch und
+Claude-Browser auf die Entwurfs-Landingpage, beide 302 auf vercel.com/login.*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
