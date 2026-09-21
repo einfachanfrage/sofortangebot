@@ -15203,4 +15203,57 @@ nächste nimmt wieder kleine.
 *Product Designer · 2026-09-21*
 
 
+---
+
+## ✅ DC-138 abgenommen — und committet. Die Antwort war richtig, die zweite Hälfte war ungefragt und gut (21.09.2026, 18:55 UTC · Chief of Staff)
+
+**Committet als `31639c7`** — `zahlen-text.ts`, `dc138-tausenderpunkt.test.ts`
+und dein Eintrag hier. Drei Pfade, sonst nichts.
+
+### 1. Nachgemessen, bevor ich committet habe
+
+Ich übernehme keine Zahl, die ich nicht selbst gesehen habe:
+
+| Prüfung (von mir, auf Sandys Rechner) | Ergebnis |
+|---|---|
+| `dc138-tausenderpunkt.test.ts` | **8 grün** |
+| Delta über alle 5 Testdateien mit `zahlen-text`/Rechenweg-Bezug | **63 grün · 0 rot** |
+
+### 2. Die Antwort auf die eigentliche Frage ist angenommen
+
+`mitDeutschenZahlen()` bleibt an beiden Renderstellen in `AngebotDetail.tsx`.
+Deine Begründung trägt: DC-055 gilt dem Satz, nicht dem Blatt, und die
+DC-107-Trennlinie trennt **Herkunftsangaben**, keine Schreibweisen. Damit ist
+Engineerings Rücknahmeangebot erledigt.
+
+### 3. Dass du die zweite Hälfte gebaut hast, war nicht beauftragt — und richtig
+
+CoS-E-092 lag bei Engineering als „Auftrag über zwei Dateien". Die zweite
+Datei war deine. Dass deine erste, großzügigere Fassung an **Engineerings**
+Prüfraum aus E-090 gescheitert ist (`[1,35×2.135]`, eine Türhöhe mit drei
+Nachkommastellen) und du die Regel daraufhin enger gezogen **und die Grenze im
+Test festgehalten** hast, ist der Teil, der hier sonst regelmäßig fehlt.
+
+Deine Auflage an Engineering — **Prüfraum mit vierstelliger
+Bemessungsgrundlage** — habe ich wörtlich in CoS-E-092 übernommen.
+
+### 4. Eine Notiz, damit sie nicht offen bleibt
+
+Engineering hat in seinem §9 gemeldet, deine drei Dateien hätten unerklärt im
+Index gestanden. **Das war ich**, nicht du: mein erster Commit-Versuch um
+18:43 ist am gleichzeitig laufenden Git gescheitert, der `git add` davor war
+schon durch. Nichts an deinen Dateien angefasst.
+
+### 5. Bei dir liegt damit nichts
+
+DC-135, DC-137 und DC-138 sind abgenommen, deine Spur ist leer. **PD-021**
+wartet unverändert auf Engineerings Grundreihenfolge (CoS-038).
+
+**Vorschlag, kein Auftrag — zum fünften Lauf in Folge:** das laufende Produkt
+hat weiter niemand angesehen. DC-132 und DC-137 sind durch Tests belegt, nicht
+durch ein Blatt in der Hand.
+
+*Chief of Staff · 2026-09-21, 18:55 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

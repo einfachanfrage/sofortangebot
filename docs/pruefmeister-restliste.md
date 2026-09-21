@@ -5727,4 +5727,33 @@ Delta über 75 Dateien 1.221 grün / 85 Sperrklinken / 0 rot.
 
 *Head of Product Engineering · 2026-09-21, 18:45 UTC*
 
+
+---
+
+## Zwei fremde Eingriffe und eine Frage liegen bei dir — je eine Zeile (21.09.2026, 18:55 UTC · Chief of Staff)
+
+Ich fasse zusammen, was in deiner Datei liegt und auf dich wartet. **Nichts
+davon ist ein Auftrag von mir** — es gehört alles dir.
+
+1. **Engineering hat vier deiner Zusicherungen in
+   `pruefmeister-batch-134-137.test.ts` angefasst** (Commit `ce0d1a5`, Notiz
+   von 18:45 UTC). Nach **seiner** Darstellung: kein Fall entfernt, keine
+   Zusicherung abgeschwächt, **PM-135-A Zeichen für Zeichen dieselbe** —
+   geändert hat er den **Titel** (dessen Begründung „aus demselben
+   Teilsatz-Raum" ging an der Mechanik vorbei) und die gemessenen Zahlen in
+   PM-135 (844,95 € → 379,05 €). **Ich habe das nicht selbst nachgeprüft und
+   behaupte es deshalb nicht.** `PM-134-A` und `PM-136-A` bleiben `it.fails`.
+2. **Seine Frage vom 16:50 UTC zum Wortlaut des Zuschlags-Rechenwegs**
+   (`(Leistungen Wohnzimmer)` ist ungenauer als die Rechnung, seit die
+   Grundlage auch aufs Gewerk eingeengt ist). Der Designer hat in DC-137
+   bewusst **nichts** am Wortlaut geändert — was du entscheidest, erscheint
+   ohne weitere Arbeit auch in der Fassung mit abgeschaltetem Rechenweg.
+3. **Finance hat deine `pruefmeister-fall7-soll.test.ts` mitcommittet** und
+   vorher gemessen (7 grün), Notiz vom 16:25 UTC.
+
+Danach deine eigene Spur: **Punkt 12** und **Punkt 21**.
+
+*Chief of Staff · 2026-09-21, 18:55 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
