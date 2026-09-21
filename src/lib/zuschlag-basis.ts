@@ -25,6 +25,8 @@
  * direkt auf 20 % ändern und der Betrag skaliert richtig mit.
  */
 
+import { ERSCHWERNIS_ARTEN } from './erschwernis'
+
 export const ZUSCHLAG_EINHEIT = '%'
 
 export function istProzentZuschlag(einheit: string | null | undefined): boolean {
@@ -66,9 +68,36 @@ const ZUSCHLAG_ZEITBEZOGEN =
   /wochenend|feiertag|notdienst|nachtarbeit|soforthilfe|au(?:ß|ss)erhalb der gesch[äa]ftszeiten/i
 const ZUSCHLAG_OBJEKTBEZOGEN = /denkmalschutz|sonderma(?:ß|ss)|sonderform|holzart/i
 
+// ── CoS-E-083 §3 / PM-104, Sandys Freigabe vom 17.09.2026 ────────────────
+//
+// Die fünf Erschwerniszuschläge, die die Vollständigkeitsprüfung selbst
+// erzeugt (Altbau, Denkmalschutz, bewohnt, schwieriger Untergrund,
+// Raumhöhe), standen bis hierher auf der ganzen Angebotssumme. Am Angebot
+// aus PM-104 gemessen: `Erschwerniszuschlag Altbau 20 %` rechnete auf
+// 2.301,14 € — also auch auf Leistungen, die kein Maler erbringt.
+//
+// Alle fünf hängen am Objekt und nicht an der Arbeitszeit: ein Altbau ist
+// ein Altbau, gleich wann gearbeitet wird. Damit gilt für sie dieselbe
+// Regel wie für die fünf objektbezogenen Katalog-Zuschläge — Grundlage sind
+// ausschließlich die Leistungen desselben Gewerks. Ein Raum im Titel engt
+// zusätzlich ein, wie bisher; die beiden Filter widersprechen sich nicht,
+// sie stehen hintereinander.
+//
+// **Keine Änderung an den Prozentsätzen** — deren Höhe ist eine getrennte
+// offene Frage bei Sandy.
+//
+// Bewusst aus `ERSCHWERNIS_ARTEN` abgeleitet statt als zweite Wortliste
+// danebengestellt: diese Liste ist die eine Stelle, an der steht, welche
+// Erschwerniszuschläge es überhaupt gibt (`erschwernis.ts` sagt das
+// ausdrücklich über sich selbst). Die sechste Art, die dort einmal
+// dazukommt, ist damit von selbst richtig eingeordnet, statt hier
+// vergessen zu werden.
+const ZUSCHLAG_ERSCHWERNIS_TITEL: readonly RegExp[] = ERSCHWERNIS_ARTEN.map(a => a.titel)
+
 /** Hängt dieser Zuschlag am Gegenstand statt an der Arbeitszeit? */
 export function istObjektbezogenerZuschlag(titel: string): boolean {
   if (ZUSCHLAG_ZEITBEZOGEN.test(titel)) return false
+  if (ZUSCHLAG_ERSCHWERNIS_TITEL.some(r => r.test(titel))) return true
   return ZUSCHLAG_OBJEKTBEZOGEN.test(titel)
 }
 
