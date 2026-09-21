@@ -182,7 +182,7 @@ describe('PM-134 · der Ausschluss vor dem Auftrag', () => {
 // Ergebnis: 465,90 € stehen auf dem Blatt, die abbestellt sind. Diesmal geht
 // das Geld GEGEN DEN KUNDEN, nicht gegen den Betrieb.
 // ───────────────────────────────────────────────────────────────────────────
-describe('PM-135 · Komma statt Punkt hebelt den Ausschluss aus', () => {
+describe('PM-135 · Komma statt Punkt hebelte den Ausschluss aus — gebaut 21.09.', () => {
   const T_PUNKT = 'Flur, 6 mal 1,50, 2,50 hoch. Wände streichen. Wohnzimmer, 4 mal 5, 2,50 hoch. Wände streichen. Im Wohnzimmer machen wir an den Wänden nichts.'
   const T_KOMMA = 'Flur, 6 mal 1,50, 2,50 hoch. Wände streichen. Wohnzimmer, 4 mal 5, 2,50 hoch. Wände streichen, im Wohnzimmer an den Wänden nichts.'
 
@@ -193,31 +193,46 @@ describe('PM-135 · Komma statt Punkt hebelt den Ausschluss aus', () => {
     expect(summe(pos)).toBe(379.05)
   })
 
-  it('PM-135 · gemessener Stand: mit Komma fällt der Ausschluss ganz aus', () => {
+  it('PM-135 · Punkt und Komma ergeben jetzt dieselbe Summe — 379,05 €', () => {
+    // Gemessener Stand bis zum 21.09., 18:30 UTC: 844,95 €. Der Ausschluss
+    // fiel mit dem Komma GANZ aus, weil die Gegenprobe den ganzen Satz las
+    // und den Auftrag im Teilsatz DAVOR mitzählte — 465,90 € Wandarbeit
+    // standen auf dem Blatt, die abbestellt war. Seit CoS-E-091 (PM-135-A)
+    // liest die Gegenprobe nur noch nach vorn.
     const pos = lauf(T_KOMMA, ZWEI())
-    expect(hat(pos, /^Wand streichen 2x — Wohnzimmer/)).toBe(true)
-    // 844,95 € statt 379,05 € — 465,90 € zu viel auf dem Blatt.
-    expect(summe(pos)).toBe(844.95)
-    expect(Number((844.95 - 379.05).toFixed(2))).toBe(465.9)
+    expect(hat(pos, /^Wand streichen 2x — Wohnzimmer/)).toBe(false)
+    expect(hat(pos, /^Wand streichen 2x — Flur/)).toBe(true)
+    expect(summe(pos)).toBe(379.05)
+    // Ein Zeichen Unterschied im Diktat darf keinen Preisunterschied machen.
+    expect(summe(pos)).toBe(summe(lauf(T_PUNKT, ZWEI())))
   })
 
-  it('PM-135-D · am Ausdruck: die Maschine sieht gar keinen Ausschluss', () => {
+  it('PM-135-D · am Ausdruck: die Maschine sieht den Ausschluss jetzt', () => {
     const a = erkenneBauteilAusschluss(
       'Flur Wände streichen, im Wohnzimmer an den Wänden nichts',
       ['Flur', 'Wohnzimmer'],
     )
-    expect(a.belege).toEqual([])
+    // Bis zum 21.09. stand hier dreimal „leer": kein Beleg, kein globaler,
+    // kein räumlicher Ausschluss — die Bremse griff überhaupt nicht.
+    expect(a.belege).toEqual(['im Wohnzimmer an den Wänden nichts'])
     expect(a.global.size).toBe(0)
-    expect(a.jeRaum.size).toBe(0)
-    // Die Raumzuordnung selbst kann es: sie trennt am Komma.
+    expect([...(a.jeRaum.get('Wohnzimmer') ?? [])]).toEqual(['wand'])
+    // Und er bleibt, wo er hingehört: der Flur verliert nichts.
+    expect(a.jeRaum.has('Flur')).toBe(false)
+    // Die Raumzuordnung selbst konnte es immer schon: sie trennt am Komma.
     expect(teilsaetze('Flur Wände streichen, im Wohnzimmer an den Wänden nichts'))
       .toEqual(['Flur Wände streichen', 'im Wohnzimmer an den Wänden nichts'])
   })
 
-  it.fails('PM-135-A · SOLL: die Gegenprobe zählt nur Aufträge aus demselben Teilsatz-Raum', () => {
-    // Soll-Lösung: Ein Auftrag im Flur darf einen Ausschluss im Wohnzimmer
-    // nicht aufheben. Die Gegenprobe braucht dieselbe Raumgrenze, die die
-    // Zuordnung schon hat.
+  it('PM-135-A · GEBAUT: ein Auftrag VOR dem Ausschluss hebt ihn nicht mehr auf', () => {
+    // ⚠ Der Titel dieser Zusicherung lautete bis zum 21.09. „die Gegenprobe
+    // zählt nur Aufträge aus demselben Teilsatz-Raum". Engineering hat das
+    // nachgemessen, statt es zu übernehmen: In T_KOMMA liegen BEIDE
+    // Teilsätze des letzten Satzes im Wohnzimmer („Wände streichen" trägt
+    // den Raum aus dem Satz davor weiter). Eine Raumgrenze hätte hier also
+    // gar nichts getrennt. Die Naht ist die REIHENFOLGE, nicht der Raum —
+    // das Soll darunter ist unverändert dasselbe geblieben.
+    // Die Raumgrenze wird trotzdem gebraucht, aber für PM-134.
     expect(hat(lauf(T_KOMMA, ZWEI()), /^Wand streichen 2x — Wohnzimmer/)).toBe(false)
   })
 })
@@ -335,6 +350,13 @@ describe('PM-137 · der Umfang der Verneinungsmaschine', () => {
     expect(wand('Flur. Decke streichen, an den Wänden machen wir nichts.')).toEqual(['wand'])
     // Auftrag im NÄCHSTEN Satz → zählt nicht mehr (das ist PM-134).
     expect(wand('Flur. An den Wänden machen wir nichts. Wände streichen.')).toEqual(['wand'])
+    // CoS-E-091 (PM-135), 21.09.: innerhalb des Satzes hat die Gegenprobe
+    // seitdem eine RICHTUNG. Sie zählt den Teilsatz des Ausschlusses und
+    // alles dahinter — ein Auftrag DAVOR hebt ihn nicht mehr auf.
+    expect(wand('Flur. Wände streichen, an den Wänden machen wir nichts.')).toEqual(['wand'])
+    // Gegenprobe zur Gegenprobe: derselbe Satz andersherum gelesen bleibt,
+    // was er war — der Auftrag dahinter gewinnt.
+    expect(wand('Flur. An den Wänden machen wir nichts, Wände streichen.')).toEqual([])
   })
 
   it('PM-137-5 · die Belege werden gesammelt und nirgends gezeigt', () => {

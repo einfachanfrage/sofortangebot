@@ -121,11 +121,36 @@ function bauteileImSatz(satz: string): Bauteil[] {
  * Erkennt abbestellte Bauteile.
  *
  * Die Gegenprobe, die diese Bremse davon abhält, zu viel wegzunehmen:
- * Ein Bauteil, für das im SELBEN Satz ein Auftrag steht, wird nicht
- * ausgeschlossen. „Die Wände nicht tapezieren, nur streichen." nennt die
- * Wand im ersten Teilsatz, der zweite trägt sie weiter und beauftragt —
- * also kein Ausschluss. „Decke streichen, an den Wänden nichts." beauftragt
- * dagegen ein ANDERES Bauteil; der Wand-Ausschluss bleibt stehen.
+ * Ein Bauteil, für das ein Auftrag steht, wird nicht ausgeschlossen.
+ * „Die Wände nicht tapezieren, nur streichen." nennt die Wand im ersten
+ * Teilsatz, der zweite trägt sie weiter und beauftragt — also kein
+ * Ausschluss. „Decke streichen, an den Wänden nichts." beauftragt dagegen
+ * ein ANDERES Bauteil; der Wand-Ausschluss bleibt stehen.
+ *
+ * ── PM-135 (21.09.2026) · Die Gegenprobe liest nur noch nach vorn ───────
+ *
+ * Bis dahin fragte sie den GANZEN Satz ab: steht darin irgendwo ein Auftrag
+ * für das Bauteil, fällt der Ausschluss aus — auch wenn der Auftrag VOR ihm
+ * steht und er ihn gerade zurücknimmt.
+ *
+ *   „Wände streichen, im Wohnzimmer an den Wänden nichts."
+ *
+ * Mit einem Punkt statt des Kommas greift derselbe Ausschluss (379,05 €),
+ * mit dem Komma fiel er ganz aus (844,95 €): 465,90 € Wandarbeit standen auf
+ * dem Angebot, die der Kunde abbestellt hatte. Ein Zeichen Unterschied im
+ * Diktat, und das Geld läuft GEGEN DEN KUNDEN.
+ *
+ * Die Gegenprobe zählt deshalb nur noch Aufträge aus dem Teilsatz des
+ * Ausschlusses und den Teilsätzen DANACH. Der Schutzfall bleibt unberührt:
+ * in „nicht tapezieren, nur streichen" steht der Auftrag HINTER der
+ * Verneinung und hebt sie weiter auf. Das jüngere Wort gewinnt, und
+ * „jünger" heißt hier: weiter hinten im Satz.
+ *
+ * ⚠ Die Satzgrenze bleibt, wo sie war. Ein Auftrag im NÄCHSTEN Satz zählt
+ * weiter nicht — das ist PM-134 und ein eigener Bauauftrag, weil er ohne
+ * eine Raumgrenze nicht zu haben ist: ein Auftrag im Flur dürfte einen
+ * Ausschluss im Wohnzimmer nicht aufheben. Hier ist davon bewusst NICHTS
+ * vorweggenommen.
  */
 export function erkenneBauteilAusschluss(
   text: string,
@@ -137,28 +162,62 @@ export function erkenneBauteilAusschluss(
   const hinweise: BauteilAusschlussStelle[] = []
   if (!text) return { global, jeRaum, belege, hinweise }
 
-  // 1. Je Satz sammeln, für welche Bauteile ein AUFTRAG dasteht. Ein
+  // 1. Je TEILSATZ sammeln, für welche Bauteile dort ein AUFTRAG dasteht. Ein
   //    Teilsatz ohne eigenes Bauteil trägt das zuletzt genannte weiter.
-  const beauftragt = new Map<number, Set<Bauteil>>()
+  //
+  //    PM-135: bis hierhin wurde je SATZ EINE Menge gebildet. Sie sagte, DASS
+  //    im Satz ein Auftrag steht, aber nicht mehr, WO — und damit ließ sich
+  //    ein Auftrag vor der Verneinung nicht von einem dahinter unterscheiden.
+  //    Die Mengen stehen deshalb jetzt einzeln, in Lesereihenfolge.
+  const beauftragt = new Map<number, Set<Bauteil>[]>()
   saetze(text).forEach((satz, i) => {
-    const menge = new Set<Bauteil>()
+    const jeTeilsatz: Set<Bauteil>[] = []
     let getragen: Bauteil[] = []
     for (const teil of teilsaetze(satz)) {
       const eigene = bauteileImSatz(teil)
       if (eigene.length > 0) getragen = eigene
       const verneint = STARKE_NEGATION.test(teil) || SCHWACHE_NEGATION.test(teil) || BLEIBT.test(teil)
+      const menge = new Set<Bauteil>()
       if (!verneint && TAETIGKEIT.test(teil)) for (const b of getragen) menge.add(b)
+      jeTeilsatz.push(menge)
     }
-    beauftragt.set(i, menge)
+    beauftragt.set(i, jeTeilsatz)
   })
 
+  /**
+   * Aufträge aus diesem Teilsatz und allen dahinter — die Gegenprobe zu
+   * einem Ausschluss, der an Stelle `teilIndex` steht.
+   *
+   * Der eigene Teilsatz ist bewusst mitgezählt und kostet nichts: er ist
+   * verneint (sonst stünde dort kein Ausschluss), und ein verneinter
+   * Teilsatz trägt oben eine leere Menge bei.
+   */
+  const auftraegeAb = (satzIndex: number, teilIndex: number): Set<Bauteil> => {
+    const jeTeilsatz = beauftragt.get(satzIndex) ?? []
+    const menge = new Set<Bauteil>()
+    for (let k = teilIndex; k < jeTeilsatz.length; k += 1) {
+      for (const b of jeTeilsatz[k]) menge.add(b)
+    }
+    return menge
+  }
+
   // 2. Ausschlusssätze lesen — mit Raumzuordnung aus `satz-raum.ts`.
+  //
+  //    `saetzeMitRaum` zerlegt mit demselben `saetze()`/`teilsaetze()` wie
+  //    Schritt 1 und gibt die Teilsätze in Lesereihenfolge zurück, nach Satz
+  //    gruppiert. Die Stelle im Satz lässt sich deshalb mitzählen — der
+  //    Zähler springt auf 0 zurück, sobald ein neuer Satz beginnt.
+  let laufenderSatz = -1
+  let teilIndex = -1
   for (const { satz, raum, raumImSatz, satzIndex } of saetzeMitRaum(text, raumNamen)) {
+    if (satzIndex === laufenderSatz) teilIndex += 1
+    else { laufenderSatz = satzIndex; teilIndex = 0 }
+
     if (BLEIBT_NICHT.test(satz)) continue
     const verneint = STARKE_NEGATION.test(satz) || SCHWACHE_NEGATION.test(satz) || BLEIBT.test(satz)
     if (!verneint) continue
 
-    const auftraege = beauftragt.get(satzIndex) ?? new Set<Bauteil>()
+    const auftraege = auftraegeAb(satzIndex, teilIndex)
     const treffer = bauteileImSatz(satz).filter(b => !auftraege.has(b))
     if (treffer.length === 0) continue
 
