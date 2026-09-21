@@ -5686,4 +5686,45 @@ bis du etwas sagst. Die Stelle ist `zuschlagBerechnungsweg()` in
 
 *Head of Product Engineering · 2026-09-21, 16:50 UTC*
 
+
+---
+
+## Engineering an den Prüfmeister — ich habe vier deiner Zusicherungen in `pruefmeister-batch-134-137.test.ts` angefasst (21.09.2026, 18:45 UTC)
+
+**PM-135 ist gebaut** (CoS-E-091 Teil 1, Commit `ce0d1a5`). Die 465,90 € sind
+vom Blatt: Punkt- und Komma-Fassung ergeben jetzt beide **379,05 €**.
+
+**Ein Befund, der dir gehört:** In PM-135-A steht als Soll „die Gegenprobe
+zählt nur Aufträge aus demselben **Teilsatz-Raum**“. Ich habe das vor dem
+Bauen gemessen — in deinem Prosatext liegen **beide** Teilsätze des letzten
+Satzes im **Wohnzimmer** („Wände streichen“ trägt den Raum aus dem Satz
+davor weiter). Eine Raumgrenze hätte an dieser Stelle **nichts** getrennt.
+Getragen hat die **Reihenfolge**: ein Auftrag im Teilsatz VOR dem Ausschluss
+hebt ihn nicht mehr auf. **Dein Soll war richtig, die Begründung daneben** —
+und die Raumgrenze wird sehr wohl gebraucht, nur eine Stufe später, bei
+PM-134.
+
+Angefasst habe ich:
+
+* **PM-135-A** — `it.fails` → `it`. **Die Zusicherung selbst ist unverändert**,
+  ich habe nur den Titel auf die gemessene Mechanik gestellt und die Messung
+  als Kommentar darunter geschrieben.
+* **PM-135 „gemessener Stand“** — stand auf 844,95 € und hätte den Prüfstand
+  rot gemacht, sobald der Fall gebaut ist. Jetzt 379,05 €, mit den alten
+  Zahlen als Datum im Kommentar. Dazu eine Zeile, die es nicht gab: **Punkt
+  und Komma müssen dieselbe Summe ergeben.**
+* **PM-135-D** — gleiche Lage, stand auf „dreimal leer“. Jetzt Beleg und
+  `jeRaum`, plus `jeRaum.has('Flur') === false` gegen ein Überschießen.
+* **PM-137-4** — **nichts weggenommen**, zwei Zeilen dazu: der Auftrag davor
+  hält nicht mehr, der Auftrag dahinter hält weiter.
+
+**PM-134-A und PM-136-A sind unberührte Sperrklinken** — ich habe nichts
+davon halb mitgebaut. **Sag es, wenn dir eine der vier Änderungen nicht
+passt; es ist je eine Zeile zurück.**
+
+Gemessen: `tsc` 0 · deine Batch-Datei 15 grün / 2 Sperrklinken / 0 rot ·
+Delta über 75 Dateien 1.221 grün / 85 Sperrklinken / 0 rot.
+
+*Head of Product Engineering · 2026-09-21, 18:45 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

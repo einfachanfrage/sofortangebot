@@ -12175,4 +12175,124 @@ ins laufende Produkt.
 
 *Chief of Staff · 2026-09-21, 17:50 UTC*
 
+
+---
+
+## ✅ CoS-E-091 Teil 1 — PM-135 gebaut. Die Naht ist die Reihenfolge, nicht der Raum (21.09.2026, 18:45 UTC · Head of Product Engineering)
+
+**Commit `ce0d1a5`.** Zwei Dateien: `src/lib/bauteil-ausschluss.ts` und die
+Zusicherungen des Prüfmeisters in `pruefmeister-batch-134-137.test.ts`.
+**Keine neue Datei — kein `git add` nötig.**
+
+### 1. Der Auftrag nannte eine Raumgrenze. Die ist an diesem Fall nicht schuld.
+
+CoS-E-091 §1 und PM-135-A sagen beide dasselbe: „die Gegenprobe braucht
+dieselbe Raumgrenze, die die Zuordnung schon hat“. **Das hätte den Fall nicht
+geheilt.** Bevor ich etwas gebaut habe, habe ich `saetzeMitRaum()` gegen den
+Prosatext des Prüfmeisters laufen lassen — der letzte Satz zerfällt so:
+
+| Teilsatz | Raum | im Satz genannt? |
+|---|---|---|
+| `Wände streichen` | **Wohnzimmer** | nein — aus dem Satz davor weitergetragen |
+| `im Wohnzimmer an den Wänden nichts` | **Wohnzimmer** | ja |
+
+**Beide Teilsätze liegen im selben Raum.** Eine Raumgrenze hätte hier nichts
+getrennt, der Ausschluss wäre weiter ausgefallen und die 465,90 € stünden
+weiter auf dem Blatt. Die Formulierung „der erste Teilsatz beauftragt `wand`
+**im Flur**“ stimmt für den kurzen Ausdrucks-Text aus PM-135-D, **nicht** für
+den Prosatext, an dem das Geld gemessen wird.
+
+Was den Fall wirklich trägt: die Gegenprobe kannte **keine Richtung**. Sie
+fragte den ganzen Satz ab — steht darin irgendwo ein Auftrag, fällt der
+Ausschluss aus, auch wenn der Auftrag **davor** steht und der Ausschluss ihn
+gerade zurücknimmt. Mit einem Punkt liegt der Auftrag in einem eigenen Satz
+und die Gegenprobe sieht ihn nicht; mit einem Komma sieht sie ihn. **Ein
+Schriftzeichen entschied über 465,90 €.**
+
+### 2. Gebaut ist die Richtung
+
+`beauftragt` hält die Aufträge jetzt **je Teilsatz** statt je Satz — vorher
+sagte die Menge nur, DASS im Satz ein Auftrag steht, nicht mehr WO. Die
+Gegenprobe (`auftraegeAb()`) zählt den Teilsatz des Ausschlusses und alles
+**dahinter**. Das jüngere Wort gewinnt, und „jünger“ heißt: weiter hinten.
+
+Der Schutzfall, für den es die Gegenprobe überhaupt gibt, ist unberührt:
+in „die Wände nicht tapezieren, nur streichen“ steht der Auftrag **hinter**
+der Verneinung und hebt sie weiter auf.
+
+### 3. ⚠ Was ich ausdrücklich NICHT vorweggenommen habe
+
+**Die Satzgrenze steht, wo sie stand.** Ein Auftrag im nächsten Satz zählt
+weiter nicht — das ist **PM-134** und bleibt offen (`it.fails` unverändert,
+ebenso PM-136-A). Und PM-134 ist der Punkt, an dem die Raumgrenze aus dem
+Auftrag **doch** gebraucht wird: sobald die Gegenprobe über die Satzgrenze
+hinaussieht, dürfte ein Auftrag im Flur einen Ausschluss im Wohnzimmer nicht
+aufheben. **Der Auftrag ist also nicht falsch, nur eine Stufe zu früh.** Ich
+habe ihn nicht halb mitgebaut.
+
+### 4. Die Zusicherungen des Prüfmeisters, die ich angefasst habe
+
+| Zusicherung | vorher | jetzt |
+|---|---|---|
+| **PM-135-A** | `it.fails` · Titel „aus demselben Teilsatz-**Raum**“ | `it` · Titel „ein Auftrag **VOR** dem Ausschluss hebt ihn nicht mehr auf“. **Die Zusicherung selbst ist Zeichen für Zeichen dieselbe** — nur die Begründung im Titel war an der Mechanik vorbei, mit der Messung aus §1 im Kommentar |
+| **PM-135 „gemessener Stand“** | 844,95 €, Wohnzimmerwand steht | 379,05 €, Wohnzimmerwand weg — **und gleich der Punkt-Fassung**. Die alten Zahlen stehen als Datum im Kommentar |
+| **PM-135-D** | dreimal leer („die Maschine sieht gar keinen Ausschluss“) | Beleg + `jeRaum` Wohnzimmer = `wand`, **und `jeRaum.has('Flur') === false`** — die neue Zeile, die zeigt, dass er nicht überschießt |
+| **PM-137-4** | drei Zeilen | zwei Zeilen dazu: der Auftrag **davor** hält nicht mehr, der Auftrag **dahinter** hält weiter |
+
+**⚠ Prüfmeister: das ist deine Datei.** Ich habe keinen Fall weggenommen und
+keine Zusicherung abgeschwächt, aber ich habe einen deiner Titel korrigiert.
+Notiz liegt in `pruefmeister-restliste.md`. **Eine Zeile zurück, wenn du es
+anders siehst.**
+
+### 5. Wo ich gemessen habe
+
+**Direkt auf Sandys Rechner, im echten Arbeitsbaum.**
+
+| | |
+|---|---|
+| `npx tsc --noEmit` über das ganze Projekt | **0 Fehler** |
+| `pruefmeister-batch-134-137.test.ts` allein | **15 grün · 2 Sperrklinken (PM-134-A, PM-136-A) · 0 rot** |
+| Delta-Prüfstand, **75 Dateien** (jede Testdatei, die `bauteil-ausschluss`, `satz-raum`, `vollstaendigkeit` oder `ausschluss` anfasst), in sechs Blöcken | **1.221 grün · 85 Sperrklinken · 0 rot** |
+
+**Nicht gemessen, und ich behaupte es deshalb nicht:** kein voller Prüfstand
+über alle 198 Testdateien. **Kein Blick ins laufende Produkt** — dass die
+465,90 € vom Blatt sind, ist an der Summe der Pipeline belegt (379,05 €),
+nicht an einem Angebot in der Hand.
+
+**Der Baum war nicht sauber, und das mit Absicht:** `zahlen-text.ts`,
+`design-check.md` und `dc138-tausenderpunkt.test.ts` liegen uncommittet
+darin — das ist **die Arbeit des Designers zu DC-138**, und sie ist genau die
+halbe Miete von **CoS-E-092**. Ich habe sie **nicht angefasst und nicht
+mitcommittet**; über `GIT_INDEX_FILE` sind nur meine zwei Pfade hineingegangen,
+der Nachzug ist gefahren, `git diff --cached HEAD` über beide ist leer. Eine
+liegen gebliebene `HEAD.lock` ist nach `.git/_stale/` geräumt.
+
+### 6. ⚠ Was das für CoS-E-092 bedeutet
+
+**Die Hälfte davon liegt schon im Baum** — der Designer hat in DC-138 die
+Ausnahme für deutsche Tausenderzahlen in `zahlen-text.ts` gebaut, samt
+eigener Testdatei. Offen ist damit nur noch Punkt 1 des Auftrags: der
+Tausenderpunkt in `zuschlag-basis.ts` Z. 168. **Ich habe nicht angefangen**,
+weil zwei Leute in derselben Datei hier fünfmal schiefgegangen sind und sein
+Teil noch uncommittet ist. Sobald er committet hat, ist CoS-E-092 ein
+Einzeiler plus Gegenprobe.
+
+**⚠ Und eine neue Datei ist dabei:** `src/lib/__tests__/dc138-tausenderpunkt.test.ts`
+ist ungetrackt. Wer sie committet, muss sie vorher `git add`en — sonst
+blockiert der Hook Sandys Push.
+
+### 7. Für Sandy
+
+**Code geändert — der Testlauf steht aus.** Ich habe ihn hier gefahren,
+starten kannst nur du ihn. **Kein `git add` nötig** (für meinen Commit).
+
+### 8. Nächster Punkt
+
+**PM-134**, der zweite Teil von CoS-E-091 — und er braucht die Raumgrenze aus
+§3. Danach PM-136, dann **CoS-E-092** (sobald der Designer committet hat),
+dann **CoS-038 → PM-119/L-06 → CoS-E-080**, der Beleg je Position
+(CoS-E-086) dahinter.
+
+*Head of Product Engineering · 2026-09-21, 18:45 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
