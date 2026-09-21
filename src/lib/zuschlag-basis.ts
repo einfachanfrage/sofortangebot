@@ -165,7 +165,24 @@ export function zuschlagBerechnungsweg(
   raum: string | null,
   gewerk: string | null = null,
 ): string {
-  const euro = basis.toFixed(2).replace('.', ',')
+  // CoS-E-092 (21.09.2026) · dieselbe Zahl, dieselbe Schreibweise.
+  //
+  // Bis hierhin stand auf dem Kundenpapier „20 % auf 2301,14 €“ — und EINE
+  // ZEILE DANEBEN, in der Betragsspalte, „2.301,14 €“. Dieselbe Zahl in zwei
+  // Schreibweisen nebeneinander liest sich wie ein Rechenfehler, und genau
+  // nachrechnen soll der Kunde hier ja.
+  //
+  // `toFixed(2)` bleibt vorne stehen, damit die Rundung dieselbe ist wie
+  // bisher; `toLocaleString` setzt danach nur noch die Gruppierung — dieselbe
+  // Form, die die Betragsspalte in `AngebotDetail.tsx` benutzt.
+  //
+  // ⚠ Diese Zeichenkette läuft in der App (CoS-E-090), in der Vorschau und
+  // im PDF (DC-137) durch `mitDeutschenZahlen()`. Ohne die Ausnahme für
+  // deutsche Tausenderzahlen, die der Designer in DC-138 (`zahlen-text.ts`)
+  // gebaut hat, stünde hier ab sofort „2,301,14 €“. Die beiden Hälften
+  // gehören zusammen — wer eine davon zurücknimmt, nimmt beide zurück.
+  const euro = Number(basis.toFixed(2))
+    .toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   const bezug = raum
     ? `(Leistungen ${raum})`
     : gewerk

@@ -49,9 +49,9 @@ describe('DC-138 — deutsche Tausenderzahlen bleiben unangetastet', () => {
 })
 
 describe('DC-138 — der heutige Zuschlags-Rechenweg überlebt die Hilfe unverändert', () => {
-  it('heute: ohne Tausenderpunkt, Cent-Komma bleibt Komma', () => {
+  it('seit CoS-E-092: mit Tausenderpunkt, und die Hilfe laesst ihn stehen', () => {
     const weg = zuschlagBerechnungsweg(20, 2301.14, null, null)
-    expect(weg).toBe('20 % auf 2301,14 € (Leistungen dieses Angebots)')
+    expect(weg).toBe('20 % auf 2.301,14 € (Leistungen dieses Angebots)')
     expect(mitDeutschenZahlen(weg)).toBe(weg)
   })
 

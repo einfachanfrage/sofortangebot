@@ -27,7 +27,7 @@ describe('DC-137 · der Leser sitzt neben dem Schreiber', () => {
 
   it('… Gewerke-Fall', () => {
     const weg = zuschlagBerechnungsweg(20, 2301.14, null, 'maler')
-    expect(weg).toBe('20 % auf 2301,14 € (Leistungen Maler)')
+    expect(weg).toBe('20 % auf 2.301,14 € (Leistungen Maler)') // Tausenderpunkt seit CoS-E-092
     expect(zuschlagsBezugAus(weg)).toBe(weg)
   })
 

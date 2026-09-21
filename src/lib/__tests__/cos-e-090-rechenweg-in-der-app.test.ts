@@ -160,12 +160,47 @@ describe('CoS-E-090 — die drei Engine-Zeilen, wie der Handwerker sie in der Ap
 
   it('E-090-G · Kontrolle: was die Hilfe NICHT anfassen darf', () => {
     // Der Zuschlags-Rechenweg (CoS-E-083 §3) bringt den Betrag bereits deutsch
-    // mit und ohne Tausenderpunkt — er darf sich nicht verändern.
+    // mit — er darf sich nicht verändern. Seit CoS-E-092 samt Tausenderpunkt;
+    // dass der stehen bleibt, trägt die Ausnahme aus DC-138.
     const zw = zuschlagBerechnungsweg(20, 2301.14, null, 'maler')
-    expect(zw).toBe('20 % auf 2301,14 € (Leistungen Maler)')
+    expect(zw).toBe('20 % auf 2.301,14 € (Leistungen Maler)')
     expect(mitDeutschenZahlen(zw)).toBe(zw)
     // Ein Datum ist kein Dezimaltrenner.
     expect(mitDeutschenZahlen('Aufmaß vom 11.09.2026')).toBe('Aufmaß vom 11.09.2026')
+  })
+
+  // ── CoS-E-092 · dieselbe Zahl darf nicht zweimal verschieden dastehen ────
+  //
+  // Auf dem Kundenpapier steht die Bemessungsgrundlage im Rechenweg und der
+  // Betrag in der Spalte daneben. Bis zum 21.09. schrieb der Rechenweg
+  // „2301,14 €“ und die Spalte „2.301,14 €“ — eine Zeile auseinander.
+  it('E-092-A · Rechenweg und Betragsspalte schreiben dieselbe Zahl gleich', () => {
+    // Die Form der Betragsspalte, wie `AngebotDetail.tsx` sie setzt.
+    const spalte = (w: number) =>
+      w.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    for (const basis of [2301.14, 1234567.89, 456, 999.99, 1000, 0]) {
+      const weg = zuschlagBerechnungsweg(20, basis, null, 'maler')
+      expect(weg).toBe(`20 % auf ${spalte(basis)} € (Leistungen Maler)`)
+      // Und der Weg über die Ausgabe lässt ihn in Ruhe — beide Hälften des
+      // Auftrags zusammen, nicht je für sich.
+      expect(mitDeutschenZahlen(weg)).toBe(weg)
+    }
+  })
+
+  it('E-092-B · Gegenfall: die englische Dezimalzahl wird weiter deutsch', () => {
+    // Die Grenze, an der CoS-E-092 hätte kippen können: ein Punkt zwischen
+    // Ziffern ist NICHT immer ein Tausenderpunkt.
+    expect(mitDeutschenZahlen('Umfang 19 lfm × 2.5 m = 47.5 m²'))
+      .toBe('Umfang 19 lfm × 2,5 m = 47,5 m²')
+    // Und die Rundung ist dieselbe geblieben wie unter `toFixed(2)` allein.
+    // Gemessen, nicht gedacht: 1000.005 liegt als Gleitkommazahl knapp UNTER
+    // der Mitte, `toFixed(2)` rundet deshalb ab. `toLocaleString` allein hätte
+    // hier `1.000,01` geschrieben — genau deshalb steht `toFixed(2)` vorne und
+    // `toLocaleString` setzt nur noch die Gruppierung.
+    expect(zuschlagBerechnungsweg(20, 1000.005, null, null))
+      .toBe('20 % auf 1.000,00 € (Leistungen dieses Angebots)')
+    expect((1000.005).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+      .toBe('1.000,01')
   })
 })
 
