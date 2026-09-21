@@ -1,5 +1,6 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { hat, add, filtereArray, istWandStreichen, istDeckeStreichen, raumAusTitel } from './helpers'
+import { saetze } from '../satz-raum'
 import type { AuftragsVerstaendnis } from '../auftrags-verstaendnis'
 import type { RaumScope } from '../arbeiten-normalisierer'
 
@@ -108,6 +109,42 @@ export function pruefeGrundierung(
     || lower.includes('neubau') || lower.includes('erstanstrich') || lower.includes('rohbau')
 
   if (!v.hatArbeit('streichen') || !hatGrundierung) return
+
+  // ── CoS-E-083 · PM-106 (21.09.2026) ─────────────────────────────────────
+  //
+  // Fall 7 aus Sandys Einsprech-Liste, live bestätigt am 17.09.:
+  //
+  //   „Flur, 6 × 1,50, 2,50 hoch. Wände und Decke zweimal weiß.
+  //    Die 4 Innentüren mit Zargen abschleifen, **grundieren** und weiß
+  //    lackieren."
+  //
+  // Im Angebot standen `Voranstrich / Grundierung — Flur` über 37,50 m² und
+  // `Voranstrich / Grundierung Decke — Flur` über 9,00 m². Zusammen 279,00 €,
+  // die niemand bestellt hat. Das Wort „grundieren" galt den TÜREN; hier
+  // unten kam nur an, DASS es gefallen ist.
+  //
+  // Dieselbe Familie wie PM-107 und PM-079-B: eine Ansage wird auf etwas
+  // angewandt, das sie nicht meint. Die Regel ist entsprechend eng gehalten:
+  //
+  //   **Nennt JEDER Satz mit dem Grundierwort ein anderes Bauteil — Tür,
+  //   Zarge, Fenster, Heizkörper — und keine Fläche, gilt der Auftrag dem
+  //   Bauteil und nicht dem Raum.**
+  //
+  // Bewusst `every` und nicht `some`: Sobald ein einziger Satz die Fläche
+  // nennt („Wände grundieren, und die Türen auch"), bleibt die Grundierung
+  // stehen. Die teurere Richtung wäre, sie zu Unrecht wegzunehmen — dann
+  // fehlt bezahlte Arbeit im Angebot und merkt es niemand. Deshalb greift
+  // die Regel nur, wenn das Diktat NIRGENDS eine Fläche zum Grundieren nennt.
+  //
+  // Die Grundierung der Bauteile selbst (`Türen grundieren`, 4 Stück) entsteht
+  // an einer anderen Stelle und bleibt davon unberührt — geprüft in E-087-7.
+  const GRUNDIER_WORT = /grundier\w*|voranstrich|primer|tiefengrund|neubau|erstanstrich|rohbau/i
+  const FREMDES_BAUTEIL = /t(?:ü|ue)r|zarge|fenster|heizk(?:ö|oe)rper|heizung|radiator|gel(?:ä|ae)nder|schrank|m(?:ö|oe)bel/i
+  const FLAECHE_WORT = /w(?:a|ä)nd|decke|dachschr(?:ä|a)g|fassade|untergrund|fl(?:ä|a)che|putz|spachtel|mauer|raum|alles|(?:ü|ue)berall|neubau|erstanstrich|rohbau/i
+  const grundierSaetze = saetze(lower).filter(satz => GRUNDIER_WORT.test(satz))
+  const nurAmBauteil = grundierSaetze.length > 0
+    && grundierSaetze.every(satz => FREMDES_BAUTEIL.test(satz) && !FLAECHE_WORT.test(satz))
+  if (nurAmBauteil) return
 
   // PM-003: "Grundierung" kam hier oft nur aus der GPT-Struktur, weil im Raum
   // eine Kleinreparatur steckt (Dübellöcher/Schadstellen) — der Nutzer selbst

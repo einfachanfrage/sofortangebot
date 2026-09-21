@@ -5,6 +5,7 @@ import { berechneSockelleistenLaenge, sockelAbzug } from './sockelleisten'
 import { berechneOeffnungsabzugVob, vobHinweistext, abgezogeneOeffnungen, abzugsText, type OeffnungsabzugErgebnis } from './vob-uebermessung'
 import { nichtStreichbarerWerkstoff, nichtStreichbarHinweis, brauchtVorlack } from '../../lack-untergrund'
 import { findeWandflaechenKonflikt, geometrieBeleg, zahlDe } from '../wandflaechen-konflikt'
+import { saetze, raumDerPosition } from '../../satz-raum'
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100
@@ -33,6 +34,46 @@ function abschnittFuerRaum(transkript: string, name: string, alleNamen: Array<st
     .filter(index => index > start)
     .sort((a, b) => a - b)[0]
   return text.slice(start, naechster ?? text.length)
+}
+
+/**
+ * Die Sätze, die KEINEN bekannten Raum nennen — die allgemeinen Ansagen.
+ *
+ * ── CoS-E-083 · PM-107 (21.09.2026) ───────────────────────────────────────
+ *
+ * „Büro 5 × 4 und Besprechungsraum 4 × 4. … danach Wände zweimal und **Decken
+ * einmal** streichen." Zwei Räume, eine Ansage — im Angebot stand die Decke im
+ * Besprechungsraum mit 1x und im Büro mit 2x. 80,00 € zu viel, und auf dem
+ * Kundenpapier zwei verschiedene Anstrichzahlen für denselben Satz.
+ *
+ * Die Ursache sitzt in `abschnittFuerRaum` oben: der Abschnitt eines Raums
+ * reicht von seinem Namen bis zum nächsten Raumnamen. Der Schlusssatz gehört
+ * damit dem ZULETZT genannten Raum — der erste sieht ihn nie und fällt auf den
+ * Standard (2x) zurück. Genau dieselbe Form wie PM-079-B: ein Satz ohne
+ * Raumnamen wurde einem einzelnen Raum zugeschlagen statt allen.
+ *
+ * Die Regel ist deshalb auch dieselbe, die dort schon gilt (CoS-E-085):
+ * **Nennt ein Satz keinen bekannten Raum, gilt er für das ganze Angebot.**
+ *
+ * Zwei Vorsichtsmaßnahmen, beide absichtlich:
+ *
+ *  1. **Ganze Sätze, keine Teilsätze.** „Im Büro, Decke einmal." zerfällt am
+ *     Komma in „Im Büro" und „Decke einmal" — der zweite Teil nennt keinen
+ *     Raum und würde als allgemeine Ansage in jeden anderen Raum bluten
+ *     (PM-005). Auf Satzebene bleibt er beim Büro, wo er hingehört.
+ *  2. **`raumDerPosition` vergleicht ohne Wortgrenze.** Das ist hier die
+ *     sichere Richtung: ein zu großzügiger Treffer erklärt einen Satz für
+ *     raumgebunden und lässt ihn aus den allgemeinen Ansagen heraus — er
+ *     bleibt liegen, statt in fremde Räume zu wandern. Die Namensgrenze
+ *     (Namen unter drei Zeichen zählen nicht) bringt die Funktion mit.
+ */
+function allgemeineAnsagen(transkript: string, alleNamen: Array<string | undefined>): string {
+  const text = (transkript ?? '').toLocaleLowerCase('de-DE')
+  if (!text) return ''
+  const namen = alleNamen.filter((n): n is string => Boolean(n))
+  // Nur ein Raum: `abschnittFuerRaum` gibt ihm ohnehin den ganzen Text.
+  if (namen.length <= 1) return ''
+  return saetze(text).filter(satz => raumDerPosition(satz, namen) === null).join('. ')
 }
 
 export function malerEngine(daten: any): MengenErgebnis {
@@ -109,6 +150,10 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Mittelweg: der Abschnitt, der zu DIESEM Raum gehört — kein Bleeding, aber
     // auch kein Informationsverlust.
     const anstrichText = `${arbeitenStr} ${abschnittFuerRaum(daten.transkript ?? '', nameRaw, (daten.raeume ?? []).map((r: any) => r.name))}`
+    // Die Sätze ohne Raumnamen (CoS-E-083 / PM-107) — sie gelten für jeden
+    // Raum, aber erst, wenn der eigene Abschnitt zur Fläche schweigt.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const allgemeinText = allgemeineAnsagen(daten.transkript ?? '', (daten.raeume ?? []).map((r: any) => r.name))
     const explizitEinAnstrich = /(?:einmal|1\s*[x×]|ein(?:en)?\s+anstrich|eine\s+lage)/i.test(anstrichText)
     const explizitZweiAnstriche = /(?:zweimal|2\s*[x×]|zwei\s+anstrich|zwei\s+lagen|2-fach)/i.test(anstrichText)
     const anstriche = explizitEinAnstrich && !explizitZweiAnstriche ? 1 : 2
@@ -121,17 +166,30 @@ export function malerEngine(daten: any): MengenErgebnis {
     // Fläche, für die im selben Satz ausdrücklich „einmal" gesagt wurde.
     // Jetzt wird je Fläche im zugehörigen Satzteil nachgesehen; findet sich
     // dort nichts, bleibt es beim Raum-Wert oben.
-    const anstricheFuerFlaeche = (muster: RegExp): number => {
-      const teile = anstrichText.split(/[,.;]|\bund\b/)
+    //
+    // CoS-E-083 / PM-107: `null` statt `anstriche`, sobald der eigene
+    // Abschnitt nichts hergibt — erst dann darf die allgemeine Ansage ran.
+    // Vorher endete die Suche hier, und der Raum, dessen Abschnitt vor dem
+    // Schlusssatz aufhörte, bekam still den Standard 2x.
+    const anstricheAusText = (quelle: string, muster: RegExp): number | null => {
+      const teile = quelle.split(/[,.;]|\bund\b/)
       const passend = teile.filter(teil => muster.test(teil))
-      if (passend.length === 0) return anstriche
+      if (passend.length === 0) return null
       const text = passend.join(' ')
       const ein = /(?:einmal|1\s*[x×]|ein(?:en)?\s+anstrich|eine\s+lage|reicht\s+ein)/i.test(text)
       const zwei = /(?:zweimal|2\s*[x×]|zwei\s+anstrich|zwei\s+lagen|2-fach)/i.test(text)
       if (ein && !zwei) return 1
       if (zwei && !ein) return 2
-      return anstriche
+      return null
     }
+    // Reihenfolge ist die Aussage: was am eigenen Raum hängt, schlägt die
+    // allgemeine Ansage; die allgemeine schlägt den Standard. So bleibt
+    // „im Besprechungsraum die Decke zweimal" beim Besprechungsraum (PM-005),
+    // und „Decken einmal" ohne Raumnamen erreicht trotzdem jeden Raum.
+    const anstricheFuerFlaeche = (muster: RegExp): number =>
+      anstricheAusText(anstrichText, muster)
+      ?? anstricheAusText(allgemeinText, muster)
+      ?? anstriche
     const anstricheWand = anstricheFuerFlaeche(/w[äa]nd/i)
     const anstricheDecke = anstricheFuerFlaeche(/(?<!ab)decke/i)
     // Kontext (Keller/Garage/Schräge/Fassade) = Union aus Transkript-Ebene und
