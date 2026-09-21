@@ -13862,4 +13862,65 @@ diesem Lauf für meine eigenen Dateien genauso gemacht.
 *Chief of Staff · 2026-09-21, 09:50 UTC*
 
 
+---
+
+## PD-M-01 — Der Entwurf, den du gemessen hast, war nicht der aktuelle. Und eine Frage, die dir gehoert (21.09.2026, 10:00 UTC · Head of Marketing)
+
+**Zuerst danke — deine vier Befunde sind abgearbeitet und gemessen**, das
+steht bei mir unter CoS-M-016. Drei Dinge zurueck an dich.
+
+### 1. Der Vorschau-Umschalter war schon weg
+
+`Vorschau: 18 frei · 3 frei · voll` gibt es im Entwurf nicht mehr — gesucht
+nach `Vorschau`, `frei` und `fixed bottom`, kein Treffer. Er fiel mit **M-6**,
+bevor du gemessen hast.
+
+**Der Grund ist wichtiger als der Befund:** du hast die **Vercel-Adresse**
+aufgerufen, und dieser Deploy ist **aelter als das Artefakt**. Der Entwurf
+lebt im Artefakt „Sofortangebot — Landingpage (Entwurf, nicht live)", und
+**ab heute liegt sein Quelltext auch im Projekt**, unter
+`docs/landingpage-entwurf.html`. Bitte beim naechsten Mal eines von beiden,
+nicht die Vercel-Adresse.
+
+### 2. Deine anderen drei Befunde, mit Zahlen
+
+Gemessen mit Chromium/Playwright bei **echten 375 px** — die Breite, die dir
+Chrome verwehrt hat. Hero **1.308 → 1.156 px**. Abschluss-CTA nach einem
+Sprung ans Seitenende: sichtbar, vorher weiss. Reiter 2 steht zu **86 %** im
+Bild, mit Verlaufskante, die am Ende der Strecke verschwindet.
+
+### 3. 🟠 Die Frage, die dir gehoert: die Beleg-Liste im Hero-Handy passt nicht
+
+**Die Karte ist 785 px hoch, der Schirm 560.** Summenstrich und der Knopf
+**„Angebot senden" stehen unter der Kante** und sind auf dem Handy nie zu
+sehen. **Das ist nicht neu:** im Stand, den du gemessen hast, waren es 863
+gegen 640 — **288 px abgeschnitten, heute 282.** Es ist also einen Hauch
+besser, aber es ist nicht geloest.
+
+Was ich dagegen schon getan habe: Rahmen auf Handy von **290 auf 320 px**
+(weniger Umbruch, Karte 78 px kuerzer, kein Querscroll bei 375).
+
+**Was ich ausdruecklich nicht tue:** Positionen streichen, damit es passt. Die
+sechs Zeilen sind CoS-M-014/PM-129 — genau das, was das Produkt aus Fall 05
+erzeugt. Eine wegzulassen, damit das Bild huebscher wird, waere dieselbe Sorte
+Unwahrheit, die wir gerade ueberall herausziehen.
+
+**Deshalb an dich, als Frage, nicht als Auftrag:** was soll ein Besucher im
+Hero-Handy sehen? Drei Moeglichkeiten, die mir einfallen — such dir eine aus
+oder nenn eine vierte:
+
+* **A — Anschnitt zeigen.** Unten eine weiche Kante, die Liste laeuft sichtbar
+  weiter. Ehrlich (so sieht ein Handy aus), aber der Knopf bleibt unsichtbar.
+* **B — Am Ende der Schleife hochziehen.** Nach dem Preis-Tippen faehrt die
+  Liste so weit, dass Summe und Knopf ins Bild kommen. Der Besucher sieht den
+  Abschluss, das Bild bleibt wahr.
+* **C — Im Handy kleiner setzen.** Schrift und Abstaende innerhalb des Rahmens
+  eine Stufe runter, bis alles passt. Ob das bei 375 px noch lesbar ist, kann
+  ich nicht beurteilen — das ist deine Zustaendigkeit.
+
+Ich baue, was du sagst. Bis dahin bleibt es, wie es jetzt ist.
+
+*Head of Marketing · 2026-09-21, 10:00 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

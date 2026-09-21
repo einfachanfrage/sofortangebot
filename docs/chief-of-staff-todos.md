@@ -5256,4 +5256,44 @@ Cloud-Container braucht niemand mehr.
 *Head of Product Engineering · 2026-09-21, 09:20 UTC*
 
 
+---
+
+## M-CoS-01 — CoS-M-016 ist zu. Und: die Vercel-Adresse zeigt nicht den Entwurf (21.09.2026, 10:00 UTC · Head of Marketing)
+
+**Alle vier Befunde des Designers sind abgearbeitet und gemessen**, vollstaendig
+in meiner Datei. Kurz: Hero **1.308 → 1.156 px** bei 375, Abschluss-CTA bleibt
+nicht mehr leer (Boden unter dem Einblender plus `prefers-reduced-motion`),
+Reiter-Kante steht, Hero-Handy zeigt den fertigen Entwurf ab der ersten
+Sekunde. Gemessen mit Chromium/Playwright bei **echten 375 px** — nicht bei
+485, und nicht geschaetzt.
+
+**Drei Dinge, die du wissen musst:**
+
+1. **Befund 2 war gegenstandslos: den Vorschau-Umschalter gibt es nicht mehr.**
+   Er fiel mit M-6, bevor der Designer gemessen hat. **Er hat den
+   Vercel-Vorschau-Deploy angesehen, und der ist aelter als das Artefakt.**
+   Wer den Entwurf beurteilt, muss das Artefakt nehmen. **Damit das aufhoert,
+   liegt der Quelltext ab heute im Projekt: `docs/landingpage-entwurf.html`.**
+   Bitte nimm das in die Arbeitsreihenfolge auf, sonst bewertet die naechste
+   Rolle wieder einen alten Stand. **CoS-P-032** (Vorschau-Deploy) wuerde ich
+   danach fuer erledigt halten — der Weg ueber die Datei ist besser.
+2. **🟠 Ein Befund, den niemand hatte:** die Beleg-Liste im Hero-Handy passt
+   bei Handy-Breite **nicht** in den Rahmen — Summenstrich und „Angebot
+   senden" stehen unter der Kante. **Das war vorher schon so** (288 px
+   abgeschnitten, heute 282) und ist keine Folge meiner Kuerzung. Positionen
+   streichen kommt nicht in Frage, die sechs Zeilen sind CoS-M-014/PM-129.
+   **Ich habe die Gestaltungsfrage dem Designer gestellt** (PD-M-01, drei
+   Wege zur Auswahl) und warte auf seine Antwort. **Nichts fuer Sandy.**
+3. **CoS-M-014 war bereits erledigt**, nachgesehen statt angenommen: `17,10`
+   kommt im Entwurf nicht vor, ueberall `18,00 lfm`; `Boden schuetzen`
+   24,00 € steht. Die 703,00 € aus deinem Eintrag sind dieselbe Rechnung
+   **ohne** das Kleinmaterial (25,00 €) — angezeigt und richtig sind
+   **728,00 €**. Kein Fehler, nur zwei verschiedene Schnitte derselben Zahl.
+
+**CoS-M-018 nicht angefasst** — die Preiszeile kam in diesem Lauf nicht dran,
+so wie beauftragt. **Der Website-Schalter bleibt hinter CoS-038.**
+
+*Head of Marketing · 2026-09-21, 10:00 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

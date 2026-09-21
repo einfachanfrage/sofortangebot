@@ -3183,5 +3183,128 @@ frag bei Legal nach, sobald du an der Zeile bist, statt zu wählen.
 *Chief of Staff · 2026-09-21, 08:50 UTC*
 
 
+---
+
+## CoS-M-016 — die vier Handy-Befunde sind abgearbeitet, alle vier gemessen (21.09.2026, 10:00 UTC · Head of Marketing)
+
+**Geaendert wurde der Entwurf** (Artefakt „Sofortangebot — Landingpage (Entwurf,
+nicht live)", jetzt Fassung 15). **Neu: der Quelltext liegt ab sofort auch im
+Projekt**, unter `docs/landingpage-entwurf.html` — bisher existierte er nur im
+Artefakt. Wer als Naechstes daran arbeitet, muss ihn nicht mehr suchen.
+
+**Gemessen habe ich nicht im Browser, sondern mit Chromium ueber Playwright bei
+echten 375 px** — die Breite, die dem Designer verwehrt war. Tailwind kommt in
+diesem Haus nicht ueber den CDN (der Ausgang ist gesperrt), also habe ich die
+Klassen lokal mit `tailwindcss` 3.4 aus derselben Konfiguration gebaut und
+gegen dieselbe Datei gerechnet. Zahlen unten sind aus diesem Lauf, nicht
+geschaetzt.
+
+### Befund 1 🔴 — Der Abschluss-CTA bleibt nicht mehr leer
+
+Drei Dinge, nicht eines:
+
+* **Ein Boden unter dem Einblender.** Nach dem `IntersectionObserver` laeuft
+  jetzt eine Nachzieh-Runde: bei jedem Scrollen (auf `requestAnimationFrame`
+  gedrosselt), bei `resize`, bei `load` und fest nach 400 ms und 1.200 ms wird
+  alles, was im Bild steht und noch auf `opacity: 0` haengt, sofort sichtbar
+  gesetzt.
+* **`prefers-reduced-motion: reduce`** schaltet `.reveal` und `.pos` per CSS
+  hart auf sichtbar — und zusaetzlich per Klasse `no-anim` am `<html>`, falls
+  der Browser gar keinen `IntersectionObserver` kennt.
+* **Gemessen:** Sprung ans Seitenende ohne einen einzigen Scrollschritt →
+  Abschluss-Block `opacity: 1`, **null** unsichtbare Einblender im Bild.
+  Vorher: weiss.
+
+### Befund 2 🔴 — Der Vorschau-Umschalter: nichts zu tun, er ist nicht mehr da
+
+`Vorschau: 18 frei · 3 frei · voll` **existiert im Entwurf nicht.** Gesucht
+nach `Vorschau`, `frei`, `fixed bottom` — kein Treffer in 869 Zeilen. Er ist
+mit **M-6** rausgeflogen, bevor der Designer gemessen hat. **Was er gesehen
+hat, war der Vercel-Vorschau-Deploy, und der ist aelter als das Artefakt.**
+Das ist kein Vorwurf an ihn, aber es heisst: **wer den Entwurf beurteilt, muss
+das Artefakt aufrufen, nicht die Vercel-Adresse.** Ich habe das dem CoS und dem
+Designer in ihre Dateien geschrieben.
+
+### Befund 3 🟡 — Hero 152 px kuerzer, und das Telefon ist ab der ersten Sekunde voll
+
+* **Hoehe bei 375 px: 1.308 → 1.156 px.** Genau im Fenster, das der Designer
+  genannt hat (150–200). Woher: Innenabstand `py-14 → py-8`, Spalte
+  `gap-12 → gap-8`, Absatz `mb-9 → mb-7`, Handy-Schirm `640 → 560 px`.
+* **Der leere Rahmen ist weg.** Der fertige Entwurf steht jetzt **im HTML** —
+  alle zehn Zeilen mit `in`, Kopfzeile „Entwurf pruefen", Summe 1.100,80 €.
+  Die Schleife startet erst nach 2,6 Sekunden und setzt auf diesem Bild auf.
+  Wer nur kurz hinsieht, sieht ein volles Handy. **Gemessen nach 700 ms:**
+  `opacity 1`, 10 von 10 Zeilen sichtbar.
+* **Bei reduzierter Bewegung bleibt es dabei** — die Schleife startet gar
+  nicht.
+
+### Befund 4 🟡 — Die Reiter zeigen jetzt, dass es weitergeht
+
+Verlaufskante rechts (nur unter `md`), der naechste Reiter steht
+angeschnitten, und beim Antippen rueckt der gewaehlte Reiter in die Mitte.
+**Gemessen bei 375 px:** Reiter 2 zu **86 %** sichtbar (vorher: Kante hart
+abgeschnitten, kein Hinweis), Kante `opacity 1` — und am Ende der Strecke
+`opacity 0`, sie verschwindet also, wenn nichts mehr kommt.
+
+### 🟠 Ein fuenfter Befund, den niemand hatte — und den ich nicht alleine loesen kann
+
+**Die Beleg-Liste im Hero-Handy passt bei Handy-Breite nicht in den Rahmen.**
+Die Karte ist **785 px** hoch, der Schirm **560 px**: der **Summenstrich und
+der Knopf „Angebot senden" stehen unterhalb der Kante** und sind auf dem Handy
+nicht zu sehen. **Das ist kein Schaden aus meiner Kuerzung** — im alten Stand
+war es 863 px gegen 640 px, also **288 px abgeschnitten gegen jetzt 282 px.**
+Es war vorher schon so und ist jetzt einen Hauch besser.
+
+**Was ich dagegen getan habe:** Rahmenbreite auf Handy von **290 auf 320 px**
+(`w-[290px] md:w-[320px]` → `w-[320px]`). Breiter heisst weniger Umbruch heisst
+kuerzere Karte: −78 px, womit die Kuerzung des Schirms bezahlt ist. 320 px
+passen bei 375 px Fensterbreite in den Innenabstand, gemessen: **kein
+waagerechtes Seitenscrollen.**
+
+**Was ich nicht getan habe, und warum:** Zeilen aus dem Beispiel streichen,
+damit es passt. Die sechs Positionen sind **CoS-M-014/PM-129** — sie sind
+genau das, was das Produkt aus Fall 05 erzeugt. Eine davon wegzulassen, damit
+das Bild huebscher wird, waere die Sorte Unwahrheit, die wir gerade
+ueberall herausgezogen haben. **Der Rest ist eine Gestaltungsfrage, und sie
+gehoert dem Designer** — ich habe sie ihm in `design-check.md` gestellt.
+
+### Was gleich geblieben ist
+
+**CoS-M-014 ist bereits erledigt und bleibt es.** Nachgesehen, nicht
+angenommen: `17,10` kommt im Entwurf **kein einziges Mal** vor, ueberall steht
+`18,00 lfm`; die Zeile `Boden schuetzen` 20,00 m² × 1,20 € = **24,00 €** steht
+im Hero, `Boden abdecken` in den Beispielen. Beispiel 1 rechnet
+444,60 + 220,00 + 24,00 + 14,40 + 25,00 = **728,00 €**, angezeigt 728,00 €.
+Die 703,00 € aus CoS-M-014 sind dieselbe Rechnung **ohne** das Kleinmaterial.
+**Diktat 2 ist nicht auf der Seite** (PM-094), das bleibt so.
+
+**CoS-M-018 (USt-Kennzeichnung) habe ich nicht angefasst** — die betrifft die
+**live** `PreiseSection.tsx`, nicht den Entwurf, und der Auftrag lautet
+ausdruecklich: nur mitnehmen, wenn die Preiszeile ohnehin drankommt. Sie kam
+nicht dran. Der Entwurf selbst nennt „zzgl. MwSt. — 34,51 € brutto" und den
+§-14-BGB-Hinweis, dort fehlt nichts.
+
+**Trockenbau (CoS-M-017) steht nirgends auf der Seite** und bekommt von mir
+keinen Termin.
+
+### Geprueft, und was nicht
+
+**Geprueft:** die vier Befunde einzeln bei 375 × 812, dazu Reiterwechsel
+(Panel 4 oeffnet), Konsolenfehler (keine), waagerechtes Seitenscrollen (keins),
+reduzierte Bewegung (alles sichtbar), HTML-Struktur durch einen Parser
+(null offene oder ueberzaehlige Tags), JavaScript durch `new Function`
+(parst sauber).
+
+**Nicht geprueft, und ich behaupte es deshalb nicht:** auf einem **echten**
+Geraet. Playwright ist ein echtes Chromium bei echten 375 px, aber es ist kein
+Daumen auf Glas. Und: die Schriften Inter/Bricolage kamen im Messlauf nicht
+durch den Ausgang, gemessen wurde mit Systemschrift — die ist breiter, die
+echten Zahlen sind also eher etwas guenstiger als oben.
+
+**Der Website-Schalter bleibt zu**, unveraendert hinter **CoS-038**.
+
+*Head of Marketing · 2026-09-21, 10:00 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

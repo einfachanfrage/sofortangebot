@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sofortangebot — Landingpage (Entwurf, nicht live)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  colors: { yellow: '#D9A400', anthracite: '#2C2C2C', bg: '#F7F7F5' },
+  fontFamily: { syne: ['"Bricolage Grotesque"','system-ui','sans-serif'], sans: ['Inter','system-ui','sans-serif'] }
+} } }
+</script>
+<style>
+html, body { background:#F7F7F5; color:#2C2C2C; font-family: Inter, system-ui, sans-serif; }
+.font-syne { font-family: "Bricolage Grotesque", system-ui, sans-serif; }
+.reveal { opacity:0; transform:translateY(16px); transition: opacity .5s ease, transform .5s ease; }
+.reveal.in { opacity:1; transform:none; }
+.no-anim .reveal, .no-anim .pos { opacity:1 !important; transform:none !important; transition:none !important; }
+.faq-a { display:grid; grid-template-rows:0fr; transition: grid-template-rows .22s ease; }
+.faq-a > div { overflow:hidden; }
+.faq-item.open .faq-a { grid-template-rows:1fr; }
+.faq-item.open .faq-plus { transform: rotate(45deg); }
+button { min-height:44px; }
+/* Hero-Handy */
+#phoneScreens { position:relative; }
+.pscreen { position:absolute; inset:0; opacity:0; transition:opacity .35s ease; pointer-events:none; }
+.pscreen.on { opacity:1; }
+@keyframes micPulse { 0%,100%{ box-shadow:0 0 0 0 rgba(217,164,0,.45);} 60%{ box-shadow:0 0 0 18px rgba(217,164,0,0);} }
+.mic-on { animation: micPulse 1.4s ease-out infinite; }
+@keyframes bar { 0%,100%{transform:scaleY(.3);} 50%{transform:scaleY(1);} }
+.wave span { display:inline-block; width:3px; height:18px; border-radius:99px; background:#2C2C2C; opacity:.35; transform-origin:center; animation: bar .9s ease-in-out infinite; }
+.wave span:nth-child(2){animation-delay:.1s}.wave span:nth-child(3){animation-delay:.2s}.wave span:nth-child(4){animation-delay:.3s}.wave span:nth-child(5){animation-delay:.15s}.wave span:nth-child(6){animation-delay:.05s}.wave span:nth-child(7){animation-delay:.25s}
+@keyframes spin { to { transform:rotate(360deg);} }
+.spinner { animation: spin 1.1s linear infinite; }
+.pos { opacity:0; transform:translateY(8px); transition: opacity .4s ease, transform .4s ease; }
+.pos.in { opacity:1; transform:none; }
+.pos.edit { background:rgba(217,164,0,.10); margin:0 -14px; padding-left:14px; padding-right:14px; border-radius:12px; }
+.ep { display:none; }
+.pos.edit .ep { display:flex; }
+@keyframes blink { 50%{opacity:0} }
+.caret { display:inline-block; width:1.5px; height:13px; background:#2C2C2C; margin-left:1px; vertical-align:-2px; animation: blink .9s step-end infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .mic-on, .wave span, .spinner, .caret { animation:none; }
+  .reveal, .pos { opacity:1 !important; transform:none !important; transition:none !important; }
+}
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- NAV -->
+<nav id="nav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent">
+  <div class="max-w-5xl mx-auto px-5 md:px-10 flex items-center justify-between h-16">
+    <a href="#" class="font-syne inline-flex items-center gap-[0.22em] font-black tracking-tight text-[20px]">
+      <img src="data:image/png;base64,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" alt="" class="h-[1em] w-auto shrink-0">
+      <span><span class="text-anthracite">sofort</span><span class="text-yellow">angebot</span></span>
+    </a>
+    <div class="hidden md:flex items-center gap-3">
+      <a href="https://sofortangebot.app/login" class="font-semibold text-sm px-4 py-2 border rounded-xl border-anthracite/15 text-anthracite hover:border-anthracite/40 transition-colors">Login</a>
+      <a href="https://sofortangebot.app/register" class="bg-yellow text-anthracite font-extrabold text-sm px-5 py-2 rounded-xl hover:bg-[#e6b800] transition-colors">14 Tage testen</a>
+    </div>
+    <button id="menuOpen" class="md:hidden flex flex-col gap-1.5 p-2" aria-label="Menü öffnen">
+      <span class="block w-5 h-0.5 bg-anthracite"></span><span class="block w-5 h-0.5 bg-anthracite"></span><span class="block w-5 h-0.5 bg-anthracite"></span>
+    </button>
+  </div>
+</nav>
+<div id="menu" class="hidden fixed inset-0 z-[100] bg-anthracite flex-col px-8 pt-20 pb-10">
+  <button id="menuClose" class="absolute top-5 right-5 text-white/50 text-3xl font-light">×</button>
+  <nav class="flex flex-col gap-8">
+    <a href="https://sofortangebot.app/login" class="font-syne font-extrabold text-white text-[36px] tracking-tight">Login</a>
+    <a href="https://sofortangebot.app/register" class="font-syne font-extrabold text-yellow text-[36px] tracking-tight">14 Tage testen</a>
+  </nav>
+  <div class="mt-auto text-white/20 text-sm font-semibold">Keine Kreditkarte · Endet von allein</div>
+</div>
+
+<!-- 1 — HERO: verstehen -->
+<section class="bg-bg min-h-screen flex flex-col justify-center pt-16">
+  <div class="max-w-5xl mx-auto px-5 md:px-10 w-full py-8 md:py-24">
+    <div class="grid md:grid-cols-[1fr_320px] gap-8 md:gap-16 items-center">
+      <div>
+        <span class="inline-flex items-center gap-2 bg-yellow/15 text-[#8B7000] text-[13px] font-extrabold px-4 py-2 rounded-full mb-6">Für Maler- und Bodenbetriebe</span>
+        <h1 class="font-syne font-extrabold text-anthracite text-[40px] md:text-[56px] lg:text-[64px] leading-[1.04] tracking-tight mb-6 max-w-xl">
+          Aufmaß fertig.<br>Angebot fertig.
+        </h1>
+        <p class="text-anthracite/55 text-base md:text-lg leading-relaxed mb-7 md:mb-9 max-w-md">
+          Du sprichst das Aufmaß ins Handy. Das Angebot ist fertig, bevor du im Auto sitzt.
+        </p>
+        <a href="https://sofortangebot.app/register" class="inline-block bg-yellow text-anthracite font-black text-base md:text-lg px-8 py-4 rounded-2xl hover:bg-[#e6b800] active:translate-y-px transition-all mb-4 shadow-lg shadow-yellow/30">14 Tage kostenlos testen →</a>
+        <p class="text-anthracite/35 text-sm font-semibold">Ohne Kreditkarte. Monatlich kündbar.</p>
+      </div>
+
+      <!-- Handy: nimmt auf → rechnet → Entwurf -->
+      <div class="flex justify-center md:justify-end">
+        <div class="w-[320px] bg-anthracite rounded-[38px] p-[10px] shadow-2xl shadow-anthracite/30">
+          <div class="rounded-[30px] overflow-hidden bg-bg">
+            <div class="bg-anthracite text-white px-5 pt-3 pb-3.5">
+              <div class="flex justify-between font-mono text-[11px] text-white/55 mb-3"><span>9:41</span><span>Baustelle</span></div>
+              <div class="flex items-center gap-2.5 font-bold text-[15px] tracking-tight"><img id="phoneLogo" src="" alt="" class="h-[15px] w-auto"><span id="phoneTitle">Entwurf prüfen</span></div>
+            </div>
+            <div id="phoneScreens" class="h-[560px] md:h-[660px]">
+
+              <!-- 1 Aufnahme -->
+              <div id="scrRec" class="pscreen px-4 pt-7">
+                <div class="flex flex-col items-center mb-5">
+                  <div class="mic-on w-16 h-16 rounded-full bg-yellow flex items-center justify-center mb-3">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2C2C2C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="1" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+                  </div>
+                  <div class="wave flex items-center gap-[3px] h-5 mb-2"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                  <span id="recTimer" class="font-mono text-[#8B7000] font-bold text-[14px]">0:00</span>
+                </div>
+                <div class="bg-white rounded-2xl p-4 min-h-[150px] shadow-sm border border-anthracite/5">
+                  <p id="recText" class="text-anthracite text-[15px] leading-relaxed"></p>
+                </div>
+              </div>
+
+              <!-- 2 Rechnen -->
+              <div id="scrCalc" class="pscreen px-4 pt-7">
+                <div class="flex flex-col items-center mb-5">
+                  <div class="w-16 h-16 rounded-full bg-anthracite/[0.06] flex items-center justify-center mb-3">
+                    <svg class="spinner" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2C2C2C" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8" opacity=".35"/><path d="M12 2v4"/></svg>
+                  </div>
+                  <span class="text-anthracite/60 text-[14px] font-semibold mb-1">Wird gerechnet</span>
+                  <span id="calcTimer" class="font-mono text-[#8B7000] font-bold text-[14px]">0:00</span>
+                </div>
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-anthracite/5">
+                  <p id="calcText" class="text-anthracite/70 text-[15px] leading-relaxed"></p>
+                </div>
+              </div>
+
+              <!-- 3 Entwurf -->
+              <div id="scrRes" class="pscreen on px-3 pt-2 flex flex-col">
+                <div class="bg-white rounded-2xl px-3.5 pb-3 shadow-sm border border-anthracite/5">
+        <div class="flex items-center justify-between gap-3 pos in py-2.5 border-b border-anthracite/[0.07] mb-3"><span class="flex items-center gap-2 text-[11px] font-extrabold tracking-[0.12em] text-anthracite/60 uppercase"><span class="text-[13px]">🛋</span>Wohnzimmer</span><span class="text-[13px] font-semibold text-anthracite/50"><span id="kopfSumme">1.100,80 €</span></span></div>
+        <div class="pos in flex flex-wrap items-center gap-x-1.5 gap-y-2 text-[11px] mb-1"><span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">4</span> <span class="text-anthracite/45">×</span> <span class="text-anthracite/25">·</span> <span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">5</span> <span class="text-anthracite/45">m</span> <span class="text-anthracite/25">·</span> <span class="text-anthracite/45">Höhe</span> <span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">2,60 m</span> <span class="text-anthracite/25">·</span> <span class="text-anthracite/45">Türen</span> <span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">1</span> <span class="text-anthracite/25">·</span> <span class="text-anthracite/45">Fenster</span> <span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">1</span></div>
+        <div class="pos in py-2.5 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[13px] font-bold">Boden schützen</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span> <span class="inline-block bg-yellow/15 text-[#8B7000] text-[10px] font-extrabold px-2 py-0.5 rounded-full tracking-wide shrink-0">Vorschlag</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[13px] font-bold">24,00 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">20,00 m² × 1,20 €</div>
+        </div>
+        <div class="pos in py-2.5 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[13px] font-bold">Sockelleisten abkleben</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span> <span class="inline-block bg-yellow/15 text-[#8B7000] text-[10px] font-extrabold px-2 py-0.5 rounded-full tracking-wide shrink-0">Vorschlag</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[13px] font-bold">14,40 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">18,00 lfm × 0,80 €</div>
+        </div>
+        <div class="pos in py-2.5 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[13px] font-bold">Tapete entfernen</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[13px] font-bold">187,20 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">46,80 m² × 4,00 €</div>
+        </div>
+        <div class="pos in py-2.5 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[13px] font-bold">Grundieren (Tiefengrund)</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span> <span class="inline-block bg-yellow/15 text-[#8B7000] text-[10px] font-extrabold px-2 py-0.5 rounded-full tracking-wide shrink-0">Vorschlag</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[13px] font-bold">210,60 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">46,80 m² × 4,50 €</div>
+        </div>
+        <div class="pos in py-2.5 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[13px] font-bold">Decke zweimal streichen</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[13px] font-bold">220,00 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">20,00 m² × 11,00 €</div>
+        </div>
+        <div id="editRow" class="pos in py-2.5">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[13px] font-bold">Wände zweimal streichen</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span id="editTotal" class="text-anthracite text-[13px] font-bold">444,60 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div id="editCalc" class="font-mono text-[12px] text-anthracite/50 mt-1">46,80 m² × 9,50 €</div>
+          <div class="text-[11px] text-anthracite/45 font-semibold mt-1 leading-snug">= 18 lfm × 2,60 m · Fenster und Tür nach VOB nicht abgezogen</div>
+          <div class="ep items-center gap-2 mt-2"><span class="text-[11px] text-anthracite/50 font-semibold">Dein Preis</span><span class="bg-white border-2 border-yellow rounded-lg px-2 py-1 font-mono text-[12px] font-bold text-anthracite"><span id="editPrice">9,50</span><span class="caret"></span></span><span class="text-[10px] text-anthracite/50 font-semibold">€/m²</span></div>
+        </div>
+                  <div class="pos in pt-3 flex justify-between items-baseline gap-3 border-t border-anthracite/[0.07]"><span class="text-anthracite/50 text-[12px] font-semibold">Summe netto</span><span id="summe" class="font-syne text-anthracite text-[17px] font-extrabold">1.100,80 €</span></div>
+                </div>
+                <div class="pos in mt-auto mb-4">
+                  <div class="bg-yellow rounded-2xl text-anthracite font-black text-[14px] text-center py-3.5">Angebot senden →</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 — DER MOMENT: fühlen -->
+<section class="bg-white py-20 md:py-28">
+  <div class="max-w-5xl mx-auto px-5 md:px-10">
+    <div class="grid md:grid-cols-2 gap-5 md:gap-6">
+      <div class="reveal bg-bg rounded-3xl p-8 md:p-10">
+        <div class="flex items-center gap-2 mb-7"><span class="text-[18px]">🌙</span><span class="text-anthracite/35 text-[13px] font-extrabold font-syne tracking-widest uppercase">22:47 Uhr</span></div>
+        <div class="flex flex-col gap-4 text-anthracite/45 text-[15px] leading-relaxed">
+          <div>Zettel vom Aufmaß suchen.</div>
+          <div>Flächen nachrechnen. Angebot tippen.</div>
+          <div>Küchentisch statt Feierabend.</div>
+        </div>
+      </div>
+      <div class="reveal bg-anthracite rounded-3xl p-8 md:p-10">
+        <div class="flex items-center gap-2 mb-7"><span class="text-[18px]">☀️</span><span class="text-yellow text-[13px] font-extrabold font-syne tracking-widest uppercase">17:03 Uhr</span></div>
+        <div class="flex flex-col gap-4 text-white/60 text-[15px] leading-relaxed">
+          <div>Aufmaß auf der Baustelle eingesprochen.</div>
+          <div>Kurz geprüft, abgeschickt.</div>
+          <div class="text-yellow font-bold">Kunde hat es, bevor du zu Hause bist.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 — SO LÄUFT DAS -->
+<section class="bg-bg py-20 md:py-28">
+  <div class="max-w-5xl mx-auto px-5 md:px-10">
+    <h2 class="reveal font-syne font-extrabold text-anthracite text-[28px] md:text-[36px] tracking-tight mb-12 md:mb-14">So läuft das.</h2>
+    <div class="grid md:grid-cols-3 gap-5 md:gap-6">
+      <div class="reveal bg-white rounded-3xl p-7 md:p-8">
+        <div class="flex items-center gap-3 mb-5"><div class="w-12 h-12 rounded-2xl bg-yellow flex items-center justify-center text-[22px] shrink-0">🎙</div><span class="font-syne font-extrabold text-anthracite/15 text-[44px] leading-none">1</span></div>
+        <div class="font-syne font-extrabold text-anthracite text-[20px] mb-2.5 tracking-tight">Einsprechen</div>
+        <div class="text-anthracite/50 text-[15px] leading-relaxed">Vor Ort, so wie du redest. Wohnzimmer, Flur, Bad am Stück — Dialekt und Versprecher inklusive.</div>
+      </div>
+      <div class="reveal bg-white rounded-3xl p-7 md:p-8">
+        <div class="flex items-center gap-3 mb-5"><div class="w-12 h-12 rounded-2xl bg-yellow flex items-center justify-center text-[22px] shrink-0">📐</div><span class="font-syne font-extrabold text-anthracite/15 text-[44px] leading-none">2</span></div>
+        <div class="font-syne font-extrabold text-anthracite text-[20px] mb-2.5 tracking-tight">Rechnen lassen</div>
+        <div class="text-anthracite/50 text-[15px] leading-relaxed">Flächen, Abzüge, Mengen — mit deinen Preisen. Kein Taschenrechner, kein Zettel.</div>
+      </div>
+      <div class="reveal bg-white rounded-3xl p-7 md:p-8">
+        <div class="flex items-center gap-3 mb-5"><div class="w-12 h-12 rounded-2xl bg-yellow flex items-center justify-center text-[22px] shrink-0">📄</div><span class="font-syne font-extrabold text-anthracite/15 text-[44px] leading-none">3</span></div>
+        <div class="font-syne font-extrabold text-anthracite text-[20px] mb-2.5 tracking-tight">Prüfen und raus</div>
+        <div class="text-anthracite/50 text-[15px] leading-relaxed">Drüberschauen, PDF an den Kunden. Der unterschreibt auf dem Handy.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3b — GESAGT. UND WAS RAUSKOMMT -->
+<section class="bg-white py-20 md:py-28">
+  <div class="max-w-5xl mx-auto px-5 md:px-10">
+    <div class="reveal mb-8">
+      <h2 class="font-syne font-extrabold text-anthracite text-[28px] md:text-[36px] tracking-tight mb-2">Gesagt. Und was rauskommt.</h2>
+      <p class="text-[#888] text-base">Echte Aufnahmen, echte Angebote.</p>
+    </div>
+    <div class="reveal relative -mx-5 md:mx-0 mb-8">
+      <div id="tabbar" class="flex gap-6 md:gap-8 overflow-x-auto border-b border-anthracite/10 px-5 pr-16 md:px-0 md:pr-0" style="scrollbar-width:none;-ms-overflow-style:none">
+        <button type="button" data-tab="0" class="tabbtn shrink-0 whitespace-nowrap text-[15px] font-semibold pb-3 -mb-px border-b-2 transition-colors text-anthracite border-yellow">Maler · Wohnzimmer</button>
+        <button type="button" data-tab="1" class="tabbtn shrink-0 whitespace-nowrap text-[15px] font-semibold pb-3 -mb-px border-b-2 transition-colors text-anthracite/45 border-transparent hover:text-anthracite/75">Bodenleger · Laminat</button>
+        <button type="button" data-tab="2" class="tabbtn shrink-0 whitespace-nowrap text-[15px] font-semibold pb-3 -mb-px border-b-2 transition-colors text-anthracite/45 border-transparent hover:text-anthracite/75">Maler · ganze Wohnung</button>
+        <button type="button" data-tab="3" class="tabbtn shrink-0 whitespace-nowrap text-[15px] font-semibold pb-3 -mb-px border-b-2 transition-colors text-anthracite/45 border-transparent hover:text-anthracite/75">Maler · Büro mit Q3</button>
+        <button type="button" data-tab="4" class="tabbtn shrink-0 whitespace-nowrap text-[15px] font-semibold pb-3 -mb-px border-b-2 transition-colors text-anthracite/45 border-transparent hover:text-anthracite/75">Wenn etwas fehlt</button>
+      </div>
+      <div id="tabfade" class="pointer-events-none absolute right-0 top-0 bottom-px w-16 bg-gradient-to-l from-white via-white/85 to-transparent transition-opacity duration-200 md:hidden"></div>
+    </div>
+    <div class="tabpanel grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] gap-5 md:gap-6 items-start" data-panel="0">
+      <div class="bg-anthracite rounded-3xl p-7 md:p-8 self-start">
+        <div class="text-white/40 text-[13px] font-semibold mb-4">Maler, Wohnzimmer</div>
+        <p class="text-white text-[19px] md:text-[21px] leading-snug font-medium mb-6">„Wohnzimmer vier mal fünf, zwei sechzig hoch. Wände und Decke zweimal weiß. Zwei Fenster, eine Tür.“</p>
+        <div class="font-mono text-white/35 text-[12px]">0:11 Aufnahme</div>
+      </div>
+      <div class="bg-white rounded-3xl px-5 md:px-7 pb-4 border border-anthracite/5 shadow-sm">
+        <div class="flex items-center justify-between gap-3 py-3 border-b border-anthracite/[0.07] mb-3"><span class="flex items-center gap-2 text-[11px] font-extrabold tracking-[0.12em] text-anthracite/60 uppercase"><span class="text-[13px]">🛋</span>Wohnzimmer</span><span class="text-[13px] font-semibold text-anthracite/50">728,00 €</span></div>
+        <div class="inline-flex bg-anthracite/[0.05] rounded-xl p-1 mb-3 text-[12px] font-semibold">
+          <span class="bg-white rounded-lg px-3 py-1.5 text-anthracite shadow-sm">Raummaße</span>
+          <span class="px-3 py-1.5 text-anthracite/40">Flächen eingeben</span>
+          <span class="px-3 py-1.5 text-anthracite/30">⊿ Unregelmäßig</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-x-1.5 gap-y-2 text-[12px] mb-1"><span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">4</span> <span class="text-anthracite/45">×</span> <span class="text-anthracite/25">·</span> <span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">5</span> <span class="text-anthracite/45">m</span> <span class="text-anthracite/25">·</span> <span class="text-anthracite/45">Raumhöhe</span> <span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">2,60 m</span> <span class="text-anthracite/25">·</span> <span class="text-anthracite/45">Türen</span> <span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">1</span> <span class="text-anthracite/25">·</span> <span class="text-anthracite/45">Fenster</span> <span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">2</span></div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Wände zweimal streichen</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">444,60 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Deckender Anstrich, zweilagig, Kanten sauber abgeschnitten</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">46,80 m² × 9,50 €</div>
+          <div class="text-[11px] text-anthracite/45 font-semibold mt-1 leading-snug">18,00 lfm × 2,60 m · Fenster und Tür unter 2,5 m² nach VOB nicht abgezogen</div>
+        </div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Decke zweimal streichen</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">220,00 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Deckenanstrich, zweilagig, gleichmäßig deckend</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">20,00 m² × 11,00 €</div>
+        </div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Boden abdecken</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span> <span class="inline-block bg-yellow/15 text-[#8B7000] text-[10px] font-extrabold px-2 py-0.5 rounded-full tracking-wide shrink-0">Vorschlag</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">24,00 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Abdeckvlies auslegen, Stöße abkleben</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">20,00 m² × 1,20 €</div>
+        </div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Sockelleisten abkleben</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span> <span class="inline-block bg-yellow/15 text-[#8B7000] text-[10px] font-extrabold px-2 py-0.5 rounded-full tracking-wide shrink-0">Vorschlag</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">14,40 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Malerkrepp ansetzen, nach dem Anstrich abziehen</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">18,00 lfm × 0,80 €</div>
+        </div>
+        <div class="py-3">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Kleinmaterial</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span> <span class="inline-block bg-yellow/15 text-[#8B7000] text-[10px] font-extrabold px-2 py-0.5 rounded-full tracking-wide shrink-0">Vorschlag</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">25,00 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Abdeckfolie, Krepp, Spachtel, Schleifpapier</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">1 pauschal × 25,00 €</div>
+        </div>
+        <div class="pt-4 flex justify-between items-baseline gap-3"><span class="text-anthracite/50 text-[13px] font-semibold">Summe netto</span><span class="font-syne text-anthracite text-[20px] font-extrabold">728,00 €</span></div>
+      </div>
+    </div>
+    <div class="tabpanel grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] gap-5 md:gap-6 items-start hidden" data-panel="1">
+      <div class="bg-anthracite rounded-3xl p-7 md:p-8 self-start">
+        <div class="text-white/40 text-[13px] font-semibold mb-4">Bodenleger, Kinderzimmer</div>
+        <p class="text-white text-[19px] md:text-[21px] leading-snug font-medium mb-6">„Kinderzimmer, vier mal drei fünfzig. Laminat, gerade verlegt, Trittschalldämmung drunter. Sockelleisten neu, weiße MDF. An der Tür kommt eine Übergangsschiene hin.“</p>
+        <div class="font-mono text-white/35 text-[12px]">0:13 Aufnahme</div>
+      </div>
+      <div class="bg-white rounded-3xl px-5 md:px-7 pb-4 border border-anthracite/5 shadow-sm">
+        <div class="flex items-center justify-between gap-3 py-3 border-b border-anthracite/[0.07] mb-3"><span class="flex items-center gap-2 text-[11px] font-extrabold tracking-[0.12em] text-anthracite/60 uppercase"><span class="text-[13px]">🧸</span>Kinderzimmer</span><span class="text-[13px] font-semibold text-anthracite/50">401,30 €</span></div>
+        <div class="inline-flex bg-anthracite/[0.05] rounded-xl p-1 mb-3 text-[12px] font-semibold">
+          <span class="bg-white rounded-lg px-3 py-1.5 text-anthracite shadow-sm">Raummaße</span>
+          <span class="px-3 py-1.5 text-anthracite/40">Flächen eingeben</span>
+          <span class="px-3 py-1.5 text-anthracite/30">⊿ Unregelmäßig</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-x-1.5 gap-y-2 text-[12px] mb-1"><span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">4</span> <span class="text-anthracite/45">×</span> <span class="text-anthracite/25">·</span> <span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">3,50</span> <span class="text-anthracite/45">m</span> <span class="text-anthracite/25">·</span> <span class="text-anthracite/45">Bodenfläche</span> <span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">14,00 m²</span></div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Trittschalldämmung</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">63,00 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Dämmunterlage verlegen, Stöße verkleben</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">14,00 m² × 4,50 €</div>
+          <div class="text-[11px] text-anthracite/45 font-semibold mt-1 leading-snug">14,00 m² — Dämmung ohne Verschnittaufschlag</div>
+        </div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Laminat verlegen, schwimmend</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">205,80 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Fachgerecht verlegt inklusive Zuschnitt, gerade Verlegung</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">14,70 m² × 14,00 €</div>
+          <div class="text-[11px] text-anthracite/45 font-semibold mt-1 leading-snug">14,00 m² Bodenfläche + 5 % Verschnitt</div>
+        </div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Sockelleisten montieren</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">82,50 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Weiße MDF-Leisten, auf Gehrung geschnitten, geclipst</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">15,00 lfm × 5,50 €</div>
+        </div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Übergangsschiene</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">15,00 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Profil an der Tür setzen, verschraubt</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">1 Stück × 15,00 €</div>
+        </div>
+        <div class="py-3">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Kleinmaterial</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span> <span class="inline-block bg-yellow/15 text-[#8B7000] text-[10px] font-extrabold px-2 py-0.5 rounded-full tracking-wide shrink-0">Vorschlag</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">35,00 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Clips, Abstandskeile, Dampfbremse</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">1 pauschal × 35,00 €</div>
+        </div>
+        <div class="pt-4 flex justify-between items-baseline gap-3"><span class="text-anthracite/50 text-[13px] font-semibold">Summe netto</span><span class="font-syne text-anthracite text-[20px] font-extrabold">401,30 €</span></div>
+      </div>
+    </div>
+    <div class="tabpanel grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] gap-5 md:gap-6 items-start hidden" data-panel="2">
+      <div class="bg-anthracite rounded-3xl p-7 md:p-8 self-start">
+        <div class="text-white/40 text-[13px] font-semibold mb-4">Maler, drei Räume</div>
+        <p class="text-white text-[19px] md:text-[21px] leading-snug font-medium mb-6">„Wohnung komplett streichen. Wohnzimmer vier mal fünf, Schlafzimmer drei fünfzig mal vier, Flur eins zwanzig mal sechs. Überall zwei fünfzig hoch. Wände und Decken zweimal weiß. Im Flur gehen drei Türen ab.“</p>
+        <div class="font-mono text-white/35 text-[12px]">0:21 Aufnahme</div>
+      </div>
+      <div class="bg-white rounded-3xl px-5 md:px-7 pb-4 border border-anthracite/5 shadow-sm">
+        <div class="flex items-center justify-between gap-3 py-3 border-b border-anthracite/[0.07] mb-3"><span class="flex items-center gap-2 text-[11px] font-extrabold tracking-[0.12em] text-anthracite/60 uppercase"><span class="text-[13px]">🏠</span>3 Räume · 41,20 m² Boden</span><span class="text-[13px] font-semibold text-anthracite/50">1.691,31 €</span></div>
+        <details class="group" open>
+          <summary class="list-none cursor-pointer select-none flex items-center justify-between gap-3 py-3"><span class="flex items-center gap-2 text-[11px] font-extrabold tracking-[0.12em] text-anthracite/60 uppercase"><span class="text-[13px]">🛋</span>Wohnzimmer<span class="normal-case tracking-normal text-anthracite/40 font-semibold group-open:hidden">· 4 Positionen</span></span><span class="flex items-center gap-2"><span class="text-[13px] font-semibold text-anthracite/50">685,90 €</span><span class="text-anthracite/30 text-[11px] transition-transform group-open:rotate-180">▾</span></span></summary>
+          <div class="border-t border-anthracite/[0.07] pt-3 mb-2">
+        <div class="inline-flex bg-anthracite/[0.05] rounded-xl p-1 mb-3 text-[12px] font-semibold">
+          <span class="bg-white rounded-lg px-3 py-1.5 text-anthracite shadow-sm">Raummaße</span>
+          <span class="px-3 py-1.5 text-anthracite/40">Flächen eingeben</span>
+          <span class="px-3 py-1.5 text-anthracite/30">⊿ Unregelmäßig</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-x-1.5 gap-y-2 text-[12px] mb-1"><span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">4</span> <span class="text-anthracite/45">×</span> <span class="text-anthracite/25">·</span> <span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">5</span> <span class="text-anthracite/45">m</span> <span class="text-anthracite/25">·</span> <span class="text-anthracite/45">Raumhöhe</span> <span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">2,50 m</span></div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Wände zweimal streichen</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">427,50 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Deckender Anstrich, zweilagig</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">45,00 m² × 9,50 €</div>
+        </div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Decke zweimal streichen</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">220,00 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Deckenanstrich, zweilagig</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">20,00 m² × 11,00 €</div>
+        </div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Boden abdecken</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">24,00 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Abdeckvlies auslegen</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">20,00 m² × 1,20 €</div>
+        </div>
+        <div class="py-3">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Sockelleisten abkleben</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">14,40 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Malerkrepp ansetzen</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">18,00 lfm × 0,80 €</div>
+        </div>
+          </div>
+        </details>
+        <details class="group border-b border-anthracite/[0.07]">
+          <summary class="list-none cursor-pointer select-none flex items-center justify-between gap-3 py-3"><span class="flex items-center gap-2 text-[11px] font-extrabold tracking-[0.12em] text-anthracite/60 uppercase"><span class="text-[13px]">🛏</span>Schlafzimmer<span class="normal-case tracking-normal text-anthracite/40 font-semibold group-open:hidden">· 4 Positionen</span></span><span class="flex items-center gap-2"><span class="text-[13px] font-semibold text-anthracite/50">539,05 €</span><span class="text-anthracite/30 text-[11px] transition-transform group-open:rotate-180">▾</span></span></summary>
+          <div class="border-t border-anthracite/[0.07] pt-3 mb-2">
+        <div class="inline-flex bg-anthracite/[0.05] rounded-xl p-1 mb-3 text-[12px] font-semibold">
+          <span class="bg-white rounded-lg px-3 py-1.5 text-anthracite shadow-sm">Raummaße</span>
+          <span class="px-3 py-1.5 text-anthracite/40">Flächen eingeben</span>
+          <span class="px-3 py-1.5 text-anthracite/30">⊿ Unregelmäßig</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-x-1.5 gap-y-2 text-[12px] mb-1"><span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">3,50</span> <span class="text-anthracite/45">×</span> <span class="text-anthracite/25">·</span> <span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">4</span> <span class="text-anthracite/45">m</span> <span class="text-anthracite/25">·</span> <span class="text-anthracite/45">Raumhöhe</span> <span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">2,50 m</span></div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Wände zweimal streichen</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">356,25 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Deckender Anstrich, zweilagig</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">37,50 m² × 9,50 €</div>
+        </div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Decke zweimal streichen</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">154,00 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Deckenanstrich, zweilagig</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">14,00 m² × 11,00 €</div>
+        </div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Boden abdecken</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">16,80 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Abdeckvlies auslegen</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">14,00 m² × 1,20 €</div>
+        </div>
+        <div class="py-3">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Sockelleisten abkleben</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">12,00 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Malerkrepp ansetzen</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">15,00 lfm × 0,80 €</div>
+        </div>
+          </div>
+        </details>
+        <details class="group border-b border-anthracite/[0.07]">
+          <summary class="list-none cursor-pointer select-none flex items-center justify-between gap-3 py-3"><span class="flex items-center gap-2 text-[11px] font-extrabold tracking-[0.12em] text-anthracite/60 uppercase"><span class="text-[13px]">🚪</span>Flur<span class="normal-case tracking-normal text-anthracite/40 font-semibold group-open:hidden">· 4 Positionen</span></span><span class="flex items-center gap-2"><span class="text-[13px] font-semibold text-anthracite/50">441,36 €</span><span class="text-anthracite/30 text-[11px] transition-transform group-open:rotate-180">▾</span></span></summary>
+          <div class="border-t border-anthracite/[0.07] pt-3 mb-2">
+        <div class="inline-flex bg-anthracite/[0.05] rounded-xl p-1 mb-3 text-[12px] font-semibold">
+          <span class="bg-white rounded-lg px-3 py-1.5 text-anthracite shadow-sm">Raummaße</span>
+          <span class="px-3 py-1.5 text-anthracite/40">Flächen eingeben</span>
+          <span class="px-3 py-1.5 text-anthracite/30">⊿ Unregelmäßig</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-x-1.5 gap-y-2 text-[12px] mb-1"><span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">1,20</span> <span class="text-anthracite/45">×</span> <span class="text-anthracite/25">·</span> <span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">6</span> <span class="text-anthracite/45">m</span> <span class="text-anthracite/25">·</span> <span class="text-anthracite/45">Raumhöhe</span> <span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">2,50 m</span> <span class="text-anthracite/25">·</span> <span class="text-anthracite/45">Türen</span> <span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">3</span></div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Wände zweimal streichen</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">342,00 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Deckender Anstrich, zweilagig</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">36,00 m² × 9,50 €</div>
+          <div class="text-[11px] text-anthracite/45 font-semibold mt-1 leading-snug">14,40 lfm × 2,50 m · drei Türen kürzen den Umfang nicht</div>
+        </div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Decke zweimal streichen</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">79,20 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Deckenanstrich, zweilagig</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">7,20 m² × 11,00 €</div>
+        </div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Boden abdecken</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">8,64 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Abdeckvlies auslegen</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">7,20 m² × 1,20 €</div>
+        </div>
+        <div class="py-3">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Sockelleisten abkleben</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">11,52 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Malerkrepp ansetzen</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">14,40 lfm × 0,80 €</div>
+        </div>
+          </div>
+        </details>
+        <div class="py-3">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Kleinmaterial</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span> <span class="inline-block bg-yellow/15 text-[#8B7000] text-[10px] font-extrabold px-2 py-0.5 rounded-full tracking-wide shrink-0">Vorschlag</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">25,00 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Abdeckfolie, Krepp, Spachtel, Schleifpapier</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">1 pauschal × 25,00 €</div>
+        </div>
+        <div class="pt-4 flex justify-between items-baseline gap-3"><span class="text-anthracite/50 text-[13px] font-semibold">Summe netto</span><span class="font-syne text-anthracite text-[20px] font-extrabold">1.691,31 €</span></div>
+      </div>
+    </div>
+    <div class="tabpanel grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] gap-5 md:gap-6 items-start hidden" data-panel="3">
+      <div class="bg-anthracite rounded-3xl p-7 md:p-8 self-start">
+        <div class="text-white/40 text-[13px] font-semibold mb-4">Maler, Büro</div>
+        <p class="text-white text-[19px] md:text-[21px] leading-snug font-medium mb-6">„Büro, fünf mal vier, zwei sechzig hoch. Die Wände müssen vollflächig gespachtelt werden, Qualitätsstufe Q3, da kommt Streiflicht drauf. Danach zweimal streichen. Die zwei Heizkörper bitte mit lackieren.“</p>
+        <div class="font-mono text-white/35 text-[12px]">0:17 Aufnahme</div>
+      </div>
+      <div class="bg-white rounded-3xl px-5 md:px-7 pb-4 border border-anthracite/5 shadow-sm">
+        <div class="flex items-center justify-between gap-3 py-3 border-b border-anthracite/[0.07] mb-3"><span class="flex items-center gap-2 text-[11px] font-extrabold tracking-[0.12em] text-anthracite/60 uppercase"><span class="text-[13px]">💼</span>Büro</span><span class="text-[13px] font-semibold text-anthracite/50">1.543,80 €</span></div>
+        <div class="inline-flex bg-anthracite/[0.05] rounded-xl p-1 mb-3 text-[12px] font-semibold">
+          <span class="bg-white rounded-lg px-3 py-1.5 text-anthracite shadow-sm">Raummaße</span>
+          <span class="px-3 py-1.5 text-anthracite/40">Flächen eingeben</span>
+          <span class="px-3 py-1.5 text-anthracite/30">⊿ Unregelmäßig</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-x-1.5 gap-y-2 text-[12px] mb-1"><span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">5</span> <span class="text-anthracite/45">×</span> <span class="text-anthracite/25">·</span> <span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">4</span> <span class="text-anthracite/45">m</span> <span class="text-anthracite/25">·</span> <span class="text-anthracite/45">Raumhöhe</span> <span class="bg-anthracite/[0.06] rounded-md px-1.5 py-0.5 font-bold text-anthracite text-[12px]">2,60 m</span></div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Spachtelarbeiten Q3</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">655,20 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Vollflächig gespachtelt, geschliffen, streiflichttauglich</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">46,80 m² × 14,00 €</div>
+          <div class="text-[11px] text-anthracite/45 font-semibold mt-1 leading-snug">Q3 — vollflächig gespachtelt, weil Streiflicht genannt wurde</div>
+        </div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Voranstrich / Grundierung</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span> <span class="inline-block bg-yellow/15 text-[#8B7000] text-[10px] font-extrabold px-2 py-0.5 rounded-full tracking-wide shrink-0">Vorschlag</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">210,60 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Tiefengrund auf gespachtelte Fläche</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">46,80 m² × 4,50 €</div>
+        </div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Wände zweimal streichen</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">444,60 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Deckender Anstrich, zweilagig, Kanten sauber abgeschnitten</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">46,80 m² × 9,50 €</div>
+        </div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Heizkörper abschleifen</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">40,00 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Altanstrich anschleifen, entstauben</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">2 Stück × 20,00 €</div>
+        </div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Heizkörper grundieren</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">50,00 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Haftgrund für Heizkörperlack</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">2 Stück × 25,00 €</div>
+        </div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Heizkörper lackieren</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">80,00 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Heizkörperlack, weiß, zweilagig</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">2 Stück × 40,00 €</div>
+        </div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Boden abdecken</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span> <span class="inline-block bg-yellow/15 text-[#8B7000] text-[10px] font-extrabold px-2 py-0.5 rounded-full tracking-wide shrink-0">Vorschlag</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">24,00 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Abdeckvlies auslegen, Stöße abkleben</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">20,00 m² × 1,20 €</div>
+        </div>
+        <div class="py-3 border-b border-anthracite/[0.07]">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Sockelleisten abkleben</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span> <span class="inline-block bg-yellow/15 text-[#8B7000] text-[10px] font-extrabold px-2 py-0.5 rounded-full tracking-wide shrink-0">Vorschlag</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">14,40 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Malerkrepp ansetzen, nach dem Anstrich abziehen</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">18,00 lfm × 0,80 €</div>
+        </div>
+        <div class="py-3">
+          <div class="flex justify-between items-start gap-3">
+            <span class="flex items-center gap-1.5 min-w-0 flex-wrap"><span class="text-anthracite text-[14px] font-bold">Kleinmaterial</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span> <span class="inline-block bg-yellow/15 text-[#8B7000] text-[10px] font-extrabold px-2 py-0.5 rounded-full tracking-wide shrink-0">Vorschlag</span></span>
+            <span class="flex items-center gap-2 shrink-0"><span class="posamt"><span class="text-anthracite text-[14px] font-bold">25,00 €</span></span><span class="text-anthracite/30"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span><span class="text-anthracite/30"><svg width="11" height="13" viewBox="0 0 10 16" fill="currentColor"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg></span></span>
+          </div>
+          <div class="text-[12px] text-anthracite/45 mt-1 leading-snug">Abdeckfolie, Krepp, Spachtel, Schleifpapier</div>
+          <div class="font-mono text-[12px] text-anthracite/50 mt-1">1 pauschal × 25,00 €</div>
+        </div>
+        <div class="pt-4 flex justify-between items-baseline gap-3"><span class="text-anthracite/50 text-[13px] font-semibold">Summe netto</span><span class="font-syne text-anthracite text-[20px] font-extrabold">1.543,80 €</span></div>
+      </div>
+    </div>
+    <div class="tabpanel grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] gap-5 md:gap-6 items-start hidden" data-panel="4">
+      <div class="bg-anthracite rounded-3xl p-7 md:p-8 self-start">
+        <div class="text-white/40 text-[13px] font-semibold mb-4">Maler, Schlafzimmer</div>
+        <p class="text-white text-[19px] md:text-[21px] leading-snug font-medium mb-6">„Schlafzimmer streichen, drei mal vier.“</p>
+        <div class="font-mono text-white/35 text-[12px]">0:04 Aufnahme</div>
+      </div>
+      <div class="bg-white rounded-3xl p-7 md:p-8 border border-anthracite/5 shadow-sm self-start">
+        <p class="font-syne font-extrabold text-anthracite text-[20px] md:text-[22px] tracking-tight mb-5">Wie hoch sind die Wände?</p>
+        <div class="flex flex-wrap gap-2.5 mb-5" id="hoeheWahl">
+          <button type="button" data-h="2,50 m" data-f="35,00 m²" class="hbtn font-mono text-[14px] font-bold text-anthracite border-2 border-anthracite/15 rounded-xl px-4 py-2.5 hover:border-anthracite/40 transition-colors">2,50 m</button>
+          <button type="button" data-h="2,60 m" data-f="36,40 m²" class="hbtn font-mono text-[14px] font-bold text-anthracite border-2 border-anthracite/15 rounded-xl px-4 py-2.5 hover:border-anthracite/40 transition-colors">2,60 m</button>
+          <button type="button" data-h="3,00 m" data-f="42,00 m²" class="hbtn font-mono text-[14px] font-bold text-anthracite border-2 border-anthracite/15 rounded-xl px-4 py-2.5 hover:border-anthracite/40 transition-colors">3,00 m</button>
+          <button type="button" data-h="" data-f="— m²" class="hbtn font-mono text-[14px] font-bold text-anthracite border-2 border-anthracite/15 rounded-xl px-4 py-2.5 hover:border-anthracite/40 transition-colors">sag ich ein</button>
+        </div>
+        <div class="flex justify-between items-baseline gap-3 py-3 border-t border-anthracite/[0.07]">
+          <span class="text-anthracite/40 text-[14px] font-semibold">Wandfläche</span>
+          <span id="hoeheFlaeche" class="font-mono text-[15px] font-bold text-anthracite/25 transition-colors">— m²</span>
+        </div>
+        <p class="text-anthracite/45 text-sm mt-2">Wenn etwas fehlt, wird gefragt. Nicht geraten.</p>
+      </div>
+      <div class="bg-white rounded-3xl px-6 py-5 md:px-8 border border-anthracite/5 shadow-sm md:col-start-2">
+        <div class="text-[13px] text-anthracite/45 font-semibold mb-3">Gilt auch für Preise, die du noch nicht hinterlegt hast:</div>
+        <div class="flex justify-between items-start gap-3">
+          <span class="flex items-center gap-1.5"><span class="text-anthracite text-[14px] font-bold">Übergangsschiene</span><span class="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full border border-anthracite/25 text-[9px] text-anthracite/45 font-bold leading-none shrink-0">i</span></span>
+          <span class="text-anthracite text-[14px] font-bold shrink-0">0,00 €</span>
+        </div>
+        <div class="font-mono text-[12px] text-anthracite/50 mt-1">1 Stück × 0,00 €</div>
+        <div class="mt-3 flex items-center justify-between gap-3 bg-[#FDECEC] border border-[#F3C2C2] rounded-xl pl-3 pr-1.5 py-1.5">
+          <span class="flex items-center gap-2 text-[#C62828] text-[12px] font-bold"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 3 2 20h20L12 3zM12 9v5M12 17.5v.5"/></svg>Preis fehlt in deiner Preisdatenbank</span>
+          <span class="bg-anthracite text-white text-[12px] font-bold px-3 py-2 rounded-lg shrink-0">Preis anlegen</span>
+        </div>
+        <p class="text-anthracite/45 text-sm mt-4">Einmal anlegen, ab dann rechnet die App damit. Kein Angebot geht mit 0 € raus.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 — VERTRAUEN -->
+<section class="bg-bg py-20 md:py-28">
+  <div class="max-w-5xl mx-auto px-5 md:px-10">
+    <div class="reveal mb-12">
+      <h2 class="font-syne font-extrabold text-anthracite text-[28px] md:text-[36px] tracking-tight mb-3">Gerechnet, nicht geschätzt.</h2>
+      <p class="text-[#888] text-base max-w-lg leading-relaxed">An jeder Position steht, wie die Zahl zustande kommt. Stimmt was nicht, änderst du es — bevor irgendwas rausgeht.</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8 md:gap-10 mb-14">
+      <div class="reveal">
+        <p class="font-syne font-extrabold text-anthracite text-[16px] mb-2">Verwinkelte Räume</p>
+        <p class="text-anthracite/50 text-sm leading-relaxed">L-Form, Nischen, acht Wände: Grundriss antippen, Längen eintragen. Oder einfach die Bodenfläche sagen.</p>
+      </div>
+      <div class="reveal">
+        <p class="font-syne font-extrabold text-anthracite text-[16px] mb-2">Deine Preise</p>
+        <p class="text-anthracite/50 text-sm leading-relaxed">Eigene Stunden- und Einheitspreise. Oder Marktpreise als Start, jederzeit änderbar.</p>
+      </div>
+      <div class="reveal">
+        <p class="font-syne font-extrabold text-anthracite text-[16px] mb-2">Denkt an das, was man vergisst</p>
+        <p class="text-anthracite/50 text-sm leading-relaxed">Boden abdecken, Grundierung nach dem Tapetenabriss — Sofortangebot fragt nach, bevor du umsonst arbeitest.</p>
+      </div>
+    </div>
+
+    <div class="reveal border-l-2 border-yellow pl-5 max-w-2xl">
+      <p class="font-syne font-extrabold text-anthracite text-[15px] mb-2">Maler und Boden. Sonst nichts.</p>
+      <p class="text-[#888] text-sm leading-relaxed">
+        Richtig rechnen heißt, die Sonderfälle zu kennen: Raufaser runter heißt danach spachteln, über drei Meter kommt Erschwernis drauf. Das können wir für diese zwei Gewerke — und erst dann für weitere.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- 5 — DARAN IST GEDACHT (sekundär, ruhig) -->
+<section class="bg-white py-16 md:py-20">
+  <div class="max-w-5xl mx-auto px-5 md:px-10">
+    <p class="reveal font-syne font-extrabold text-anthracite/40 text-[12px] tracking-widest uppercase mb-8">Daran ist gedacht</p>
+    <div class="reveal grid md:grid-cols-2 gap-x-12 gap-y-4 text-[15px] max-w-4xl">
+      <div class="flex items-start gap-3"><span class="text-yellow font-bold mt-0.5 shrink-0">✓</span><span class="text-anthracite/60"><span class="text-anthracite font-bold">Dein Briefpapier</span> — Logo, Zahlungsziel, Angebotsnummern laufen automatisch mit.</span></div>
+      <div class="flex items-start gap-3"><span class="text-yellow font-bold mt-0.5 shrink-0">✓</span><span class="text-anthracite/60"><span class="text-anthracite font-bold">Digitale Unterschrift</span> — der Kunde unterschreibt aufs Handy, kein Drucken.</span></div>
+      <div class="flex items-start gap-3"><span class="text-yellow font-bold mt-0.5 shrink-0">✓</span><span class="text-anthracite/60"><span class="text-anthracite font-bold">Buchhaltung</span> — Lexware, sevDesk und DATEV direkt, andere über Export.</span></div>
+      <div class="flex items-start gap-3"><span class="text-yellow font-bold mt-0.5 shrink-0">✓</span><span class="text-anthracite/60"><span class="text-anthracite font-bold">E-Rechnung</span> — ZUGFeRD, GoBD, fortlaufende Nummern. Läuft mit.</span></div>
+      <div class="flex items-start gap-3"><span class="text-yellow font-bold mt-0.5 shrink-0">✓</span><span class="text-anthracite/60"><span class="text-anthracite font-bold">Kleinmaterial und Anfahrt</span> — einmal einstellen, landet auf jedem Angebot.</span></div>
+      <div class="flex items-start gap-3"><span class="text-yellow font-bold mt-0.5 shrink-0">✓</span><span class="text-anthracite/60"><span class="text-anthracite font-bold">Kleinunternehmer §19</span> — Hinweis statt MwSt, einmal einstellen.</span></div>
+      <div class="flex items-start gap-3"><span class="text-yellow font-bold mt-0.5 shrink-0">✓</span><span class="text-anthracite/60"><span class="text-anthracite font-bold">Kundendaten</span> — verschlüsselt auf Servern in Deutschland. Kein Tracking, kein Weiterverkauf.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 — PREIS -->
+<section class="bg-bg py-20 md:py-28">
+  <div class="max-w-5xl mx-auto px-5 md:px-10">
+    <div class="reveal mb-12">
+      <h2 class="font-syne font-extrabold text-anthracite text-[28px] md:text-[36px] tracking-tight mb-2">Was kostet das.</h2>
+      <p class="text-[#888] text-base">Ein Preis für den ganzen Betrieb, so viele Angebote du willst. Monatlich kündbar.</p>
+    </div>
+
+    <div class="reveal bg-anthracite rounded-3xl p-8 md:p-10 max-w-md relative">
+      <div id="gruenderBadge" class="absolute -top-3.5 left-8 bg-yellow text-anthracite font-black text-xs px-3 py-1 rounded-full tracking-wide">Gründerpreis</div>
+      <div class="font-syne font-extrabold text-white text-[18px] tracking-tight mb-1">Sofortangebot</div>
+      <div class="text-white/30 text-sm mb-8">Alles drin. Keine Stufen, keine Zusatzpakete.</div>
+
+      <div class="flex items-end gap-2.5 mb-1">
+        <span id="preisHaupt" class="font-syne font-extrabold text-white leading-none text-[52px] tracking-tight">29 €</span>
+        <span class="text-white/40 text-sm pb-2">/Monat</span>
+        <span id="preisAlt" class="text-white/25 text-lg pb-1.5 line-through">49 €</span>
+      </div>
+      <div id="preisBrutto" class="text-white/30 text-xs font-semibold mb-7">zzgl. MwSt. — 34,51 € brutto</div>
+
+      <div id="gruenderBlock" class="bg-white/[0.06] rounded-2xl px-4 py-3.5 mb-8">
+        <p class="text-white/70 text-[13px] font-semibold leading-relaxed">Die ersten <span class="text-yellow font-extrabold">25 Betriebe, die buchen</span>, zahlen dauerhaft 29 € — auch wenn der Preis danach auf 49 € steigt.</p>
+      </div>
+
+      <a href="https://sofortangebot.app/register" class="block w-full text-center bg-yellow rounded-2xl text-anthracite font-black text-sm py-4 hover:bg-[#e6b800] transition-colors">14 Tage kostenlos testen →</a>
+      <p class="text-white/20 text-xs text-center mt-3">Keine Kreditkarte · Endet von allein</p>
+    </div>
+
+    <p class="reveal text-anthracite/30 text-xs font-semibold mt-6 max-w-md">Preise netto, zzgl. gesetzlicher MwSt. Sofortangebot richtet sich ausschließlich an Unternehmer (§ 14 BGB).</p>
+  </div>
+</section>
+
+<!-- 7 — FAQ -->
+<section class="bg-[#F5F5F5] py-20 md:py-28">
+  <div class="max-w-3xl mx-auto px-5 md:px-10">
+    <h2 class="reveal font-syne font-extrabold text-anthracite text-[28px] md:text-[36px] tracking-tight mb-12">Noch Fragen?</h2>
+    <div id="faq" class="mb-12">
+      <div class="faq-item border-b border-[#E0E0E0]"><button class="w-full flex items-center justify-between py-5 text-left gap-6"><span class="font-syne font-extrabold text-anthracite text-[15px] md:text-[16px] leading-snug">Woher weiß ich, dass die Mengen stimmen?</span><span class="faq-plus text-[#999] text-xl font-light shrink-0 transition-transform duration-200 select-none">+</span></button><div class="faq-a"><div><p class="text-[#777] text-base leading-relaxed pb-6">Weil du es nachrechnen kannst. Die Flächen werden nicht geschätzt, sondern gerechnet: Umfang × Höhe, und Fenster oder Türen unter 2,5 m² bleiben drin, so wie es die VOB vorsieht. An jeder Position steht der Rechenweg. Und bevor etwas rausgeht, schaust du drüber.</p></div></div></div>
+      <div class="faq-item border-b border-[#E0E0E0]"><button class="w-full flex items-center justify-between py-5 text-left gap-6"><span class="font-syne font-extrabold text-anthracite text-[15px] md:text-[16px] leading-snug">Und wenn ich mich verspreche oder Dialekt spreche?</span><span class="faq-plus text-[#999] text-xl font-light shrink-0 transition-transform duration-200 select-none">+</span></button><div class="faq-a"><div><p class="text-[#777] text-base leading-relaxed pb-6">Du siehst sofort, was erkannt wurde, und änderst es mit zwei Fingertipps. „Warte, nicht fünf — sechs Meter" versteht Sofortangebot in der Regel richtig.</p></div></div></div>
+      <div class="faq-item border-b border-[#E0E0E0]"><button class="w-full flex items-center justify-between py-5 text-left gap-6"><span class="font-syne font-extrabold text-anthracite text-[15px] md:text-[16px] leading-snug">Wie lange dauert die Einrichtung?</span><span class="faq-plus text-[#999] text-xl font-light shrink-0 transition-transform duration-200 select-none">+</span></button><div class="faq-a"><div><p class="text-[#777] text-base leading-relaxed pb-6">Fünf Minuten. Firmendaten eintragen, Preise kurz durchsehen, loslegen. Mehr ist nicht.</p></div></div></div>
+      <div class="faq-item border-b border-[#E0E0E0]"><button class="w-full flex items-center justify-between py-5 text-left gap-6"><span class="font-syne font-extrabold text-anthracite text-[15px] md:text-[16px] leading-snug">Was passiert nach den 14 Tagen?</span><span class="faq-plus text-[#999] text-xl font-light shrink-0 transition-transform duration-200 select-none">+</span></button><div class="faq-a"><div><p class="text-[#777] text-base leading-relaxed pb-6">Nichts, was du nicht selbst auslöst. Du gibst keine Kreditkarte an, also wird auch nichts abgebucht — der Test endet einfach. Willst du weitermachen, buchst du in den Einstellungen. Deine Angebote bleiben dir.</p></div></div></div>
+      <div class="faq-item border-b border-[#E0E0E0]"><button class="w-full flex items-center justify-between py-5 text-left gap-6"><span class="font-syne font-extrabold text-anthracite text-[15px] md:text-[16px] leading-snug">Zahle ich mehr, wenn mein Geselle es auch nutzt?</span><span class="faq-plus text-[#999] text-xl font-light shrink-0 transition-transform duration-200 select-none">+</span></button><div class="faq-a"><div><p class="text-[#777] text-base leading-relaxed pb-6">Nein. Der Preis gilt für den Betrieb, nicht pro Kopf. Ob du allein losziehst oder zu fünft — es bleibt bei einem Monatsbeitrag.</p></div></div></div>
+      <div class="faq-item border-b border-[#E0E0E0]"><button class="w-full flex items-center justify-between py-5 text-left gap-6"><span class="font-syne font-extrabold text-anthracite text-[15px] md:text-[16px] leading-snug">Sind meine Kundendaten sicher?</span><span class="faq-plus text-[#999] text-xl font-light shrink-0 transition-transform duration-200 select-none">+</span></button><div class="faq-a"><div><p class="text-[#777] text-base leading-relaxed pb-6">Alles liegt verschlüsselt auf Servern in Deutschland. Kein Verkauf, kein Tracking, kein Weitergeben. DSGVO-konform.</p></div></div></div>
+      <div class="faq-item border-b border-[#E0E0E0]"><button class="w-full flex items-center justify-between py-5 text-left gap-6"><span class="font-syne font-extrabold text-anthracite text-[15px] md:text-[16px] leading-snug">Kann ich jederzeit kündigen?</span><span class="faq-plus text-[#999] text-xl font-light shrink-0 transition-transform duration-200 select-none">+</span></button><div class="faq-a"><div><p class="text-[#777] text-base leading-relaxed pb-6">Ja. Monatlich, ohne Frist, ohne Anruf. In den Einstellungen auf Kündigen tippen.</p></div></div></div>
+    </div>
+    <div class="reveal border-l-2 border-yellow pl-5">
+      <p class="font-syne font-extrabold text-anthracite text-[15px] mb-1">Nicht dabei?</p>
+      <p class="text-[#888] text-sm mb-2">Schreib uns. Antwort innerhalb eines Werktages.</p>
+      <a href="mailto:support@sofortangebot.app" class="text-anthracite text-sm font-semibold hover:text-yellow transition-colors">support@sofortangebot.app</a>
+    </div>
+  </div>
+</section>
+
+<!-- 8 — SCHLUSS -->
+<section class="bg-yellow py-20 md:py-28">
+  <div class="max-w-5xl mx-auto px-5 md:px-10 reveal">
+    <h2 class="font-syne font-extrabold text-anthracite leading-tight tracking-tight mb-6 text-[32px] md:text-[44px] max-w-xl">Feierabend statt<br>Angebot schreiben.</h2>
+    <p class="text-anthracite/60 text-base md:text-lg leading-relaxed mb-9 max-w-md">Einsprechen, kurz prüfen, raus damit. Der Küchentisch bleibt heute frei.</p>
+    <a href="https://sofortangebot.app/register" class="inline-block bg-anthracite text-white font-black text-base md:text-lg px-10 py-4 rounded-2xl hover:bg-[#1a1a1a] active:translate-y-px transition-all mb-5 w-full md:w-auto text-center">14 Tage kostenlos testen →</a>
+    <div class="flex flex-wrap gap-x-5 gap-y-1.5 text-anthracite/50 text-sm font-medium">
+      <span class="flex items-center gap-1.5"><span class="text-anthracite/70 font-bold">✓</span> Keine Kreditkarte</span><span class="flex items-center gap-1.5"><span class="text-anthracite/70 font-bold">✓</span> In 5 Minuten eingerichtet</span><span class="flex items-center gap-1.5"><span class="text-anthracite/70 font-bold">✓</span> Monatlich kündbar</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER inkl. Blog -->
+<footer class="bg-anthracite py-14 md:py-16">
+  <div class="max-w-5xl mx-auto px-5 md:px-10">
+    <div class="mb-12">
+      <div class="flex items-end justify-between mb-6">
+        <p class="font-syne font-extrabold text-white text-[17px] tracking-tight">Praxiswissen für Handwerker</p>
+        <a href="https://sofortangebot.app/blog" class="text-white/40 text-sm font-bold hover:text-yellow transition-colors shrink-0 ml-6">Alle Artikel →</a>
+      </div>
+      <div class="grid md:grid-cols-3 gap-x-8 gap-y-4">
+        <a href="https://sofortangebot.app/blog/kleinunternehmer-angebot-pflichtangaben" class="group border-t border-white/10 pt-4"><span class="text-yellow text-[10px] font-black uppercase tracking-widest">Recht & Steuern</span><p class="text-white/70 text-[14px] leading-snug mt-1.5 group-hover:text-white transition-colors">Kleinunternehmer §19 UStG: Was muss auf dein Angebot</p></a>
+        <a href="https://sofortangebot.app/blog/maler-preise-2026" class="group border-t border-white/10 pt-4"><span class="text-yellow text-[10px] font-black uppercase tracking-widest">Preise</span><p class="text-white/70 text-[14px] leading-snug mt-1.5 group-hover:text-white transition-colors">Maler Preise 2026: Was kostet Streichen pro Quadratmeter wirklich</p></a>
+        <a href="https://sofortangebot.app/blog/handwerkerangebot-schreiben" class="group border-t border-white/10 pt-4"><span class="text-yellow text-[10px] font-black uppercase tracking-widest">Angebote</span><p class="text-white/70 text-[14px] leading-snug mt-1.5 group-hover:text-white transition-colors">Handwerkerangebot schreiben: Was muss drauf — und was vergessen die meisten</p></a>
+      </div>
+    </div>
+
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-t border-white/[0.08] pt-8">
+      <div>
+        <span class="font-syne inline-flex items-center gap-[0.22em] font-black tracking-tight text-xl mb-2">
+          <img src="data:image/png;base64,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" alt="" class="h-[1em] w-auto shrink-0">
+          <span><span class="text-yellow">sofort</span><span class="text-white">angebot</span></span>
+        </span>
+        <p class="text-[#888] text-sm font-medium">Das schnellste Angebot im Handwerk.</p>
+      </div>
+      <div class="flex gap-5 text-[#888] text-sm font-medium">
+        <a href="https://sofortangebot.app/impressum" class="hover:text-yellow transition-colors">Impressum</a>
+        <a href="https://sofortangebot.app/datenschutz" class="hover:text-yellow transition-colors">Datenschutz</a>
+        <a href="https://sofortangebot.app/agb" class="hover:text-yellow transition-colors">AGB</a>
+      </div>
+    </div>
+    <p class="text-[#888]/50 text-xs font-medium mt-6">© 2026 Sofortangebot · Made in Germany</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var nav=document.getElementById('nav');
+  function onScroll(){ if(window.scrollY>40){nav.classList.add('bg-white','shadow-sm');nav.classList.remove('bg-transparent');}else{nav.classList.remove('bg-white','shadow-sm');nav.classList.add('bg-transparent');} }
+  window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+  var menu=document.getElementById('menu');
+  document.getElementById('menuOpen').onclick=function(){menu.classList.remove('hidden');menu.classList.add('flex');};
+  document.getElementById('menuClose').onclick=function(){menu.classList.add('hidden');menu.classList.remove('flex');};
+  document.querySelectorAll('#faq .faq-item > button').forEach(function(b){ b.onclick=function(){ var it=b.parentElement, was=it.classList.contains('open'); document.querySelectorAll('#faq .faq-item').forEach(function(x){x.classList.remove('open')}); if(!was) it.classList.add('open'); }; });
+
+
+  /* Hero-Handy: Aufnahme → Rechnen → Entwurf, in Schleife */
+  (function(){
+    var logo=document.querySelector('nav img'); if(logo) document.getElementById('phoneLogo').src=logo.src;
+    var title=document.getElementById('phoneTitle'),
+        rec=document.getElementById('scrRec'), calc=document.getElementById('scrCalc'), res=document.getElementById('scrRes'),
+        recText=document.getElementById('recText'), calcText=document.getElementById('calcText'),
+        recTimer=document.getElementById('recTimer'), calcTimer=document.getElementById('calcTimer'),
+        editPrice=document.getElementById('editPrice'), editTotal=document.getElementById('editTotal'), editCalc=document.getElementById('editCalc'), summe=document.getElementById('summe'), kopfSumme=document.getElementById('kopfSumme'),
+        editRow=document.getElementById('editRow'),
+        satz='Wohnzimmer, vier mal fünf, zwei sechzig hoch. Wände zweimal weiß, Decke auch. Ein Fenster, eine Tür. Alte Tapete muss runter.',
+        worte=satz.split(' '), timers=[];
+    var reduced=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function fmt(n){ return '0:'+(n<10?'0':'')+n; }
+    function euro(v){ return v.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.')+' €'; }
+    function zaehle(von,bis,ms){ var t0=performance.now(); (function step(now){ var k=Math.min(1,(now-t0)/ms); summe.textContent=euro(von+(bis-von)*k); kopfSumme.textContent=summe.textContent; if(k<1) requestAnimationFrame(step); })(t0); }
+    function show(el,t){ [rec,calc,res].forEach(function(x){x.classList.remove('on')}); el.classList.add('on'); title.textContent=t; }
+    function later(fn,ms){ timers.push(setTimeout(fn,ms)); }
+    function run(){
+      timers.forEach(clearTimeout); timers=[];
+      recText.textContent=''; calcText.textContent=''; recTimer.textContent='0:00'; calcTimer.textContent='0:00';
+      res.querySelectorAll('.pos').forEach(function(p){p.classList.remove('in')});
+      editRow.classList.remove('edit'); editPrice.textContent='9,50'; editTotal.textContent='444,60 €'; editCalc.textContent='46,80 m² × 9,50 €'; summe.textContent=euro(1100.80); kopfSumme.textContent=euro(1100.80);
+      show(rec,'Aufnahme läuft');
+      var pause=600, wortMs=190, dauer=pause+worte.length*wortMs;
+      worte.forEach(function(w,i){ later(function(){ recText.textContent+=(i?' ':'')+w; }, pause+i*wortMs); });
+      for(var sek=1;sek<=19;sek++){ (function(k){ later(function(){ recTimer.textContent=fmt(k); }, k*(dauer/19)); })(sek); }
+      later(function(){ show(calc,'Wird gerechnet'); calcText.textContent=satz; }, dauer+900);
+      for(var c=1;c<=4;c++){ (function(k){ later(function(){ calcTimer.textContent=fmt(k); }, dauer+900+k*600); })(c); }
+      var tRes=dauer+900+2900, n=res.querySelectorAll('.pos').length;
+      later(function(){ show(res,'Entwurf prüfen'); res.querySelectorAll('.pos').forEach(function(p,i){ later(function(){p.classList.add('in')}, 250+i*300); }); }, tRes);
+      var tEdit=tRes+250+n*300+2500;
+      later(function(){ editRow.classList.add('edit'); }, tEdit);
+      later(function(){ editPrice.textContent='10,'; }, tEdit+1100);
+      later(function(){ editPrice.textContent='10,00'; editTotal.textContent='468,00 €'; editCalc.textContent='46,80 m² × 10,00 €'; zaehle(1100.80,1124.20,700); }, tEdit+1500);
+      later(run, tEdit+6500);
+    }
+    /* Der fertige Entwurf steht schon im HTML und bleibt stehen.
+       Wer nur kurz hinsieht, sieht ein volles Handy, keinen leeren Rahmen.
+       Bei reduzierter Bewegung bleibt es dabei. */
+    if(!reduced) timers.push(setTimeout(run, 2600));
+  })();
+
+  /* Beispiele: Tabs */
+  document.querySelectorAll('.tabbtn').forEach(function(b){
+    b.addEventListener('click',function(){
+      var i=b.getAttribute('data-tab');
+      document.querySelectorAll('.tabbtn').forEach(function(x){ x.className=x.className.replace('text-anthracite border-yellow','text-anthracite/45 border-transparent hover:text-anthracite/75'); });
+      b.className=b.className.replace('text-anthracite/45 border-transparent hover:text-anthracite/75','text-anthracite border-yellow');
+      document.querySelectorAll('.tabpanel').forEach(function(p){ p.classList.toggle('hidden', p.getAttribute('data-panel')!==i); });
+      if(b.scrollIntoView) b.scrollIntoView({inline:'center', block:'nearest', behavior:'smooth'});
+    });
+  });
+  /* Verlaufskante rechts: zeigt, dass da noch Reiter liegen - und geht am Ende weg */
+  (function(){
+    var bar=document.getElementById('tabbar'), fade=document.getElementById('tabfade');
+    if(!bar||!fade) return;
+    function kante(){ var rest=bar.scrollWidth-bar.clientWidth-bar.scrollLeft; fade.style.opacity = rest>8 ? '1' : '0'; }
+    bar.addEventListener('scroll', kante, {passive:true});
+    window.addEventListener('resize', kante); kante();
+  })();
+  document.querySelectorAll('.hbtn').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.hbtn').forEach(function(x){ x.classList.remove('bg-yellow','border-yellow'); x.classList.add('border-anthracite/15'); });
+      b.classList.add('bg-yellow','border-yellow'); b.classList.remove('border-anthracite/15');
+      var f=document.getElementById('hoeheFlaeche'); f.textContent=b.getAttribute('data-f');
+      f.classList.toggle('text-anthracite/25', !b.getAttribute('data-h')); f.classList.toggle('text-anthracite', !!b.getAttribute('data-h'));
+    });
+  });
+
+  /* Einblender mit Boden: was im Bild steht, wird sichtbar - auch nach einem
+     Sprung ans Seitenende, auch wenn der Beobachter nicht ausloest. */
+  var reduziert = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduziert || !('IntersectionObserver' in window)){
+    document.documentElement.classList.add('no-anim');
+  } else {
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{rootMargin:'-60px'});
+    document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
+    var lauf=false;
+    function nachziehen(){
+      lauf=false;
+      var h=window.innerHeight||document.documentElement.clientHeight;
+      document.querySelectorAll('.reveal:not(.in)').forEach(function(el){
+        var r=el.getBoundingClientRect();
+        if(r.top < h-40 && r.bottom > 0){ el.classList.add('in'); io.unobserve(el); }
+      });
+    }
+    function anstossen(){ if(!lauf){ lauf=true; requestAnimationFrame(nachziehen); } }
+    window.addEventListener('scroll', anstossen, {passive:true});
+    window.addEventListener('resize', anstossen);
+    setTimeout(nachziehen, 400); setTimeout(nachziehen, 1200);
+    window.addEventListener('load', nachziehen);
+  }
+})();
+</script>
+
+</body>
+</html>
+
