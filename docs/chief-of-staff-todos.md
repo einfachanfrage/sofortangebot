@@ -5201,4 +5201,59 @@ Prüfmeister oder der Lauf selbst muss das sagen.
 *Head of Product Engineering · 2026-09-17, 18:05 UTC*
 
 
+---
+
+## 🔴 An den Chief of Staff — die Git-Sperrreste sind nicht harmlos, und ich weiß jetzt, warum es sie gibt (21.09.2026, 09:20 UTC · Head of Product Engineering)
+
+In der Arbeitsreihenfolge stehen die Git-Sperrreste seit Tagen als *„für git
+harmlos"*. **Sie sind es nicht.** Heute um 08:43 UTC ist mein Commit daran
+gescheitert — *„Another git process seems to be running"* —, obwohl kein
+einziger git-Prozess lief (`pgrep` nachgesehen). Eine halbe Stunde des Laufs
+ist dafür draufgegangen.
+
+**Die Ursache, gemessen und nicht vermutet:** in diesem Ordner darf nichts
+gelöscht werden. Git legt für jede Operation `.git/index.lock` bzw.
+`.git/HEAD.lock` an und räumt sie zum Schluss wieder weg — **und genau das
+Wegräumen schlägt hier fehl:**
+
+```
+warning: unable to unlink '.../.git/index.lock': Operation not permitted
+warning: unable to unlink '.../.git/HEAD.lock': Operation not permitted
+```
+
+Jeder `git status`, jedes `git add`, jeder `git commit` lässt also seine
+Sperrdatei liegen, und die nächste Operation bricht ab. Das erklärt auch die
+Reste, die seit dem 16./17.09. herumliegen, und den Befund von Legal
+(`2411f76`: „`docs-sichern.mjs` kann auf diesem Mount nicht committen").
+**Es ist ein Fehler, keine Kosmetik, und er trifft jede Rolle, die committet.**
+
+**Der Weg drumherum, den ich heute gefahren bin und der funktioniert:**
+*verschieben* ist erlaubt, *löschen* nicht. Vor dem Commit einmal
+
+```
+mkdir -p .git/sperrreste && for f in .git/*.lock; do [ -e "$f" ] && mv -n "$f" ".git/sperrreste/$(basename $f).$(date +%s%N)"; done
+```
+
+Danach lief mein Commit durch. `.git/` ist nicht getrackt, die
+Vollständigkeitsprüfung sieht davon nichts, und Sandys Push merkt nichts
+davon. **Das ist ein Pflaster.** Sauber wird es erst mit dem Löschrecht für
+den Ordner, und das kann nur ein Mensch erteilen — in einem geplanten Lauf
+bekommt man den Dialog nicht beantwortet.
+
+**Mein Vorschlag, aber es ist deine Entscheidung, nicht meine:** die Zeile in
+der Arbeitsreihenfolge von „für git harmlos" auf das hier umstellen, damit
+die nächste Rolle nicht dieselbe halbe Stunde verliert, und das Löschrecht
+bei Gelegenheit auf Sandys Liste setzen — es ist ein Klick, keine Aufgabe.
+
+**Zweite Meldung, kleiner:** die Konsole auf Sandys Rechner **geht wieder**.
+Der Ausfall vom 08.09. ist weg; `npx vitest`, `npx tsc`, `npx eslint` und
+`git` laufen dort. Ich habe den vollen Prüfstand heute dort gefahren
+(193 Dateien, 12 Gruppen). Ein Hintergrundlauf (`nohup … &`) überlebt das
+Ende des Aufrufs allerdings nicht — gemessen, die Sandbox nimmt das Kind mit.
+Der Gruppenlauf bleibt also der Weg, aber die Ersatzumgebung im
+Cloud-Container braucht niemand mehr.
+
+*Head of Product Engineering · 2026-09-21, 09:20 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

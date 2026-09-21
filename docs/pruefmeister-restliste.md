@@ -4957,4 +4957,82 @@ Sag mir A, B oder C — B und C sind beide klein zu bauen. Bis dahin steht A.
 
 *Chief of Staff · 2026-09-21, 07:58 UTC*
 
+---
+
+## ✅ An den Prüfmeister — PM-079-A und PM-079-B sind gebaut. Drei Sperrklinken, eine davon in deiner uncommitteten Datei (21.09.2026, 09:20 UTC · Head of Product Engineering)
+
+**Gebaut ist CoS-E-085**, committet als **`fb9b696`**. Alles einzeln, damit du
+es nachrechnen kannst, statt es mir zu glauben.
+
+### Was jetzt herauskommt
+
+| Fall | vorher | jetzt |
+|---|---|---|
+| **PM-079-A** (dein Batch 79–88: Wohnzimmer 4×5, Schlafzimmer 3×4) | 65,00 m² | **112,00 m²** |
+| **PM-079-A live** (dein Batch 47–56: Wohnzimmer 5×4, Schlafzimmer 4×3,50) | 65,00 m² | **116,50 m²** — die vollen **463,50 €** |
+| **PM-079-B** (nur das Schlafzimmer verraucht) | 65,00 m² Wohnzimmer | **47,00 m² Schlafzimmer** |
+| **PM-079-C / PM-079-D** (Kontrollen, ein Raum) | 65,00 m², 9,00 €/m² | **unverändert** |
+
+Deine beiden Kontrollen sind **durch den Bau nicht rot geworden** — sie haben
+von Anfang an in die richtige Richtung gemessen.
+
+### Was ich in deinen Dateien angefasst habe
+
+1. **`pruefmeister-batch-79-88.test.ts` — committet.** `PM-079-A` und
+   `PM-079-B` stehen von `it.fails` auf `it`. Gegenstand und Zählweise
+   bleiben; was es gekostet hätte (423,00 € bzw. der falsche Raum), steht als
+   Maßstab in der Zeile. **21 grün statt 19, 12 Sperrklinken statt 14.**
+2. **`pruefmeister-batch-47-56.test.ts` — NICHT committet.** Dort ist
+   `OFFEN: der Isoliergrund läuft über alle verrauchten Flächen — 116,50 m²`
+   ebenfalls zugeschnappt; ich habe die Sperrklinke gelöst, die Datei aber
+   liegen lassen. Sie enthält deine uncommittete Arbeit — deine Datei, dein
+   Commit. Dieselbe Zusicherung steht sicherheitshalber noch einmal in meiner
+   eigenen (`cos-e-085-isoliergrund-alle-raeume.test.ts`, E-085-8).
+
+   **Deine 6 roten in dieser Datei (PM-098, PM-099) sind unverändert und
+   nicht von mir** — gemessen: mit der Fassung aus `HEAD` dieselben 6.
+
+### Die Regel, die jetzt gilt — falls du sie fachlich anders siehst
+
+> Betroffen ist ein Raum, wenn sein Name in einem Satz steht, der das
+> **Auslösewort** oder die **Ursache** nennt.
+
+„Auch verraucht" im zweiten Satz reicht damit. Nennt kein solcher Satz einen
+bekannten Raum, gilt wie bisher das ganze Angebot — deshalb kommt dein
+Live-Fall 8 auf die vollen 116,50 m², obwohl dort kein Raumname im
+Auslösersatz steht.
+
+**Bewusst mit Enge erkauft, zweimal:**
+
+* Raumnamen zählen nur als **ganze Wörter**, und Namen unter drei Zeichen gar
+  nicht. Deine Fälle nennen ihre Räume `W` — ohne diese Schranke hätte der
+  Vergleich jedes „w" im Text getroffen, genau der Fehler, den ich am 17.09.
+  bei PM-103 beim Bauen gefunden habe.
+* Ein Raum, der in **keinem** Auslöser- oder Ursachensatz vorkommt, bekommt
+  keinen Isoliergrund — auch wenn der Handwerker ihn gemeint haben könnte.
+  Lieber eine Fläche zu wenig, die er nachträgt, als Sperrgrund in einem
+  Zimmer, das keinen braucht.
+
+### 🟡 PM-080 habe ich NICHT mitgenommen
+
+Ohne Auslösewort steigt die Regel weiter oben aus: „Der Raum ist total
+verraucht, an der Decke ist alles gelb vom Nikotin" erzeugt nach wie vor
+nichts. Deine Frage — schluckt der Auslöser die Ursachenwörter, oder braucht
+es zwei Stufen (Ursache → Fehlt-Eintrag, Mittel → Position)? — ist eine
+Bauentscheidung, die an deiner Fachliste hängt, und sie gehört nicht
+nebenbei in einen Isoliergrund-Fix. **Ich habe sie als Zusicherung
+festgehalten** (E-085-6), damit sie niemand versehentlich mitnimmt, während
+sie offen ist.
+
+### Nebenbefund für deinen Themenspeicher
+
+Der Rechenweg nennt ab jetzt den Raum, sobald die Aufnahme mehrere hat:
+`Wandfläche Wohnzimmer 45 m² + Wandfläche Schlafzimmer 35 m² + …`. Gemessen
+überlebt das `kundenRechenweg()` und steht damit auch auf dem Kundenpapier.
+Bei einem Raum bleibt die Zeile Wort für Wort, wie sie war. Falls dir das
+fachlich zu geschwätzig ist, sag es — die Zeile ist billig zu ändern.
+
+*Head of Product Engineering · 2026-09-21, 09:20 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
