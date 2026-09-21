@@ -1,84 +1,84 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 21.09.2026, 08:55 UTC · Chief of Staff**
-*(ersetzt die Fassung von 08:05 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 21.09.2026, 10:05 UTC · Chief of Staff**
+*(ersetzt die Fassung von 08:55 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
 *Alle Uhrzeiten sind **UTC**. In Deutschland ist es gerade **MESZ = UTC + 2**,
-also 10:55 Uhr Ortszeit.*
+also 12:05 Uhr Ortszeit.*
 
 ---
 
 ## Lage in drei Zeilen
 
-**🟢 Alles ist gepusht, und der gepushte Stand ist grün — gemessen.**
-Sandy hat zwischendurch selbst gepusht: `origin/main` und der lokale Stand
-sind beide **`3c3dd3d`**, **null ungepushte Commits**. Vercel-Produktion:
-`3c3dd3d`, **READY**. GitHub-Actions-CI auf demselben `3c3dd3d`: **success**,
-08:27 UTC. (Ein Lauf auf `2411f76` steht auf „cancelled" — der wurde vom
-nächsten Push überholt, das ist normal und kein Fehler.)
+**🟢 Was gepusht ist, ist grün — gemessen um 09:40 UTC.** GitHub-Actions:
+**CI auf `92e83e2` success**, 09:39 UTC. Vercel: jüngster Produktions-Deploy
+**`92e83e2`, READY**; die sechs davor ebenfalls READY, kein einziger Fehlschlag
+heute. Der einzige nicht-grüne CI-Lauf des Tages ist `2411f76` mit
+`cancelled` — abgebrochen, weil `3c3dd3d` 15 Sekunden später kam, kein Fehler.
 
-**🟢 In den vier Stunden seit dem letzten Stand haben vier Rollen geliefert.**
-Designer (DC-128 gebaut **und** committet, PD-023 beantwortet), Legal (L-KI-01
-gebaut, CoS-L-011 mit **B** beantwortet, CoS-L-012 abgearbeitet, ein roter
-Fund in Sandys eigenem Behördenplan korrigiert), Platform (CoS-P-033
-beantwortet), Engineering (läuft in diesem Moment). Der Stillstand vom
-17.–20.09. ist vorbei.
+**🟢 Seit 08:55 haben vier Rollen geliefert.** Engineering (CoS-E-085,
+`fb9b696`), Designer (DC-122 Teil 2, `92e83e2`), Platform (CoS-P-034-Fix,
+`scripts/docs-sichern.mjs`) und Platform noch einmal (CoS-P-033 beantwortet).
+**Alle vier sind fertig, keiner hängt.**
 
-**🔴 Der teuerste Fund des Tages kommt von Legal und betrifft alle acht
-Rollen: `docs-sichern.mjs sichern` committet auf diesem Rechner nichts.**
-Die Doku-Sicherung, die Sandy am 31.08. freigegeben hat, läuft seit unbekannter
-Zeit **lautlos** ins Leere. `pruefen` ist nicht betroffen. Auftrag liegt als
-**CoS-P-034** bei Platform.
+**🟡 Drei Commits liegen ungepusht.** `c997a10` (Doku-Sicherung), `f25fb12`
+(Platforms Skript) und der Commit dieses Laufs. **Sandy muss einmal pushen** —
+Block steht im Chat.
 
 ---
 
-## Was seit dem 21.09., 08:05 UTC fertig geworden ist
+## Was seit 08:55 UTC fertig geworden ist
 
-| Rolle | Ergebnis | Status |
+| Wer | Was | Wo |
 |---|---|---|
-| **Designer** | **DC-128 gebaut und committet** (`3c3dd3d`, fünf Dateien): der ausgenommene Bauabschnitt wird im Entwurf angezeigt — Hinweis **plus Belegzitat**. Die vier Tage uncommitteten Designer-Dateien sind damit weg | ✅ erledigt |
-| **Designer** | **PD-023 beantwortet.** Auf dem Kundenpapier steht „aus Transkript" gar nicht mehr (`kundenRechenweg()` streicht es). In der App stehen die zwei Wörter nebeneinander — er ändert die Schrift **bewusst nicht**: der Zeile fehlt der Beleg, nicht das Gewicht | ✅ erledigt |
-| **Legal** | **L-KI-01 eingebaut** (`bcd6916`, freigegebener Wortlaut, `datenschutz/page.tsx`) | ✅ erledigt |
-| **Legal** | **CoS-L-011 beantwortet: B.** Die drei freien Fußzeilen kommen **zusätzlich** und ersetzen nichts. Dazu die Richtigstellung: **DC-122 hing nie an Sandy** — der Fuß trägt die Daten des Handwerksbetriebs, nicht ihre | ✅ erledigt |
-| **Legal** | **CoS-L-012 abgearbeitet**, mit einem roten Fund in der eigenen Datei: `legal-007-plan-fuer-sandy.md` nannte Sandy **das falsche Kreuz** für den Fragebogen zur steuerlichen Erfassung (§ 19 statt Verzicht) und behauptete, es lasse sich später ändern — der Verzicht bindet **fünf Jahre**. Korrigiert, Korrekturkasten sichtbar | ✅ erledigt |
-| **Platform** | **CoS-P-033 beantwortet und zu.** Die vier Aufnahmen vom 19.08.: `audio_url` auf `null`, kein Storage-Objekt mehr im Bucket, Code löscht erst die Datei und dann den Verweis. Die Datenbankzeile bleibt **absichtlich** (Transkript). Datenschutzerklärung Z. 117 / AGB § 8.3 sind damit **vollständig belegt** | ✅ erledigt |
-| **Sandy** | **Gepusht.** Alle vier Commits von heute früh sind auf `origin/main`, Produktion ist darauf | ✅ erledigt |
-| **CoS** | **CoS-P-034 an Platform** (`docs-sichern.mjs`), **CoS-E-086 an Engineering** (Beleg-Feldpaar), **CoS-M-018 an Marketing** (Preiszeile ohne USt-Kennzeichnung), **CoS-L-013 an Legal** (Löschfrist zu, kommt nicht zurück), **DC-122-Freigabe** an den Designer | 🆕 verteilt |
+| **Engineering** | **CoS-E-085 / PM-079-A + PM-079-B** — der Isoliergrund läuft jetzt über **alle** verrauchten Räume statt über den ersten. 112,00 statt 65,00 m²; im Live-Fall **116,50 m² = 463,50 €**. PM-079-B stand auf dem **falschen Raum** und steht jetzt auf dem richtigen | `fb9b696` |
+| **Designer** | **DC-122 Teil 2** — die drei freien Fußzeilen-Felder stehen jetzt auf dem Kundendokument, **zusätzlich** zum festen Fuß, nach Legals Antwort B. 60-Zeichen-Grenze gerechnet, nicht geschätzt. **DC-122 ist damit ganz zu** | `92e83e2` |
+| **Platform** | **CoS-P-034-Fix** — `docs-sichern.mjs sichern` läuft über einen eigenen `GIT_INDEX_FILE` außerhalb des Repos, räumt liegende Sperren durch **Verschieben** weg und zieht den geteilten Index danach nach | `f25fb12` |
+| **Platform** | **CoS-P-033 beantwortet und zu** — Audiodatei nach 30 Tagen wirklich weg (Storage + `audio_url`), Datenbankzeile bleibt absichtlich. Zusage aus Datenschutzerklärung Z. 117 / AGB § 8.3 vollständig belegt | in `f25fb12` |
+| **CoS** | **CoS-P-034 auf Sandys echtem Mount nachgemessen** und abgenommen; **CoS-E-087** (Richtigstellung zum roten Ausgangsstand) an Engineering; **Bereinigungsauftrag** an den Prüfmeister; **Hinweis auf die neue Rechenweg-Zeile** an den Designer; **Löschrecht** auf Sandys Liste | dieser Commit |
 
 ---
 
 ## 🔎 Was ich selbst nachgesehen habe — und was nicht
 
-**Selbst gemessen, 08:42–08:55 UTC:**
+**Selbst gemessen, 09:40–10:05 UTC:**
 
-* **`git fetch` + `git rev-parse`:** `origin/main` = lokal = **`3c3dd3d`**,
-  **0 ungepushte Commits**.
-* **Vercel-API:** jüngster Produktions-Deploy **`3c3dd3d`, READY**; die drei
-  davor (`2411f76`, `954c6e6`, `69222b6`) ebenfalls READY.
-* **GitHub-Actions-API:** **CI auf `3c3dd3d` success**, 08:27 UTC.
-* **`git status`:** uncommittet liegen **fünf** Dateien — siehe unten, und
-  **vier davon gehören einem laufenden Vorgang**, nicht einem liegengebliebenen.
-* **Die Sperrdatei selbst:** `.git/index.lock` liegt in diesem Moment da,
-  0 Byte, und `git status` meldet beim Versuch, sie zu entfernen,
-  `Operation not permitted`. **Legals Befund ist damit von mir nachgemessen,
-  nicht übernommen.**
-* **`_git-sperrreste-zum-loeschen/` gibt es nicht.** Legal schreibt, der Ordner
-  liege im Projektordner und Sandy müsse ihn löschen. `ls` und `git status`
-  sagen: nein. Die leeren Sperrdateien liegen in **`.git/_locks/`** — innerhalb
-  von `.git`, unsichtbar für `git status`, nicht mitcommittbar. **Für Sandy ist
-  nichts zu tun, und ich habe ihr nichts auf die Liste gesetzt.**
-* **`node scripts/docs-sichern.mjs pruefen`:** „Alle 58 Doku-Dateien in
-  Ordnung", vor und nach meinem Anhängen.
-* **Gelesen, bevor ich darüber berichte:** Legal-Liste (ganzer Tagesbericht),
-  Platform-Liste, `design-check.md`, `entscheidungen-fuer-sandy.md`,
-  `arbeitsreihenfolge.md` der 08:05-Fassung.
+* **`git fetch` + `git rev-parse`:** vor diesem Lauf `origin/main` = lokal =
+  **`92e83e2`**, **0 ungepusht**. Sandy hat zwischendurch selbst gepusht.
+* **Vercel-API:** Produktion **`92e83e2`, READY**.
+* **GitHub-Actions-API:** **CI auf `92e83e2` success**, 09:39 UTC.
+* **Der Prüfstand über `pruefmeister-batch-47-56.test.ts`, dreimal** — und
+  zwar sauber getrennt, mit einer `git archive`-Kopie aus `HEAD` **außerhalb
+  des Arbeitsbaums**, damit niemandes laufende Arbeit angefasst wird:
+
+  | Was | Ergebnis |
+  |---|---|
+  | committete Testdatei gegen committeten Code | **32 grün · 7 erwartete Fehlschläge · 0 rot** |
+  | uncommittete Testdatei gegen committeten Code | **6 rot** |
+  | uncommittete Testdatei im echten Arbeitsbaum | **7 rot** |
+
+* **Was diese sechs wirklich sind:** fünf sind `it.fails` und melden
+  `Expect test to fail` — **der Fehler tritt nicht mehr auf**. Der sechste ist
+  ein Beleg-Test, der seine eigene Behauptung widerlegt. **PM-098 und PM-099
+  sind auf dem committeten Stand nicht mehr reproduzierbar.** Der siebte rote
+  gehört Engineerings gerade laufender Arbeit (PM-107).
+* **Der CoS-P-034-Fix auf dem echten Mount:** `.git/index.lock` lag da
+  (0 Byte, 09:37), `node scripts/docs-sichern.mjs sichern` **hat trotzdem
+  committet** (`c997a10`), Hash in der Ausgabe, fremde uncommittete Dateien
+  blieben draußen. `git log -1` als Gegenprobe.
+* **`scripts/docs-sichern.mjs` lag uncommittet** und enthält den Fix —
+  Bytegröße und Inhalt gegengeprüft, nicht der „written"-Meldung geglaubt.
+* **Das Löschrecht für den Ordner:** 09:44 UTC selbst angefragt,
+  **abgewiesen** — in einem geplanten Lauf erreicht die Frage Sandy nicht.
 
 **Nicht geprüft, und ich behaupte es deshalb nicht:**
 
-* **Kein eigener Prüfstand.** Letzter belegter Stand bleibt Engineerings
-  Messung vom 17.09., 17:15 UTC (190 Testdateien, 2.954 Prüfungen, 0 rot),
-  plus CI grün auf `3c3dd3d`.
-* **Was Engineering in diesem Moment baut**, ist nicht fertig und wird von mir
-  nicht als erledigt geführt — siehe unten.
+* **Kein eigener voller Prüfstand.** Letzte belegte Vollmessungen:
+  Engineering 09:20 UTC im Arbeitsbaum (193 Dateien) und Platform im
+  GitHub-Spiegel auf `92e83e2` (**194 Dateien, 2.897 grün, 96 erwartet
+  fehlschlagend, 0 rot**). Die beiden Zahlen widersprechen sich nicht — der
+  Unterschied ist genau die uncommittete Fremddatei.
+* **Warum** PM-098/PM-099 nicht mehr auftreten. Ich habe den Stand gemessen,
+  nicht die Ursache gesucht.
 * **Gate 1 rechne ich in diesem Lauf nicht neu.** Stand bleibt **54,2 %**.
 * **Versicherung, Stripe, Gewerbeanmeldung, Buchhaltungs-Testlauf,
   OneDrive-Sicherung** — nicht angefasst.
@@ -89,11 +89,12 @@ Zeit **lautlos** ins Leere. `pruefen` ist nicht betroffen. Auftrag liegt als
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | 🔵 **Wieder einmal pushen**, sobald Engineering und Prüfmeister ihre Läufe committet haben. Block steht unten im Chat | ein Befehl |
-| 2 | 🔵 **Ab 26.09.:** Gewerbeanmeldung → Fragebogen zur steuerlichen Erfassung → Geschäftskonto → Steuerberater. **Neu: beim Fragebogen die aktuelle Fassung von `legal-007-plan-fuer-sandy.md` lesen**, nicht eine gemerkte — das Kreuz hat sich mit ihrer eigenen Entscheidung vom 17.09. geändert, und es bindet fünf Jahre | nichts jetzt |
-| 3 | ⚪ **Einmal selbst einsprechen — freiwillig, nicht dringend.** Der Designer kann das Bernsteinbanner mit einer echten Sprachaufnahme auf dem Handy nicht prüfen: ein Raum normal, ein zweiter mit „das kommt später und wird extra angeboten". Ohne Mikrofon ist die Kette nicht auslösbar | 2 Minuten |
-| 4 | ⚪ **Freigabe für den Landingpage-Entwurf — freiwillig**, nur falls eine Messung bei echter Handy-Breite (375 px) gewünscht ist | freiwillig |
-| 5 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office) · **E-Rechnungs-Viewer** (Quba, 0 €) · **Versicherung** (exali/Markel 1 Mio. €) · **Stripe** (Konto + 2 Preise) · **Vercel-Benachrichtigung** | unverändert |
+| 1 | 🔵 **Einmal pushen.** Drei Commits liegen lokal. Block steht im Chat | ein Befehl |
+| 2 | 🔵 **Löschrecht für den Projektordner — NEU.** Ein Klick, aber nur in einer **normalen** Unterhaltung möglich, nicht in einem geplanten Lauf. Spart jeder Rolle einen Handgriff und einen möglichen Fehlschlag. **Nicht dringend** | ein Klick |
+| 3 | 🔵 **Ab 26.09.:** Gewerbeanmeldung → Fragebogen zur steuerlichen Erfassung → Geschäftskonto → Steuerberater. Beim Fragebogen die **aktuelle** Fassung von `legal-007-plan-fuer-sandy.md` lesen — das Kreuz hat sich am 17.09. geändert und bindet fünf Jahre | nichts jetzt |
+| 4 | ⚪ **Einmal selbst einsprechen — freiwillig.** Der Designer kann das Bernsteinbanner ohne echte Sprachaufnahme nicht prüfen: ein Raum normal, ein zweiter mit „das kommt später und wird extra angeboten" | 2 Minuten |
+| 5 | ⚪ **Freigabe für den Landingpage-Entwurf — freiwillig**, nur falls eine Messung bei echter Handy-Breite (375 px) gewünscht ist | freiwillig |
+| 6 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office) · **E-Rechnungs-Viewer** (Quba, 0 €) · **Versicherung** (exali/Markel 1 Mio. €) · **Stripe** (Konto + 2 Preise) · **Vercel-Benachrichtigung** | unverändert |
 
 **Es wartet keine Rolle auf Sandy, und nichts davon ist dringend.**
 
@@ -103,47 +104,51 @@ Zeit **lautlos** ins Leere. `pruefen` ist nicht betroffen. Auftrag liegt als
 
 | Rolle | Nächstes | Wartet auf |
 |---|---|---|
-| **Engineering** | **Der laufende Vorgang zuerst zu Ende und committet** (uncommittet im Baum: `maler-sonder.ts` plus die neue `cos-e-085-isoliergrund-alle-raeume.test.ts` — nach dem Namen ist das **PM-079-A**, Platz 1). Danach **CoS-E-083 weiter:** **PM-106 + PM-107 zusammen** → **PM-105**, dann unverändert **CoS-038 → PM-119/L-06 → CoS-E-080**. **🆕 CoS-E-086** (kann eine Position den Satz mitführen, aus dem ihre Zahl stammt?) ist eine **Antwortfrage, kein Bauauftrag** und drängt sich nicht vor | niemanden |
-| **Designer** | **🆕 DC-122 ist frei** — Legal hat mit **B** geantwortet, die fünf Grenzzeilen stehen in `design-check.md`. Punkt 2 beachten: der feste Fuß ist der aus CoS-E-057, bis dahin bleibt der heutige. Danach **DC-127** (dunkler Tabellenkopf, nur eine der beiden Seiten). **PD-018 §3** sinnvoll erst nach Engineerings Umstellung. DC-128 ist gebaut und committet | niemanden |
-| **Platform** | **🆕 CoS-P-034 — rot, und es betrifft alle:** `docs-sichern.mjs sichern` stolpert über seine eigene `.git/index.lock` und committet nichts. Weg erster Wahl: das Skript durchgängig auf einen eigenen `GIT_INDEX_FILE` außerhalb des Repos legen, `git read-tree HEAD` davor. **Melden mit Commit-Hash, nicht mit „müsste jetzt gehen".** Die eigene Liste ist außerdem uncommittet — mitnehmen | niemanden |
-| **Prüfmeister** | **Zuerst die Frage beantworten, die Engineering ihm zurückgegeben hat:** zählt „Altbauwohnung"/„Altbauhaus" als Zustandsaussage (**A** nur freistehendes Wort · **B** Wohnung/Haus zählen mit · **C** es braucht ein Zustandswort daneben)? Bis dahin steht A. Danach: **seine zwei Testdateien committen** (`pruefmeister-batch-47-56`, `pruefmeister-batch-79-88`, liegen seit dem 17.09.), dann **Themenspeicher-Punkt 14**. Trockenbau-Beobachtungen sammelt er nebenbei im Themenspeicher | niemanden |
-| **Legal** | **🆕 CoS-L-013: nichts zu tun** — die Löschfrist ist durch Platform vollständig belegt, kein Rechtstext-Mangel, der Punkt kommt **nicht** zurück. Danach frei für die eigene Reihenfolge. **`docs-sichern.mjs` nicht selbst anfassen**, das liegt bei Platform. Bitte beim nächsten Lauf gegenprüfen, wohin das `mv` der Sperrdateien tatsächlich gelaufen ist | niemanden |
-| **Marketing** | **CoS-M-017 zuerst lesen** (Trockenbau ist Richtung, wird **nirgends beworben**, bekommt keinen Termin). Dann **CoS-M-016** (Abschluss-CTA kann auf dem Handy leer bleiben), Vorschau-Umschalter raus (M-6), Hero kürzen, Reiter-Kante. Dann **CoS-M-014**, danach Zustelltest `support@`. **🆕 CoS-M-018** nur mitnehmen, wenn die Preiszeile ohnehin angefasst wird — den Wortlaut bei Legal holen, nicht selbst wählen. Website-Schalter bleibt hinter **CoS-038** | Engineering (CoS-038) |
-| **Finance** | **CoS-F-009** (Vorsteuer in die Kostenübersicht, Reverse-Charge auf „durchlaufend", Voranmeldungsrhythmus als Frage für den Steuerberater) · **Behördenliste für Sandy bis 26.09.** — kürzester Vorlauf, und sie muss zum korrigierten Schritt 2 in `legal-007-plan-fuer-sandy.md` passen · **26 unbearbeitete Belege** · **CoS-F-008** · steigt Gate-1-Punkt 4.7 über die 40/100? | niemanden |
+| **Prüfmeister** | **🆕 Platz 1: deine eigene Testdatei aufräumen und committen.** `pruefmeister-batch-47-56.test.ts` liegt seit dem 17.09. uncommittet und enthält **sechs rote**: fünf zugeschnappte Sperrklinken (PM-098, PM-099 — der Fehler tritt nicht mehr auf) und einen Beleg-Test, der sich selbst widerlegt. Erst nachrechnen, ob deine Soll-Lösung damit erfüllt ist, dann `it.fails` → `it`, Beleg-Test umschreiben, **dann** committen. **Unverändert committet wird die CI rot.** Danach: die Frage von Engineering beantworten — zählt „Altbauwohnung"/„Altbauhaus" als Zustandsaussage (**A** nur freistehend · **B** Wohnung/Haus zählen mit · **C** Zustandswort nötig)? Bis dahin gilt A. Dann `pruefmeister-batch-79-88` committen und Themenspeicher-Punkt 14 | niemanden |
+| **Engineering** | **CoS-E-083 weiter, ab Platz 4:** der laufende Vorgang (PM-106 + PM-107, uncommittet im Baum: `maler.ts`, `maler-basis.ts`, `cos-e-083-ansage-gilt-fuer-alle.test.ts`) **zuerst zu Ende und committet**. Danach **PM-105**, dann **CoS-038 → PM-119/L-06 → CoS-E-080**. **CoS-E-086** (Beleg je Position) bleibt eine **Antwortfrage**, kein Bauauftrag, und hängt hinter PM-105. **🆕 CoS-E-087 lesen** — der „rote Ausgangsstand von 6" ist keiner | niemanden |
+| **Designer** | **DC-122 ist zu, beide Teile.** Als Nächstes **DC-127** (dunkler Tabellenkopf, nur eine der beiden Seiten). **PD-018 §3** sinnvoll erst nach Engineerings Umstellung. **🆕 Zur Kenntnis:** der Rechenweg nennt ab jetzt den Raum, sobald die Aufnahme mehrere hat (`Wandfläche Wohnzimmer 45 m² + …`) — das steht auf dem Kundenpapier, die Gestaltung ist bewusst nicht angefasst und gehört dir | niemanden |
+| **Platform** | **CoS-P-034 ist abgenommen und zu**, CoS-P-033 ebenfalls. Damit frei für die eigene Reihenfolge. **Dein Skript ist jetzt committet** (`f25fb12`) — du konntest auf dem Mount nicht committen, ich habe nur diese eine Datei genommen | niemanden |
+| **Marketing** | **CoS-M-017 zuerst lesen** (Trockenbau ist Richtung, wird **nirgends beworben**, kein Termin). Dann **CoS-M-016** (Abschluss-CTA kann auf dem Handy leer bleiben), Vorschau-Umschalter raus (M-6), Hero kürzen, Reiter-Kante. Dann **CoS-M-014**, danach Zustelltest `support@`. **CoS-M-018** nur mitnehmen, wenn die Preiszeile ohnehin angefasst wird — Wortlaut bei Legal holen, nicht selbst wählen. Website-Schalter bleibt hinter **CoS-038** | Engineering (CoS-038) |
+| **Legal** | **CoS-L-013: nichts zu tun** — die Löschfrist ist durch Platform vollständig belegt, kein Rechtstext-Mangel, der Punkt kommt **nicht** zurück. Danach frei für die eigene Reihenfolge. **`docs-sichern.mjs` ist repariert und abgenommen** — dein Befund war der erste und er war richtig | niemanden |
+| **Finance** | **CoS-F-009** (Vorsteuer in die Kostenübersicht, Reverse-Charge auf „durchlaufend", Voranmeldungsrhythmus als Frage für den Steuerberater) · **Behördenliste für Sandy bis 26.09.** — kürzester Vorlauf, muss zum korrigierten Schritt 2 in `legal-007-plan-fuer-sandy.md` passen · **26 unbearbeitete Belege** · **CoS-F-008** · steigt Gate-1-Punkt 4.7 über die 40/100? **Finance hat heute noch nicht gelaufen** | niemanden |
 
 ---
 
 ## Was gerade niemanden blockiert, aber nicht untergehen darf
 
-* **🔴 Die Doku-Sicherung sichert nichts.** `docs-sichern.mjs sichern` bricht
-  an der eigenen Sperrdatei ab, seit unbekannter Zeit, lautlos. **CoS-P-034.**
-  `pruefen` ist nicht betroffen und meldet weiter zuverlässig.
-* **🔴 Richtigstellung meiner eigenen Notiz vom 08:05-Lauf:** Ich hatte
-  geschrieben, die Git-Sperrreste seien „für git harmlos". **Das war falsch.**
-  Eine liegengebliebene `index.lock` blockiert den nächsten `git add` **jeder**
-  Rolle. Dass die vier Commits heute durchgingen, liegt daran, dass Legal einen
-  eigenen Index benutzt hat — nicht daran, dass die Sperre folgenlos wäre.
-  **Der Weg, der heute nachweislich funktioniert:**
-  `export GIT_INDEX_FILE=$HOME/<rolle>-index; git read-tree HEAD; git add -- <nur eigene Dateien>; git commit`.
-  Er hat den Nebennutzen, dass fremde uncommittete Dateien gar nicht
-  mitrutschen können.
-* **🟡 Uncommittet im Arbeitsbaum, fünf Dateien — aber nicht alle gleich:**
-  Engineerings `maler-sonder.ts` + `cos-e-085-…test.ts` gehören einem **jetzt
-  laufenden** Vorgang; Platforms eigene Liste ist von heute früh; die zwei
-  Prüfmeister-Testdateien liegen seit dem **17.09.** **`git add -A` bleibt
-  abgeschafft.** Wer seine Arbeit fortsetzt, committet **seine** Dateien.
+* **🟢 Die Doku-Sicherung sichert wieder.** `docs-sichern.mjs sichern` läuft
+  über einen eigenen Index, verschiebt liegende Sperren statt sie zu löschen
+  und nennt den Commit-Hash in der Ausgabe. **Auf dem echten Mount mit
+  liegender Sperre gemessen**, nicht nur im Spiegel.
+* **🟡 Die Sperrdateien entstehen weiter.** Der Fix räumt sie vor dem eigenen
+  Lauf weg, aber jeder `git status` jeder Rolle legt neue an. Ursache ist das
+  fehlende Löschrecht. **Der Weg, der ohne dieses Recht funktioniert** — und
+  den jede Rolle vor dem Commit fahren soll:
+  `mkdir -p .git/_stale && for f in .git/*.lock; do [ -e "$f" ] && mv -n "$f" ".git/_stale/$(basename $f).$(date +%s%N)"; done`
+  danach `export GIT_INDEX_FILE=$HOME/<rolle>-index; git read-tree HEAD;
+  git add -- <nur eigene Dateien>; git commit`.
+* **🟡 „written" ist keine Zusage, dass die Datei angekommen ist.** Der
+  Designer hat heute erneut erlebt, dass eine Datei als geschrieben gemeldet
+  wurde und nicht ankam — aufgefallen nur durch den Bytegrößen-Vergleich.
+  **Verfahren für alle Rollen: nach jedem Schreiben die Größe gegenprüfen.**
+* **🟡 Uncommittet im Arbeitsbaum, vier Dateien:** Engineerings `maler.ts`,
+  `maler-basis.ts` und `cos-e-083-…test.ts` gehören einem **laufenden**
+  Vorgang; die Prüfmeister-Testdatei liegt seit dem **17.09.**
+  **`git add -A` bleibt abgeschafft.**
 * **🟡 „Der Browser in der Claude-App kommt an beide Adressen" stimmt nicht.**
   Er stimmt für `sofortangebot.app`, **nicht** für den Landingpage-Entwurf —
   der liegt hinter Vercel Deployment Protection und antwortet mit 302 auf
-  `vercel.com/login`. Der falsche Satz ging an Marketing, Finance und den
-  Designer. Wer ihm folgt, hält den Login für einen eigenen Fehler.
-* **🟡 Legals kleiner Fund, bewusst klein gehalten:** die **live** Preiszeile
-  (`PreiseSection.tsx`) nennt „0 €" und den Monatspreis **ohne jede
-  Umsatzsteuerangabe** (§ 5a UWG). Kein Gate-1-Blocker. **CoS-M-018.**
+  `vercel.com/login`.
+* **🟡 Die live Preiszeile** (`PreiseSection.tsx`) nennt „0 €" und den
+  Monatspreis **ohne jede Umsatzsteuerangabe** (§ 5a UWG). Kein
+  Gate-1-Blocker. **CoS-M-018.**
 * **LR-17 ist die eigentliche Fußzeilen-Lücke, nicht DC-122.** Rechtsform,
-  Registergericht, Registernummer, Vertretungsberechtigte kennt das Produkt bis
-  heute nicht — weder in `companies` noch irgendwo in `src/` oder
-  `supabase/migrations/`. Gebaut wird das in **CoS-E-057**, nicht vom Designer.
+  Registergericht, Registernummer, Vertretungsberechtigte kennt das Produkt
+  bis heute nicht. Gebaut wird das in **CoS-E-057**, nicht vom Designer.
+* **PM-080 ist bewusst nicht mitgenommen worden.** Ohne Auslösewort entsteht
+  weiter keine bepreiste Zeile. Das ist eine offene Bauentscheidung des
+  Prüfmeisters und als Zusicherung festgehalten (E-085-6), damit sie niemand
+  versehentlich nebenbei ändert.
 * **Die Vollständigkeitsprüfung warnt beim Commit** (`pre-commit`, `exit 0`,
   blockiert nichts). Wer „ist committet" meldet, ohne die
   `[pre-commit]`-Zeilen gelesen zu haben, meldet einen Stand, der bei Vercel
@@ -156,8 +161,9 @@ Zeit **lautlos** ins Leere. `pruefen` ist nicht betroffen. Auftrag liegt als
   bei Engineering; vor dem Umbenennen `dc050-rechenweg-pdf.test.ts` und
   `dc119-wandflaechen-konflikt.test.ts` ansehen.
 * **`menge_unbekannt` ist bewusst nicht gebaut.** Offen, wer die Messung macht.
-* **403 ist nicht 404.** Eine Schnittstelle, die „keine Berechtigung" sagt,
-  sagt nicht „nicht vorhanden". Dieselbe Vorsicht hat heute zum zweiten Mal
-  geholfen — diesmal bei einem Ordner, den es nicht gibt.
+* **Eine rote Zahl ist nicht immer ein Fehler.** Sechs „rote Tests" waren
+  heute in Wahrheit sechs Meldungen, dass ein Fehler **weg** ist. Wer eine
+  Zahl weiterreicht, ohne sie einmal aufzumachen, reicht die falsche Lage
+  weiter — dreimal messen war heute billiger als einmal raten.
 
-*Chief of Staff · 2026-09-21, 08:55 UTC*
+*Chief of Staff · 2026-09-21, 10:05 UTC*

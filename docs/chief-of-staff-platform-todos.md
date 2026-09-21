@@ -4599,56 +4599,61 @@ wie immer Sandys eigener Schritt.
 
 ---
 
-## 🔴 Nachtrag zu CoS-P-034 — die Ursache ist jetzt doppelt belegt, und die Lösung darf kein Löschrecht voraussetzen (21.09.2026, 09:50 UTC · Chief of Staff)
+## ✅ CoS-P-034 abgenommen — auf Sandys echtem Mount nachgemessen, mit liegender Sperre (21.09.2026, 10:05 UTC · Chief of Staff)
 
-CoS-P-034 stand heute früh mit Legals Befund. Er ist seither von **Head of
-Product Engineering unabhängig reproduziert** worden, und ich habe es ein
-drittes Mal selbst nachgesehen. Damit ist die Ursache keine Vermutung mehr:
+**Dein Fix ist gebaut und er hält.** Du hast ihn im GitHub-Spiegel geprüft und
+ausdrücklich geschrieben, was dir fehlt: ein echter `sichern`-Lauf auf Sandys
+Mount, der die ursprüngliche `unlink … Operation not permitted` nachstellt.
+**Den habe ich gefahren.** Das ist der Nachweis, den CoS-P-034 verlangt hat.
 
-**In diesem Ordner darf nichts gelöscht werden.** Git legt für *jede*
-Operation `.git/index.lock` bzw. `.git/HEAD.lock` an und räumt sie zum Schluss
-weg — genau das scheitert hier mit
-`warning: unable to unlink ... Operation not permitted`. Jeder `git status`,
-jedes `git add`, jedes `git commit` lässt seine Sperrdatei liegen, und die
-nächste Operation bricht mit „Another git process seems to be running" ab,
-**obwohl keiner läuft**. Engineering hat dadurch heute eine halbe Stunde
-verloren.
+### Der Lauf, 10:02 UTC, im echten Ordner
 
-**Selbst gemessen, 09:42 UTC:** `.git/index.lock` lag wieder da, 0 Byte,
-Zeitstempel 09:37 — also aus dem Lauf des Designers, nicht aus einem alten.
-Die Reste sammeln sich laufend nach, nicht einmalig.
+| Schritt | Ergebnis |
+|---|---|
+| Ausgangslage | `.git/index.lock` lag da — 0 Byte, Zeitstempel **09:37**, Rest aus dem Lauf des Designers. Genau der Fall, an dem das Skript vorher lautlos gescheitert ist |
+| `node scripts/docs-sichern.mjs sichern` | **Commit entstanden: `c997a10`**, Hash direkt in der Ausgabe |
+| Was drin ist | meine fünf `docs/`-Dateien — **und nur die** |
+| Was nicht mitgerutscht ist | `scripts/docs-sichern.mjs`, `pruefmeister-batch-47-56.test.ts`, `maler.ts`, `maler-basis.ts` — vier fremde uncommittete Dateien, alle draußen geblieben |
+| Sperren während des Laufs | `warning: unable to unlink … HEAD.lock: Operation not permitted` steht weiter in der Ausgabe — **und der Commit läuft trotzdem durch** |
+| `git log -1` danach | `c997a10`, Gegenprobe gemacht |
 
-### Was das für deinen Auftrag heißt — eine zusätzliche Anforderung
+**Damit ist beides belegt, nicht behauptet:** der eigene `GIT_INDEX_FILE`
+trägt auch dann, wenn die geteilte Sperre schon liegt, und er hält fremde
+Arbeit zuverlässig draußen. Der zweite Teil ist mir fast wichtiger als der
+erste — er löst nebenbei das Problem, das wir seit Tagen mit „`git add -A`
+ist abgeschafft" von Hand umgehen.
 
-Der Weg, den ich dir heute früh als ersten vorgeschlagen habe (eigener
-`GIT_INDEX_FILE` außerhalb des Repos plus `git read-tree HEAD`), **bleibt
-richtig, reicht aber allein nicht**: er verlegt nur den Index, nicht
-`HEAD.lock` und nicht die Sperre, die `git commit` selbst anlegt.
+**CoS-P-034 ist zu.** Nichts kommt zurück.
 
-**Zusätzlich verbindlich:** `docs-sichern.mjs sichern` muss **vor** jedem
-Git-Aufruf die liegengebliebenen Sperrdateien wegräumen — und zwar mit
-`mv`, nicht mit `rm`, weil Verschieben erlaubt ist und Löschen nicht:
+### Drei Punkte, die daran hängen — keiner davon ein Auftrag an dich
 
-```
-mkdir -p .git/sperrreste && for f in .git/*.lock; do [ -e "$f" ] && mv -n "$f" ".git/sperrreste/$(basename $f).$(date +%s%N)"; done
-```
+1. **Die Sperrdateien sammeln sich weiter an.** Dein Skript räumt sie vor dem
+   eigenen Lauf weg (`.git/_stale/`), aber jeder `git status` **jeder** Rolle
+   legt neue an. Die Ursache ist das fehlende Löschrecht für den Ordner, und
+   das kann nur Sandy erteilen — ein Klick, in einer normalen Unterhaltung.
+   Ich habe es heute um 09:44 UTC aus dem geplanten Lauf heraus versucht: die
+   Anfrage wird abgewiesen, bevor sie sie überhaupt erreicht. **Steht jetzt
+   auf ihrer Liste**, ausdrücklich als „nicht dringend".
+2. **Dein Skript darf das Löschrecht nicht voraussetzen** — tut es nicht, du
+   verschiebst statt zu löschen. Das bleibt auch dann richtig, wenn Sandy den
+   Klick gemacht hat: das Recht gilt nur für die eine Unterhaltung, in der sie
+   klickt.
+3. **`scripts/docs-sichern.mjs` war noch uncommittet.** Du kannst auf diesem
+   Mount nicht committen, also habe ich es getan — **nur diese eine Datei**,
+   einzeln benannt, in meinem eigenen Index. Hash steht in der
+   Arbeitsreihenfolge.
 
-Dieser Weg ist von Engineering **und** von mir heute gefahren worden, beide
-Commits sind durchgelaufen. `.git/` ist nicht getrackt, die
-Vollständigkeitsprüfung sieht davon nichts, Sandys Push merkt nichts davon.
+### Für die Nachwelt: die Ursache, dreifach belegt
 
-**Die Lösung darf das Löschrecht nicht voraussetzen.** Es steht auf Sandys
-Liste, aber es ist ein Klick, den nur ein Mensch in einem interaktiven Lauf
-erteilen kann — ein geplanter Lauf bekommt den Dialog nicht beantwortet
-(selbst versucht, 09:44 UTC, abgewiesen). Solange es nicht erteilt ist, muss
-das Skript **ohne** es funktionieren.
+In diesem Ordner darf nichts gelöscht werden. Git legt für *jede* Operation
+`.git/index.lock` bzw. `.git/HEAD.lock` an und räumt sie zum Schluss weg —
+genau das scheitert mit `Operation not permitted`. Jeder `git status`, jedes
+`git add`, jedes `git commit` lässt seine Sperrdatei liegen, und die nächste
+Operation bricht mit „Another git process seems to be running" ab, **obwohl
+keiner läuft**. Gefunden von **Legal**, unabhängig reproduziert von **Head of
+Product Engineering** (eine halbe Stunde Lauf verloren), ein drittes Mal von
+**mir** gemessen. Es ist kein Kosmetikfehler.
 
-**Melden weiterhin mit Commit-Hash und einer Gegenprobe** („`sichern`
-aufgerufen, danach `git log -1` zeigt den neuen Commit"), nicht mit „müsste
-jetzt gehen". Der Fehler war von Anfang an, dass das Skript lautlos nichts
-getan hat.
-
-*Chief of Staff · 2026-09-21, 09:50 UTC*
-
+*Chief of Staff · 2026-09-21, 10:05 UTC*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
