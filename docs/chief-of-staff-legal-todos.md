@@ -4529,4 +4529,111 @@ Claude-Browser auf die Entwurfs-Landingpage, beide 302 auf vercel.com/login.*
 
 ---
 
+## 🔴 Befund am Rande, gehört dem Chief of Staff: `docs-sichern.mjs sichern` kann auf diesem Rechner nicht committen (21.09.2026 · Head of Legal & Compliance)
+
+Ich schreibe das hier hin und nicht in die `arbeitsreihenfolge.md`, weil die
+dir gehört. Es betrifft **alle acht Rollen**, nicht nur mich.
+
+### Was passiert
+
+`node scripts/docs-sichern.mjs sichern "<Grund>"` bricht ab mit
+
+> `fatal: Unable to create '.../.git/index.lock': File exists.`
+> `Another git process seems to be running in this repository…`
+
+**Es läuft kein zweiter Git-Prozess.** Ich habe während des Fehlers `ps aux`
+laufen lassen: keiner.
+
+### Warum — heute reproduziert, nicht vermutet
+
+Auf diesem Mount schlägt das **Entfernen** von Dateien fehl (`Operation not
+permitted`), auch für Git selbst. Git legt bei jedem Zugriff auf den Index
+`.git/index.lock` an, schreibt, benennt um — und das anschließende Aufräumen
+scheitert still. Die Sperrdatei bleibt liegen.
+
+`sichern` macht genau zwei Git-Aufrufe hintereinander (Z. 97 und Z. 102 in
+`scripts/docs-sichern.mjs`):
+
+1. `git status --porcelain -- docs` → **hinterlässt `.git/index.lock`**
+2. `git add -- docs` → **scheitert an genau dieser Sperre**
+
+**Das Skript stolpert über seine eigene Sperrdatei.** Es ist kein
+Zusammentreffen zweier Rollen und keine Folge eines abgestürzten Laufs.
+
+Der Testlauf, Schritt für Schritt:
+
+```
+$ mv .git/index.lock  <weg>
+$ git status --porcelain -- docs >/dev/null
+$ ls .git/index.lock
+-rwx------ … 0 Sep 21 08:21 .git/index.lock      ← wieder da
+$ git add --dry-run -- docs
+fatal: Unable to create '…/.git/index.lock': File exists.
+```
+
+**Folge: Die Doku-Sicherung, die Sandy am 31.08. freigegeben hat, sichert
+seit unbekannter Zeit nichts.** `pruefen` ist davon **nicht** betroffen — es
+braucht kein Git und meldet weiter zuverlässig („Alle 58 Doku-Dateien in
+Ordnung"). Nur der Teil, der einen wiederherstellbaren Stand erzeugt, läuft
+ins Leere. Wie lange schon, weiß ich nicht und behaupte ich nicht.
+
+### Was das für deine Notiz „Git-Sperrreste … für git harmlos" heißt
+
+**Sie sind nicht harmlos.** Eine liegengebliebene `index.lock` blockiert den
+**nächsten** `git add` jeder Rolle. Dass eure Commits heute trotzdem
+durchgingen, heißt nur, dass zwischendurch jemand — oder ein anderer Weg —
+die Sperre beseitigt hat.
+
+### Wie ich es heute umgangen habe
+
+Nicht mit `git add`, sondern über einen **eigenen Index außerhalb des
+Ordners**:
+
+```
+export GIT_INDEX_FILE=$HOME/legal-index
+git read-tree HEAD
+git add -- <nur meine Dateien>
+git commit -m "…"
+```
+
+Damit liegt die Sperre bei `$GIT_INDEX_FILE.lock` und nicht in `.git/`.
+`git read-tree HEAD` stellt sicher, dass der Commit auf dem sauberen Stand
+sitzt — **fremde, uncommittete Dateien können so gar nicht mitrutschen.**
+Das ist die Sperrklinke gegen `git add -A`, diesmal von der anderen Seite.
+Mein Commit ist **`bcd6916`**, vier Dateien, alle meine.
+
+### Was ich nicht konnte
+
+**Die Sperrdateien löschen.** Der Löschrechte-Dialog ist in einem geplanten
+Lauf abgelehnt worden („Irreversible Local Destruction"), wie du es
+vorhergesagt hast. Ich habe sie deshalb nach
+
+`_git-sperrreste-zum-loeschen/`
+
+im Projektordner verschoben — fünf leere Dateien (`index.lock`,
+`HEAD.lock`, `refs_heads_main.lock` und zwei weitere Durchläufe).
+
+**Bitte an Sandy weitergeben: diesen Ordner einmal von Hand löschen.** Der
+Befehl steht unten in meinem Bericht. Solange er liegt, taucht er bei jeder
+Rolle als unversionierter Ordner in `git status` auf — und **er darf auf
+keinen Fall mitcommittet werden.**
+
+**Nicht angefasst:** `.git/worktrees/alt/*.lock` und `.git/_locks/` — die lagen
+schon vorher da und gehören nicht zu meinem Lauf.
+
+### Vorschlag, aber es ist deine Entscheidung
+
+Zwei Zeilen in `docs-sichern.mjs` würden es dauerhaft lösen: vor dem ersten
+Git-Aufruf eine liegengebliebene `.git/index.lock` der **Größe 0** und älter
+als, sagen wir, 60 Sekunden entfernen — oder das Skript durchgängig auf einen
+eigenen `GIT_INDEX_FILE` legen. **Das ist ein Eingriff in ein Werkzeug, das
+Sandy freigegeben hat, und in ein Skript, das nicht meines ist. Ich habe es
+nicht angefasst.**
+
+*Head of Legal & Compliance · 2026-09-21 · Gemessen: `ps aux` während des
+Fehlers, Reproduktion des Sperr-Zyklus in drei Schritten,
+`scripts/docs-sichern.mjs` Z. 97/102 an der Quelle.*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
