@@ -138,11 +138,23 @@ describe('PM-134 · der Ausschluss vor dem Auftrag', () => {
     expect(summe(lauf(T_NACHHER, FLUR()))).toBe(121.8)
   })
 
-  it('PM-134-B · und der Wegfall ist stumm — kein Fehlt-Eintrag', () => {
-    // Dieselbe Klasse wie PM-113 und PM-125: Das Blatt sagt nicht, warum die
-    // Wand fehlt. Genau daran kann Manfred den Fehler nicht sehen.
+  it('PM-134-B · der Wegfall ist nicht mehr stumm — seit DC-135 mit Beleg', () => {
+    // Gemessen am 21.09. war er stumm: kein Fehlt-Eintrag, das Blatt sagte
+    // nicht, warum die Wand fehlt — genau daran konnte Manfred den Fehler
+    // nicht sehen. DC-135 (Antwort auf PD-024) reicht den Satz mit, auf den
+    // sich die Bremse stützt. Der Wegfall selbst bleibt falsch: das ist
+    // PM-134-A, und die Sperrklinke darunter steht unverändert.
+    //
+    // Diese Zusicherung ist damit von „so ist es" zu „so soll es bleiben"
+    // geworden. Wer den Hinweis wieder entfernt, sieht es hier.
     const { fehlende } = laufVoll(T_VORHER, FLUR())
-    expect(fehlende.some(f => /wand|wänd/i.test(f))).toBe(false)
+    const spur = fehlende.find(f => /wand|wänd/i.test(f))
+    expect(spur, 'kein Fehlt-Eintrag zur Wand').toBeDefined()
+    expect(spur!).toMatch(/^⚠/)
+    expect(spur!).toMatch(/„Flur": Arbeiten an den Wänden sind nicht im Angebot/)
+    // Der Beleg-Satz gehört dazu — ohne ihn kann der Betrieb nicht
+    // beurteilen, ob die Bremse richtig gegriffen hat (DC-116/DC-128).
+    expect(spur!).toMatch(/gesagt: „An den Wänden machen wir nichts"/)
   })
 
   it.fails('PM-134-A · SOLL: der spätere ausdrückliche Auftrag hebt den früheren Ausschluss auf', () => {
@@ -260,8 +272,17 @@ describe('PM-136 · der Ausschluss ohne Raumnamen', () => {
     // Richtig ist ein Fehlt-Eintrag / eine Rückfrage, der sagt, dass die
     // Ansage nicht zugeordnet werden konnte. Eine Bremse, die rät, ist
     // schlimmer als keine — der Satz steht so in `bauteil-ausschluss.ts`.
+    //
+    // NACHGEZOGEN am 21.09. (DC-135): Seit der Bauteil-Ausschluss seinen
+    // Beleg mitreicht, steht in `fehlende` eine Zeile mit „Wänden" — aber
+    // sie sagt das Falsche. Sie behauptet die geerbte Zuordnung („Wohnzimmer:
+    // Arbeiten an den Wänden sind nicht im Angebot") statt zuzugeben, dass
+    // die Ansage nicht zugeordnet werden konnte. Die alte Fassung dieser
+    // Zusicherung („irgendeine Zeile nennt die Wand") wäre dadurch grün
+    // geworden, ohne dass der Befund behoben ist. Sie prüft deshalb jetzt
+    // auf das, was PM-136-A wirklich verlangt.
     const { fehlende } = laufVoll(T_OHNE_RAUM, ZWEI())
-    expect(fehlende.some(f => /wand|wänd/i.test(f))).toBe(true)
+    expect(fehlende.some(f => /nicht zugeordnet|welchem Raum|nicht eindeutig/i.test(f))).toBe(true)
   })
 })
 

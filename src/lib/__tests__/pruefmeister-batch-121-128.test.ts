@@ -635,7 +635,11 @@ describe('PM-125 · die Verneinung mit Menge, jenseits der Fenster', () => {
     expect(finde(laufMaler(T_SOCKEL, FLUR()), /Sockelleisten lackieren/)).toBeDefined()
   })
 
-  it.fails('PM-125-D 🔴 oder der Satz hinterlässt wenigstens eine Spur', () => {
+  // GELÖST am 21.09.2026 durch DC-135 (Product Designer, Antwort auf PD-024) —
+  // derselbe Grund wie bei PM-105-B: der Ausschlusssatz reicht seinen Beleg
+  // jetzt bis in `fehlende` durch. PM-125-A/B/C bleiben rot: die ausdrücklich
+  // bestellte Tür bzw. der Heizkörper sind weiter nicht im Angebot.
+  it('PM-125-D 🔴 oder der Satz hinterlässt wenigstens eine Spur', () => {
     // Die schwächere Forderung, dieselbe wie PM-105-B, PM-101-G, PM-103-A.
     expect(fehltHat(laufMalerVoll(T_TUER, FLUR()).fehlende, /tür/i), 'Tür').toBe(true)
     expect(fehltHat(laufMalerVoll(T_HEIZ, FLUR()).fehlende, /heizk/i), 'Heizkörper').toBe(true)

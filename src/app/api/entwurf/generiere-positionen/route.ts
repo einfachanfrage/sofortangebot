@@ -10,6 +10,7 @@ import { uebernehmeGrundrisse, type RaumDetail } from '@/lib/mengen/raum-details
 import { ergaenzeAusAufnahmeHinweisen, normalisiereBodenPositionenAusAufnahme } from '@/lib/mengen/aufnahme-hinweise'
 import { pruefeMassPlausibilitaet } from '@/lib/mass-plausibilitaet'
 import { istZeitAusschlussHinweis } from '@/lib/zeit-ausschluss'
+import { istBauteilAusschlussHinweis } from '@/lib/bauteil-ausschluss'
 import { filtereExakteDubletten } from '@/lib/quote-items-dedup'
 import { trenneGeschuetzte, handaenderungsHinweis } from '@/lib/manuelle-positionen'
 import { filtereErschwernis, type ErschwernisConfig } from '@/lib/erschwernis'
@@ -304,8 +305,16 @@ export async function POST(req: NextRequest) {
   // die Entwurfsseite leitet bei vorhandenen Warnungen nicht mehr sofort
   // weiter, sondern zeigt sie erst. Ein weggelassener Bauabschnitt ist genau
   // der Fall, für den diese Bremse gebaut wurde (PM-010).
+  // PD-024/DC-135: Die Bauteil-Ausschlüsse (PM-099/PM-134) nehmen denselben
+  // Weg. Zwei Bremsen, die dasselbe tun — eine nimmt einen Raum, die andere
+  // ein Bauteil in einem Raum —, dürfen sich für den Betrieb nicht
+  // verschieden anfühlen. Weiterhin ausdrücklich NUR diese zwei Sorten:
+  // „Küche: Keine Maße angegeben" und Geschwister bleiben draußen, über
+  // einem frischen Entwurf ist eine Mängelliste kein Hinweis, sondern ein
+  // Urteil (DC-128).
   for (const zeile of extData.bewertung?.fehlende_angaben ?? []) {
-    if (istZeitAusschlussHinweis(zeile) && !massWarnungen.includes(zeile)) {
+    const istHinweis = istZeitAusschlussHinweis(zeile) || istBauteilAusschlussHinweis(zeile)
+    if (istHinweis && !massWarnungen.includes(zeile)) {
       massWarnungen.push(zeile)
     }
   }

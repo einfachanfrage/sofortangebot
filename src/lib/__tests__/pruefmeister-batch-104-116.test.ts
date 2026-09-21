@@ -212,7 +212,13 @@ describe('PM-105 · die Verneinung mit Menge', () => {
     expect(fenster!.menge).toBe(1)
   })
 
-  it.fails('PM-105-B · oder der Satz hinterlässt wenigstens eine Spur', () => {
+  // GELÖST am 21.09.2026 durch DC-135 (Product Designer, Antwort auf PD-024).
+  // Die Sperrklinke stand auf `it.fails`, weil der Verneinungssatz spurlos
+  // blieb. Seit `bauteil-ausschluss.ts` seine Belege mitreicht, entsteht ein
+  // Fehlt-Eintrag „⚠ Arbeiten an den Fenstern sind nicht im Angebot —
+  // gesagt: …". PM-105-A bleibt offen: eine Spur ist noch kein zurückgeholtes
+  // Fenster, und 100,00 € bestellte Arbeit fehlen weiter.
+  it('PM-105-B · oder der Satz hinterlässt wenigstens eine Spur', () => {
     // Die schwächere Forderung, dieselbe wie PM-101-G und PM-103-A.
     expect(fehltHat(laufVoll('maler', T_VERNEINT, WZ_MALER()).fehlende, /fenster/i)).toBe(true)
   })

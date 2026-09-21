@@ -82,6 +82,25 @@ const TAETIGKEIT = /streich|lackier|tapezier|spachtel|schleif|grundier|verputz|v
 /** Ausschluss gilt für den ganzen Auftrag, nicht für einen Raum. */
 const UEBERALL = /[üu]berall|generell|insgesamt|nirgend|in allen r[äa]umen|\bwohnung\b/i
 
+/**
+ * Eine einzelne Ausschluss-Stelle: WO, WAS, und WORAUF sie sich stützt.
+ *
+ * PD-024 (Prüfmeister, 21.09.2026) / DC-135: `belege` sagt nur, welche Sätze
+ * überhaupt gegriffen haben — flach, ohne Raum und ohne Bauteil. Damit lässt
+ * sich später nicht mehr entscheiden, ob ein bestimmter Satz wirklich eine
+ * Zeile gekostet hat, und ein Hinweis über ein Bauteil, das gar nicht im
+ * Angebot stand, wäre Lärm. Deshalb dieselbe Feststellung noch einmal, nur
+ * nicht mehr flach.
+ */
+export interface BauteilAusschlussStelle {
+  /** Raumname, oder `null` wenn der Satz für den ganzen Auftrag gilt. */
+  raum: string | null
+  /** Die in diesem Satz abbestellten Bauteile. */
+  bauteile: Bauteil[]
+  /** Der Satz, auf den sich das stützt. */
+  satz: string
+}
+
 /** Für einen Raum (oder global) abbestellte Bauteile. */
 export interface BauteilAusschluss {
   /** Bauteile, die im ganzen Auftrag abbestellt sind. */
@@ -90,6 +109,8 @@ export interface BauteilAusschluss {
   jeRaum: Map<string, Set<Bauteil>>
   /** Die Sätze, auf die sich das stützt — für sichtbare Hinweise. */
   belege: string[]
+  /** Dieselben Sätze mit Raum und Bauteil (PD-024/DC-135). */
+  hinweise: BauteilAusschlussStelle[]
 }
 
 function bauteileImSatz(satz: string): Bauteil[] {
@@ -113,7 +134,8 @@ export function erkenneBauteilAusschluss(
   const global = new Set<Bauteil>()
   const jeRaum = new Map<string, Set<Bauteil>>()
   const belege: string[] = []
-  if (!text) return { global, jeRaum, belege }
+  const hinweise: BauteilAusschlussStelle[] = []
+  if (!text) return { global, jeRaum, belege, hinweise }
 
   // 1. Je Satz sammeln, für welche Bauteile ein AUFTRAG dasteht. Ein
   //    Teilsatz ohne eigenes Bauteil trägt das zuletzt genannte weiter.
@@ -142,6 +164,11 @@ export function erkenneBauteilAusschluss(
 
     belege.push(satz.trim())
     const istGlobal = UEBERALL.test(satz) || (!raumImSatz && raum === null)
+    hinweise.push({
+      raum: istGlobal ? null : (raum as string),
+      bauteile: [...treffer],
+      satz: satz.trim(),
+    })
     for (const b of treffer) {
       if (istGlobal) global.add(b)
       else {
@@ -152,7 +179,7 @@ export function erkenneBauteilAusschluss(
     }
   }
 
-  return { global, jeRaum, belege }
+  return { global, jeRaum, belege, hinweise }
 }
 
 export interface PositionFuerAusschluss {
@@ -175,15 +202,15 @@ export interface PositionFuerAusschluss {
  * darauf stützt sich die Kennzeichnung `automatisch_ergaenzt` in
  * `vollstaendigkeit/index.ts`.
  */
-export function entferneAusgeschlosseneBauteile<T extends PositionFuerAusschluss>(
+export function entferneAusgeschlosseneBauteileMitHinweisen<T extends PositionFuerAusschluss>(
   positionen: T[],
   transkript: string,
   raumNamen: string[] = [],
-): T[] {
-  if (!transkript || positionen.length === 0) return positionen
+): BauteilAusschlussErgebnis<T> {
+  if (!transkript || positionen.length === 0) return { positionen, hinweise: [] }
   const namen = raumNamen.map(n => (n ?? '').trim()).filter(n => n.length >= 3)
   const a = erkenneBauteilAusschluss(transkript, namen)
-  if (a.global.size === 0 && a.jeRaum.size === 0) return positionen
+  if (a.global.size === 0 && a.jeRaum.size === 0) return { positionen, hinweise: [] }
 
   /** Welche Bauteile sind für diese Position abbestellt? */
   const verbotIn = (raum: string | null): Set<Bauteil> => {
@@ -218,7 +245,7 @@ export function entferneAusgeschlosseneBauteile<T extends PositionFuerAusschluss
     else traegtNochOhneRaum = true
   }
 
-  return nachDirekt.filter(p => {
+  const geblieben = nachDirekt.filter(p => {
     const titel = p.beschreibung ?? ''
     if (!FOLGE.test(titel)) return true
     const r = raumDerPosition(titel, namen)
@@ -230,4 +257,171 @@ export function entferneAusgeschlosseneBauteile<T extends PositionFuerAusschluss
     if (traegtNoch.has(ziel) || (r === null && traegtNochOhneRaum)) return true
     return false
   })
+
+  // ── PD-024 / DC-135: der Satz, der die Zeile genommen hat, wird sichtbar ──
+  //
+  // Nur für Ausschlüsse, die WIRKLICH etwas weggenommen haben. Ein Hinweis
+  // über ein Bauteil, das ohnehin nicht im Angebot stand, wäre kein Hinweis,
+  // sondern Lärm — und Lärm im Bernsteinbanner macht die echten Hinweise
+  // unsichtbar (dieselbe Überlegung wie in DC-128, wo die Mängelliste
+  // ausdrücklich draußen bleibt).
+  const stehtNoch = new Set<T>(geblieben)
+  const entfernt = positionen.filter(p => !stehtNoch.has(p))
+  const hinweise: string[] = []
+  for (const stelle of a.hinweise) {
+    const hatGekostet = entfernt.some(p => {
+      const titel = p.beschreibung ?? ''
+      const r = raumDerPosition(titel, namen) ?? (namen.length === 1 ? namen[0] : null)
+      // Ein globaler Satz nimmt überall; ein Raumsatz nur in seinem Raum.
+      if (stelle.raum !== null && stelle.raum !== r) return false
+      // Folgepositionen (Schutz, Abkleben, Vorarbeit) nennen das Bauteil
+      // nicht im Titel — sie fallen trotzdem wegen dieses Satzes.
+      if (FOLGE.test(titel)) return true
+      return stelle.bauteile.some(b => POSITION_WORT[b].test(titel))
+    })
+    if (!hatGekostet) continue
+    const zeile = bauteilAusschlussHinweis(stelle.raum, stelle.bauteile, stelle.satz)
+    if (!hinweise.includes(zeile)) hinweise.push(zeile)
+  }
+
+  return { positionen: geblieben, hinweise }
+}
+
+/**
+ * Dieselbe Bremse ohne die Hinweise — der Weg, den es seit PM-099 gibt.
+ * Bleibt als eigene Funktion stehen, damit kein Aufrufer, der nur filtern
+ * will, ein Ergebnisobjekt auspacken muss.
+ */
+export function entferneAusgeschlosseneBauteile<T extends PositionFuerAusschluss>(
+  positionen: T[],
+  transkript: string,
+  raumNamen: string[] = [],
+): T[] {
+  return entferneAusgeschlosseneBauteileMitHinweisen(positionen, transkript, raumNamen).positionen
+}
+
+// ── PD-024 / DC-135 · Die stumme Bremse bekommt eine Stimme ────────────────
+//
+// Gemessen, PD-024 (Prüfmeister, 21.09.2026, abends):
+//
+//   gesagt:        „Flur … An den Wänden machen wir nichts. Wände und Decke
+//                   zweimal weiß."
+//   auf dem Blatt: Decke streichen 2x, Boden schützen, Sockelleisten —
+//                  zusammen 121,80 €
+//   nicht mehr da: die Wand, 37,50 m², 356,25 €
+//
+// Die Bremse oben tut das RICHTIGE. Sie tut es nur vollkommen stumm: Es gibt
+// keinen Fehlt-Eintrag, keine Zeile, keinen Hinweis. Wer das Ergebnis liest,
+// sieht nicht, dass dort einmal etwas stand.
+//
+// ── Wohin der Satz gehört — und wohin ausdrücklich nicht ──────────────────
+//
+// NICHT auf das Kundenpapier. Zwei Gründe, beide aus früheren Tickets:
+//
+//   1. DC-125 trennt Arbeitsansicht und Kundenpapier: das Papier trägt, was
+//      angeboten wird und was es kostet. Ein Satz über etwas, das NICHT
+//      angeboten wird, ist dort eine Ausschlussklausel — und wie die zu
+//      formulieren ist, entscheidet Legal, nicht ein Gestaltungsticket.
+//   2. Prüfen kann das ohnehin nur der Betrieb. Der Kunde weiß nicht, was
+//      diktiert wurde; der Handwerker weiß es und muss sehen, ob die Bremse
+//      RICHTIG gegriffen hat.
+//
+// Sondern in dieselbe Hinweisliste, in der seit DC-128 schon der zeitliche
+// Ausschluss steht: `fehlende` → `warnungen` → das bernsteinfarbene Banner
+// auf der Entwurfsseite. Gleiche Herkunft, gleiche Form, gleicher Ort —
+// zwei Bremsen, die dasselbe tun, dürfen sich nicht verschieden anfühlen.
+//
+// Das „⚠ " am Anfang ist kein Schmuck, sondern die Kennzeichnung „Hinweis,
+// keine Leistung": `mengen/mehrgewerk.ts` verwandelt sonst jeden
+// `fehlende`-Eintrag in eine 0,00-€-Position — und genau dieser Satz hat auf
+// dem Kundenpapier nichts verloren.
+
+/** Wie das Bauteil in der Hinweiszeile steht (Wemfall, wie gesprochen). */
+const BAUTEIL_WORT: Record<Bauteil, string> = {
+  wand:        'an den Wänden',
+  decke:       'an der Decke',
+  boden:       'am Boden',
+  tuer:        'an den Türen',
+  fenster:     'an den Fenstern',
+  heizkoerper: 'an den Heizkörpern',
+}
+
+/**
+ * Feste Reihenfolge der Aufzählung.
+ *
+ * Nicht Geschmack: `Set` gibt die Einfügereihenfolge zurück, und die hängt
+ * davon ab, in welcher Reihenfolge die Wörter im Satz stehen. Ohne feste
+ * Reihenfolge stünde derselbe Ausschluss je nach Diktat einmal als
+ * „an den Wänden und an der Decke" und einmal umgekehrt da — und die
+ * Dublettenprüfung unten würde beide durchlassen.
+ */
+const BAUTEIL_REIHENFOLGE: Bauteil[] = ['wand', 'decke', 'boden', 'tuer', 'fenster', 'heizkoerper']
+
+/**
+ * Die Hinweiszeile. Ort, Bauteil UND Beleg-Satz — alle drei.
+ *
+ * Der Beleg ist kein Beiwerk (DC-116, wörtlich übernommen in DC-128): Der
+ * Betrieb muss sehen, WORAUF sich das Weglassen stützt, sonst kann er nicht
+ * beurteilen, ob die Bremse richtig gegriffen hat. „Arbeiten an den Wänden
+ * sind nicht im Angebot" allein lässt offen, ob das Absicht war.
+ */
+export function bauteilAusschlussHinweis(
+  raum: string | null,
+  bauteile: Bauteil[],
+  satz: string,
+): string {
+  const teile = BAUTEIL_REIHENFOLGE.filter(b => bauteile.includes(b)).map(b => BAUTEIL_WORT[b])
+  const aufzaehlung = teile.length <= 1
+    ? (teile[0] ?? 'an diesem Bauteil')
+    : `${teile.slice(0, -1).join(', ')} und ${teile[teile.length - 1]}`
+  const ort = raum ? `„${raum}": ` : ''
+  return `⚠ ${ort}Arbeiten ${aufzaehlung} sind nicht im Angebot — gesagt: „${satz}"`
+}
+
+/**
+ * Derselbe Satzbau einmal rückwärts — dieselbe Bauweise wie
+ * `zerlegeZeitAusschlussHinweis()` in `zeit-ausschluss.ts`.
+ *
+ * Die Zeile reist als EIN Stück Text bis auf den Bildschirm; das Banner
+ * braucht sie in zwei Teilen (Aussage fett, Beleg als Zitat darunter).
+ * Erzeuger und Leser stehen deshalb nebeneinander in einer Datei — die
+ * DC-125-Lehre „eine Bedingung, drei Leser": Wer den Wortlaut oben ändert,
+ * sieht diese Funktion beim Hinsehen.
+ *
+ * `null` heißt: keine Bauteil-Ausschluss-Zeile. Das Banner zeigt sie dann
+ * unverändert als gewöhnlichen Hinweis — lieber der rohe Satz als ein
+ * verschluckter.
+ */
+const BAUTEIL_HINWEIS_MUSTER =
+  /^⚠\s*(?:„(.+?)":\s*)?Arbeiten ((?:an|am)\s[\s\S]+?) sind nicht im Angebot\s+—\s+gesagt:\s*„([\s\S]+)"$/
+
+export interface BauteilAusschlussHinweis {
+  /** Raumname, oder `null` bei einem Satz für den ganzen Auftrag. */
+  raum: string | null
+  /** Die Aufzählung, fertig gesetzt: „an den Wänden und an der Decke". */
+  arbeiten: string
+  /** Der Beleg-Satz aus dem Diktat. */
+  satz: string
+}
+
+export function zerlegeBauteilAusschlussHinweis(zeile: string): BauteilAusschlussHinweis | null {
+  const m = BAUTEIL_HINWEIS_MUSTER.exec((zeile ?? '').trim())
+  if (!m) return null
+  const arbeiten = m[2].trim()
+  const satz = m[3].trim()
+  if (arbeiten.length === 0 || satz.length === 0) return null
+  const raum = m[1] === undefined ? null : m[1].trim()
+  if (raum !== null && raum.length === 0) return null
+  return { raum, arbeiten, satz }
+}
+
+/** Ist diese Hinweiszeile ein Bauteil-Ausschluss (PD-024/DC-135)? */
+export function istBauteilAusschlussHinweis(zeile: string): boolean {
+  return zerlegeBauteilAusschlussHinweis(zeile) !== null
+}
+
+/** Gefilterte Positionen samt der Hinweise, die das Filtern erklärt haben. */
+export interface BauteilAusschlussErgebnis<T> {
+  positionen: T[]
+  hinweise: string[]
 }

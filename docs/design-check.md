@@ -14691,4 +14691,176 @@ und niemand sollte den Punkt deshalb für zu halten.
 
 *Chief of Staff · 2026-09-21, 17:00 UTC*
 
+---
+
+## DC-135 ✅ — Antwort auf PD-024: Der Satz gehört nicht aufs Kundenpapier, sondern dorthin, wo die Bremse geprüft werden kann. Und er steht jetzt dort (Product Designer, 21.09.2026)
+
+**Bezug:** PD-024 (Prüfmeister, 21.09.2026, abends) · PM-134/PM-135/PM-136 ·
+DC-128 (dieselbe Bauweise eine Ebene höher) · DC-125 (Arbeitsansicht vs.
+Kundenpapier) · DC-116 · DC-136 (Standsmeldung des Chief of Staff)
+
+**Die Frage war:** Gehört der Satz, auf den sich ein Bauteil-Ausschluss
+stützt, aufs Kundenpapier — und wenn ja, wohin?
+
+**Die Antwort in einem Satz: Nein, nicht aufs Kundenpapier — aber der Wegfall
+darf auch nicht stumm bleiben, und ab jetzt ist er es nicht mehr.**
+
+### Warum nicht aufs Kundenpapier — zwei Gründe, beide aus früheren Tickets
+
+1. **DC-125 trennt Arbeitsansicht und Kundenpapier, und die Trennung ist
+   Absicht.** Das Papier trägt, was angeboten wird und was es kostet. Ein
+   Satz über etwas, das **nicht** angeboten wird, ist dort keine Information,
+   sondern eine **Ausschlussklausel** — und wie die zu formulieren ist,
+   entscheidet Legal, nicht ein Gestaltungsticket. „An den Wänden machen wir
+   nichts" auf ein VOB-nahes Angebot zu setzen, wäre eine
+   Leistungsabgrenzung mit Rechtsfolge, die ich mir ausgedacht hätte.
+2. **Prüfen kann es ohnehin nur der Betrieb.** Der Kunde weiß nicht, was
+   diktiert wurde; er kann nicht beurteilen, ob die Bremse richtig gegriffen
+   hat. Manfred weiß es — und genau er sieht heute nichts. Der Unterschied
+   zwischen „die haben mich verstanden" und „die haben es vergessen", den du
+   beschreibst, entsteht **vor** dem Absenden, nicht danach.
+
+**Was ich damit ausdrücklich nicht sage:** dass der Kunde es nie erfahren
+darf. Wenn eine ausgenommene Leistung auf dem Papier benannt werden soll,
+gehört sie in die Leistungsbeschreibung bzw. eine Vorbemerkung, mit einem
+Wortlaut von Legal — **das ist ein eigener Punkt und keiner von mir.**
+Gemeldet, nicht gebaut.
+
+### Wohin er stattdessen gehört — die Stelle gibt es seit DC-128
+
+Der zeitliche Ausschluss (DC-116/DC-128) hat genau dieses Problem vor vier
+Tagen gelöst: `fehlende` → `warnungen` → das bernsteinfarbene Banner auf der
+Entwurfsseite, zwei Zeilen — Aussage fett, Beleg als Zitat darunter.
+
+**Zwei Bremsen, die dasselbe tun — eine nimmt einen ganzen Raum, die andere
+ein Bauteil darin —, dürfen sich für den Betrieb nicht verschieden
+anfühlen.** Deshalb keine neue Darstellung, keine neue Liste, kein neues
+Bauteil: dieselbe Form, eine Ebene tiefer.
+
+Was ab jetzt dasteht, im Fall PM-134:
+
+```
+  ⚠  „Flur": Arbeiten an den Wänden sind nicht im Angebot
+     Gesagt: „An den Wänden machen wir nichts"
+
+     Trotzdem weiter zum Angebot
+```
+
+Die Bremse hält damit auch an: Liegt eine Warnung an, leitet die
+Entwurfsseite nicht sofort weiter (PM-010/PM-034). 356,25 €, die stumm
+verschwinden, sind genau der Fall, für den diese Bremse gebaut wurde.
+
+### Die eine Entscheidung innerhalb der Entscheidung: der Hinweis schweigt, wenn er nichts zu sagen hat
+
+Ein Ausschlusssatz kann greifen, **ohne etwas zu kosten** — wenn im Angebot
+gar keine Wandzeile stand. Ein Hinweis darüber wäre kein Hinweis, sondern
+Lärm, und Lärm im Bernsteinbanner macht die echten Hinweise unsichtbar
+(dieselbe Überlegung, mit der DC-128 die Mängelliste ausdrücklich draußen
+lässt).
+
+**Deshalb: Ein Satz bekommt nur dann eine Zeile, wenn er nachweislich eine
+Position weggenommen hat.** Gemessen wird das am Ergebnis — welche Positionen
+vor dem Filtern da waren und nach dem Filtern fehlen —, nicht daran, ob die
+Regel gegriffen hat. Folgepositionen (Schutz, Abkleben, Vorarbeit) zählen
+mit: sie nennen das Bauteil nicht im Titel, fallen aber wegen desselben
+Satzes. Zusicherung 8 in der neuen Prüfdatei hält beide Richtungen fest.
+
+### Ein zweiter Nebenbefund, gefunden beim Bauen
+
+`belege` in `bauteil-ausschluss.ts` war flach — eine Liste von Sätzen, ohne
+Raum und ohne Bauteil. Damit lässt sich nicht mehr entscheiden, ob ein
+bestimmter Satz eine Zeile gekostet hat; für den Hinweis oben reicht das
+nicht. Dieselbe Feststellung steht jetzt ein zweites Mal daneben, nicht mehr
+flach (`hinweise: BauteilAusschlussStelle[]`). **`belege` bleibt unverändert**
+— PM-135-D misst darauf.
+
+### Gebaut
+
+| Datei | Was |
+|---|---|
+| `src/lib/bauteil-ausschluss.ts` | `BauteilAusschlussStelle` (Raum + Bauteile + Satz) · `bauteilAusschlussHinweis()` als Erzeuger · `zerlegeBauteilAusschlussHinweis()`/`istBauteilAusschlussHinweis()` als Leser **direkt daneben** (DC-125-Lehre „eine Bedingung, drei Leser") · `entferneAusgeschlosseneBauteileMitHinweisen()` liefert Positionen **und** Hinweise; die alte Funktion bleibt als dünner Aufruf stehen, damit kein Aufrufer ein Ergebnisobjekt auspacken muss |
+| `src/lib/vollstaendigkeit/index.ts` | Die Hinweise wandern nach `fehlende` — direkt über dem Zeit-Ausschluss, der dasselbe tut. Vier Zeilen, rein additiv |
+| `src/app/api/entwurf/generiere-positionen/route.ts` | Die Route sammelt jetzt **beide** Hinweissorten ein. Weiterhin ausdrücklich nur diese zwei: „Küche: Keine Maße angegeben" und Geschwister bleiben draußen |
+| `src/app/(app)/angebot/[id]/entwurf/page.tsx` | Das Banner zerlegt auch die Bauteil-Zeile in Aussage + Beleg-Zitat. Reihenfolge als eigene Funktion `rang()`: ganzer Raum (2) vor Bauteil (1) vor Maß-Hinweis (0) — sortiert nach Folgen, nicht nach Text |
+| `src/lib/__tests__/dc135-bauteil-ausschluss-sichtbar.test.ts` | **13 neue Prüfungen** über die ganze Kette, inkl. der Route-Regel (im Prüfstand nachgebaut — eine Next-Route läuft dort nicht ohne Supabase) |
+
+**Das „⚠ " am Zeilenanfang ist Pflicht, kein Schmuck.** `mengen/mehrgewerk.ts`
+verwandelt jeden `fehlende`-Eintrag **ohne** dieses Zeichen in eine
+0,00-€-Position — und damit stünde genau dieser Satz auf dem Kundenpapier.
+Zusicherung 12 hält das fest.
+
+### Drei fremde Testdateien angefasst — mit Grund, nicht nebenbei
+
+Nach der Regel von heute (*„wer eine Sperrklinke in einer fremden Testdatei
+löst, committet im selben Lauf den eigenen Code — oder löst sie nicht"*)
+gehören sie in denselben Commit. Engineering hat um 16:50 auf PM-105-B
+hingewiesen, der Chief of Staff um 17:00 auf den Rest:
+
+| Datei | Was, und warum |
+|---|---|
+| `pruefmeister-batch-104-116.test.ts` · **PM-105-B** | `it.fails` → `it`. „Oder der Satz hinterlässt wenigstens eine Spur" ist **erfüllt**: der Verneinungssatz erzeugt jetzt einen Fehlt-Eintrag. **PM-105-A bleibt rot** — eine Spur ist kein zurückgeholtes Fenster |
+| `pruefmeister-batch-121-128.test.ts` · **PM-125-D** | `it.fails` → `it`, derselbe Grund. **PM-125-A/B/C bleiben rot** |
+| `pruefmeister-batch-134-137.test.ts` · **PM-134-B** | Die Zusicherung maß „der Wegfall ist stumm". Das stimmt nicht mehr. Sie prüft jetzt das Gegenteil und dazu den Wortlaut der Zeile — aus „so ist es" ist „so soll es bleiben" geworden. **PM-134-A bleibt unverändert `it.fails`** |
+| `pruefmeister-batch-134-137.test.ts` · **PM-136-A** | **Hier habe ich die Zusicherung verschärft, nicht gelöst.** Sie fragte, ob *irgendeine* Zeile in `fehlende` „Wand" nennt — das wäre durch meinen Hinweis grün geworden, **ohne dass der Befund behoben ist**: meine Zeile behauptet die geerbte Zuordnung („Wohnzimmer"), statt zuzugeben, dass die Ansage nicht zugeordnet werden konnte. Sie prüft jetzt auf genau das und steht weiter als `it.fails` |
+
+**PM-136-A ist der Punkt, auf den es mir ankommt.** Ein neuer Hinweis kann
+eine fremde Messung zufällig grün machen. Wer das nicht nachsieht, hält einen
+offenen Befund für behoben — und das wäre teurer als der Befund.
+
+### Verifikation — auf Sandys Rechner, am echten Projekt
+
+| Prüfung | Ergebnis |
+|---|---|
+| `npx tsc --noEmit -p tsconfig.json` | **Exit 0, fehlerfrei** (kein neues `tsconfig.*`-Beiwerk angelegt) |
+| `npx eslint` über die sechs angefassten Dateien | **0 Fehler**, 7 Warnungen — alle Bestand, keine aus meinen Zeilen |
+| `dc135-bauteil-ausschluss-sichtbar.test.ts` | **13 grün** |
+| Delta-Prüfstand über **69 Testdateien** (alles, was `vollstaendigkeit`, `mehrgewerk`, `bauteil-ausschluss` oder `berechneBewertung` anfasst), in fünf Blöcken | **1.116 grün · 86 Sperrklinken · 0 rot** |
+| dieselben drei Prüfmeister-Dateien nach dem Umstellen | **98 grün · 23 Sperrklinken · 0 rot** |
+
+**Nicht geprüft und deshalb nicht behauptet:** wie das Banner mit einer echten
+Sprachaufnahme auf dem Handy aussieht. Wie schon bei DC-128 braucht die Kette
+ein echtes Diktat — ohne Mikrofon nicht auslösbar. **Sandys freiwilliger
+Zweiminüter** (Punkt 6 auf ihrer Liste) würde jetzt zwei Hinweissorten auf
+einmal belegen: ein Raum mit „das kommt später", ein Raum mit „an den Wänden
+machen wir nichts".
+
+### Was DC-135 ausdrücklich NICHT tut
+
+**Es macht das Weglassen sichtbar. Es macht es nicht richtig.** Der Chief of
+Staff schreibt dasselbe in DC-136, und ich unterschreibe es:
+
+* **PM-134-A** — die Selbstkorrektur („erst nichts, dann doch") gewinnt
+  weiterhin nicht. Die Wand fällt in PM-134 falsch weg.
+* **PM-135-A** — das Komma hebelt den Ausschluss weiter aus. Dort läuft das
+  Geld gegen den Kunden, und **dort entsteht auch kein Hinweis** — wo die
+  Maschine gar keinen Ausschluss sieht, hat sie auch nichts zu melden. Das
+  ist keine Lücke meines Baus, sondern derselbe Befund.
+* **PM-136-A** — die Zuordnung ohne Raumnamen wird weiter geerbt statt
+  erfragt.
+
+Alle drei sind Engineerings Bauaufträge (CoS-E-091). **Ein Hinweis ist die
+halbe Lösung; wer den Punkt deshalb für zu hält, hält den falschen für zu.**
+Umgekehrt gilt aber auch: Seit heute kann Manfred den Fehler aus PM-134
+**überhaupt erst sehen** — vorher war er unsichtbar, auch für den, der ihn
+gemacht hat.
+
+### 📌 Für den Prüfmeister — PD-024 ist beantwortet
+
+Deine Frage war, ob der Satz aufs Kundenpapier gehört. **Nein** — aber die
+Stummheit war der eigentliche Befund, und die ist weg. Der Weg ist derselbe,
+den du bei DC-128 schon gesehen hast, und deine drei Sperrklinken-Fälle
+(PM-134/135/136) sind davon unberührt: ihre Soll-Zustände stehen unverändert.
+**PM-136-A habe ich verschärft statt gelöst** — begründet oben; wenn dir die
+Formulierung zu eng ist, ändere sie, es ist deine Datei.
+
+Dieselbe Stummheit bei **PM-113** (leeres Angebot ohne Begründung) und
+**PM-125** habe ich nicht mitgebaut. PM-125 bekommt durch diesen Bau eine
+Spur (PM-125-D steht jetzt grün), PM-113 nicht — das leere Angebot entsteht
+an einer anderen Stelle und ist ein eigener Punkt.
+
+**Status: ✅ erledigt** — die Frage aus PD-024 ist entschieden und die
+Entscheidung ist gebaut.
+
+*Product Designer · 2026-09-21*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

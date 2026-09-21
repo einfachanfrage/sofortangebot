@@ -26,6 +26,22 @@ import { gruppiereNachRaum } from '@/lib/angebot-gruppierung'
 import { istProzentZuschlag } from '@/lib/zuschlag-basis'
 import { nutzerFehler } from '@/lib/fehlertexte'
 import { istZeitAusschlussHinweis, zerlegeZeitAusschlussHinweis } from '@/lib/zeit-ausschluss'
+import { istBauteilAusschlussHinweis, zerlegeBauteilAusschlussHinweis } from '@/lib/bauteil-ausschluss'
+
+/**
+ * Reihenfolge im Bernsteinbanner (DC-128, erweitert um PD-024/DC-135).
+ *
+ * Ein ganzer Raum, den der Handwerker auf später geschoben hat, wiegt mehr
+ * als ein einzelnes Bauteil darin; beides wiegt mehr als ein korrigiertes
+ * Maß. Das ist keine Sortierung nach Text, sondern nach Folgen: die zwei
+ * oberen Sorten sagen „hier fehlt Arbeit im Angebot", die untere sagt
+ * „hier ist eine Zahl geradegerückt worden".
+ */
+function rang(zeile: string): number {
+  if (istZeitAusschlussHinweis(zeile)) return 2
+  if (istBauteilAusschlussHinweis(zeile)) return 1
+  return 0
+}
 
 // Bereits berechnete quote_items — vollständig geladen (nicht nur die Anzahl),
 // damit sie sich zusammen mit frischen Vorschau-Positionen raum-gruppieren
@@ -1542,22 +1558,39 @@ export default function EntwurfPage() {
                   auf das Muster, steht sie unverändert da: lieber der rohe
                   Satz als ein verschluckter. */}
               {[...massWarnungen]
-                .sort((a, b) => Number(istZeitAusschlussHinweis(b)) - Number(istZeitAusschlussHinweis(a)))
+                .sort((a, b) => rang(b) - rang(a))
                 .map((w, i) => {
                   const ausgenommen = zerlegeZeitAusschlussHinweis(w)
-                  if (!ausgenommen) {
-                    return <p key={i} className="text-amber-800 font-semibold text-[13px]">{w}</p>
+                  if (ausgenommen) {
+                    return (
+                      <div key={i} className="flex flex-col gap-0.5">
+                        <p className="text-amber-900 font-black text-[13px]">
+                          „{ausgenommen.raum}" steht nicht in diesem Angebot
+                        </p>
+                        <p className="text-amber-800/90 font-semibold text-[12px] italic leading-snug">
+                          Gesagt: „{ausgenommen.satz}"
+                        </p>
+                      </div>
+                    )
                   }
-                  return (
-                    <div key={i} className="flex flex-col gap-0.5">
-                      <p className="text-amber-900 font-black text-[13px]">
-                        „{ausgenommen.raum}" steht nicht in diesem Angebot
-                      </p>
-                      <p className="text-amber-800/90 font-semibold text-[12px] italic leading-snug">
-                        Gesagt: „{ausgenommen.satz}"
-                      </p>
-                    </div>
-                  )
+                  /* PD-024/DC-135: dieselbe Form eine Ebene tiefer — nicht
+                     ein ganzer Raum, sondern ein Bauteil darin. Gleiche
+                     zwei Zeilen, gleiches Gewicht, gleicher Beleg. */
+                  const bauteil = zerlegeBauteilAusschlussHinweis(w)
+                  if (bauteil) {
+                    return (
+                      <div key={i} className="flex flex-col gap-0.5">
+                        <p className="text-amber-900 font-black text-[13px]">
+                          {bauteil.raum ? <>„{bauteil.raum}": </> : null}
+                          Arbeiten {bauteil.arbeiten} sind nicht im Angebot
+                        </p>
+                        <p className="text-amber-800/90 font-semibold text-[12px] italic leading-snug">
+                          Gesagt: „{bauteil.satz}"
+                        </p>
+                      </div>
+                    )
+                  }
+                  return <p key={i} className="text-amber-800 font-semibold text-[13px]">{w}</p>
                 })}
             </div>
             <button onClick={() => setMassWarnungen([])} className="ml-auto text-amber-400 shrink-0"><X size={14} /></button>

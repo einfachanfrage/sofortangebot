@@ -1,7 +1,7 @@
 import type { BerechnetePosition } from '../mengen/types'
 import { baueVerstaendnis, type ExtraktionSignale } from '../auftrags-verstaendnis'
 import { filtereErschwernis, type ErschwernisConfig } from '../erschwernis'
-import { entferneAusgeschlosseneBauteile } from '../bauteil-ausschluss'
+import { entferneAusgeschlosseneBauteileMitHinweisen } from '../bauteil-ausschluss'
 import { wendeFliesenrichtungAn } from '../fliesen-richtung'
 import {
   entferneZeitlichAusgenommene,
@@ -109,7 +109,21 @@ export function pruefeUndErgaenzeVollstaendigkeit(
   // die beiden Filter darüber: Die Wandpositionen entstehen an vier Stellen
   // in drei Dateien, und die nächste entsteht an einer fünften.
   const raumNamen = (meta?.raeume ?? []).map(r => r?.name ?? '').filter(Boolean)
-  const nachBauteil = entferneAusgeschlosseneBauteile(nachErschwernis, transkript, raumNamen)
+  //
+  // PD-024 / DC-135: Die Bremse war stumm. Sie nimmt die Zeile richtig
+  // heraus, sagt es aber niemandem — in PM-134 fallen so 356,25 € weg, ohne
+  // dass ein Zeichen davon übrig bleibt. Ab jetzt reicht sie die Sätze mit,
+  // auf die sie sich stützt, und zwar NUR für Ausschlüsse, die wirklich eine
+  // Zeile gekostet haben. Weg und Form sind dieselben wie beim
+  // Zeit-Ausschluss darunter (DC-128): fehlende → warnungen → das
+  // bernsteinfarbene Banner auf der Entwurfsseite.
+  const bauteilErgebnis = entferneAusgeschlosseneBauteileMitHinweisen(
+    nachErschwernis, transkript, raumNamen,
+  )
+  const nachBauteil = bauteilErgebnis.positionen
+  for (const zeile of bauteilErgebnis.hinweise) {
+    if (!fehlende.includes(zeile)) fehlende.push(zeile)
+  }
 
   // CoS-E-074 / DC-116 / PM-116 + PM-097: die dritte Bremse, eine Ebene über
   // der zweiten. `entferneAusgeschlosseneBauteile` nimmt EIN Bauteil aus
