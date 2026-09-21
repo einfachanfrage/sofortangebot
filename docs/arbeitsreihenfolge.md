@@ -1,95 +1,89 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 17.09.2026, 18:55 UTC · Chief of Staff**
-*(ersetzt die Fassung von 18:40 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
+**Stand: 21.09.2026, 08:00 UTC · Chief of Staff**
+*(ersetzt die Fassung vom 17.09., 18:55 UTC — diese Datei wird immer ersetzt, nie ergänzt.)*
 *Alle Uhrzeiten sind **UTC**. In Deutschland ist es gerade **MESZ = UTC + 2**,
-also 20:00 Uhr Ortszeit.*
+also 10:00 Uhr Ortszeit.*
 
 ---
 
 ## Lage in drei Zeilen
 
-**🟢 Produktion grün und gemessen, der Prüfstand ist wieder belegt.** Vercel,
-17:42 UTC: jüngster Produktions-Deploy ist **`8fec90b`, READY**. Engineering
-hat um 17:15 UTC über **190 Testdateien** gemessen: **2.850 grün · 104
-Sperrklinken · 0 rot**. Damit ist der gelbe Punkt der letzten Fassung („seit
-11:58 UTC ungemessen") **erledigt**.
+**🟢 Alles, was gepusht ist, ist grün — und diesmal gemessen, nicht vermutet.**
+Vercel, 07:44 UTC: jüngster Produktions-Deploy ist **`3c662af`, READY**.
+GitHub-Actions, 07:47 UTC: **CI-Lauf #219 auf demselben `3c662af`, success**.
+Damit ist der gelbe Punkt der letzten Fassung („CI nicht messbar, 403") zu:
+die Abfrage läuft aus dem Ordner auf Sandys Rechner heraus, nicht aus dem
+Cloud-Container. Die Produktionssicherung der Datenbank lief am 18., 19. und
+20.09. jeweils erfolgreich.
 
-**🔴 Sechs neue Funde aus Sandys zweitem Live-Lauf**, alle reproduziert:
-PM-102 (626,62 € fehlen **und** 1.714,96 € erfunden auf derselben Zeile),
-PM-103 (20 % Zuschlag, ausgelöst vom Wort „Altbau" im Raumnamen), PM-104
-(Zuschlagszeile unlesbar), PM-105, PM-106, PM-107 — und **PM-079-A ist wieder
-offen**, die Entwarnung von gestern war falsch. Alles zusammen als
-**CoS-E-083**, Reihenfolge steht.
+**⏸️ Zwischen dem 17.09., 18:25 UTC und heute, 07:30 UTC hat keine Rolle
+gearbeitet.** Gemessen an den geplanten Aufgaben: der letzte Lauf von
+Engineering war am 17.09. um 18:25, Designer 17:15, Prüfmeister 16:06,
+Marketing 15:50, Finance 15:56, Legal 08:08. Seit heute ~07:30 sind **alle
+Aufgaben wieder aktiv** und haben einen nächsten Termin heute (Legal 08:07,
+Designer 08:15, Engineering 08:25, Platform 08:35, Marketing 09:50, Finance
+09:55, Prüfmeister 10:05). **Warum es stillstand, weiß ich nicht — ich
+behaupte dazu nichts.** Praktische Folge: die Reihenfolge unten ist die vom
+17.09. abends, nur um das ergänzt, was seither fertig wurde.
 
-**🔴 Mein Fehler des Tages, von Sandy korrigiert: die Landingpage-Entwurfs-Adresse
-existiert doch.** Sie ruft sie auf und sieht die Seite. Der unangemeldete Aufruf
-landet auf `vercel.com/login`, weil die Seite hinter **Vercel Deployment
-Protection** liegt — und `list_deployments` antwortet **403 Forbidden**, nicht
-404. Ich habe „ich sehe es nicht" als „es gibt es nicht" gelesen. **CoS-P-032
-zurückgezogen**, es braucht keinen Vorschau-Deploy, sondern **eine Freigabe von
-Sandy**.
+**🔴 Zwei der drei teuersten Funde sind gebaut, der dritte ist der nächste.**
+PM-102 (626,62 € fehlten, 1.714,96 € erfunden) und PM-103 (460,20 €
+Zuschlag aus einem Raumnamen) sind zu (`98c41ae`). **PM-079-A** — 463,50 € zu
+wenig, sobald zwei Räume verraucht sind — ist damit Platz 1 bei Engineering.
 
 ---
 
-## Was seit 17:00 UTC passiert ist
+## Was seit dem 17.09., 18:55 UTC fertig geworden ist
 
 | Rolle | Ergebnis | Status |
 |---|---|---|
-| **Engineering** | **CoS-E-082 fertig, gemessen und gepusht** (in `8fec90b`): 190 Testdateien, 2.954 Prüfungen, 0 rot, `tsc` 0, `eslint` 0. Dazu zwei Befunde zum geteilten Arbeitsbaum — Sammel-Commit über 19 Dateien und die lautlose Falle beim eigenen Index | ✅ erledigt |
-| **Prüfmeister** | **Sandys zweiten Live-Lauf ausgemessen:** sieben von zehn Fällen sauber, **vier neue Funde + eine Rücknahme** (PM-102…PM-107, PM-079-A), alle mit Sperrklinke. `pruefmeister-batch-47-56.test.ts`: 33 grün, 17 Sperrklinken | ✅ erledigt |
-| **Designer** | **DC-128 gebaut** (uncommittet) und **gemessen, dass die Entwurfs-Adresse nicht existiert** — mit Vercel-API und Browser belegt, nichts angefasst | ✅ erledigt |
-| **CoS** | **CoS-E-083 angelegt** — die sechs Funde als ein Auftrag mit Reihenfolge; dazu die Korrektur, dass CoS-E-081 entgegen der Meldung von 17:15 **doch im Arbeitsbaum läuft** (selbst nachgesehen: +69 Zeilen in `helpers.ts`) | ✅ verteilt |
-| **Designer** | **Den Entwurf auf Handy-Breite gemessen** — über Sandys Chrome hineingekommen, Seitentitel gegengelesen. Urteil: **sie trägt**, aber vier Befunde, zwei rot (Abschluss-CTA kann leer bleiben; Vorschau-Umschalter verdeckt Inhalt) | ✅ erledigt |
-| **CoS** | **CoS-M-016 angelegt** — die vier Befunde geordnet an Marketing, mit der Reihenfolge und den Fixvorschlägen | ✅ verteilt |
-| **CoS** | **CoS-P-032 und CoS-M-015 wieder zurückgezogen** (18:40 UTC), nachdem Sandy widersprochen hat: die Adresse existiert, sie ist geschützt. Richtigstellung in `design-check.md`, Platform- und Marketing-Liste und in Punkt 9.1 von `launch-readiness.md` | ✅ erledigt |
-| **CoS** | **Verfahren entschieden statt weitergereicht:** der Baustein „geteilter Arbeitsbaum" steht jetzt in `AGENTS.md` — inklusive des dritten Schritts, ohne den „eigener Index" fremde Einträge löscht | ✅ erledigt |
-| **CoS** | **Eine Entscheidung für Sandy gestellt:** auf welche Grundlage ein Erschwerniszuschlag rechnet (PM-104), mit Empfehlung | ✅ verteilt |
-| **Sandy** | **Entschieden, 18:15 UTC — „ja so wie empfohlen":** ein Erschwerniszuschlag rechnet **nur auf die Positionen, die er betrifft**, nicht auf die Angebotssumme. Die Prozentsätze (15/20/30/10/10 %) bleiben als eigener Punkt offen. Freigabe an Engineering und Designer ist eingetragen | ✅ erledigt |
+| **Engineering** | **CoS-E-081 gebaut und committet** (`a99791a`): die `anzahlAus`-Familie ist zu — PM-131/132/133 gebaut, PM-128 fällt mit. („50 Stück Fliesen" macht keine 50 Türen mehr.) | ✅ erledigt |
+| **Engineering** | **CoS-E-084 gebaut und committet** (`98c41ae`): **PM-102** und **PM-103**. Platz 2 der CoS-E-083-Reihenfolge ist zu | ✅ erledigt |
+| **CoS** | **Gate 1 neu gerechnet**: 53,0 % → **54,2 %** (`151f4f4`, Heimat `launch-readiness.md`) | ✅ erledigt |
+| **CoS** | **Siebter wöchentlicher strategischer Check-in** eingetragen (`f249b3d`, `vision-strategie.md`) | ✅ erledigt |
+| **Platform** | **CoS-P-029 eingelöst** — der Löschlauf vom 19.09., 03:30 UTC hat **4 Aufnahmen** gegen die 30-Tage-Frist geprüft, `fehler: 0`. Der Nein-Fall („zwei Rechtstexte unrichtig") ist **nicht** eingetreten, Legal muss nicht benachrichtigt werden | ✅ erledigt |
+| **Platform** | **CoS-P-006 vollständig zu** — `RESEND_API_KEY` ist für `preview` **und** `production` gesetzt, Zeitstempel deckt sich mit der Rotation vom 17.08. | ✅ erledigt |
+| **CoS** | **CoS-P-033 neu angelegt** — Platform hat selbst angemerkt, dass der Zähler `geprueft` heißt und nicht `geloescht`. Die Rechtstexte versprechen Löschung. Eine Abfrage, kein Bau | 🆕 verteilt |
+| **CoS** | **Die Gewerke-Frage in `entscheidungen-fuer-sandy.md` gestellt** — dreimal im Strategiepapier gefragt, dreimal untergegangen. Jetzt mit A/B/C und Empfehlung an der Stelle, an der Sandys offene Punkte stehen | 🆕 verteilt |
 
 ---
 
 ## 🔎 Was ich selbst nachgesehen habe — und was nicht
 
-**Selbst gemessen, nicht vermutet:**
+**Selbst gemessen, 07:44–07:55 UTC:**
 
-* **Vercel-API, 17:42 UTC:** jüngster Produktions-Deploy `8fec90b`, **READY**.
-* **Vercel-API, 17:41 UTC:** **ein** Team (`einfachanfrages-projects`), in
-  `list_projects` **ein** Projekt (`sofortangebot`). **Das ist kein Beweis für
-  Abwesenheit** — unser Zugang ist offenbar auf dieses Projekt beschränkt.
-* **Aufruf der Entwurfs-Adresse, 17:42 UTC:** **302 auf
-  `https://vercel.com/login`** — das ist **Vercel Deployment Protection**, kein
-  fehlendes Ziel.
-* **`list_deployments` auf `sofortangebot-landingpage-entwurf`, 18:35 UTC:**
-  **403 Forbidden**, „You don't have permission to list the deployment" —
-  **403, nicht 404.** Die Adresse existiert, unser Zugang reicht nicht heran.
-* **`git fetch` + `git log`, 17:43 UTC:** `origin/main` = `8fec90b`, davor
-  **3 ungepushte Commits** (`66955fa`, `f687d17`, `dbea3b5`) — `git diff
-  --name-only` zeigt **ausschließlich `docs/`**, kein Code.
-* **Arbeitsbaum, 17:44 UTC, Datei für Datei:** `helpers.ts` **+69 Zeilen** mit
-  dem Kopf „CoS-E-081 · PM-131 / PM-132 / PM-133" (also läuft der Bau),
-  vier Dateien des Designers zu DC-128, zwei Testreihen des Prüfmeisters.
+* **Vercel-API:** jüngster Produktions-Deploy `3c662af`, **READY**.
+* **GitHub-Actions-API (aus dem verbundenen Ordner heraus):** **#219 auf
+  `3c662af`, success**; davor #211–#218 alle success. Sicherungslauf
+  „Production database backup" #60/#61/#62 am 18./19./20.09., alle success.
+* **`git fetch` + `git rev-parse`:** `origin/main` = **`3c662af`**, lokal liegt
+  **ein ungepushter Commit** davor (`f249b3d`, nur Doku).
+* **`git status`:** uncommittet im Arbeitsbaum liegen **vier geänderte
+  Quelldateien** (`entwurf/page.tsx`, `generiere-positionen/route.ts`,
+  `zeit-ausschluss.ts`, `pruefmeister-batch-47-56.test.ts`) und **eine neue
+  Testdatei** (`dc128-zeit-ausschluss-sichtbar.test.ts`) — DC-128 des Designers
+  und die Testreihe des Prüfmeisters, seit dem 17.09. unverändert liegen
+  geblieben.
+* **Die geplanten Aufgaben aller acht Rollen:** alle **aktiv**, keine
+  abgeschaltet, letzte Läufe und nächste Termine wie oben.
 * **`node scripts/docs-sichern.mjs pruefen`:** „Alle 58 Doku-Dateien in
-  Ordnung", nach dem Anhängen erneut.
-* **Gelesen, bevor ich darüber berichte:** Restliste, Engineering-Liste,
-  design-check, Notiz an den Chief of Staff, Arbeitsreihenfolge, und die
-  Zuschlag-Entscheidung vom 04.09. in `entscheidungen-fuer-sandy.md` (sonst
-  hätte ich Sandy eine Frage gestellt, die sie halb schon beantwortet hat).
+  Ordnung", vor und nach meinem Anhängen.
+* **Gelesen, bevor ich darüber berichte:** Engineering-Liste (CoS-E-084),
+  Restliste, `entscheidungen-fuer-sandy.md`, Platform-Liste,
+  `launch-readiness.md` (Zeile 41), `vision-strategie.md`.
 
 **Nicht geprüft, und ich behaupte es deshalb nicht:**
 
-* **🟡 Die CI ist in diesem Lauf nicht messbar.** Zwei Abfragen kamen mit
-  **403** zurück, die dritte lieferte eine Liste, die bei **#202 vom 16.09.**
-  endet — das kann nicht der aktuelle Stand sein. **Für `8fec90b` behaupte ich
-  keinen CI-Stand.** Der letzte belegte CI-Lauf bleibt **#213 auf `8d07102`,
-  success** (gemessen 16:47 UTC). Die Produktion ist davon unabhängig grün.
-* **Kein eigener Prüfstand.** Die Zahlen 2.850/104/0 sind Engineerings
-  Messung von 17:15 UTC, nicht meine.
-* **Der Landingpage-Entwurf selbst** — ich habe die Adresse gemessen, nicht
-  die Seite beurteilt.
+* **Kein eigener Prüfstand.** Ich habe in diesem Lauf keine Tests gefahren.
+  Der letzte belegte Stand ist Engineerings Messung vom 17.09., 17:15 UTC
+  (190 Testdateien, 2.954 Prüfungen, 0 rot) — plus CI #219 grün auf dem
+  gepushten Stand.
+* **Der OneDrive-Sicherungslauf vom 17.09. abends** — ob er angekommen ist,
+  habe ich nicht nachgesehen.
 * **Versicherung, Stripe, Gewerbeanmeldung, Vercel-Benachrichtigung,
-  Sicherungslauf um 20:00 Uhr** — nicht angefasst.
-* **Gate 1 rechne ich weiter nicht neu.** Stand bleibt **53,0 %**.
+  Buchhaltungs-Testlauf** — nicht angefasst.
+* **Gate 1 rechne ich in diesem Lauf nicht neu.** Stand bleibt **54,2 %**.
 
 ---
 
@@ -97,16 +91,15 @@ Sandy**.
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | 🔵 **Einmal pushen.** Es liegen fertige Doku-Commits hier, kein Code — du hast heute Abend schon zweimal gepusht, danach ist wieder etwas dazugekommen. Block steht unten im Chat | ein Befehl |
-| 2 | ⚪ **Freigabe für den Landingpage-Entwurf — nicht mehr dringend.** Der Designer ist über deinen Chrome hineingekommen und hat gemessen. Nur falls du eine Messung bei echter Handy-Breite (375 px) willst: Schutz abschalten oder Freigabe-Link. Sonst liegen lassen | freiwillig |
-| 3 | 🔵 **Nach Italien, ab 26.09.:** Gewerbeanmeldung → Fragebogen zur steuerlichen Erfassung → Geschäftskonto → Steuerberater. Finance und Legal legen die Reihenfolge fertig hin | nichts jetzt |
-| 4 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office, fünf Minuten — schaltet den stärksten Satz der Landingpage frei) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
-| 5 | 🔵 **Versicherung** (exali/Markel 1 Mio. €) · **Stripe** (Konto + 2 Preise) · **Vercel-Benachrichtigung** · Gewerbeanmeldung KW 41 (CoS-041) | unverändert |
-| 6 | 🔵 Heute Abend nach 20:00 Uhr einmal auf `onedrive.live.com` schauen, ob der erste **automatische** Sicherungslauf angekommen ist | ein Blick |
+| 1 | 🔵 **Einmal pushen.** Es liegt ein fertiger Doku-Commit hier plus meine heutigen Einträge, kein Code. Block steht unten im Chat | ein Befehl |
+| 2 | 🔵 **Welches Gewerk nach Maler/Bodenleger? A, B oder C.** Steht jetzt vollständig in `entscheidungen-fuer-sandy.md`, mit Empfehlung. Eilt nicht, kostet ein Wort | ein Wort |
+| 3 | ⚪ **Freigabe für den Landingpage-Entwurf — freiwillig.** Nur falls du eine Messung bei echter Handy-Breite (375 px) willst | freiwillig |
+| 4 | 🔵 **Ab 26.09.:** Gewerbeanmeldung → Fragebogen zur steuerlichen Erfassung → Geschäftskonto → Steuerberater. Finance und Legal legen die Reihenfolge fertig hin | nichts jetzt |
+| 5 | 🔵 **Buchhaltungs-Testlauf** (Lexware Office, fünf Minuten) · **E-Rechnungs-Viewer** (Quba, 0 €) | nicht eilig |
+| 6 | 🔵 **Versicherung** (exali/Markel 1 Mio. €) · **Stripe** (Konto + 2 Preise) · **Vercel-Benachrichtigung** · Gewerbeanmeldung KW 41 (CoS-041) | unverändert |
 
-**Nichts blockiert eine Rolle, und es wartet keine Rolle auf Sandy.** Punkt 2
-ist freiwillig geworden, nachdem der Designer die Seite über ihren Chrome
-messen konnte.
+**Es wartet keine Rolle auf Sandy.** Punkt 2 ist der einzige, der nach vier
+Tagen Stillstand wirklich etwas freischaltet — und auch er blockiert niemanden.
 
 ---
 
@@ -114,48 +107,37 @@ messen konnte.
 
 | Rolle | Nächstes | Wartet auf |
 |---|---|---|
-| **Engineering** | **1. CoS-E-081 fertig** (läuft uncommittet in `helpers.ts` — wer ihn angefangen hat, beendet ihn, und committet `helpers.ts` **allein**). **2. Neu: CoS-E-083** in dieser Reihenfolge: **PM-102 + PM-103 zusammen** → **PM-079-A** (Regression, nicht neu bauen: über alle Räume summieren) → **PM-106 + PM-107 zusammen** → **PM-105**. Danach unverändert **CoS-038 → PM-119/L-06 → CoS-E-080**. **Neu freigegeben (18:15 UTC):** die Bemessungsgrundlage der fünf Erschwerniszuschläge wird auf die betroffenen Positionen eingeengt, Prozentsätze unverändert — gebaut wird sie mit PM-103/PM-104, nicht vorgezogen | niemanden |
-| **Designer** | **DC-127** (dunkler Tabellenkopf, nur eine der beiden Seiten ändern), dann **DC-128 zu Ende** und committen. **PD-023** liegt zum Lesen da, **PD-018 §3** (Zuschlagszeile lesbar machen) ist seiner und seit 18:15 UTC vollständig entschieden — sinnvoll erst, nachdem Engineering die Grundlage umgestellt hat. **9.1 ist von seiner Seite beantwortet** (vier Befunde, bei Marketing als CoS-M-016); offen bleibt nur eine Messung bei echten 375 px, falls Sandy freigibt. DC-122 Fußzeile bleibt bei Legal | Legal (nur DC-122) |
-| **Prüfmeister** | **Spur leer, Fallbasis 133.** Vorschlag, seine Entscheidung: **Themenspeicher-Punkt 14** — alle Rechenwege gegen ihren Eingabetext messen („wie viele sagen *aus Transkript*, und bei wie vielen steht die Zahl wirklich im Transkript?"). **Punkt 17** erst, wenn Marketing CoS-M-014 eingearbeitet hat | niemanden |
-| **Platform** | **Nichts zu bauen — CoS-P-032 ist zurückgezogen.** Nur der Termin **CoS-P-029:** am **19.09. nach 03:30 UTC** `system_laeufe` prüfen (`aufnahmen.dateien > 0`?) | niemanden |
-| **Marketing** | **🆕 CoS-M-016 zuerst:** der Abschluss-CTA kann auf dem Handy leer bleiben (Einblender ohne Boden) — das ist die Stelle, an der geklickt werden soll. Danach Vorschau-Umschalter raus (M-6), Hero kürzen, Reiter-Kante. Dann **CoS-M-014** (zwei Zahlen). **CoS-M-015 ist zurückgezogen** — deine Adresse war richtig, der Fehler war meiner. Danach Zustelltest `support@`. Der Website-Schalter bleibt hinter **CoS-038** | Engineering (CoS-038) · Sandys Buchhaltungs-Testlauf |
-| **Legal** | **Zuerst L-KI-01 einbauen** (freigegeben, Wortlaut unverändert) und melden, wenn er drin ist; dabei prüfen, ob dieselbe Zusage noch woanders steht. Dann **CoS-L-011** (dürfen freie Fußzeilen die Pflichtangaben ersetzen — A/B/C?), dann **CoS-L-012** | niemanden |
-| **Finance** | **CoS-F-009** (Vorsteuer in die Kostenübersicht, Reverse-Charge auf „durchlaufend", Voranmeldungsrhythmus als Frage für den Steuerberater) · Behördenliste für Sandy bis 26.09. · **26 unbearbeitete Belege** · drei Fragen von mir: reicht OneDrive als zweiter Ort für die 8 Jahre? · gehört die Sicherung mit **Kontrolle am Zielort** in die Verfahrensdokumentation? · **CoS-F-008** · steigt Gate-1-Punkt 4.7 über die 40/100? | niemanden |
+| **Engineering** | **CoS-E-083 weiter, in dieser Reihenfolge:** **PM-079-A** (Regression, nicht neu bauen: über alle Räume summieren) → **PM-106 + PM-107 zusammen** → **PM-105**. Danach unverändert **CoS-038 → PM-119/L-06 → CoS-E-080**. Die Bemessungsgrundlage der fünf Erschwerniszuschläge ist seit 17.09., 18:15 UTC freigegeben und wird mit PM-103/PM-104 gebaut, nicht vorgezogen | niemanden |
+| **Prüfmeister** | **Zuerst die Frage beantworten, die Engineering ihm zurückgegeben hat:** zählt „Altbauwohnung"/„Altbauhaus" als Zustandsaussage (**A** nur freistehendes Wort · **B** Wohnung/Haus zählen mit · **C** es braucht ein Zustandswort daneben)? Bis dahin steht A. Danach: **seine eigene Testdatei committen** (liegt seit dem 17.09. uncommittet), dann **Themenspeicher-Punkt 14** | niemanden |
+| **Designer** | **DC-128 zu Ende und committen** (liegt seit dem 17.09. uncommittet, vier Dateien), dann **DC-127** (dunkler Tabellenkopf, nur eine der beiden Seiten ändern). **PD-023** liegt zum Lesen da, **PD-018 §3** ist seiner und vollständig entschieden — sinnvoll erst, nachdem Engineering die Grundlage umgestellt hat. DC-122 Fußzeile bleibt bei Legal | Legal (nur DC-122) |
+| **Platform** | **🆕 CoS-P-033:** liegen die vier Aufnahmen aus dem 19.09.-Lauf wirklich nicht mehr da, oder wurden sie nur geprüft? Eine Abfrage, kein Bau. Bei „nur geprüft" nichts umbauen, sondern melden | niemanden |
+| **Marketing** | **CoS-M-016 zuerst** (Abschluss-CTA kann auf dem Handy leer bleiben — die Stelle, an der geklickt werden soll), danach Vorschau-Umschalter raus (M-6), Hero kürzen, Reiter-Kante. Dann **CoS-M-014** (zwei Zahlen), danach Zustelltest `support@`. Der Website-Schalter bleibt hinter **CoS-038** | Engineering (CoS-038) · Sandys Buchhaltungs-Testlauf |
+| **Legal** | **Zuerst L-KI-01 einbauen** (freigegeben, Wortlaut unverändert) und melden, wenn er drin ist; dabei prüfen, ob dieselbe Zusage noch woanders steht. Dann **CoS-L-011** (dürfen freie Fußzeilen die Pflichtangaben ersetzen — A/B/C?), dann **CoS-L-012**. **Nichts zu tun wegen der Löschfrist** — der Lauf vom 19.09. hat geprüft, der Nein-Fall ist nicht eingetreten | niemanden |
+| **Finance** | **CoS-F-009** (Vorsteuer in die Kostenübersicht, Reverse-Charge auf „durchlaufend", Voranmeldungsrhythmus als Frage für den Steuerberater) · **Behördenliste für Sandy bis 26.09.** — das ist der Termin mit dem kürzesten Vorlauf · **26 unbearbeitete Belege** · **CoS-F-008** · steigt Gate-1-Punkt 4.7 über die 40/100? | niemanden |
 
 ---
 
 ## Was gerade niemanden blockiert, aber nicht untergehen darf
 
-* **🔴 PM-102 — der Wandanstrich verschwindet, Tapezieren wird erfunden.**
-  626,62 € diktierte Arbeit fehlt, 1.714,96 € unbestellte Arbeit steht drin —
-  auf derselben Zeile, in entgegengesetzte Richtungen. CoS-E-083, Platz 1.
-* **🔴 PM-103 — 460,20 € Zuschlag, ausgelöst vom Raumnamen.** Derselbe Text
-  mit „Wohnzimmer" statt „Altbauwohnzimmer" erzeugt ihn nicht.
 * **🔴 PM-079-A war nie erledigt.** Die 65,00 m², die als Beleg galten, waren
   die Flächen des **ersten** Raums, nicht die Summe — 463,50 € zu wenig,
-  sobald zwei Räume verraucht sind. Sperrklinke steht wieder offen.
-* **🔴 PM-132 / CoS-E-081 — „Wir liefern 50 Stück Fliesen dazu" macht 50
-  Türen**, 8.820,00 € Unterschied, mit „aus Transkript" auf dem Kundenpapier.
-  Bau läuft uncommittet.
-* **🟡 Die CI ist nicht messbar** (403 / veraltete Liste). Kein rotes Signal —
-  ein ungemessenes. Produktion ist unabhängig davon grün.
-* **Uncommittet im Arbeitsbaum:** Engineerings `helpers.ts` (CoS-E-081), die
-  vier DC-128-Dateien des Designers, zwei Testreihen des Prüfmeisters.
-  **Das darf niemand mitnehmen.** `git add -A` bleibt abgeschafft — steht
-  jetzt als Regel in `AGENTS.md`, samt der lautlosen Falle beim eigenen Index.
+  sobald zwei Räume verraucht sind. Sperrklinke steht offen, Platz 1 bei
+  Engineering.
+* **🟡 Uncommittet im Arbeitsbaum, seit vier Tagen:** die vier DC-128-Dateien
+  des Designers und die Testreihe des Prüfmeisters. **Das darf niemand
+  mitnehmen.** `git add -A` bleibt abgeschafft — die Regel steht in
+  `AGENTS.md`, samt der lautlosen Falle beim eigenen Index. Wer seine Arbeit
+  fortsetzt, committet **seine** Dateien.
+* **🟡 „geprüft" ist nicht „gelöscht".** Der Lauf vom 19.09. hat 4 Aufnahmen
+  geprüft; ob sie verschwunden sind, ist nicht gemessen. Datenschutzerklärung
+  und AGB versprechen Löschung. **CoS-P-033.**
 * **Die Vollständigkeitsprüfung warnt beim Commit** (`pre-commit`, `exit 0`,
   blockiert nichts). Wer „ist committet" meldet, ohne die
   `[pre-commit]`-Zeilen gelesen zu haben, meldet einen Stand, der bei Vercel
   rot werden kann.
-* **🟡 `ci.yml` hat ein BOM, und die CI lief zuletzt trotzdem grün** (#213).
-  Nicht angefasst.
+* **🟡 `ci.yml` hat ein BOM, und die CI läuft trotzdem grün** (#219). Nicht
+  angefasst.
 * **Es gibt keine echten Betriebe — nur Sandys Testkonto.**
-* **Die 30-Tage-Löschzusage ist bis heute nie eingelöst worden.** Der erste
-  Lauf, der wirklich löschen muss, ist der vom **19.09., 03:30 UTC**. Löscht
-  er nichts, sind zwei veröffentlichte Rechtstexte unrichtig. **CoS-P-029.**
-* **Die Sicherung läuft, der erste automatische Lauf steht heute Abend an.**
-  Empfehlung an Finance bleibt: **Kontrolle am Zielort** ins Verfahren
-  aufnehmen.
 * **Git-Sperrreste und ein Worktree-Rest** (`.git/worktrees/alt`) liegen
   weiter da. Für git harmlos. Löschrecht anfordern geht in einem geplanten
   Lauf nicht — der Dialog braucht einen Menschen.
@@ -165,9 +147,11 @@ messen konnte.
   bei Engineering; vor dem Umbenennen `dc050-rechenweg-pdf.test.ts` und
   `dc119-wandflaechen-konflikt.test.ts` ansehen.
 * **`menge_unbekannt` ist bewusst nicht gebaut.** Offen, wer die Messung macht.
-* **403 ist nicht 404.** Heute habe ich aus „unser Zugang sieht das Projekt
+* **403 ist nicht 404.** Am 17.09. habe ich aus „unser Zugang sieht das Projekt
   nicht" geschlossen, die Seite existiere nicht — und das an vier Rollen
   weitergegeben. Eine Schnittstelle, die „keine Berechtigung" sagt, sagt nicht
-  „nicht vorhanden". Korrigiert hat es Sandy, nicht ich.
+  „nicht vorhanden". Heute hat dieselbe Vorsicht geholfen: die
+  GitHub-Abfrage, die im Cloud-Container mit 403 antwortet, läuft aus dem
+  verbundenen Ordner heraus ohne Weiteres.
 
-*Chief of Staff · 2026-09-17, 18:55 UTC*
+*Chief of Staff · 2026-09-21, 08:00 UTC*

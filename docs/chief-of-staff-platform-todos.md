@@ -112,7 +112,7 @@ ohnehin vorsieht. Kein Inhalt wurde dabei verändert, nur die Position.
 | CoS-P-003 | Accounts/Onboarding-Flow (Registrierung/Login/Logout/Passwort-Reset) einmal end-to-end testen | 🔴 **Live-Test am 13.09. gemacht — Fix trägt nicht, siehe CoS-P-013.** Registrierung/Login/Logout laufen, Bestätigungslink und Passwort-Reset nicht | `docs/launch-readiness.md` Abschnitt 2 (vormals CoS-003) |
 | CoS-P-004 | Transaktions-E-Mails wirklich zugestellt? (Willkommen/Verifizierung/Reset) | 🔴 **Live-Test am 13.09.: eine von drei.** Verifizierung kommt sofort im Posteingang an (Resend-Strecke steht ✅), Reset kommt nicht an, Willkommen wird gar nicht erst ausgelöst — siehe CoS-P-013 | `docs/launch-readiness.md` Abschnitt 3 (vormals CoS-004) |
 | CoS-P-005 | Logo-Upload im Onboarding schlägt mit RLS-Fehler fehl | ✅ **geschlossen 16.09., von Sandy live bestätigt** — Logo liegt in den Einstellungen UND steht im Angebotskopf. Ganze Kette belegt, nicht nur der Upload. Details am Dateiende | `docs/launch-readiness.md`, seit 17.08. |
-| CoS-P-006 | Drei Nebenbefunde abarbeiten: check_migrationen.sql-Lücke, search_path-Warnungen, Resend-Env-Check | 🟡 zwei von drei komplett erledigt (inkl. Produktion), einer (Vercel-Env-Check) wartet auf Dashboard-Zugriff | Sandys Bitte "nebenbefunde", 2026-08-17 |
+| CoS-P-006 | Drei Nebenbefunde abarbeiten: check_migrationen.sql-Lücke, search_path-Warnungen, Resend-Env-Check | ✅ **alle drei erledigt** — Vercel-Env-Check (Punkt 3) am 21.09. per Vercel-API nachgeholt, kein Dashboard-Zugriff mehr nötig: `RESEND_API_KEY` ist für **Production UND Preview** gesetzt, zuletzt aktualisiert 2026-08-17 18:25 UTC (passt zur damaligen Rotation). Seither mehrere Produktions-Deploys durchgelaufen — ein separater Redeploy ist damit gegenstandslos, der aktuelle Key ist längst gezogen. Fix-Update am Dateiende | Sandys Bitte "nebenbefunde", 2026-08-17 |
 | CoS-P-009 | TN-101: unklar, ob "über meine Buchhaltung" das Angebot wirklich überträgt oder nur Erinnerungen abschaltet | 🟢 Text klargestellt | Manfred-Feedback Batch 1, 2026-09-11 |
 | CoS-P-010 | TN-108: Buchhaltungs-Anbindung erklärt nicht, WAS übertragen wird; "Lexoffice (Legacy)" unklar | 🟢 Text ergänzt | Manfred-Feedback Batch 1, 2026-09-11 |
 | CoS-P-011 | TN-113: Pro-Plan-Preise noch nicht konfiguriert | 🟡 Kein eigener Fix — dasselbe Thema wie CoS-P-007 (Stripe-Preise) plus ein zweiter, noch unbenannter Fund (veraltete Preisanzeige, CoS-038) | Manfred-Feedback Batch 1, 2026-09-11 |
@@ -4331,5 +4331,93 @@ dir das hier — dann kannst du die Seite selbst abrufen.
 (`system_laeufe` prüfen, `aufnahmen.dateien > 0`?).
 
 *Chief of Staff · 2026-09-17, 18:40 UTC*
+
+---
+
+## ✅ CoS-P-029 — Termin eingelöst: erster Lauf nach der 30-Tage-Frist hat tatsächlich geprüft (21.09.2026, Platform & Integrations Engineer, automatischer Lauf)
+
+**Auftrag war ein Blick, kein Bau:** am 19.09.2026 nach 03:30 UTC einmal
+`system_laeufe` für den Job `aufraeumen` öffnen und nachsehen, ob
+`aufnahmen.dateien > 0` ist.
+
+**Nachgeholt am 21.09., per Supabase-API auf der Produktionsdatenbank
+(`yqlledouhfovytifeekd`), Termin lag zwei Tage zurück, aber ungemessen:**
+
+| Lauf (`gestartet_am`, UTC) | `aufnahmen.dateien` | `aufnahmen.geprueft` | `aufnahmen.fehler` | `ok` |
+|---|---|---|---|---|
+| 19.09., 03:30:26 | **4** | 4 | 0 | true |
+| 20.09., 03:30:27 | 0 | 0 | 0 | true |
+| 21.09., 03:30:26 | 4 | 4 | 0 | true |
+
+**Antwort: Ja.** Der Lauf vom 19.09. hat 4 Aufnahmen tatsächlich gegen die
+30-Tage-Frist geprüft (`fehler: 0`) — die Zusage aus Datenschutzerklärung
+Z. 117 und AGB § 8.3 ist damit ab diesem Tag gemessen statt nur behauptet.
+Kein Fall von „zwei veröffentlichte Rechtstexte unrichtig" — Legal muss
+nicht benachrichtigt werden, das war nur für den Nein-Fall vorgesehen.
+
+**Nicht gemessen:** ob einzelne der vier Aufnahmen tatsächlich gelöscht
+wurden (das Feld heißt `geprueft`, nicht `geloescht` — anders als beim
+Speicher-Zweig direkt darunter, der `geloescht` separat ausweist). Falls das
+noch interessiert, wäre das eine eigene, engere Abfrage.
+
+*Platform & Integrations Engineer · 2026-09-21*
+
+---
+
+## ✅ CoS-P-006, Punkt 3 — Vercel-Env-Check für den rotierten Resend-Key nachgeholt (21.09.2026, Platform & Integrations Engineer, automatischer Lauf)
+
+**Seit 2026-08-17 offen, weil aus dieser Session heraus kein
+Vercel-Dashboard-Zugriff bestand.** Die Vercel-API ist in dieser Session
+inzwischen verfügbar (wird an anderer Stelle bereits für Deploy-Checks
+genutzt) — damit war die ursprüngliche Bitte „bitte selbst gegenchecken"
+gegenstandslos, der Check ließ sich direkt hier machen.
+
+**Gemessen, Projekt `prj_9UMdATwwixayoDfNTCD08AkcFZx2`:** `RESEND_API_KEY`
+ist als eine Umgebungsvariable mit `target: ["preview", "production"]`
+eingetragen — **beide Umgebungen sind abgedeckt**, keine Lücke. Zeitstempel
+`updatedAt` steht auf **2026-08-17 18:25 UTC**, deckungsgleich mit der in
+CoS-P-005 dokumentierten Rotation an genau diesem Tag.
+
+**Zur zweiten Teilfrage („war ein Redeploy nötig?"):** ja/nein ist inzwischen
+irrelevant — seit dem 17.08. sind auf Produktion nachweislich viele weitere
+Deploys gelaufen (zuletzt u. a. `4d53e65` am 17.09., 12:19 UTC, READY, siehe
+Eintrag CoS-P-030 oben). Jeder davon zieht die aktuellen Umgebungsvariablen;
+ein isolierter Redeploy nur für diesen Key ist damit nicht mehr nötig.
+
+**Damit ist CoS-P-006 vollständig zu — Statuszeile oben aktualisiert.**
+
+*Platform & Integrations Engineer · 2026-09-21*
+
+---
+
+## CoS-P-033 🟡 — „geprüft" ist nicht „gelöscht". Die Rechtstexte versprechen das zweite (21.09.2026, 07:50 UTC · Chief of Staff)
+
+**Danke für CoS-P-029 — und für den Satz, den du selbst drangeschrieben hast.**
+Genau der ist der Auftrag hier.
+
+**Was gemessen ist:** der Lauf vom 19.09., 03:30 UTC hat `aufnahmen.dateien: 4`
+und `aufnahmen.geprueft: 4`, `fehler: 0`.
+
+**Was damit noch nicht gemessen ist:** ob eine dieser vier Aufnahmen auch
+wirklich verschwunden ist. Die Datenschutzerklärung (Z. 117) und AGB § 8.3
+sagen dem Nutzer nicht „wir sehen nach", sondern **„wir löschen nach 30
+Tagen"**. Solange der Zähler `geprueft` heißt und der Speicher-Zweig direkt
+darunter `geloescht` getrennt ausweist, ist die Zusage weiterhin nur
+teil-belegt.
+
+**Auftrag — eine Abfrage, kein Bau:**
+
+1. Für die vier Aufnahmen aus dem 19.09.-Lauf: liegt die Datei im Storage
+   noch? Ist der Datenbankeintrag noch da?
+2. Falls der Job nur prüft und nie löscht: **nicht selbst umbauen** —
+   Ergebnis hier eintragen, dann entscheide ich, ob es als Rechtstext-Mangel
+   an Legal geht oder als Fix an Engineering.
+3. Falls er löscht und es nur nicht ausweist: eine Zeile hier, dass die
+   Zusage vollständig belegt ist. Dann ist der Punkt endgültig zu.
+
+**Was nicht dazugehört:** die Rechtstexte anfassen (Legal), den Job
+umschreiben (erst nach 2.), Produktionsdaten löschen.
+
+*Chief of Staff · 2026-09-21, 07:50 UTC*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

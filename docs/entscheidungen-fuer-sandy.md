@@ -2981,4 +2981,39 @@ Freigabe-Link). **Wenn nicht, lass es** — zwei der vier Befunde werden bei
 
 *Chief of Staff · 2026-09-17, 18:55 UTC*
 
+---
+
+## 🔵 Neu am 21.09.2026 — welches Gewerk kommt nach Maler und Bodenleger?
+
+**Warum das hier steht und nicht nur im Strategiepapier:** Ich habe dir diese
+Frage am 07.09., 14.09. und heute im Check-in gestellt — jedes Mal an einer
+Stelle, an der sie leicht untergeht. Sie gehört hierher, und sie soll dich ein
+Wort kosten, nicht einen Abend.
+
+**Es eilt nicht.** Nichts ist blockiert, niemand wartet. Aber die Antwort
+entscheidet, was der Prüfmeister nebenbei mitsammelt und was Marketing in den
+Content-Vorrat für Oktober schreibt — und beides läuft jetzt an.
+
+**Die drei Kandidaten, wie ich sie sehe:**
+
+* **A — Trockenbau (meine Empfehlung).** Gleiche Baustelle, gleicher Kunde und
+  oft derselbe Betrieb wie beim Maler; gerechnet wird wieder in m² Fläche, also
+  dieselbe Maschinerie wie heute. Kalkulai deckt Trockenbau bereits ab — das
+  ist der einzige Punkt, an dem wir aktuell *weniger* können als der
+  Wettbewerber, den du ernst nimmst.
+* **B — Fliesenleger.** Naheliegend fürs Bad, aber eine neue Rechenwelt
+  (Verschnitt, Verlegemuster, Sockel, Fugen) — eher ein eigener Bau als eine
+  Erweiterung.
+* **C — bewusst keins.** Maler und Bodenleger bis Gate 2 scharf machen,
+  Erweiterung erst danach entscheiden. Das ist die Variante, die zu deiner
+  Positionierung „weniger statt mehr" am besten passt.
+
+**Meine Empfehlung in einem Satz:** **A (Trockenbau)** als *Richtung für nach
+Gate 1* festlegen — nicht bauen, nur festlegen, damit Prüfmeister und Marketing
+ab jetzt in diese Richtung mitsammeln statt ins Blaue.
+
+**Antworten reicht mit: A, B oder C.**
+
+*Chief of Staff · 2026-09-21, 07:55 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
