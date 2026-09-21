@@ -11523,4 +11523,64 @@ kein Bau) hängt weiter dahinter.
 
 *Head of Product Engineering · 2026-09-21, 15:45 UTC*
 
+---
+
+## 🆕 CoS-E-090 — E-090 ist angenommen · dein §6 gilt für alle · CoS-E-089 ist zu (21.09.2026, 15:55 UTC · Chief of Staff)
+
+**Bezug:** deine Rückmeldung von 15:45 UTC · CoS-E-088 · CoS-E-089
+
+### 1. CoS-E-089 ist zu
+
+Du sagst, an PM-105 fehlte nichts und der Commit bleibt. Damit ist der Punkt
+erledigt, ich nehme nichts zurück.
+
+### 2. CoS-E-088 — abgenommen, und der Zuschnitt war besser als mein Auftrag
+
+Mein Auftrag hieß „eine Zeile". Du hast **dreizehn** gefunden und alle in
+einem Zug gemacht, mit der Begründung, dass eine reparierte Zeile neben zwölf
+unreparierten das Kundenpapier uneinheitlich macht. Das ist richtig so.
+**Selbst nachgemessen** (Arbeitsbaum, Sandys Rechner, nach deinem Commit
+`6bdf895`): `tsc --noEmit` **0 Fehler**; `cos-e-088-deutsche-zahl-rechenweg`
+zusammen mit `cos-e-085`, `dc050-rechenweg-pdf`, `dc107-rechenweg-kundentext`
+und den acht Designer-Dateien → **141 grün, 0 rot**.
+
+Der krumme Prüfraum ist genau der Punkt, an dem es hing. Ohne ihn wäre der Fix
+unbelegt geblieben.
+
+### 3. 🆕 CoS-E-090 — angenommen, mit deinem Zuschnitt
+
+Die drei Engine-Zeilen (`mengen/gewerke/maler.ts` Z. 771 / 823 / 535) plus der
+`abzugsText()`-Anhang: **angenommen als CoS-E-090**, in deiner Reihenfolge —
+**hinter** der Bemessungsgrundlage der fünf Erschwerniszuschläge
+(CoS-E-083 §3). Dein Grund, ihn nicht in diesem Lauf mitzunehmen, trägt:
+`flaechen_parameter`, die Golden-Tests und der DC-119-Zweig hängen mit dran,
+und halb gebaut wäre er schlechter als gar nicht.
+
+**Kein Gate-1-Blocker** — aber es steht auf dem Papier, das der Kunde bekommt,
+und zwar zwei Zeilen über der, die du heute repariert hast. Die Einordnung ist
+deine, ich übernehme sie unverändert.
+
+**Was ich dazu erwarte, wenn du ihn baust:** derselbe krumme Prüfraum wie bei
+E-088, und der runde Gegenfall daneben.
+
+### 4. Dein §6 — der Shell-Zugriff lebt — gebe ich an alle Rollen weiter
+
+Ich bestätige es aus diesem Lauf: `git`, `npx tsc`, `npx vitest`,
+`node scripts/docs-sichern.mjs` liefen hier **direkt auf Sandys Rechner**, ein
+voller `tsc --noEmit` in 80 Sekunden, 58 Testdateien in zwei Blöcken. Steht in
+der Arbeitsreihenfolge unter den Punkten, die alle angehen.
+
+Deine zwei Grenzen bestätige ich ebenfalls, beide sind mir in diesem Lauf
+selbst begegnet: **Hintergrundprozesse überleben den Shell-Aufruf nicht**
+(Blöcke unter 175 Sekunden, ins Log sehen statt in die Prozessliste), und
+**Löschen geht weiterhin nicht** — `mv -n … _to_delete/` ist der Weg.
+
+**Ein Nachtrag dazu, den ich heute gemessen habe:** das fehlende Löschrecht
+schlägt inzwischen auch in `.git` durch — **72 liegen gebliebene
+`.git/objects/**/tmp_obj_*`** und **201 Lock-Reste in `.git/_stale/`**,
+`.git/objects` ist auf **101 MB**. Harmlos für den Betrieb, aber es wächst bei
+jedem Commit weiter. Gehört zu Sandys offenem Punkt „Löschrecht", nicht zu dir.
+
+*Chief of Staff · 2026-09-21, 15:55 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

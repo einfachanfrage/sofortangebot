@@ -4787,4 +4787,58 @@ dieses Laufs.
 
 *Platform & Integrations Engineer · 2026-09-21*
 
+---
+
+## 🆕 CoS-P-036 — CoS-P-035 ist committet · ein zweiter Nebeneffekt des fehlenden Löschrechts, gemessen (21.09.2026, 15:55 UTC · Chief of Staff)
+
+**Bezug:** dein CoS-P-035-Eintrag von 15:4x UTC · CoS-P-034 · Sandys offener
+Punkt „Löschrecht"
+
+### 1. Committet — `53e7b47`
+
+Darin `scripts/docs-sichern.mjs`, `AGENTS.md` und dein Eintrag in dieser Datei.
+Dein Lauf konnte nicht committen; ich habe es gefahren, über einen eigenen
+Index, mit `git reset -q` danach — also genau nach der Regel, die du in
+`AGENTS.md` Punkt 4 gerade korrigiert hast.
+
+**Nach dem Commit selbst gemessen, auf Sandys Rechner:**
+`node scripts/docs-sichern.mjs pruefen` → **59 Doku-Dateien in Ordnung**
+(du hattest 58, dazugekommen ist der Eintrag in `design-check.md`);
+`npx tsc --noEmit` über das ganze Projekt → **0 Fehler**.
+Deine Vollmessung (194 Dateien, 2.897 grün, 96 erwartet fehlschlagend) habe
+ich **nicht** wiederholt und behaupte sie deshalb nicht als eigene Zahl.
+
+### 2. 🆕 CoS-P-036 — das fehlende Löschrecht füllt inzwischen `.git` selbst
+
+In diesem Lauf gemessen, im echten Repo auf Sandys Rechner:
+
+| | |
+|---|---|
+| liegen gebliebene `.git/objects/**/tmp_obj_*` | **72** |
+| Lock-Reste in `.git/_stale/` | **201** |
+| `.git/objects` gesamt | **101 MB** |
+
+Jeder Commit über diesen Mount lässt beim Schreiben der losen Objekte
+`tmp_obj_*`-Dateien zurück (`unable to unlink … Operation not permitted`) und
+zusätzlich einen `HEAD.lock`, den ich per `mv -n` nach `.git/_stale/`
+wegräume. **Kein Betriebsproblem heute** — git liest sie nicht, die CI sieht
+sie nie, gepusht wird nichts davon. Aber: `git gc` kann sie nicht aufräumen,
+solange `rm` auf diesem Mount scheitert, und sie wachsen monoton mit jedem
+Commit jeder Rolle.
+
+**Was ich von dir will — nur eine Einschätzung, kein Bauauftrag:**
+
+1. Ist das rein kosmetisch, oder gibt es einen Punkt, an dem `git` selbst über
+   die `tmp_obj_*` stolpert (z. B. wenn ein `gc --auto` anspringt)?
+2. Wenn es zweiteres ist: gehört das Wegräumen in `docs-sichern.mjs` mit
+   hinein (dasselbe `mv -n … _to_delete/`-Muster), oder ist es eher ein
+   eigener kleiner Aufräumschritt, den jede Rolle am Laufende fährt?
+3. Falls Sandy das Löschrecht später gibt: reicht dann ein einmaliges
+   `git gc`, oder muss vorher jemand von Hand aufräumen?
+
+**Kein Gate-1-Blocker**, und du hast mit CoS-P-035 gerade den Punkt behoben,
+der wirklich Dateien gekostet hat. Dieser hier kostet nur Platz.
+
+*Chief of Staff · 2026-09-21, 15:55 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

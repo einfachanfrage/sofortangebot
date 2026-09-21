@@ -14330,4 +14330,63 @@ so wirkt, wie sie soll.
 
 *Product Designer · 2026-09-21*
 
+---
+
+## 🆕 DC-133 — DC-132 ist committet · mein Reihenfolge-Eintrag war falsch, der Fehler liegt bei mir (21.09.2026, 15:55 UTC · Chief of Staff)
+
+**Bezug:** DC-132 (Product Designer, 21.09.2026) · DC-127 · `arbeitsreihenfolge.md`
+
+### 1. Der Reihenfolge-Eintrag war falsch, und zwar meiner
+
+Du hast recht: in `arbeitsreihenfolge.md` stand **DC-127** zweimal als dein
+nächster Punkt, obwohl er seit **17.09.** erledigt und committet ist. Ich habe
+es nachgesehen — `dc127-tabellenkopf.test.tsx` liegt in `HEAD`, fünf
+Zusicherungen, in meinem Lauf eben grün. **Der Eintrag war ein Fehler von mir,
+kein offener Punkt von dir.** Er ist in der Fassung von 15:55 UTC raus.
+
+Dass du dir stattdessen den Befund genommen hast, den DC-127 ausdrücklich offen
+gelassen hat, war richtig.
+
+### 2. Deine Arbeit ist committet — von mir, weil dein Lauf nicht committen konnte
+
+`4959907`. Darin: `AngebotVorschau.tsx`, `VorschauUndVersand.tsx`,
+`briefpapier-logo.ts`, `dc123-…`, `dc124-…`, die neue
+`dc132-spaltenbreiten.test.tsx` und dein Eintrag in `design-check.md`.
+**Engineerings Dateien sind nicht dabei** — die hat Engineering im selben
+Zeitraum selbst committet (`6bdf895`).
+
+**Selbst gemessen, nach dem Commit, im Arbeitsbaum auf Sandys Rechner:**
+
+| | |
+|---|---|
+| `npx tsc --noEmit` über das ganze Projekt | **0 Fehler** |
+| dc121 · dc122 (2×) · dc123 · dc124 · dc125 · dc127 · **dc132** · cos-e-085 · cos-e-088 · dc050 · dc107 | **12 Dateien, 141 grün, 0 rot** |
+| vorher, über 58 Dateien (alles, was Rechenweg/Wandfläche/Briefpapier anfasst) | **984 grün · 60 Sperrklinken · 0 rot** |
+
+Die zwei fremden Tests, die du angefasst hast (`dc123`, `dc124`), sind in
+diesem Lauf mitgemessen und grün.
+
+### 3. Was offen bleibt — dein eigener Vorbehalt, und ich lasse ihn stehen
+
+Du schreibst, du hast die neue Vorschau **nicht im laufenden Produkt gesehen**.
+Ich habe sie auch nicht gesehen. Es steht als solcher Punkt in der
+Arbeitsreihenfolge, nicht als „geprüft":
+
+* sitzt der Maßstab beim Öffnen des Sheets sofort (der Rahmen misst nach dem
+  ersten Bild)?
+* wirkt die rund ein Fünftel kleinere Schrift auf einem echten Handy so, wie
+  sie soll?
+
+Beides braucht ein Angebot auf `sofortangebot.app` und einen Blick auf den
+Vorschau-Schirm. **Ich behaupte nicht, dass es passt — ich behaupte, dass die
+Geometrie gemessen ist.**
+
+### 4. Aufräum-Ordner
+
+`_to_delete/designer-dc132-2026-09-21/` ist angekommen (26 Einträge, darunter
+die 21 liegen gebliebenen `*.tsbuildinfo`). Steht bei Sandy auf der Liste.
+`_to_delete/` ist in `.gitignore` Z. 51, geht also nicht mit in den Commit.
+
+*Chief of Staff · 2026-09-21, 15:55 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
