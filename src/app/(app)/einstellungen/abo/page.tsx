@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { getAboStand } from '@/data/abo'
-import { PRICING } from '@/lib/pricing'
+import { PRICING, TESTPHASE_ENDE_TITEL, TESTPHASE_ENDE_ZUSAGE } from '@/lib/pricing'
 import { AboAktionen } from './AboAktionen'
 
 // DC-045: Die einzige Stelle, an der ein Nutzer nach dem Onboarding je
@@ -96,9 +96,14 @@ export default async function AboPage() {
                   Seit {formatDatum(testEndeISO)}.
                 </div>
                 <div className="mt-3 bg-yellow/10 border border-yellow/30 rounded-xl px-3.5 py-3">
-                  <div className="font-bold text-anthracite text-sm">Deine Testzeit ist vorbei</div>
+                  {/* Head of Marketing (23.09.2026): Hier stand „Deine Testzeit
+                      ist vorbei" — das dritte Wort für dieselbe Sache, neben
+                      „Testphase" (Kopfzeile darüber) und „Tage zum Testen"
+                      (Sperrmeldung). Ein Ding, ein Wort. Beide Sätze kommen
+                      jetzt aus `pricing.ts` und nicht mehr von Hand. */}
+                  <div className="font-bold text-anthracite text-sm">{TESTPHASE_ENDE_TITEL}</div>
                   <div className="text-xs font-semibold text-anthracite/60 mt-0.5">
-                    Angefangene Angebote kannst du weiter bearbeiten und versenden — für ein neues brauchst du ein Abo.
+                    {TESTPHASE_ENDE_ZUSAGE}
                   </div>
                 </div>
               </>
@@ -110,7 +115,12 @@ export default async function AboPage() {
                     : 'Läuft heute ab'}
                 </div>
                 <div className="text-sm font-semibold text-anthracite/50 mt-1">
-                  Bis {formatDatum(testEndeISO)}. Keine Kreditkarte, keine stille Verlängerung.
+                  {/* Head of Marketing (23.09.2026): „keine stille Verlängerung"
+                      → „endet von allein". Dieselbe Zusage, aber als Zusage
+                      statt als Dementi — und wörtlich die von der Landingpage
+                      („Keine Kreditkarte · Endet von allein"). Wer hier steht,
+                      hat den Satz dort gelesen. */}
+                  Bis {formatDatum(testEndeISO)}. Keine Kreditkarte, endet von allein.
                 </div>
               </>
             )}

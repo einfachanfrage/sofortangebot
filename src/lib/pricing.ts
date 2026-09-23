@@ -73,3 +73,37 @@ export const MWST_HINWEIS =
   'Preise netto, zzgl. gesetzlicher MwSt. Sofortangebot richtet sich ausschließlich an Unternehmer (§ 14 BGB).'
 
 export const TESTPHASE_CTA = `${PRICING.testTage} Tage kostenlos testen`
+
+/**
+ * Was dasteht, wenn die Testphase vorbei ist.
+ *
+ * ⚠ Wortlaut des Head of Marketing (23.09.2026). Beide Sätze stehen hier,
+ * weil sie an drei Stellen gebraucht werden — Sperr-Bildschirm, Abo-Seite
+ * und die API-Meldung aus `plan-limit.ts`. Genau so ist der Preis bei
+ * CoS-001/DC-001 schon einmal auseinandergelaufen: derselbe Satz, an
+ * mehreren Stellen von Hand getippt.
+ *
+ * Die Aufteilung ist Absicht. Der TITEL nennt den Grund, die ZUSAGE nennt,
+ * was weiter geht und was jetzt nötig ist. Wo beides übereinander steht,
+ * wird nur die Zusage gezeigt — sonst stünde der Grund zweimal.
+ *
+ * Das Wort für die Sache ist „Testphase". Nicht „Testzeit" (stand bis heute
+ * auf der Abo-Seite), nicht „Probezeit" — ein Ding, ein Wort.
+ */
+export const TESTPHASE_ENDE_TITEL = 'Deine Testphase ist vorbei'
+
+/**
+ * Unverändert der Satz aus DC-045 (06.09.2026). Die Zusage ist dieselbe
+ * geblieben: niemand bleibt beim Kunden mit einem halben Angebot stehen.
+ */
+export const TESTPHASE_ENDE_ZUSAGE =
+  'Angefangene Angebote kannst du weiter bearbeiten und versenden — '
+  + 'für ein neues brauchst du ein Abo.'
+
+/**
+ * Knopf, der zum Abo führt. Nicht „Auf Pro upgraden": „Pro" ist der Name
+ * aus dem am 03.09. abgelösten Modell mit zwei Tarifen. Es gibt einen
+ * bezahlten Tarif, und der heißt nicht.
+ */
+export const ABO_CTA = 'Abo abschließen'
+

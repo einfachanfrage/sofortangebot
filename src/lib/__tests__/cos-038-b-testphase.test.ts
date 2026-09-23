@@ -29,7 +29,7 @@ import { describe, it, expect } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { bewerteTestphase, sperrNachricht } from '../plan-limit'
-import { PRICING, TESTPHASE_CTA } from '../pricing'
+import { PRICING, TESTPHASE_CTA, TESTPHASE_ENDE_ZUSAGE } from '../pricing'
 
 const lies = (p: string) => readFileSync(join(process.cwd(), p), 'utf-8')
 
@@ -170,9 +170,19 @@ describe('CoS-038-B · was der Kunde liest', () => {
 
   // Die Zusage aus DC-045, Wort für Wort unverändert: niemand bleibt beim
   // Kunden hängen. Sie steht in der Sperr-Nachricht UND auf der Abo-Seite.
+  //
+  // Head of Marketing (23.09.2026, 13:05 UTC): Diese Zusicherung hat ihre
+  // Richtung behalten, aber ihren Messpunkt gewechselt — ich sage es hier,
+  // damit niemand sie für aufgeweicht hält. Bis heute stand der Satz ZWEIMAL
+  // getippt da (Sperr-Nachricht + Abo-Seite), und der Test maß das Literal in
+  // der Abo-Seite. Seit er als `TESTPHASE_ENDE_ZUSAGE` in `pricing.ts` steht,
+  // wäre genau diese Messung ein Anreiz, ihn wieder zu tippen. Gemessen wird
+  // jetzt der Satz selbst und dass beide Flächen ihn HOLEN. Das ist enger als
+  // vorher, nicht weiter: vorher durften die zwei Fassungen auseinanderlaufen.
   it('beide Stellen sagen, dass Angefangenes weitergeht', () => {
+    expect(TESTPHASE_ENDE_ZUSAGE).toMatch(/weiter bearbeiten und versenden/)
     expect(sperrNachricht()).toMatch(/weiter bearbeiten und versenden/)
-    expect(ohneKommentare(ABO_SEITE)).toMatch(/weiter bearbeiten und versenden/)
+    expect(ohneKommentare(ABO_SEITE)).toContain('TESTPHASE_ENDE_ZUSAGE')
   })
 
   // Der Nutzer muss sehen können, wie lange er noch hat — sonst ist der

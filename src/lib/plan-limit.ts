@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { PRICING } from './pricing'
+import { PRICING, TESTPHASE_ENDE_ZUSAGE } from './pricing'
 
 // ── CoS-038-B (Head of Product Engineering, 23.09.2026) ───────────────────
 //
@@ -175,11 +175,15 @@ export async function zaehleNeueAngeboteDiesenMonat(
  * ⚠ Der zweite Satz ist unverändert der aus DC-045 („Angefangene Angebote …"),
  * weil die Zusage dieselbe geblieben ist. Nur der erste Satz ist neu: das
  * Kontingent ist durch die Testphase ersetzt. Die ZAHL kommt aus PRICING.
- * Der Wortlaut liegt beim Head of Marketing zur Bestätigung (Notiz in
- * `chief-of-staff-marketing-todos.md`, 23.09.).
+ *
+ * Head of Marketing, 23.09.2026, 12:55 UTC: Wortlaut bestätigt, unverändert.
+ * Der zweite Satz steht jetzt als `TESTPHASE_ENDE_ZUSAGE` in `pricing.ts` —
+ * er wird an drei Stellen gebraucht und darf nicht dreimal getippt werden.
+ * Diese Funktion ist die Fassung für Flächen OHNE Überschrift (API-Antwort):
+ * sie nennt den Grund selbst. Wo eine Überschrift darübersteht, wird nur die
+ * Zusage gezeigt.
  */
 export function sperrNachricht(): string {
   return `Deine ${PRICING.testTage} Tage zum Testen sind vorbei. `
-    + 'Angefangene Angebote kannst du weiter bearbeiten und versenden — '
-    + 'für ein neues brauchst du ein Abo.'
+    + TESTPHASE_ENDE_ZUSAGE
 }
