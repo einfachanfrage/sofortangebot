@@ -12,8 +12,13 @@ function formatDatum(iso: string) {
 }
 
 export default async function AboPage() {
-  const { plan, laeuftBisISO, hatStripeKonto, angeboteDiesenMonat, freikontingent, limitErreicht } = await getAboStand()
+  const { plan, laeuftBisISO, hatStripeKonto, angeboteDiesenMonat, freikontingent, limitErreicht, istGruenderpreis } = await getAboStand()
   const istPro = plan === 'pro'
+  // CoS-038-A (23.09.2026): Der Preis hing an `PRICING.proMonatlich` — einer
+  // Zahl aus dem abgelösten Modell, die es nicht mehr gibt. Es gibt zwei
+  // Preise, und welcher gilt, steht am Betrieb (`is_founder_price`), nicht an
+  // einer Konstante.
+  const monatspreis = istGruenderpreis ? PRICING.gruenderMonatlich : PRICING.standardMonatlich
 
   return (
     <div className="min-h-dvh bg-bg pb-24">
@@ -31,7 +36,7 @@ export default async function AboPage() {
               {istPro ? 'Pro' : 'Starter'}
             </span>
             <span className="text-sm font-bold text-anthracite/40">
-              {istPro ? `${PRICING.proMonatlich} €/Monat` : 'kostenlos'}
+              {istPro ? `${monatspreis} € /Monat zzgl. MwSt.` : 'kostenlos'}
             </span>
           </div>
 
@@ -41,9 +46,18 @@ export default async function AboPage() {
             </div>
           )}
 
+          {istPro && istGruenderpreis && (
+            <div className="text-sm font-semibold text-anthracite/50 mt-2">
+              Gründerpreis — dieser Preis bleibt dir dauerhaft erhalten.
+            </div>
+          )}
+
+          {/* CoS-038-A: Hier stand „Im Jahresabo kostet Pro 17 €/Monat." Ein
+              Jahresabo gibt es vor Gate 2 nicht; `api/stripe/route.ts` nimmt
+              deshalb bewusst gar keinen Plan-Parameter mehr entgegen. */}
           {!istPro && (
             <div className="text-sm font-semibold text-anthracite/50 mt-2">
-              Im Jahresabo kostet Pro {PRICING.proJahresabo} €/Monat.
+              Unbegrenzt Angebote ab {PRICING.gruenderMonatlich} € /Monat zzgl. MwSt.
             </div>
           )}
         </div>

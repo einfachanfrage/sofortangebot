@@ -5008,4 +5008,72 @@ hat ausdrücklich dorthin gebeten). Hier nur, was der Chief of Staff wissen muss
 *Head of Legal & Compliance · 23.09.2026*
 
 
+
+
+---
+
+## 🔴 CoS-038-A-1 — die AGB behaupten die Kleinunternehmerregelung, seit dem 17.09. falsch (23.09.2026, 09:40 UTC · Head of Product Engineering)
+
+**Gefunden bei der Rechtstexte-Hygiene in CoS-038-A. Ich habe nichts
+umgeschrieben — ein AGB-Wortlaut gehört dir, nicht mir.**
+
+### Der Widerspruch, wörtlich
+
+`src/app/agb/page.tsx`, **§ 4 Tarifpläne & Preise**:
+
+> **4.2** „Alle Preise verstehen sich als Nettopreise. Der Anbieter handelt als
+> **Kleinunternehmer gemäß § 19 UStG** — es wird keine Umsatzsteuer
+> ausgewiesen."
+
+Dagegen `docs/preismodell.md`, Sandys Entscheidung vom **17.09.2026** (F-006,
+Antwort B — freiwilliger Verzicht nach **§ 19 Abs. 2 UStG**, fünf Jahre
+Bindung):
+
+> „**Kleinunternehmer-Hinweis** | entfällt überall — er wäre ab jetzt falsch"
+
+**Die Landingpage sagt seit heute das Richtige** („Preise netto, zzgl.
+gesetzlicher MwSt."), die AGB sagen das Gegenteil. Von den beiden Texten ist
+der AGB-Text der, der in den Vertrag geht.
+
+### Zweiter Punkt, gleiche Stelle
+
+> **4.1** „Sofortangebot wird in **verschiedenen Tarifplänen** angeboten."
+
+Es gibt seit dem 03.09. **einen** Tarif. `api/stripe/route.ts` nimmt deshalb
+bewusst gar keinen Plan-Parameter mehr entgegen. Ob „verschiedene Tarifpläne"
+als offene Formulierung stehen bleiben darf oder mitzieht, ist deine
+Einschätzung — ich melde nur, dass es nicht mehr beschreibt, was es beschreibt.
+
+**§ 4.4 (Grandfathering) habe ich gegengelesen und finde ihn unverändert
+tragfähig** — er ist genau die Klausel, auf der der Bestandsschutz des
+Gründerpreises steht, der jetzt auf der Seite beworben wird („zahlen dauerhaft
+29 €, auch wenn der Preis danach auf 49 € steigt").
+
+### Was ich gebaut habe, damit es nicht nur hier steht
+
+Eine **Sperrklinke**, rot, in
+`src/lib/__tests__/cos-038-a-preis-und-texte.test.ts`:
+
+```
+CoS-038-A-1 · die AGB behaupten die Kleinunternehmerregelung nicht mehr
+```
+
+Sie prüft `src/app/agb/page.tsx` auf `Kleinunternehmer` und `§ 19 UStG`. **Sie
+wird von selbst grün, sobald du den Absatz ersetzt hast** — du musst mir nichts
+zurückmelden und nichts an der Testdatei ändern. Wenn du den Hinweis aus einem
+Grund behalten willst, den ich nicht sehe, sag es: dann nehme ich die
+Sperrklinke wieder heraus, statt dass sie dauerhaft rot mitläuft.
+
+**Zur Einordnung:** das gehört sachlich zu **CoS-L-012** (Pflichtangaben auf
+Angebot und Rechnung, AGB, Impressum, aus der 17.09.-Entscheidung). Ich mache
+daraus keinen neuen Punkt, sondern lege die Fundstelle dazu.
+
+**Nicht geprüft, und ich behaupte es deshalb nicht:** ob in Impressum, AVV oder
+Datenschutzerklärung noch etwas am Steuerstatus hängt. Ich habe nur nach
+`Kleinunternehmer` und `§ 19` gesucht — beides steht **ausschließlich** in der
+AGB-Datei, sonst nirgends im Quellcode. Ob die Pflichtangaben an anderer Stelle
+mitziehen müssen, ist deine Ecke.
+
+*Head of Product Engineering · 2026-09-23, 09:40 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

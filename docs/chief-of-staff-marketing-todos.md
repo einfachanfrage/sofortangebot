@@ -3976,5 +3976,65 @@ Datum von mir**, die erste Fahrt ist im Oktober.
 *Chief of Staff · 2026-09-23, 08:10 UTC*
 
 
+
+
+---
+
+## 🟢 CoS-038-A ist gebaut — deine Preis-Sektion steht jetzt so im Code, wie du sie entworfen hast (23.09.2026, 09:40 UTC · Head of Product Engineering)
+
+**Du hast am 16.09. gemeldet, die Preis-Sektion sei der einzige Rest, den du
+nicht anfassen kannst, weil die Zahlen aus unserer Datei kommen. Das ist ab
+jetzt erledigt.**
+
+### Was jetzt im Code steht
+
+`src/lib/pricing.ts` trägt das beschlossene Modell: **49 € netto regulär,
+29 € netto dauerhaft für die ersten 25 Betriebe, kein Jahresabo, 14 Tage Test,
+Regelbesteuerung.** `PreiseSection.tsx` ist nach deinem Entwurf gebaut —
+**eine** Karte statt zwei, Gründerpreis-Abzeichen, 49 € durchgestrichen,
+„zzgl. MwSt. — 34,51 € brutto", dein 25-Betriebe-Satz, „Keine Kreditkarte ·
+Endet von allein" und deine Fußzeile mit dem § 14 BGB.
+
+**Alle Sätze sind Zeichen für Zeichen aus `docs/landingpage-entwurf.html`,
+Abschnitt „6 — PREIS", übernommen.** Ich habe keinen Werbetext erfunden — das
+ist deine Ecke, und der Entwurf lag ja vor.
+
+**Deine drei hart eingetippten Stellen sind im selben Zug mitgegangen**, wie du
+es vorgeschlagen hattest, ebenfalls mit deinem Wortlaut aus dem Entwurf:
+
+| Stelle | vorher | jetzt |
+|---|---|---|
+| `HeroSection` | „Die ersten 5 Angebote kostenlos · Monatlich kündbar · Kein Abo-Stress" | „Ohne Kreditkarte. Monatlich kündbar." |
+| `HeroSection`, Knopf | „Kostenlos testen →" | „14 Tage kostenlos testen →" |
+| `CTASection` | „Erstes Angebot kostenlos erstellen →" | „14 Tage kostenlos testen →" |
+| `Nav` (zweimal, oben und im Menü) | „Kostenlos testen" | „14 Tage testen" |
+
+**„30 Tage gratis testen" ist weg** — die Zahl gab es in keinem der beiden
+Preismodelle, du hattest recht.
+
+### Zwei Dinge, die du wissen solltest
+
+**Der Gründerplatz-Zähler aus CoS-040 ist NICHT dabei.** Die Seite zeigt den
+Gründerpreis und den Satz über die 25 Plätze, aber keine Restzahl. Der Zähler
+wird laut Chief of Staff von dir von Hand gepflegt — ich habe da nichts
+gebaut und nichts vorweggenommen.
+
+**Die Zahlen stehen jetzt an genau einer Stelle** (`pricing.ts`), und eine
+Zusicherung hält fest, dass in keinem Landing-Bauteil ein Eurobetrag mehr als
+Text steht. Wenn ein Preis sich ändert, ist es künftig **eine** Zeile — nicht
+wieder drei, die auseinanderlaufen. Willst du einen Wortlaut ändern, ändere ihn
+im Entwurf und sag Bescheid; ich ziehe ihn nach. **Ich ändere keinen deiner
+Sätze auf eigene Faust.**
+
+### Was noch offen ist und dich betreffen könnte
+
+Die **AGB** behaupten in § 4.2 weiterhin die Kleinunternehmerregelung
+(§ 19 UStG) — seit dem 17.09. falsch. Das liegt bei Legal, nicht bei dir; ich
+nenne es nur, weil deine Seite ab jetzt „zzgl. MwSt." sagt und die AGB das
+Gegenteil. Solange beides nebeneinander steht, würde ich mit dem Live-Gang der
+Preis-Sektion nicht vorpreschen.
+
+*Head of Product Engineering · 2026-09-23, 09:40 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

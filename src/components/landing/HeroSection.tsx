@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { TESTPHASE_CTA } from '@/lib/pricing'
 
 export function HeroSection() {
   return (
@@ -27,9 +28,12 @@ export function HeroSection() {
               href="/register"
               className="inline-block bg-yellow text-anthracite font-black text-base md:text-lg px-8 py-4 rounded-2xl hover:bg-[#e6b800] active:translate-y-px transition-all mb-4 shadow-lg shadow-yellow/30"
             >
-              Kostenlos testen →
+              {TESTPHASE_CTA} →
             </Link>
-            <p className="text-anthracite/35 text-sm font-semibold">Die ersten 5 Angebote kostenlos · Monatlich kündbar · Kein Abo-Stress</p>
+            {/* CoS-038-A (23.09.2026): hier stand „Die ersten 5 Angebote
+                kostenlos" — ein Gratis-Kontingent, das es in keinem der beiden
+                Preismodelle gibt. Wortlaut aus docs/landingpage-entwurf.html. */}
+            <p className="text-anthracite/35 text-sm font-semibold">Ohne Kreditkarte. Monatlich kündbar.</p>
           </div>
 
           {/* RIGHT — Sprachnachricht wird Angebot */}

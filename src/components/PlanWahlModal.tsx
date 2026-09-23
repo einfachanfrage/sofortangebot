@@ -3,24 +3,32 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Check, X } from 'lucide-react'
-import { PRICING, FREE_KONTINGENT_TEXT } from '@/lib/pricing'
+import { PRICING, GRUENDERPREIS_TEXT, TESTPHASE_CTA, bruttoText } from '@/lib/pricing'
 
 interface Props {
   onClose: () => void
 }
 
-const FREE_FEATURES = [
-  FREE_KONTINGENT_TEXT,
-  '1 Gewerk',
-  'PDF mit Logo',
+// ── CoS-038-A (Head of Product Engineering, 23.09.2026) ───────────────────
+//
+// Nur die BESCHRIFTUNG ist geändert, der Ablauf nicht: „erst mal testen"
+// führt unverändert auf das Dashboard, „abonnieren" unverändert in den
+// Stripe-Checkout. Was hier stand, bewarb das abgelöste Modell — ein
+// Gratis-Kontingent, ein Jahresabo zu 17 € und „30 Tage gratis", eine Zahl,
+// die es in KEINEM der beiden Modelle je gab. Die Testphase sind 14 Tage
+// (`companies.trial_ends_at`), sie läuft ohne Kreditkarte und ohne Stripe.
+const TEST_FEATURES = [
+  `${PRICING.testTage} Tage voller Funktionsumfang`,
+  'Keine Kreditkarte, keine stille Verlängerung',
+  'Angebote bleiben dir erhalten',
 ]
 
 const PRO_FEATURES = [
   'Unbegrenzte Angebote',
   PRICING.unterstuetzteGewerke,
   'Digitale Unterschrift',
-  'Lexoffice & sevDesk',
-  '30 Tage gratis testen',
+  'Lexware Office & sevDesk Export',
+  'Monatlich kündbar',
 ]
 
 export function PlanWahlModal({ onClose }: Props) {
@@ -75,19 +83,19 @@ export function PlanWahlModal({ onClose }: Props) {
             Womit möchtest du starten?
           </h2>
           <p className="text-anthracite/40 font-semibold text-sm">
-            Kein Risiko. Monatlich kündbar.
+            {TESTPHASE_CTA}. Danach monatlich kündbar.
           </p>
         </div>
 
         <div className="px-4 pb-4 flex flex-col gap-3">
           {/* Free Card */}
           <div className="border-2 border-anthracite/10 rounded-2xl p-4">
-            <div className="font-extrabold text-anthracite text-base mb-0.5">Reinschnuppern</div>
+            <div className="font-extrabold text-anthracite text-base mb-0.5">Erst mal testen</div>
             <div className="font-extrabold text-anthracite text-3xl mb-3">
-              0 <span className="text-base font-semibold text-anthracite/40">€</span>
+              {PRICING.testTage} <span className="text-base font-semibold text-anthracite/40">Tage</span>
             </div>
             <div className="flex flex-col gap-1.5 mb-4">
-              {FREE_FEATURES.map(f => (
+              {TEST_FEATURES.map(f => (
                 <div key={f} className="flex items-center gap-2 text-[13px] text-anthracite/60 font-semibold">
                   <Check size={13} color="var(--color-anthracite)" strokeWidth={2.5} className="opacity-40 shrink-0" />
                   {f}
@@ -99,7 +107,7 @@ export function PlanWahlModal({ onClose }: Props) {
               disabled={loading !== null}
               className="w-full border-2 border-anthracite/15 rounded-xl py-3 font-extrabold text-anthracite text-sm hover:border-anthracite/30 transition-colors disabled:opacity-50"
             >
-              {loading === 'free' ? 'Wird gestartet...' : 'Kostenlos starten'}
+              {loading === 'free' ? 'Wird gestartet...' : `${PRICING.testTage} Tage testen`}
             </button>
           </div>
 
@@ -108,14 +116,17 @@ export function PlanWahlModal({ onClose }: Props) {
             <div className="flex items-center justify-between mb-0.5">
               <div className="font-extrabold text-anthracite text-base">⭐ Vollgas</div>
               <span className="text-[11px] font-extrabold bg-yellow text-anthracite px-2 py-0.5 rounded-full">
-                30 Tage gratis
+                Gründerpreis
               </span>
             </div>
             <div className="font-extrabold text-anthracite text-3xl mb-0.5">
-              {PRICING.proJahresabo} <span className="text-base font-semibold text-anthracite/40">€/Monat</span>
+              {PRICING.gruenderMonatlich} <span className="text-base font-semibold text-anthracite/40">€/Monat</span>
+            </div>
+            <div className="text-[12px] text-anthracite/40 font-semibold mb-1">
+              zzgl. MwSt. — {bruttoText(PRICING.gruenderMonatlich)} brutto
             </div>
             <div className="text-[12px] text-anthracite/40 font-semibold mb-3">
-              Bei Jahresabo. Monatlich {PRICING.proMonatlich} €.
+              {GRUENDERPREIS_TEXT}
             </div>
             <div className="flex flex-col gap-1.5 mb-4">
               {PRO_FEATURES.map(f => (
@@ -130,14 +141,14 @@ export function PlanWahlModal({ onClose }: Props) {
               disabled={loading !== null}
               className="w-full bg-yellow text-anthracite font-extrabold text-sm rounded-xl py-3 active:translate-y-px transition-transform disabled:opacity-50"
             >
-              {loading === 'pro' ? 'Weiterleitung...' : '30 Tage gratis testen →'}
+              {loading === 'pro' ? 'Weiterleitung...' : 'Jetzt abonnieren →'}
             </button>
           </div>
         </div>
 
         <div className="px-4 pb-5 text-center">
           <p className="text-[12px] text-anthracite/30 font-semibold">
-            Keine Kreditkarte für Free. Keine versteckten Kosten.
+            Keine Kreditkarte für den Test. Keine versteckten Kosten.
           </p>
           <button onClick={onClose} className="mt-2 text-[12px] text-anthracite/30 font-semibold underline underline-offset-2">
             Erstmal ohne Plan fortfahren →

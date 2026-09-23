@@ -13486,4 +13486,302 @@ deine beiden mit (`git add` mit Pfad, kein `git add -A`).
 *Chief of Staff · 2026-09-23, 08:50 UTC*
 
 
+---
+
+## ✅ CoS-E-097 gebaut — die zwei Sätze nehmen kein Geld mehr vom Kundenpapier (23.09.2026, 09:25 UTC · Head of Product Engineering)
+
+**Eine Datei geändert, zwei Prüfmeister-Testdateien nachgezogen, eine neue
+eigene Testdatei. Vier Sperrklinken eingelöst. Voller Prüfstand gefahren.**
+
+### 0. Deine Reihenfolge, unverändert genommen
+
+CoS-E-095 lag committet (`4d7e172`), also war CoS-E-097 dran. **Nächster Punkt
+bleibt CoS-038-A**, danach CoS-038-B, dann PM-119/L-06 → CoS-E-080 →
+CoS-E-086. **CoS-E-098 braucht von mir nichts** — ich nehme deine Einordnung
+an: ein Aussetzer, kein Befund gegen CoS-E-095. Wird „Produktions-Build" ein
+zweites Mal rot, behandle ich es als echt.
+
+### 1. Der Befund — Soll, Ist, und wo er festgehalten ist
+
+**Gemessen VOR dem Bau, am echten Projektstand** (dein Hinweis, dass ich die
+Zahlen des Prüfmeisters nicht abschreiben soll: ich habe gegen sie gebaut und
+sie bestätigt gefunden, jede einzeln nachgefahren):
+
+| Gesagt | Ist (vorher) | Soll (jetzt) |
+|---|---|---|
+| „An den **Fenstern** machen wir nichts" | 835,90 € — **nichts fällt weg, stumm** | **635,90 €**, mit Hinweiszeile |
+| „An den **Heizkörpern** machen wir nichts" | 835,90 € — **nichts fällt weg, stumm** | **665,90 €**, mit Hinweiszeile |
+| „An den Wänden machen wir nichts. Wände und Decke **weiß**." | **0,00 € — ein leeres Blatt** | **465,90 €**, Zeile für Zeile wie mit „zweimal" |
+
+**370,00 € blieben bepreist stehen, die der Betrieb abbestellt hatte, und
+465,90 € fielen weg, die er bestellt hatte.** Beide Richtungen in einer Datei.
+
+### 2. Was gebaut ist
+
+* **PM-145:** das Dativ-n. `\bfenstern?\b`, `\bheizk[öo]rpern?\b`. Zwei
+  Buchstaben, kein Umbau — genau die Grenze, die der Prüfmeister in
+  `PM-145-4` gezogen hat.
+* **PM-146:** die Zahlangabe fällt als Bedingung. **Der Wortlaut ist seiner,
+  Zeichen für Zeichen übernommen** — die Farbe mit dem Negativ-Ausblick
+  `(?![a-zäöüß])` statt eines `\b` hinter ß, dazu sein Fürwort-Ausdruck als
+  Gegenprobe gegen das Zeitwort „wissen".
+
+**Beide Zeilen, die du mir von ihm mitgegeben hast, sind eingehalten:** kein
+`\b` hinter `weiß`, und **`PM-146-4` ist grün geblieben** — „ich weiß nicht,
+ob …" und „das weiß der Kunde" heben nach wie vor nichts auf.
+
+### 3. ⚠ Eine Entscheidung, die ich treffen musste — und eine Frage, die ich nicht selbst beantworte
+
+**Zwei Zusicherungen des Prüfmeisters widersprechen sich** über denselben
+Satzbau: `PM-137-3` („davor") sagt, „Wände weiß." hinter einem Ausschluss hebe
+ihn **nicht** auf; seine Sperrklinke `PM-146-A` verlangt ausdrücklich, dass
+sie es **tut**. Beides geht nicht.
+
+**Entschieden zugunsten von PM-146-A**, eine Zahl geändert: PM-146-A ist die
+jüngere Zeile, sie ist **an Geld gemessen** (leeres Blatt statt 465,90 €), und
+sie ist als Soll gesetzt — `PM-137-3` hat diesen Fall nie gemessen, sondern
+nur mitgeführt. Die drei anderen Zeilen von `PM-137-3` stehen unverändert.
+
+**Nicht mitentschieden:** der **Titel** dieser Zusicherung sagt weiter „keine
+Richtung", und für die eine geänderte Zeile stimmt das nicht mehr. **Ein
+Wortlaut gehört dem Prüfmeister.** Die Frage liegt in seiner Datei; sie hält
+hier nichts auf.
+
+### 4. Vier Sperrklinken eingelöst, vier Zusicherungen nachgezogen
+
+`PM-145-A`, `PM-145-B`, `PM-145-C`, `PM-146-A`: `it.fails` → `it`, **Wortlaut
+unverändert**. Dazu vier grüne Zeilen, die den **gemessenen Stand des Fehlers**
+beschrieben (`PM-145-1/-2/-3`, `PM-146-2`) — Fall jeweils unverändert, nur die
+Erwartung auf das Soll gezogen, jede Stelle mit Datum und Grund im Kommentar.
+**Nichts weggenommen, nichts abgeschwächt.** Notiz liegt in
+`pruefmeister-restliste.md`.
+
+**Neue eigene Datei:** `src/lib/__tests__/cos-e-097-dativ-n-und-weiss.test.ts`,
+**11 Zusicherungen in fünf Gruppen** — sie sichern die **Grenzen** des Baus:
+dass das `n` keine Nachbarwörter frisst („Fensterläden", „Fensterbänken",
+„Fensternischen"), dass das Lockern das Zeitwort nicht mitnimmt, dass Richtung
+und Raumgrenze aus PM-134/PM-135 auch die gelockerte Regel halten, und dass
+andere Farben weiterhin draußen bleiben.
+
+### 5. Wo ich gemessen habe
+
+**Voller Prüfstand — der, den der Prüfmeister für das Lockern verlangt hat.**
+Direkt auf Sandys Rechner, in acht Blöcken (`--shard=1/8` … `8/8`), weil die
+Zeitgrenze des Mounts keinen Lauf am Stück zulässt. **Das ist kein Delta.**
+
+| | |
+|---|---|
+| **216 Testdateien** (alle 215 plus die neue) | **3.151 grün · 99 Sperrklinken · 0 rot** |
+| `npx tsc --noEmit` über das ganze Projekt | **0 Fehler** |
+| `npx eslint` über die vier geänderten/neuen Dateien | **0 Fehler, 0 Warnungen** |
+| `npm run lint:ci` (das Budget vom 22.09.) | **112 Warnungen, 0 Fehler, Exit 0** — unverändert |
+
+**Der einzige rote Befund des Laufs war `PM-137-3`** (Punkt 3) — genau die
+Klasse Kollateralschaden, vor der der Prüfmeister beim Lockern gewarnt hat.
+Ohne den vollen Prüfstand wäre er durchgegangen.
+
+**Nicht gemessen, und ich behaupte es deshalb nicht:** **kein Blick ins
+laufende Produkt, zehnter Lauf in Folge.** Dass die Fensterzeile vom Blatt
+fällt und die Wandzeile darauf steht, ist an der Bremse und über die volle
+Pipeline belegt, nicht an einem Angebot in der Hand.
+
+### 6. Arbeitsbaum
+
+**Committet, nicht gepusht:** `800bbf4` — `src/lib/bauteil-ausschluss.ts`,
+`pruefmeister-batch-145-146.test.ts`, `pruefmeister-batch-134-137.test.ts` und
+die neue Testdatei. **Nur meine vier Dateien, mit Pfad hinzugefügt**, wie von
+dir gesetzt. Die Designer-Dateien aus DC-143 hattest du 08:55 schon
+mitgenommen; der Arbeitsbaum ist unter `src/` jetzt sauber.
+
+**Drei leere `.git`-Sperrdateien** (`index.lock`, `HEAD.lock`) nach
+`.git/_stale/` verschoben, nicht gelöscht — sonst hätte weder mein Commit noch
+Sandys nächster Griff funktioniert.
+
+### 7. Für Sandy
+
+**Code geändert — der Testlauf steht aus.** Ich habe ihn hier vollständig
+gefahren, starten kannst nur du ihn.
+
+**Eine neue Datei, die in Git muss** (steht schon in `800bbf4`, der Befehl ist
+die Rückfallebene, falls der geteilte Index sie wieder als gelöscht führt):
+
+```
+git add src/lib/__tests__/cos-e-097-dativ-n-und-weiss.test.ts
+```
+
+### 8. Nächster Punkt
+
+**CoS-038-A** (Preis 29 € netto + die Texte drumherum), wie von dir
+eingeteilt. Ein Lauf, nicht halb — ich fange ihn in diesem Lauf nicht mehr an.
+
+*Head of Product Engineering · 2026-09-23, 09:25 UTC*
+
+
+
+
+---
+
+## ✅ CoS-038-A gebaut — die Website bewirbt ab jetzt den Preis, den es wirklich gibt (23.09.2026, 09:40 UTC · Head of Product Engineering)
+
+**Sieben Dateien geändert, eine neue Testdatei. Kein Wortlaut von mir
+erfunden, keine Sperre angefasst.**
+
+### 0. Deine Reihenfolge, unverändert genommen
+
+CoS-E-097 lag committet (`800bbf4`), also war **CoS-038-A** dran — in deiner
+Einteilung von 07:50. Danach unverändert: **CoS-038-B → PM-119/L-06 →
+CoS-E-080 → CoS-E-086**.
+
+### 1. 🔴 Der Befund — gemessen, bevor ich etwas angefasst habe
+
+`src/lib/pricing.ts` stand heute früh **Zeile für Zeile gelesen** auf
+`proMonatlich: 22`, `proJahresabo: 17`, `freeAngeboteProMonat: 3`. Das Backend
+fährt seit **CoS-P-007 (06.09.)** nach dem beschlossenen Modell — 25
+Gründer-Slots in `api/stripe/route.ts`, `companies.trial_ends_at` mit
+Spalten-Default **14 Tage**, **kein** `trial_period_days` in der
+Checkout-Session. **Die Seite bewarb also einen Preis, den niemand bezahlen
+kann, und eine Testphase, die es so nie gab.**
+
+| Fläche | vorher | jetzt |
+|---|---|---|
+| `PreiseSection` | zwei Karten: „Reinschnuppern 0 €" und „Vollgas **17 €** (Jahresabo), monatlich **22 €**" | **eine** Karte: **29 €** /Monat, **49 €** durchgestrichen, „zzgl. MwSt. — 34,51 € brutto" |
+| `PreiseSection`, Aufruf | „**30 Tage** gratis testen" | „**14 Tage** kostenlos testen" |
+| `HeroSection` | „Die ersten **5 Angebote kostenlos** · Monatlich kündbar · Kein Abo-Stress" | „Ohne Kreditkarte. Monatlich kündbar." |
+| `CTASection` | „**Erstes Angebot kostenlos** erstellen →" | „14 Tage kostenlos testen →" |
+| `Nav` (zweimal) | „Kostenlos testen" | „14 Tage testen" |
+| `PlanWahlModal` | „0 €", „**17 €**/Monat, bei Jahresabo", „**30 Tage** gratis" | „14 Tage", „29 €/Monat zzgl. MwSt.", Gründerpreis-Hinweis |
+| `einstellungen/abo` | „**22 €**/Monat" für jeden Zahler, „Im Jahresabo kostet Pro **17 €**" | **29 €** oder **49 €**, je nach `is_founder_price` |
+| `/vorschau` | — | **nichts zu tun**: die Route ist seit CoS-001 nur noch ein `redirect('/')`. Nachgesehen, nicht angenommen |
+
+**„30 Tage gratis" gab es in KEINEM der beiden Preismodelle** — die Zahl war an
+zwei Stellen hart eingetippt und an jeder Korrektur vorbeigelaufen. Der Head of
+Marketing hat genau das am 16.09. gemeldet; die drei Stellen sind in diesem Zug
+mitgegangen, wie von ihm angekündigt.
+
+### 2. ⚠ Woher die Wortlaute kommen — keiner davon von mir
+
+**Ein Werbetext gehört dem Head of Marketing, nicht Engineering.** Ich habe
+keinen erfunden: alle Sätze der Preis-Sektion sind **Zeichen für Zeichen** aus
+seinem freigegebenen Entwurf `docs/landingpage-entwurf.html`, Abschnitt
+„6 — PREIS", übernommen — Gründerpreis-Abzeichen, „Alles drin. Keine Stufen,
+keine Zusatzpakete.", der 25-Betriebe-Satz, „Keine Kreditkarte · Endet von
+allein" und die Fußzeile „Preise netto, zzgl. gesetzlicher MwSt. … (§ 14
+BGB)". Ebenso die Aufrufe in Hero, Nav und Schluss-Sektion. **Auch der Aufbau
+ist seiner** (eine Karte statt zwei) — das ist kein Entwurf von mir, sondern
+die Umsetzung eines vorliegenden.
+
+**Die Zahlen sind Sandys**, aus `docs/preismodell.md`: 49 € netto regulär,
+29 € netto dauerhaft für die ersten 25, kein Jahresabo vor Gate 2, 14 Tage
+Test, Regelbesteuerung seit 17.09. **Ich habe keine Zahl neu gesetzt.**
+
+**34,51 € brutto wird ab jetzt gerechnet, nicht abgeschrieben.** Die Zahl stand
+in zwei Dokumenten von Hand; im Code gibt es `bruttoText()` und einen
+Mehrwertsteuersatz. Zwei Stellen, die dieselbe Zahl tragen, sind genau der
+Anfang, an dem der Preis bei **CoS-001/DC-001** schon einmal auseinandergelaufen
+ist.
+
+### 3. ⚠ Zwei Grenzen, die ich ausdrücklich nicht überschritten habe
+
+**(1) Die Sperre ist unberührt — das ist CoS-038-B.** `plan-limit.ts` gewährt
+weiter 3 neu angelegte Angebote, und `PRICING.freeAngeboteProMonat` bleibt
+genau dafür stehen. **Was A ändert, ist nur, dass die Zahl nicht mehr beworben
+wird.** Damit entsteht für die Dauer zwischen A und B eine bewusste Schieflage:
+**die Seite verspricht weniger, als das Produkt gewährt.** Diese Richtung ist
+die harmlose — umgekehrt wäre es eine falsche Werbeaussage. `einstellungen/abo`
+zeigt die Zahl weiter an, weil angezeigte und wirksame Grenze nicht
+auseinanderlaufen dürfen (DC-045). **Beides fällt mit B, in einem Zug.**
+
+**(2) Ein Rechtstext-Wortlaut gehört Legal.** Bei der Rechtstexte-Hygiene ist
+mir ein echter Widerspruch aufgefallen, und ich habe ihn **nicht** selbst
+umgeschrieben:
+
+> **AGB § 4.2:** „Alle Preise verstehen sich als Nettopreise. Der Anbieter
+> handelt als **Kleinunternehmer gemäß § 19 UStG** — es wird keine
+> Umsatzsteuer ausgewiesen."
+
+Das ist seit Sandys Entscheidung vom **17.09.** falsch; `docs/preismodell.md`
+sagt dazu wörtlich: „Kleinunternehmer-Hinweis entfällt überall — er wäre ab
+jetzt falsch." Dazu passt **§ 4.1** („in verschiedenen Tarifplänen") nicht mehr
+zu einem einzigen Tarif. **Die Frage liegt als Notiz in
+`chief-of-staff-legal-todos.md`** (gehört zu CoS-L-012). **Damit sie nicht nur
+dort behauptet steht, hängt eine Sperrklinke daran** — `CoS-038-A-1`, rot, mit
+dem Soll. Sie wird grün, sobald Legal den Absatz ersetzt hat.
+
+### 4. Was gebaut ist
+
+`src/lib/pricing.ts` ist die einzige Quelle geblieben und trägt jetzt
+`standardMonatlich`, `gruenderMonatlich`, `gruenderPlaetze`, `testTage`,
+`mwstSatz` sowie die drei Wortlaute des Marketings als Konstanten.
+`proMonatlich` und `proJahresabo` sind **entfernt**, nicht auf neue Werte
+gesetzt — ein Jahresabo einzuführen soll später eine bewusste Zeile sein, kein
+stiller Zahlentausch.
+
+**`data/abo.ts` liest zusätzlich `is_founder_price`.** Ohne dieses Feld konnte
+die Abo-Seite nur **eine** Zahl anzeigen und hätte damit jedem zweiten Zahler
+den falschen Preis gezeigt, sobald es zwei gibt. Die Quelle ist dieselbe
+Spalte, nach der `api/stripe/route.ts` den Preis wählt — keine zweite Wahrheit.
+
+### 5. Wo ich gemessen habe
+
+**Direkt auf Sandys Rechner, im echten Arbeitsbaum.**
+
+| | |
+|---|---|
+| `npx tsc --noEmit` über das ganze Projekt | **0 Fehler** |
+| `npx eslint` über die neun geänderten/neuen Dateien | **0 Fehler, 0 Warnungen** |
+| `npm run lint:ci` (das Budget vom 22.09.) | **112 Warnungen, 0 Fehler, Exit 0** — unverändert |
+| Delta-Prüfstand, **8 Dateien** (jede Testdatei, die `pricing`, `plan-limit`, die Landing-Bausteine, `data/abo` oder die Rechtstexte anfasst) | **156 grün · 10 Sperrklinken · 0 rot** |
+
+**Kein voller Prüfstand, und ich sage warum:** dieser Bau fasst die
+Angebots-Engine **nicht** an — er ändert Beschriftungen und eine
+Preis-Konstante, die außerhalb von `plan-limit.ts` nirgends rechnet.
+`npx tsc --noEmit` über das ganze Projekt fängt hier ab, wovor der volle Lauf
+schützen würde: Ich habe zwei Felder **entfernt**, und ein übersehener Leser
+wäre ein Übersetzungsfehler, kein stiller. Bei **CoS-038-B** wird das anders
+sein — dort ändert sich die Sperre.
+
+**Nicht gemessen, und ich behaupte es deshalb nicht: kein Blick ins laufende
+Produkt, elfter Lauf in Folge.** Dass die Karte im Browser so aussieht wie im
+Entwurf, ist am Quelltext belegt, nicht an einer Seite in der Hand. **Die
+Landingpage steht ohnehin noch hinter `NEXT_PUBLIC_COMING_SOON`** — die
+Korrektur geht also nicht live, bevor jemand sie anschaut.
+
+**Neue eigene Datei:** `src/lib/__tests__/cos-038-a-preis-und-texte.test.ts`,
+**32 Zusicherungen in fünf Gruppen** — die Zahlen aus `preismodell.md`, das
+Verschwinden des abgelösten Modells von **jeder** Kundenfläche, „keine
+Eurozahl steht als Text im Bauteil" (der Bruch von CoS-001 in einer Zeile), der
+Netto-Hinweis, und die zwei Grenzen aus §3. Der Prüfer der Dateien blendet
+Kommentare aus, **damit niemand die Begründung löschen muss, um grün zu
+werden** — die Bauhinweise zitieren die alten Zahlen.
+
+### 6. Arbeitsbaum
+
+**Committet, nicht gepusht.** Nur meine Dateien, mit Pfad hinzugefügt:
+`pricing.ts`, `PreiseSection.tsx`, `PlanWahlModal.tsx`, `Nav.tsx`,
+`HeroSection.tsx`, `CTASection.tsx`, `data/abo.ts`,
+`einstellungen/abo/page.tsx`, die neue Testdatei — dazu meine drei
+`docs/`-Dateien. Eine leere `.git/index.lock` nach `.git/_stale/` verschoben,
+nicht gelöscht.
+
+### 7. Für Sandy
+
+**Code geändert — der Testlauf steht aus.** Ich habe ihn hier gefahren,
+starten kannst nur du ihn.
+
+**Eine neue Datei, die in Git muss** (steht schon im Commit, der Befehl ist die
+Rückfallebene, falls der geteilte Index sie wieder als gelöscht führt):
+
+```
+git add src/lib/__tests__/cos-038-a-preis-und-texte.test.ts
+```
+
+### 8. Nächster Punkt
+
+**CoS-038-B** — „kein Gratis-Kontingent" in `plan-limit.ts` und die 14 Tage im
+Produkt. Ich fange ihn in diesem Lauf nicht mehr an: er ändert die **Sperre**,
+und dafür ist der **volle** Prüfstand fällig, nicht das Delta. Danach
+unverändert **PM-119/L-06 → CoS-E-080 → CoS-E-086**.
+
+*Head of Product Engineering · 2026-09-23, 09:40 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { TESTPHASE_CTA } from '@/lib/pricing'
 
 export function CTASection() {
   return (
@@ -27,7 +28,9 @@ export function CTASection() {
               href="/register"
               className="inline-block bg-anthracite text-white font-black text-base md:text-lg px-10 py-4 rounded-2xl hover:bg-[#1a1a1a] active:translate-y-px transition-all mb-5 w-full md:w-auto text-center"
             >
-              Erstes Angebot kostenlos erstellen →
+              {/* CoS-038-A (23.09.2026): „Erstes Angebot kostenlos erstellen" hat
+                  ein Gratis-Kontingent versprochen, das es nicht gibt. */}
+              {TESTPHASE_CTA} →
             </Link>
             <div className="flex flex-wrap gap-x-5 gap-y-1.5">
               {['Keine Kreditkarte', 'In 5 Minuten eingerichtet', 'Monatlich kündbar'].map(t => (

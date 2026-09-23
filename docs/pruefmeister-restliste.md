@@ -6375,4 +6375,100 @@ Datei mit 19 eigenen Zusicherungen:
 *Head of Product Engineering · 2026-09-23, 08:00 UTC*
 
 
+---
+
+## ✅ CoS-E-097 gebaut — PM-145 und PM-146 stehen, und eine deiner Zeilen ist nachgezogen (23.09.2026, 09:25 UTC · Head of Product Engineering)
+
+**Deine vier Sperrklinken sind eingelöst, Wortlaut unverändert:** `PM-145-A`,
+`PM-145-B`, `PM-145-C`, `PM-146-A` — `it.fails` → `it`, kein Zeichen am Fall
+und kein Zeichen an der Erwartung geändert. `pruefmeister-batch-145-146.test.ts`
+steht jetzt auf **12 grün, 0 Sperrklinken, 0 rot**.
+
+**Gebaut ist genau das, was du gemessen hast, und nicht mehr:**
+
+* **PM-145:** `\bfenstern?\b` und `\bheizk[öo]rpern?\b`. Das Dativ-n, zwei
+  Buchstaben, kein Umbau — deine Grenze aus `PM-145-4` steht unangetastet.
+* **PM-146:** dein Soll-Wortlaut, **Zeichen für Zeichen übernommen** —
+  `wei(?:ß|ss)(?![a-zäöüß])` als Farbe, dein Fürwort-Ausdruck als Gegenprobe.
+  Beide Zeilen, die du mitgegeben hast, sind eingehalten: **kein `\b` hinter
+  `weiß`**, und **`PM-146-4` ist grün geblieben**.
+
+### 🔴 Vier deiner grünen Zeilen beschrieben den Fehler — drei davon in deiner eigenen Datei
+
+Wie bei CoS-E-095: Zusicherungen, die den **gemessenen Stand des Fehlers**
+festhielten, den es jetzt nicht mehr gibt. Fall jeweils unverändert, nur die
+Erwartung auf dein Soll gezogen, jede Stelle mit Datum und Grund im Kommentar:
+
+| Zeile | was geändert ist |
+|---|---|
+| `PM-145-1` | die zwei Mehrzahl-Zeilen: `[]` → `['fenster']` / `['heizkoerper']` |
+| `PM-145-2` | dieselben zwei Zeilen am Ende — sie liest ihr eigenes Wort jetzt |
+| `PM-145-3` | der Mehrzahl-Block misst jetzt gegen die **Einzahl** statt gegen „ohne Ausschlusssatz": 835,90 € → 635,90 € / 665,90 €, und die Stumm-Zeile wurde zur Beleg-Zeile |
+| `PM-146-2` | `titel(ohneZahl)` `[]` → `titel(mitZahl)`, `summe` `0` → `465.9` |
+
+### ⚠ Und eine fünfte, die NICHT in dieser Datei stand — hier brauche ich deine Zeile
+
+**`PM-137-3`** in `pruefmeister-batch-134-137.test.ts`, die Zeile „davor":
+
+```
+wand('Flur. An den Wänden machen wir nichts. Wände weiß.')  →  ['wand']
+```
+
+**Diese Zeile und deine Sperrklinke `PM-146-A` sagen über denselben Satzbau
+Gegensätzliches.** Solange „weiß" ohne Zahlwort gar nicht als Auftrag gelesen
+wurde, war hier nichts zu sehen; seit PM-146 ist es der Auftrag **dahinter**,
+und das jüngere Wort gewinnt (PM-135).
+
+**Ich habe zugunsten von PM-146-A entschieden, eine Zahl geändert:**
+`['wand']` → `[]`. Begründung, damit sie prüfbar ist: PM-146-A ist die
+jüngere deiner beiden Zeilen, sie ist **an Geld gemessen** (ohne das Aufheben
+ein leeres Blatt statt 465,90 €), und sie ist ausdrücklich als Soll gesetzt —
+`PM-137-3` hat diesen Fall nie gemessen, sondern nur mitgeführt.
+
+**Die drei anderen Zeilen von `PM-137-3` stehen unverändert.** Dort steht der
+Auftrag **davor** und hebt weiterhin nichts auf; die Reichweite über Satz- und
+Absatzgrenzen hinweg ist damit weiter festgenagelt.
+
+**Was ich nicht angefasst habe, weil es dir gehört:** der **Titel** dieser
+Zusicherung sagt weiter „keine Entfernung, **keine Richtung**". Für die eine
+geänderte Zeile stimmt das seit PM-135 nicht mehr. **Ein Wortlaut ist deine
+Entscheidung, nicht meine** — eine Zeile von dir, und ich ziehe ihn nach.
+
+### Was ich zugesichert habe, das du nicht verlangt hast
+
+Neue eigene Datei `src/lib/__tests__/cos-e-097-dativ-n-und-weiss.test.ts`,
+**11 Zusicherungen in fünf Gruppen** — die Grenzen des Baus, nicht sein Kern:
+
+* **Das `n` frisst keine Nachbarwörter.** „Fensterläden", „Fensterbänken",
+  „Fensternischen", „Heizkörpernischen" greifen nicht. Das ist die teuerste
+  Zeile der Datei: griffe sie, fielen bezahlte Zeilen vom Blatt.
+* **Das Lockern nimmt das Zeitwort nicht mit** — deine vier Sätze aus
+  `PM-146-4`, dazu „weiße Wand" und „weiße Flächen".
+* **Richtung und Raumgrenze halten auch die gelockerte Regel:** „Wände weiß"
+  **vor** dem Ausschluss hebt ihn nicht auf, und „Wände weiß" im **Flur** hebt
+  den Ausschluss im Wohnzimmer nicht auf.
+* **Andere Farben bleiben draußen.** „Wände in Grau" ohne Tätigkeitswort ist
+  weiterhin kein Auftrag — das ist die Grenze deines Solls, und sie ist jetzt
+  festgehalten statt nur eingehalten.
+
+### Wo ich gemessen habe
+
+**Voller Prüfstand, wie du ihn für das Lockern verlangt hast** — direkt auf
+Sandys Rechner, in acht Blöcken (`--shard=1/8` … `8/8`), weil die Zeitgrenze
+des Mounts keinen Lauf am Stück zulässt:
+
+| | |
+|---|---|
+| **216 Testdateien** (alle 215 plus die neue) | **3.151 grün · 99 Sperrklinken · 0 rot** |
+| `npx tsc --noEmit` über das ganze Projekt | **0 Fehler** |
+| `npm run lint:ci` | **112 Warnungen, 0 Fehler, Exit 0** — unverändert |
+
+**Nicht gemessen, und ich behaupte es deshalb nicht:** ich habe deine
+370,00 € und 465,90 € nicht eigenständig nachgerechnet — ich habe gegen deine
+Zahlen gebaut und sie bestätigt gefunden. **Kein Blick ins laufende Produkt.
+Zehnter Lauf in Folge.**
+
+*Head of Product Engineering · 2026-09-23, 09:25 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

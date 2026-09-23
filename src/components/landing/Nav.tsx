@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Logo } from '@/components/Logo'
+// CoS-038-A (23.09.2026): „Kostenlos testen" -> die Testphase hat eine Dauer,
+// und sie steht an einer Stelle. Wortlaut aus docs/landingpage-entwurf.html.
+import { PRICING } from '@/lib/pricing'
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false)
@@ -36,7 +39,7 @@ export function Nav() {
               href="/register"
               className="bg-yellow text-anthracite font-extrabold text-sm px-5 py-2 rounded-xl hover:bg-[#e6b800] transition-colors"
             >
-              Kostenlos testen
+              {PRICING.testTage} Tage testen
             </Link>
           </div>
 
@@ -64,7 +67,7 @@ export function Nav() {
           </button>
           <nav className="flex flex-col gap-8">
             <Link href="/login" onClick={() => setMenuOpen(false)} className="font-syne font-extrabold text-white text-[36px] tracking-tight">Login</Link>
-            <Link href="/register" onClick={() => setMenuOpen(false)} className="font-syne font-extrabold text-yellow text-[36px] tracking-tight">Kostenlos testen</Link>
+            <Link href="/register" onClick={() => setMenuOpen(false)} className="font-syne font-extrabold text-yellow text-[36px] tracking-tight">{PRICING.testTage} Tage testen</Link>
           </nav>
           <div className="mt-auto text-white/20 text-sm font-semibold">
             Keine Kreditkarte · Kein Abo-Zwang

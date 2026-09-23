@@ -31,13 +31,22 @@ export interface AboStand {
   freikontingent: number
   /** Ist die Grenze erreicht? Dann sind neue Angebote gesperrt. */
   limitErreicht: boolean
+  /**
+   * CoS-038-A (23.09.2026): Zahlt dieser Betrieb den Gründerpreis?
+   *
+   * Ohne dieses Feld konnte die Abo-Seite nur EINE Zahl anzeigen — und zeigte
+   * damit jedem zweiten Zahler den falschen Preis, sobald es zwei gibt
+   * (29 € für die ersten 25, danach 49 €). Die Quelle ist dieselbe Spalte,
+   * nach der auch `api/stripe/route.ts` den Preis wählt.
+   */
+  istGruenderpreis: boolean
 }
 
 export async function getAboStand(): Promise<AboStand> {
   const { supabase, company } = await requireCompany()
 
   const { data: firma } = await supabase.from('companies')
-    .select('plan, plan_expires_at, stripe_customer_id')
+    .select('plan, plan_expires_at, stripe_customer_id, is_founder_price')
     .eq('id', company.id).single()
 
   const plan = (firma?.plan ?? 'starter') === 'starter' ? 'starter' : 'pro'
@@ -53,5 +62,6 @@ export async function getAboStand(): Promise<AboStand> {
     angeboteDiesenMonat: limit.anzahl,
     freikontingent: PRICING.freeAngeboteProMonat,
     limitErreicht: limit.erreicht,
+    istGruenderpreis: Boolean(firma?.is_founder_price),
   }
 }
