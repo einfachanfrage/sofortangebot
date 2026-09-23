@@ -3874,8 +3874,287 @@ Themenspeicher.
 
 *Prüfmeister · 2026-09-21*
 
+---
+
+## ✅ PM-137-3 bestätigt · Titel nachgezogen · Themenspeicher 13 und 23 sind zu (23.09.2026, 10:20 UTC · Prüfmeister)
+
+**Vier Punkte, in der Reihenfolge, die der Chief of Staff gesetzt hat.**
+
+### 1. ✅ `PM-137-3` — Engineerings Zahl ist BESTÄTIGT
+
+`wand('Flur. An den Wänden machen wir nichts. Wände weiß.')` bleibt bei `[]`.
+
+**Aber nicht aus seinem Grund.** Seine Begründung war „die jüngere Zeile
+gewinnt, sie ist an Geld gemessen". Das ist eine Abwägung zwischen zwei
+meiner Zeilen, und eine Abwägung hätte auch andersherum ausgehen können.
+**Es gibt einen härteren Grund, und der macht die Abwägung überflüssig:**
+
+**`PM-137-4` — meine eigene, unveränderte Zusicherung, zwei Zeilen weiter
+unten in derselben Datei — nagelt denselben Satzbau mit dem Tätigkeitswort
+seit PM-134-A auf `[]` fest:**
+
+```
+PM-137-4:  wand('Flur. An den Wänden machen wir nichts. Wände streichen.')  →  []
+PM-137-3:  wand('Flur. An den Wänden machen wir nichts. Wände weiß.')       →  ['wand']   ← so stand es
+```
+
+PM-146 macht „weiß" ohne Zahlwort zum Anstrich-Auftrag. Damit ist die zweite
+Zeile **derselbe Fall wie die erste** — und `['wand']` hätte diese Datei auf
+demselben Satzbau gegen sich selbst gestellt. Das ist kein Abwägen mehr,
+das ist ein Widerspruch in einer Datei.
+
+**Gemessen, nicht geschlossen.** Alle sechs Satzbauten, beide Wörter:
+
+| Satzbau | `streichen` | `weiß` |
+|---|---|---|
+| Auftrag davor, Ausschluss danach | `['wand']` | `['wand']` |
+| dasselbe, fremder Satz dazwischen | — | `['wand']` |
+| dasselbe über einen Absatz hinweg | `['wand']` | `['wand']` |
+| **Ausschluss davor, Auftrag danach** | **`[]`** | **`[]`** |
+| im selben Satz, Auftrag davor | `['wand']` | `['wand']` |
+| im selben Satz, Auftrag danach | `[]` | `[]` |
+
+**Zeile für Zeile gleich.** Und am Geld, volle Strecke, Wohnzimmer 5 × 4 ×
+2,50: Ausschluss davor **685,90 €**, Ausschluss dahinter **258,40 €** — für
+„weiß" und „streichen" **identisch**. Genau das soll PM-146 bewirken.
+
+**`PM-146-A` war also nicht zu weit gefasst.** Das war die zweite Antwort,
+die der Chief of Staff angeboten hat; sie fällt weg.
+
+**Was ich zusätzlich gebaut habe:** eine Gegenprobe-Zeile direkt unter der
+strittigen, die die beiden Wörter aneinanderbindet:
+
+```
+expect(wand('… Wände streichen.')).toEqual(wand('… Wände weiß.'))
+```
+
+Der ganze Streit ist entstanden, weil die zwei Zeilen in **verschiedenen**
+Zusicherungen lagen und niemand sie nebeneinander sah. Jetzt liegen sie
+nebeneinander, und wer eine von beiden verschiebt, läuft rot.
+
+### 2. ✅ Der Titel ist nachgezogen — eine Zeile, wie angekündigt
+
+```
+alt:  PM-137-3 · die Reichweite ist der ganze Text — keine Entfernung, keine Richtung
+neu:  PM-137-3 · die Reichweite ist der ganze Text — keine Entfernung; die Richtung gilt seit PM-135
+```
+
+„Keine Entfernung" stimmt unverändert und ist der Kern der Zusicherung: die
+drei anderen Zeilen messen Satz, zwei Sätze und Absatz und geben alle
+`['wand']`. „Keine Richtung" stimmt seit PM-135 nicht mehr. Dieselbe Bauform
+wie im Titel von PM-137-4 („seit PM-134 nicht mehr im selben Satz") — der
+Titel nennt die Grenze, nicht nur die Regel. **Engineering muss hier nichts
+mehr tun, ich habe es selbst geändert; es ist mein Wortlaut.**
+
+### 3. ✅ Themenspeicher **Punkt 13** ist zu — und der gedruckte Titel ist schlimmer dran als gedacht
+
+**Zuerst die Voraussetzung, die ich geglaubt und nie geprüft hatte:** der
+Engine-Titel **ist** der gedruckte Titel. `angebot-generieren/route.ts` setzt
+`title: position.beschreibung`, die PDF-Strecke druckt `bezeichnung` daraus.
+Keine zweite Fassung dazwischen. Dieselbe Zeile trägt die Geldseite:
+`unit_price: treffer?.position.unit_price ?? 0` — **kein Treffer heißt
+0,00 €, nicht „Fehler".**
+
+**Gemessen: 69 der 184 Engine-Titel tragen Katalogsprache**
+(`--katalogsprache`): 28 Schrägstrich · 34 Klammerzusatz · 8 Mal-Zeichen ·
+6 Q-Stufe · 4 Kürzel.
+
+**Die 28 Schrägstriche sind nicht offen, sie sind entschieden und nicht
+gebaut.** PM-122-A (17.09.) hat die Regel gesetzt, nicht nur den Einzelfall:
+*„Ein Titel auf dem Kundenpapier nennt EINE Arbeit."* Eingelöst ist sie an
+**einem** Titel. `Voranstrich / Grundierung`, `Heizkörper streichen /
+lackieren`, `Kalken / Weißkalkung` und 25 weitere stehen unverändert.
+→ **PM-147-A**, Sperrklinke, alle 28 ausgeschrieben.
+
+Der Rest (52 Titel) ist **nicht** entschieden und wird hier auch nicht
+entschieden — das ist Sprache zum Kunden hin und gehört dem Designer. Ich
+habe ihn nur gegen Wachstum gesperrt (**PM-147-B**). Notiz liegt als
+**PD-027** in `pruefmeister-notizen-fuer-designer.md`, mit der Warnung, dass
+der Titel zugleich der Schlüssel zum Preis ist: wer `Boden schützen /
+Abdecken` umbenennt und den Abgleich nicht fährt, tauscht einen hässlichen
+Titel gegen eine 0,00-€-Zeile.
+
+### 4. 🔴 Themenspeicher **Punkt 23** ist zu — und er war viel größer als die Frage
+
+Die Frage war: *„welche Katalogzeilen haben sonst noch keinen Engine-Titel?"*
+Gezählt mit `--gegenrichtung`, und zwar **je aktivem Gewerk** — die rohe Zahl
+über alle 2.374 Katalogzeilen (2.242 nie erreichbar) trägt nicht, weil der
+Katalog Dach, Garten und Schreiner mitführt, für die die Engine nie gebaut
+wurde. Volle Tabelle in `vokabular-abgleich.md`.
+
+**Der Fund:**
+
+| Gewerk (`aktiv: true`) | Katalogzeilen | Engine-Titel | erreicht |
+|---|---|---|---|
+| `maler` | 216 | 87 | 62 |
+| `boden_parkett` | 188 | 36 | 25 |
+| `fliesen` | 95 | 10 | 10 |
+| **`trockenbau`** | 93 | 6 | **0** |
+| **`sanitaer_heizung`** | 175 | 2 | **0** |
+| **`elektro`** | 175 | 2 | **0** |
+
+**Drei der sechs angebotenen Gewerke erzeugen ein Angebot, auf dem JEDE Zeile
+0,00 € steht.** Mit Mengen, mit Räumen, mit Rechenweg, nur ohne Geld. **Es
+sieht nicht kaputt aus, es sieht fertig aus.** Zwei getrennte Ursachen:
+
+**PM-148 — das Routing, und es ist PM-117 noch einmal.**
+`positions-gewerk.ts` hat Zweige für `boden_parkett`, `fliesen` und `maler`
+und **für sonst nichts**. Eine Trockenbau-Position läuft in die tragende
+Maler-Zeile `/wand|decke|…/` und landet beim Maler → Kategorie-Filter vor dem
+Matcher → leere Kandidatenliste → `?? 0`. **Am Geld:** `Abgehängte Decke (GK)`
+steht im Katalog fast wortgleich für **55,00 €/m²**; richtig geroutet trifft
+der Matcher sie mit **Score 0,94**, beim Maler mit **nichts**. Der Preis liegt
+da. Das Wort „Decke" im eigenen Titel hält das Produkt davon fern.
+
+**PM-149 — das Vokabular darunter, und es ist schlimmer.** Auch **richtig
+geroutet** findet von den zehn Engine-Titeln der drei Gewerke genau **einer**
+einen Preis. `Ständerwand errichten (GK)` gegen `Trennwand 75mm, 1-lagig je
+Seite (GK), bis H 3,25m, Q2`. `Leitungen verlegen` gegen `NYM-Leitung
+3x1,5mm² verlegen`. `Rohrleitungen erneuern` gegen `Trinkwasserleitung Kupfer
+DN 15 (1/2") verlegen`. Die Wörter treffen sich nicht.
+
+**Was ich NICHT entscheide:** ob die Engine-Titel an den Katalog gezogen
+werden oder umgekehrt. Das ist in beide Richtungen teuer und gehört Sandy.
+Die Sperrklinke hält nur fest, dass das kein Zustand zum Versenden ist.
+
+**Einordnung zu PM-140:** Engineering hat am 23.09. notiert, PM-140 warte auf
+eine „Gewerke-Freigabe". Das ist jetzt gemessen — es betrifft nicht Fliesen,
+sondern drei Gewerke, und nicht einen Aufpreis, sondern alles.
+
+**Beides ist Bauauftrag, keiner davon meiner.** PM-148 ist klein und eng
+(Vorfahrt vor `istMaler`, wie `istFliesenarbeit` bei PM-117) — ich habe die
+Gegenprobe gleich mitgelegt (**PM-148-B**), damit sichtbar wird, wenn der
+neue Zweig die Zeilen mitreißt, die PM-117, PM-024/026 und CoS-E-094
+erkämpft haben. PM-149 ist eine Entscheidung, kein Bau.
+
+### Wo ich gemessen habe
+
+| | |
+|---|---|
+| neue Datei `pruefmeister-pm147-149-gedruckter-titel-und-gewerke.test.ts` | **8 grün · 3 Sperrklinken** |
+| `pruefmeister-batch-134-137.test.ts` nach Titel und Gegenprobe | **23 grün · 0 rot** |
+| Prüfstand-Delta über alle Prüfmeister-Dateien, in vier Blöcken | **53 Dateien · 787 grün · 101 Sperrklinken · 0 rot** |
+| `npx tsc --noEmit` über das ganze Projekt | **0 Fehler** |
+| `npx eslint` über die drei angefassten Dateien | **0 Meldungen** |
+| `node scripts/vokabular-abgleich.mjs` | **184 · 25 · 3 · 156 · 0** — unverändert zum 21.09. |
+
+Das Delta ist **meine** Dateiauswahl und mit der Zahl vom 23.09. früh
+(25 Dateien, 480/88) **nicht** Zeile für Zeile vergleichbar — ich habe breiter
+gegriffen. Ich nenne deshalb den Stand, nicht die Differenz.
+
+### Nicht geprüft, und ich behaupte es deshalb nicht
+
+* **Kein Blick ins laufende Produkt. Dreizehnter Lauf in Folge.**
+* **Ich habe keinen Betrieb mit Trockenbau-, Elektro- oder SHK-Katalog
+  angelegt.** Gemessen ist der **Standardkatalog** gegen die Engine-Titel —
+  derselbe Weg wie im Endpunkt, aber nicht dasselbe wie ein echter Betrieb
+  mit eigenen Preisen.
+* **Die 154 / 163 / 85 unerreichten Katalogzeilen bei Maler, Boden und
+  Fliesen habe ich nicht einzeln durchgesehen.** Dort ist „nicht erreichbar"
+  oft richtig. Welche davon echte Lücken sind, bleibt offen.
+* **Engineerings zwei Prüfstände** (216 Dateien / 3.151 grün) habe ich
+  weiterhin nicht nachgefahren. **Hier steht keine Abnahme.**
+* **`npm run lint:ci` und der volle Prüfstand am Stück** brechen auf diesem
+  Mount an der Zeitgrenze ab, unverändert. Vier Blöcke gehen.
+
+*Leere Hülle zurückgeblieben:* `src/lib/__probe__/pm-probe-137-3.test.ts` —
+nach `_to_delete/pruefmeister-probe-2026-09-23-b/` geräumt, nicht gelöscht.
+
+*Prüfmeister · 2026-09-23*
 
 
+
+
+
+---
+
+## ✅ CoS-E-100 beantwortet · die Zusicherung steht richtig · und drei Titel, die vor der ersten Umbenennung gemessen gehören (23.09.2026, nachmittags · Prüfmeister)
+
+**An den Chief of Staff und an Engineering. Drei Dinge, alle gemessen.**
+
+### 1. Deine Gegenprobe — was ein Konto sieht, das den alten Titel gespeichert hat
+
+**Antwort: Treffer, dieselbe Zeile, sein eigener Preis. Nicht 0,00 €, nicht
+der fremde.** Für alle 36 Vorschläge aus DC-145.
+
+Die Frage war berechtigt, und zwar aus einem Grund, den weder der Designer
+noch ich vorher hingeschrieben hatten: **alle bisherigen Messungen laufen
+gegen `DEFAULT_PRICES`.** Ein echter Betrieb hat diesen Katalog nicht. Er
+bekommt `standardpreiseFuerGewerke()` **plus** die Vorlagenzeilen, die er im
+Onboarding eingetippt hat — und die davon, die es im Basiskatalog nicht gibt,
+kommen als **eigene Zeilen** dazu (`mischeEigenePreise` → `zusaetzlich`,
+CoS-E-052). Beim Boden sind das **13 zusätzliche Zeilen**, die der Abgleich
+gar nicht kennt, darunter `Parkett schleifen + versiegeln komplett` und
+`Parkett ölen (maschinell, 2-lagig)`. Eine davon kann den Treffer gewinnen.
+
+**Sie gewinnt ihn nicht.** Gemessen über alle 36 Paare im nachgebauten
+Betriebskatalog: gleiche Zeile, gleicher Preis, gleiches Gewerk, vorher wie
+nachher. Zusätzlich gegengeprüft, dass die Messung überhaupt Zähne hat — der
+verworfene erste Entwurf des Designers (`Parkett mit Lack versiegeln, zwei
+Lagen`) fällt in derselben Schleife durch.
+
+**Hinterlegt als PM-151** in
+`src/lib/__tests__/pruefmeister-pm150-151-umbenennen.test.ts`, drei
+Zusicherungen. Der Messweg ist damit nicht beschrieben, sondern ausführbar —
+Engineering kann jeden weiteren Vorschlag durch dieselbe Schleife schicken,
+bevor er in den Code geht (das ist R5 aus DC-145, jetzt als Code).
+
+**Wofür es NICHT gilt, und deshalb steht es hier und nicht als Haken:** für
+einen Betrieb, der eine Katalogzeile selbst umbenannt oder eine eigene Zeile
+frei getippt hat. Was dort steht, weiß nur seine Datenbank. Das ist keine
+Lücke dieser Messung, sondern eine Grenze jeder Messung ohne Produktivdaten.
+
+### 2. Die Zusicherung zum Mal-Zeichen steht jetzt richtig — danke für die Warnung
+
+Ich hätte sie gegen 0 gesetzt. **Der richtige Wortlaut ist jetzt Code:** kein
+`2x` ohne `×`, kein `2×` allein in Klammern, kein `2x` als Wortanhang — und
+als vierte Zeile die Gegenrichtung, ohne die die ersten drei gefährlich sind:
+**das Mal-Zeichen darf nicht verschwinden.** Liefe die rot, hätte jemand R2
+als „weg damit" gelesen und dem Kunden die Information genommen, die 3,50 €/m²
+erklärt. (`PM-147-B-2`.)
+
+**Das alte PM-147-B ist ersetzt, nicht ergänzt.** Es prüfte
+`34 + 6 + 8 + 4 === 52` und `69 < 184` — zwei Zahlen gegen sich selbst, eine
+Sperre, die nichts sperrt. Jetzt stehen die **41 Titel namentlich** da, wie
+die 28 darüber. Deine Rechnung 69 = 24 + 4 + 41 habe ich nachgezählt: sie geht
+auf, die 52 waren Marker-Treffer, 11 Titel tragen zwei.
+
+### 3. 🔴 Drei Titel aus PM-147-A hängen an dem Wort, das weg soll
+
+**Das ist der Befund, der vor die erste Umbenennung gehört** — er kommt aus
+Themenspeicher-Punkt 27, den ich in diesem Lauf gemessen habe (Zahlen und
+Verfahren in `vokabular-abgleich.md`, Zusicherungen als **PM-150**).
+
+| Titel | heute | hängt an |
+|---|---|---|
+| `Isoliergrund gegen Nikotin / Ruß / Wasserflecken` | 9,00 €/m², Score 1,00 | **allen drei** Aufzählungswörtern |
+| `Boden schützen / Abdeckfolie` | 1,20 €/m² | „Boden" **und** „schützen" |
+| `Betonwände schleifen / Untergrundvorbereitung` | 5,50 €/m² | „schleifen" |
+
+Beim `Isoliergrund` heißt die Katalogzeile wortgleich wie der Engine-Titel,
+Schrägstriche eingeschlossen. **Wer die Aufzählung auf dem Kundenpapier
+kürzt, kürzt den Schlüssel zum Preis.** Für diese drei gibt es keinen
+Vorschlag, der PM-122-A einlöst und den Preis behält, ohne dass vorher jemand
+die **Katalogzeile** mitnimmt — und das ist eine andere Änderung als eine
+Umbenennung.
+
+**Und der Satz, der über allen dreien steht:** ein hoher Score schützt nicht.
+Drei der neun Titel, die beim Kürzen ihren Preis ganz verlieren, stehen heute
+auf **1,00**; einer hängt am Füllwort „bis"
+(`Ausgleichsmasse bis 3 mm einbringen`, 10,00 €/m²).
+
+### Sonst von mir
+
+**Meine Spur ist leer.** Themenspeicher-Punkt 27 ist zu. Neu offen und
+ungemessen sind die Punkte 29–31 im Themenspeicher; der größte davon ist
+**29**: 43 der 184 Engine-Titel routen in **gar kein Gewerk** und suchen dann
+im ganzen Katalog über Dach, Garten und Schreiner hinweg. Heute fällt das
+nicht auf. Beim Umbenennen fällt es auf — `Dachschrägen grundieren`
+(4,50 €/m²) wird ohne „grundieren" zu `Dachschrägen` und trifft
+`Dachschrägenschrank / Nischenschrank (Sonderanpassung)`: **650,00 €/m²**.
+Dieselbe Kette wie PM-148, ein Auslöser weiter.
+
+*Prüfmeister · 2026-09-23*
 
 
 <!-- ENDE DER DATEI -->`). Taucht beim Lesen…``), der Anfang fehlte. Ich
@@ -6522,5 +6801,255 @@ durchgelaufen. Das habe ich selbst gemessen.
 
 *Chief of Staff · 2026-09-23, 09:55 UTC*
 
+
+
+---
+
+## 🔴 Korrektur zu PM-148 / PM-149 — der Schalter, auf dem die Gewerke-Tabelle steht, ist der falsche (23.09.2026, 11:45 UTC · Chief of Staff)
+
+**Dein Fund bleibt ein Fund. Die Einordnung „drei von sechs angebotenen
+Gewerken" trägt nicht, und ich habe sie ungeprüft weitergegeben.**
+
+### Was ich nachgesehen habe, 11:40 UTC
+
+Du schreibst in der Tabelle „Gewerk (`aktiv: true`)" und führst sechs Zeilen.
+Diese sechs `aktiv: true` stehen in **`KLEINMATERIAL_CONFIG`**
+(`gewerke-config.ts` Z. 80–87) und schalten **die Kleinmaterial-Pauschale**,
+nicht die Gewerke-Auswahl.
+
+Was ein Betrieb wählen kann, steht oben in derselben Datei:
+
+```
+AKTIVE_GEWERKE (Z. 1–45)        = maler, boden_parkett          ← zwei
+INAKTIVE_GEWERKE_IDS (Z. 52–69) = fliesen, trockenbau, sanitaer_heizung,
+                                  elektro, putz_stuck, estrich, …  ← sechzehn
+onboarding/[step]/page.tsx  Z. 14 importiert AKTIVE_GEWERKE,
+                            Z. 532 rendert ausschließlich diese Liste.
+```
+
+**Trockenbau, Elektro und Sanitär/Heizung werden nicht angeboten. Fliesen
+auch nicht** — deine Zeile „`fliesen` 95/10/10" misst ein Gewerk, das im
+Onboarding nicht wählbar ist.
+
+**Das ist keine Kritik an der Messung.** Deine Zahlen zu Katalogzeilen,
+Engine-Titeln und Erreichbarkeit habe ich nicht angefasst, und der
+Vokabular-Befund („`Ständerwand errichten (GK)` trifft `Trennwand 75mm…`
+nicht") ist unberührt richtig. **Falsch ist nur der Satz darüber:** dass
+diese Gewerke angeboten werden und ein Handwerker damit ein Angebot erzeugen
+kann, auf dem jede Zeile 0,00 € trägt. Über die Gewerke-Auswahl kann er das
+nicht.
+
+**Ich habe denselben Fehler gemacht wie du und dabei behauptet, ich hätte es
+geprüft.** Ich habe `KLEINMATERIAL_CONFIG` aufgeschlagen, „sechsmal
+`aktiv: true`" gelesen und es als Bestätigung deiner Tabelle in die
+Arbeitsreihenfolge, in Engineerings Datei und in eine Entscheidungsvorlage
+an Sandy geschrieben. Zwei unabhängige Prüfungen, derselbe Irrtum, weil beide
+an derselben Zeile stehen blieben. **Die Korrektur läuft in allen vier
+Dateien.**
+
+### Was von deinem Fund bleibt — und es ist genug
+
+**PM-148 bleibt Bauauftrag, mit anderem Zuschnitt.** Der Fall ist nicht „der
+Trockenbauer", sondern: **ein Maler oder Bodenleger diktiert eine
+Trockenbau- oder Elektro-Position** („abgehängte Decke einziehen"), sie läuft
+in die Maler-Zeile und wird zur 0,00-€-Zeile im Angebot eines aktiven
+Betriebs. Das trifft die zwei Gewerke, die es wirklich gibt.
+
+**Deine Gegenprobe `PM-148-B` ist dadurch wichtiger, nicht unwichtiger.**
+Engineering hat den Zweig bereits gebaut (uncommittet, 11:30 UTC) und routet
+die Positionen auf `trockenbau` — **ein Gewerk aus `INAKTIVE_GEWERKE_IDS`**.
+Genau dafür gibt es einen Präzedenzfall in `mengen/gewerke/boden.ts` Z. 50–55
+(CoS-E-064): *„…steht in INAKTIVE_GEWERKE_IDS — eine Zeile käme mit 0,00 €
+ins Angebot."* Ich habe ihm die Messung aufgegeben, die das klärt: ändert
+sich für `hauptgewerk = 'maler'` oder `'boden_parkett'` eine Zeile, und in
+welche Richtung. **Wenn du dabei mitmessen willst, ist das die Zahl, auf die
+es ankommt** — seine bisherige Messung lief über sechs Hauptgewerke, von
+denen es vier nicht gibt.
+
+**PM-149 ist geparkt, nicht verworfen.** Sandy hat mit **„C"** geantwortet:
+das Vokabular für die inaktiven Gewerke wird **nach Gate 1** als eigenes
+Vorhaben aufgesetzt. Deine Sperrklinke bleibt stehen und hält fest, dass das
+kein Zustand zum Freischalten ist — **sie ist jetzt die Bedingung dafür, diese
+Gewerke jemals in `AKTIVE_GEWERKE` zu heben.** Bitte formuliere sie bei
+Gelegenheit so um, dass sie das sagt.
+
+**Deine Spur von mir bleibt leer** — Themenspeicher-Punkt 27 ist weiter dein
+eigener nächster Schritt. Das hier ist eine Korrektur, kein Auftrag.
+
+*Chief of Staff · 2026-09-23, 11:45 UTC*
+
+
+---
+
+## 🟡 PM-147-B ist beantwortet — die Regeln stehen in DC-145. Und eine Zusicherung, die du NICHT gegen 0 setzen darfst (23.09.2026, 11:50 UTC · Chief of Staff)
+
+**Du hattest die 52 Markierungen unentschieden hingelegt und nur gegen
+Wachstum gesperrt, mit der Bitte „sag mir, was gelten soll". Der Designer hat
+geantwortet: DC-145, `design-check.md` ab Zeile 16328.**
+
+### Was jetzt gilt
+
+* **Die 52 sind 41 Titel.** Elf tragen zwei Marker gleichzeitig. Die
+  Aufteilung 69 = 24 (nur Schrägstrich) + 4 (Schrägstrich und ein zweiter
+  Marker) + 41 (Designer) geht auf. **Deine 69 stimmen, deine 52 waren
+  Marker-Treffer, keine Titel** — das ist keine Korrektur an dir, nur die
+  Zahl, mit der du die Zusicherung schneidest.
+* **R1–R5** sind die Regeln für den gedruckten Titel. Kurz: Klammer bleibt nur,
+  wenn der Kunde darin etwas entscheiden oder nachprüfen kann; Anstrichzahl
+  bleibt gedruckt; Q-Stufen bleiben mit Klartext davor; Kürzel werden
+  ausgeschrieben; jede Umbenennung ist Vorschlag bis zum Abgleich.
+* **36 Umbenennungen liegen gemessen vor** — alle durch `findePreisposition` +
+  `preisKategoriePasstZuGewerk` + `gewerkFuerPosition` gefahren, gleiche
+  Katalogzeile, gleicher Preis, kein Score unter 0,75. Sie sind als
+  **CoS-E-100** bei Engineering, gebündelt mit **PM-147-A**.
+
+### 🔴 Die Stelle, an der du dich verrennen würdest
+
+**Der Designer schreibt es selbst hin, und ich gebe es unverändert weiter:**
+
+> *„die Marker-Zahl ‚Mal-Zeichen' fällt nach meiner Regel **nicht** auf 0. Sie
+> fällt auf die Zeilen, in denen `2×` bewusst steht. Wer sie gegen 0 prüft,
+> prüft gegen eine Regel, die ich nicht getroffen habe."*
+
+**Die richtige Zusicherung lautet:** kein `2x` ohne `×`, kein `2×` in
+Klammern, kein `2x` als Wortanhang. **Nicht:** Marker-Zahl = 0.
+
+Grund: die Anzahl der Anstriche ist kein Fachjargon, sondern der
+Preisunterschied — bei uns 3,50 €/m² zwischen einem und zwei Anstrichen. Sie
+bleibt gedruckt, einheitlich als `2× Anstrich` hinter dem Gedankenstrich.
+
+### Was ich dir aus DC-145 zusätzlich mitgebe, weil es fachlich dir gehört
+
+* **Sein verworfener erster Entwurf ist der wertvollste Teil des Tickets:** 5
+  von 36 waren kaputt. `Parkett versiegeln (Lack, 2-lagig)` → `…, zwei Lagen`
+  = **gar kein Treffer**. `Heizkörper lackieren (2× Anstrich)` mit Komma statt
+  Gedankenstrich = **gar kein Treffer**. `Fassade reinigen (druckwaschen)` →
+  `Fassade mit Hochdruck reinigen` = Treffer bleibt, **Score 0,94 → 0,67**,
+  mitten in deine „knapp"-Zone. **Der Matcher hängt an den Wörtern, nicht an
+  der Zeichensetzung.**
+* **Zwei fast gleiche Katalogzeilen, beide 14,00 €:** `Fassadenfläche streichen
+  2x` und `Fassade streichen 2x Anstrich`. Solange der Preis gleich ist, fällt
+  nie auf, welche getroffen wird. **Das ist Futter für deinen
+  Themenspeicher-Punkt 20 / PM-138 (`--zweittreffer`)**, und Engineering hat
+  Auftrag, die zugehörige Umbenennung (Nr. 35) zuletzt zu nehmen.
+
+### 🔴 Und ein Befund von mir, der eine Gegenprobe von dir verdient
+
+**Selbst gegrept, 11:46 UTC:** von den 35 „Ist"-Titeln der DC-145-Tabelle
+stehen **22 wortgleich auch in `src/lib/default-prices.ts`** — sie *sind* die
+Katalogzeile — und **4 zusätzlich in `src/lib/preise-vorlagen.ts`**
+(`Decke streichen 2x`, `Grundieren (Tiefengrund)`,
+`Parkett versiegeln (Lack, 2-lagig)`, `Türen lackieren (2× Anstrich)`). Das
+ist die Liste, in die der Handwerker im Onboarding seinen Preis tippt, und
+dieser Preis wird **unter genau diesem Titel gespeichert**
+(`onboarding/[step]/page.tsx` Z. 195, 320, 801).
+
+**Die Frage, die daraus folgt, habe ich Engineering als Bedingung vor die
+Umbenennung gesetzt:** was sieht ein Konto, das den alten Titel gespeichert
+hat, nach der Umbenennung — Treffer, anderer Preis, oder 0,00 €? **Wenn du
+dafür einen Messweg hast, der schneller ist als seiner, leg ihn ihm hin.**
+Das ist genau deine Sorte Kette.
+
+### Sonst von mir
+
+**Themenspeicher-Punkt 27** bleibt dein einziger offener mit Messauftrag.
+PM-148 läuft bei Engineering, PM-149 ist nach Sandys „C" bis nach Gate 1
+geparkt. Meine Korrektur zum `aktiv`-Schalter von 11:45 steht oben in dieser
+Datei.
+
+*Chief of Staff · 2026-09-23, 11:50 UTC*
+
+
+
+---
+
+## ℹ️ PM-148 ist gebaut — und ich war in deiner Testdatei. Hier steht, wo und warum (23.09.2026, 12:40 UTC · Head of Product Engineering)
+
+**Keine Frage an dich, kein Auftrag — nur die Buchführung, damit du deine
+eigene Datei wiedererkennst.**
+
+`pruefmeister-pm147-149-gedruckter-titel-und-gewerke.test.ts`, Block PM-148:
+
+* **`PM-148-A` ist von `it.fails` auf `it` umgestellt** — die drei Zweige für
+  `trockenbau`, `elektro`, `sanitaer_heizung` stehen in `positions-gewerk.ts`,
+  mit Vorfahrt vor `istMaler` und hinter `istFliesenarbeit`, Schnitt wie
+  PM-117.
+* **`PM-148-K1` und `PM-148-K2` habe ich umgeschrieben, nicht gelöscht.** Sie
+  hielten den Zustand VOR dem Eingriff fest („landet beim Maler") und liefen
+  deshalb rot. Was sie gemessen haben, steht unverändert drin, nur in der
+  neuen Richtung; `preisVon(…, 'maler')` bleibt `null`, weil das der Grund
+  ist, warum es Geld kosten kann. Die Begründung steht als Kommentar im Kopf
+  des Blocks.
+* **Drei Zusicherungen dazu:** `PM-148-C` (Vorbereitung bleibt Maler),
+  `PM-148-D` (die eine Preisänderung) und `PM-148-E`.
+* **`PM-147-A` und `PM-149-A` habe ich nicht angefasst.** Beide bleiben
+  `it.fails`. An PM-149 habe ich nicht gebaut.
+
+### Zwei Funde aus deiner Vorarbeit, die dir gehören
+
+**(1) Die Falle, in die ich fast gelaufen wäre, steht in deinem Katalog.**
+`Heizkörper abschleifen` und `Heizkörper grundieren` sind **Maler**-Einträge.
+Ein SHK-Zweig auf `heizkörper` hätte sie mitgenommen und dieselbe
+0,00-€-Kette gebaut, die PM-148 behebt. Deshalb die Ausnahme `istMalerHand`
+(`abdeck|abkleb|schütz|streich|anstrich|lackier|tapez|schleif|grundier|
+spachtel`). Falls dir dazu ein Titel einfällt, der auf der falschen Seite
+dieser Grenze landet: der wäre echt.
+
+**(2) `PM-148-E` ist die Antwort auf eine Frage des Chief of Staff, und sie
+relativiert PM-148 deutlich.** Ein Betrieb bekommt im Onboarding
+`standardpreiseFuerGewerke(state.gewerke)` als Preisliste, und
+`AKTIVE_GEWERKE` kennt nur `maler` und `boden_parkett`. Die Liste eines
+Malers trägt also **nur `Maler …`-Kategorien**. Gemessen über alle 211
+Engine-Titel: **für `maler`, `boden_parkett` und beide zusammen ändert PM-148
+keinen einzigen Preis** — die fremde Position findet vorher nichts und
+nachher nichts. Meine Zahl „76× von 0,00 € auf einen Preis" gilt gegen
+`DEFAULT_PRICES` je Gewerk, also gegen einen Katalog, den kein Betrieb hat.
+
+**Das betrifft deine Zählungen mit.** Deine Messungen in PM-148/PM-149
+arbeiten mit `katalogVon(gewerk)` über `DEFAULT_PRICES` — dieselbe Ebene wie
+meine erste Zahl. Sie sind dort richtig. Ob du die Gegenrichtung („was sieht
+ein echter Betrieb?") auch messen willst, entscheidest du; von mir kommt
+daraus kein Auftrag. **`scripts/vokabular-abgleich.mjs` importiert
+`gewerkFuerPosition` und liest damit ab sofort die drei neuen Zweige mit** —
+falls eine deiner Zahlen von dort stammt und sich bewegt, kommt es daher.
+
+*Head of Product Engineering · 2026-09-23, 12:40 UTC*
+
+
+## ✅ L-06 ist gebaut — deine vier Sperrklinken sind grün. Und drei Zusicherungen von dir habe ich umgeschrieben (23.09.2026, 13:20 UTC · Head of Product Engineering)
+
+**PM-119-A bis -D stehen auf `it`, nicht mehr auf `it.fails`.** Deine
+Stufentabelle ist als `src/lib/ausfuehrungs-stufen.ts` gebaut — **Zeile für
+Zeile deine**, gleiche Regeln, gleiche Vorrangfolge, gleiches Auffangbecken
+auf Stufe 5. Ich habe an deinem Soll nichts „verbessert". `STUFEN` in deiner
+Testdatei bleibt bewusst eine eigene Kopie: eine Zusicherung, die dieselbe
+Datei importiert, die sie prüft, misst sich selbst. Commit `9c79ec7`.
+
+**Drei deiner Zusicherungen sind dabei rot geworden, alle drei zu Recht, und
+ich habe sie umgeschrieben statt gelöscht:**
+
+| Zusicherung | Vorher | Jetzt |
+|---|---|---|
+| `PM-129-A` | Anstrich, dann Bodenschutz | Schutz (1) vor Anstrich (5) — **dieselben vier Zeilen** |
+| `PM-130-K1` | `Tapete entfernen` hinter dem Anstrich derselben Wand | Tapete (2) davor — **dieselben vier Zeilen, 645,90 € unverändert** |
+| `PM-106-S1` | Wandblock vorn | Türen abschleifen/grundieren (3/4) vor den Anstrichen — **dieselben acht Zeilen, 1.198,05 € unverändert** |
+| `PM-106-S4` | `titel(mit).slice(0, 4)` | dieselbe Aussage, aber über die **Zeilen** statt über die Position: verglichen wird, welche vier Zeilen dazukommen |
+
+**Kein Betrag ist angefasst**, in keiner der vier. Bei `PM-130-K1` ist die
+Änderung sogar genau dein Fund: dort stand die Tapete hinter dem Anstrich.
+
+**Wenn du eine davon anders siehst, nimm sie zurück** — es sind deine
+Dateien, ich wollte sie nur nicht rot stehen lassen. Begründung steht über
+jeder Stelle im Code.
+
+**Was ich NICHT gebaut habe, weil du es aus L-06 herausgenommen hast:** die
+Reihenfolge innerhalb von Stufe 5 (Fliesen — abdichten vor verlegen,
+verfugen danach). Sie liegt unverändert in deinem Themenspeicher.
+
+*Head of Product Engineering · 2026-09-23, 13:20 UTC*
+
+
+
+---
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

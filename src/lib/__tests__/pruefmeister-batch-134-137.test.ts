@@ -452,7 +452,7 @@ describe('PM-137 · der Umfang der Verneinungsmaschine', () => {
     ])
   })
 
-  it('PM-137-3 · die Reichweite ist der ganze Text — keine Entfernung, keine Richtung', () => {
+  it('PM-137-3 · die Reichweite ist der ganze Text — keine Entfernung; die Richtung gilt seit PM-135', () => {
     const wand = (t: string) =>
       [...(erkenneBauteilAusschluss(t, ['Flur']).jeRaum.get('Flur') ?? [])]
     // direkt danach
@@ -462,19 +462,26 @@ describe('PM-137 · der Umfang der Verneinungsmaschine', () => {
     // davor
     //
     // ⚠ CoS-E-097, 23.09.2026 (Engineering): EINE Zahl geändert,
-    // `['wand']` → `[]`. Grund: Diese Zeile und die Sperrklinke PM-146-A
-    // desselben Prüfmeisters sagen über DENSELBEN Satzbau Gegensätzliches.
-    // PM-146-A verlangt ausdrücklich, dass „Wände und Decke weiß." HINTER
-    // dem Ausschluss ihn aufhebt — an Geld gemessen: ohne das Aufheben stand
-    // ein leeres Blatt statt 465,90 €. Solange „weiß" ohne Zahlwort gar
-    // nicht als Auftrag gelesen wurde, war hier nichts zu sehen; seit PM-146
-    // ist es der Auftrag DAHINTER, und das jüngere Wort gewinnt (PM-135).
-    // Die drei anderen Zeilen dieser Zusicherung stehen unverändert: dort
-    // steht der Auftrag DAVOR und hebt weiterhin nichts auf — die Reichweite
-    // über Satz- und Absatzgrenzen hinweg ist damit weiter festgenagelt.
-    // Notiz liegt in `pruefmeister-restliste.md`; eine Zeile zurück, wenn du
-    // es anders siehst.
+    // `['wand']` → `[]`, weil diese Zeile und die Sperrklinke PM-146-A über
+    // denselben Satzbau Gegensätzliches sagten.
+    //
+    // ✅ PM-137-3-A, 23.09.2026 (Prüfmeister): BESTÄTIGT. Nicht weil die
+    // jüngere Zeile gewinnt, sondern weil PM-137-4 denselben Satzbau mit
+    // „streichen" seit PM-134-A auf `[]` festnagelt (Zeile „Auftrag im
+    // NÄCHSTEN Satz"). PM-146 macht „weiß" ohne Zahlwort zum Anstrich-Auftrag
+    // — damit ist „Wände weiß." hier derselbe Fall wie „Wände streichen." und
+    // muss dieselbe Antwort geben. `['wand']` hätte diese Datei auf demselben
+    // Satzbau gegen sich selbst gestellt. Gemessen, alle sechs Satzbauten,
+    // „weiß" und „streichen" Zeile für Zeile gleich; am Geld: Ausschluss
+    // davor 685,90 € / Ausschluss dahinter 258,40 €, für beide Wörter
+    // identisch. PM-146-A war nicht zu weit gefasst.
     expect(wand('Flur. An den Wänden machen wir nichts. Wände weiß.')).toEqual([])
+    // PM-137-3-A: die Gegenprobe zur Zeile darüber, damit die beiden Wörter
+    // nicht noch einmal unbemerkt auseinanderlaufen — derselbe Satzbau mit
+    // dem Tätigkeitswort muss dasselbe sagen. Läuft eine der beiden Zeilen
+    // rot, ist „weiß" und „streichen" auseinandergefallen, nicht der Satzbau.
+    expect(wand('Flur. An den Wänden machen wir nichts. Wände streichen.'))
+      .toEqual(wand('Flur. An den Wänden machen wir nichts. Wände weiß.'))
     // über einen Absatz hinweg
     expect(wand('Flur, Wände weiß.\n\nAn den Wänden machen wir nichts.')).toEqual(['wand'])
   })

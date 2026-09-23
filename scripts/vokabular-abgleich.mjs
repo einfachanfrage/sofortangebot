@@ -352,6 +352,17 @@ function tabelle(titel, eintraege, mitTreffer) {
   }
 }
 
+// (23.09.2026, Prüfmeister) `--json` gibt die gemessene Liste maschinenlesbar
+// aus, damit eine zweite Messung sie nicht abschreiben muss. Abgeschriebene
+// Listen veralten still — derselbe Grund, aus dem es dieses Skript gibt.
+if (process.argv.includes('--json')) {
+  console.log(JSON.stringify(zeilen.map(z => ({
+    titel: z.titel, einheit: z.einheit, score: z.score,
+    katalogTitel: z.katalogTitel, katalogPreis: z.katalogPreis, katalogEinheit: z.katalogEinheit,
+  })), null, 1))
+  process.exit(0)
+}
+
 console.log(`\nVokabular-Abgleich Engine ↔ Standardkatalog (${new Date().toISOString().slice(0, 10)})`)
 console.log(`  Engine-Titel mit eigener Einheit : ${zeilen.length}`)
 console.log(`  davon ohne Preis                 : ${ohnePreis.length}`)
@@ -412,6 +423,211 @@ if (zweittreffer) {
   for (const s of scharf) {
     console.log(`\n  +${(s.spanne * 100).toFixed(0)} %  ${s.titel} [${s.einheit}]  ·  Score ${s.score.toFixed(2)} auf ${s.oben.length} Zeilen`)
     for (const p of s.oben) console.log(`        ${euro(p.unit_price).padStart(10)}  ${p.title}`)
+  }
+  console.log('')
+}
+
+// ── Katalogsprache: was von diesen Titeln auf dem KUNDENPAPIER landet ─────
+//
+// (23.09.2026, Prüfmeister) Themenspeicher Punkt 13. PM-122 entschied den
+// Einzelfall — kein Schrägstrich auf dem Kundenpapier — und machte damit eine
+// Klasse auf: Der Engine-Titel IST der gedruckte Titel, es gibt keine zweite,
+// kundenfreundliche Fassung dazwischen. Jedes Klammerzeichen, jeder
+// Schrägstrich und jede Q-Stufe, die hier steht, steht auch auf dem Angebot,
+// das der Betrieb seinem Kunden schickt. Diese Zählung sagt, wie groß die
+// Klasse ist — sie entscheidet nichts. Was davon umbenannt gehört, gehört
+// dem Designer und mir gemeinsam.
+if (process.argv.includes('--katalogsprache')) {
+  const MARKER = [
+    ['Schrägstrich', /\//, 'PM-122: entschieden — gehört nicht aufs Kundenpapier'],
+    ['Klammerzusatz', /\([^)]*\)/, 'Fachzusatz in Klammern'],
+    ['Q-Stufe', /\bQ[1-4]\b/, 'Norm-Kürzel ohne Erklärung'],
+    ['Mal-Zeichen', /\d\s*[×x]\b/, '„2× Anstrich" — Katalogschreibweise'],
+    ['Abkürzung', /\b(?:GK|CW|UW|inkl\.|ggf\.|bzw\.|zzgl\.|o\. ?g\.|z\. ?B\.)\b/, 'Kürzel aus der Preisliste'],
+  ]
+  const betroffen = new Map()
+  for (const z of zeilen) {
+    for (const [name, muster] of MARKER) {
+      if (!muster.test(z.titel)) continue
+      if (!betroffen.has(name)) betroffen.set(name, [])
+      betroffen.get(name).push(z)
+    }
+  }
+  const eindeutig = new Set()
+  for (const liste of betroffen.values()) for (const z of liste) eindeutig.add(z.titel)
+  console.log(`\nKATALOGSPRACHE IM GEDRUCKTEN TITEL (Themenspeicher 13)`)
+  console.log(`  geprüfte Engine-Titel            : ${zeilen.length}`)
+  console.log(`  davon mit mindestens einem Marker: ${eindeutig.size}`)
+  console.log('-'.repeat(72))
+  for (const [name, , hinweis] of MARKER) {
+    const liste = betroffen.get(name) ?? []
+    console.log(`\n  ${name} — ${liste.length}   (${hinweis})`)
+    for (const z of liste) console.log(`        ${z.titel} [${z.einheit}]`)
+  }
+  console.log('')
+}
+
+// ── Gegenrichtung: Katalogzeilen, die die Engine nie erreicht ─────────────
+//
+// (23.09.2026, Prüfmeister) Themenspeicher Punkt 23. Der Abgleich misst bisher
+// nur eine Richtung: Engine-Titel ohne Preis. Die andere Richtung ist ebenso
+// teuer und war nie gezählt — eine Katalogzeile, auf die KEIN Engine-Titel
+// trifft, kann nie auf ein Angebot kommen. Der Betrieb pflegt einen Preis,
+// den das Produkt nicht abrufen kann; er merkt es nie, weil nichts rot wird.
+// PM-140 ist der gemessene Einzelfall (Diagonalverlegung Boden/Wand); diese
+// Zählung sagt, wie viele Zeilen sonst noch so dastehen.
+if (process.argv.includes('--gegenrichtung')) {
+  // Die rohe Zahl über den ganzen Katalog trägt NICHT. Der Standardkatalog
+  // hat 2.374 Zeilen über Dach, Garten, Schreiner, Abbruch, Reinigung —
+  // Gewerke, für die die Engine gar nicht gebaut ist. „2.242 nie erreichbar"
+  // wäre eine Schlagzeile ohne Aussage. Gemessen wird deshalb je AKTIVEM
+  // Gewerk (gewerke-config.ts) und nur in den Kategorien, die der Matcher für
+  // dieses Gewerk überhaupt zur Auswahl stellt: dort, und nur dort, ist eine
+  // unerreichte Zeile ein gepflegter Preis, den das Produkt nicht abrufen kann.
+  const GEWERKE = ['maler', 'boden_parkett', 'fliesen', 'trockenbau', 'sanitaer_heizung', 'elektro']
+  console.log(`\nKATALOGZEILEN OHNE ENGINE-TITEL (Themenspeicher 23)`)
+  console.log(`  Zeilen im Standardkatalog gesamt : ${DEFAULT_PRICES.length}  (über alle Gewerke, auch die ohne Engine)`)
+  console.log('-'.repeat(72))
+  let summeIn = 0, summeErreicht = 0
+  for (const gewerk of GEWERKE) {
+    const katalog = DEFAULT_PRICES.filter(p => preisKategoriePasstZuGewerk(p.category, gewerk))
+    const titelDesGewerks = zeilen.filter(z => gewerkFuerPosition(z.titel, undefined) === gewerk)
+    const erreicht = new Set(titelDesGewerks.map(z => z.katalogTitel).filter(Boolean))
+    const nie = katalog.filter(p => !erreicht.has(p.title))
+    summeIn += katalog.length; summeErreicht += erreicht.size
+    console.log(`\n  ${gewerk}: ${katalog.length} Katalogzeilen · ${titelDesGewerks.length} Engine-Titel · ${erreicht.size} erreicht · ${nie.length} NIE erreichbar`)
+    const jeKategorie = new Map()
+    for (const p of nie) {
+      if (!jeKategorie.has(p.category)) jeKategorie.set(p.category, [])
+      jeKategorie.get(p.category).push(p)
+    }
+    for (const [kategorie, liste] of [...jeKategorie].sort((a, b) => b[1].length - a[1].length)) {
+      console.log(`      ${String(liste.length).padStart(3)}  ${kategorie}`)
+      if (process.argv.includes('--alle')) for (const p of liste) console.log(`             ${euro(p.unit_price).padStart(10)}  ${p.title} [${p.unit}]`)
+    }
+  }
+  console.log(`\n  ZUSAMMEN über die sechs aktiven Gewerke: ${summeIn} Katalogzeilen, ${summeErreicht} erreicht, ${summeIn - summeErreicht} nie erreichbar`)
+  console.log('')
+}
+
+// ── Wortabhängigkeit: wie fest hängt der Preis an einem einzigen Wort ─────
+//
+// (23.09.2026, Prüfmeister) Themenspeicher Punkt 27. PM-147 hat es sichtbar
+// gemacht, DC-145 macht es akut: 36 Engine-Titel sollen umbenannt werden,
+// weil sie auf dem Kundenpapier nach Preisliste klingen. Der Titel ist aber
+// zugleich der Schlüssel zum Preis. Der Designer hat seine 36 einzeln
+// gemessen — das ist die richtige Antwort auf „sind DIESE 36 sicher?", aber
+// nicht auf „wie gefährlich ist Umbenennen überhaupt?". Diese Zählung
+// beantwortet die zweite Frage, und zwar ohne App: jeder Titel wird Wort für
+// Wort um ein Wort gekürzt und erneut durch denselben Matcher geschickt.
+//
+// Warum Weglassen und nicht Umformulieren: Weglassen ist die kleinste
+// denkbare Änderung und braucht kein Urteil darüber, was ein „schönerer"
+// Titel wäre. Fällt der Treffer schon, wenn EIN Wort fehlt, dann trägt dieses
+// Wort den Preis allein. Das ist die Untergrenze der Gefahr, nicht ihr Maß:
+// DC-145 zeigt am verworfenen ersten Entwurf, dass auch das Ersetzen eines
+// Wortes durch ein anderes den Treffer verlieren kann.
+//
+// Gemessen wird gegen den Katalog des Gewerks, das der URSPRÜNGLICHE Titel
+// routet — Umbenennen soll das Gewerk nicht wechseln. Wechselt es trotzdem,
+// steht das als eigene Zahl darunter; das ist die schlimmere Klasse, weil
+// dann nicht nur der Treffer, sondern die ganze Katalogseite wechselt.
+if (process.argv.includes('--wortabhaengigkeit')) {
+  const katalogFuer = gewerk => DEFAULT_PRICES
+    .filter(preis => preisKategoriePasstZuGewerk(preis.category, gewerk))
+    .map((preis, i) => ({ id: `standard-${i}`, ...preis }))
+
+  const mitTreffer = zeilen.filter(z => z.score !== null)
+  const befunde = []
+  let routingWechsel = 0
+  const routingBeispiele = []
+
+  for (const z of mitTreffer) {
+    const gewerk = gewerkFuerPosition(z.titel, undefined)
+    const katalog = katalogFuer(gewerk)
+    const woerter = z.titel.split(/\s+/)
+    if (woerter.length < 2) continue
+    const tragend = []
+    for (let i = 0; i < woerter.length; i++) {
+      const kurz = woerter.filter((_, j) => j !== i).join(' ').replace(/\s+/g, ' ').trim()
+      if (!kurz) continue
+      const neu = findePreisposition(kurz, z.einheit, katalog)
+      let klasse = null
+      if (!neu) klasse = 'weg'
+      else if (neu.position.unit_price !== z.katalogPreis) klasse = 'preis'
+      else if (neu.position.title !== z.katalogTitel) klasse = 'zeile'
+      else if (z.score >= 0.75 && neu.score < 0.75) klasse = 'knapp'
+      if (klasse) tragend.push({ wort: woerter[i], kurz, klasse, neu })
+      if (gewerkFuerPosition(kurz, undefined) !== gewerk) {
+        routingWechsel++
+        if (routingBeispiele.length < 8) routingBeispiele.push(`${z.titel}  ohne „${woerter[i]}"  →  ${gewerkFuerPosition(kurz, undefined) ?? 'kein Gewerk'} (statt ${gewerk})`)
+      }
+    }
+    if (tragend.length) befunde.push({ ...z, gewerk, woerter: woerter.length, tragend })
+  }
+
+  const hat = (b, ...klassen) => b.tragend.some(t => klassen.includes(t.klasse))
+  const verliertTreffer = befunde.filter(b => hat(b, 'weg'))
+  const anderePreisZeile = befunde.filter(b => !hat(b, 'weg') && hat(b, 'preis'))
+  const nurStill = befunde.filter(b => !hat(b, 'weg', 'preis'))
+  // Die härteste Klasse: EIN Wort trägt den Treffer, und es ist nicht das
+  // Tätigkeitswort — solche Titel sehen harmlos aus und sind es nicht.
+  const einWort = befunde.filter(b => b.tragend.filter(t => t.klasse === 'weg' || t.klasse === 'preis').length === 1)
+
+  console.log(`\nWORTABHÄNGIGKEIT DES PREISTREFFERS (Themenspeicher 27)`)
+  console.log(`  Engine-Titel mit Preis, mehr als ein Wort : ${mitTreffer.filter(z => z.titel.split(/\s+/).length > 1).length}`)
+  console.log(`  davon hängt der Treffer an mind. einem Wort: ${verliertTreffer.length + anderePreisZeile.length}`)
+  console.log(`      Wort fehlt → gar kein Preis mehr (0,00 €): ${verliertTreffer.length}`)
+  console.log(`      Wort fehlt → anderer Preis               : ${anderePreisZeile.length}`)
+  console.log(`      Wort fehlt → andere Zeile/Score, Preis gleich (still): ${nurStill.length}`)
+  console.log(`  davon hängt es an GENAU EINEM Wort        : ${einWort.length}`)
+  console.log(`  Wortauslassungen, die das GEWERK wechseln : ${routingWechsel}`)
+  console.log('-'.repeat(72))
+
+  const zeige = (ueberschrift, liste, klassen) => {
+    if (!liste.length) return
+    console.log(`\n  ${ueberschrift} (${liste.length})`)
+    for (const b of liste) {
+      const w = b.tragend.filter(t => klassen.includes(t.klasse))
+      if (!w.length) continue
+      console.log(`\n    ${b.titel} [${b.einheit}] · ${b.gewerk} · Score ${b.score.toFixed(2)}`)
+      console.log(`        heute → ${b.katalogTitel} — ${euro(b.katalogPreis)}`)
+      for (const t of w) {
+        console.log(t.klasse === 'weg'
+          ? `        ohne „${t.wort}" → KEIN TREFFER (0,00 €)`
+          : `        ohne „${t.wort}" → ${t.neu.position.title} — ${euro(t.neu.position.unit_price)}`)
+      }
+    }
+  }
+  // ── Der Schnitt, der die Entscheidung trägt ───────────────────────────
+  //
+  // Die Gesamtzahl sagt, wie gefährlich Umbenennen im Allgemeinen ist. Die
+  // Frage aus PM-147 ist enger: wie gefährlich ist es an genau den Titeln,
+  // die umbenannt werden SOLLEN? Deshalb dieselbe Messung noch einmal, nur
+  // über die Titel mit Katalogsprache — dieselben Marker wie
+  // `--katalogsprache`, damit beide Zahlen aufeinander passen.
+  const MARKER_27 = [
+    ['Schrägstrich', /\//],
+    ['Klammerzusatz', /\([^)]*\)/],
+    ['Q-Stufe', /\bQ[1-4]\b/],
+    ['Mal-Zeichen', /\d\s*[×x]\b/],
+    ['Abkürzung', /\b(?:GK|CW|UW|inkl\.|ggf\.|bzw\.|zzgl\.|o\. ?g\.|z\. ?B\.)\b/],
+  ]
+  console.log(`\n  SCHNITT MIT PM-147 — die Titel, die umbenannt werden sollen`)
+  for (const [name, muster] of MARKER_27) {
+    const inKlasse = mitTreffer.filter(z => muster.test(z.titel) && z.titel.split(/\s+/).length > 1)
+    const haengt = inKlasse.filter(z => befunde.some(b => b.titel === z.titel && hat(b, 'weg', 'preis')))
+    const verliert = inKlasse.filter(z => befunde.some(b => b.titel === z.titel && hat(b, 'weg')))
+    console.log(`        ${name.padEnd(14)} ${String(inKlasse.length).padStart(3)} mit Preis · ${String(haengt.length).padStart(3)} hängen an einem Wort · ${String(verliert.length).padStart(2)} davon auf 0,00 €`)
+    for (const z of verliert) console.log(`             🔴 ${z.titel}`)
+  }
+
+  zeige('TRÄGT DEN PREIS ALLEIN — ohne dieses Wort steht 0,00 € im Angebot', verliertTreffer, ['weg'])
+  zeige('TRÄGT DEN PREIS ALLEIN — ohne dieses Wort ein ANDERER Preis', anderePreisZeile, ['preis'])
+  if (alle) zeige('STILL — andere Zeile oder schwächerer Score, Preis gleich', nurStill, ['zeile', 'knapp'])
+  if (routingBeispiele.length) {
+    console.log(`\n  GEWERK-WECHSEL durch ein fehlendes Wort (erste ${routingBeispiele.length})`)
+    for (const b of routingBeispiele) console.log(`        ${b}`)
   }
   console.log('')
 }

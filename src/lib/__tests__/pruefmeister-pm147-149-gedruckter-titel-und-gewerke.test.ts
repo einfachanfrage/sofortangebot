@@ -110,17 +110,108 @@ describe('PM-147 · der gedruckte Titel trägt Katalogsprache', () => {
     expect(MIT_SCHRAEGSTRICH).toEqual([])
   })
 
-  it('PM-147-B · Sperre gegen Wachstum: die NICHT entschiedene Katalogsprache bleibt, wo sie ist', () => {
-    // Klammerzusätze 34 · Q-Stufen 6 · Mal-Zeichen 8 · Kürzel 4, gemessen am
-    // 23.09.2026. Hier steht kein Soll — nur: es darf nicht MEHR werden,
-    // solange niemand entschieden hat, was davon auf ein Kundenpapier gehört.
-    // Wird diese Zeile rot, ist ein neuer Titel in Katalogsprache
-    // dazugekommen; dann gehört er in diese Zahl oder umbenannt, aber nicht
-    // stillschweigend mitgenommen.
-    const GEMESSEN = { klammer: 34, qStufe: 6, malZeichen: 8, kuerzel: 4 }
-    expect(GEMESSEN.klammer + GEMESSEN.qStufe + GEMESSEN.malZeichen + GEMESSEN.kuerzel).toBe(52)
-    // 69 eindeutige Titel von 184 — die Marker überschneiden sich.
-    expect(69).toBeLessThan(184)
+  // ── Beantwortet durch DC-145 (Designer, 23.09.2026) ────────────────────
+  //
+  // Die 52 „Markierungen" waren Marker-TREFFER, nicht Titel: elf Titel
+  // tragen zwei Marker gleichzeitig. Entdoppelt sind es **41 Titel ohne
+  // Schrägstrich**, und die Aufteilung der 69 geht damit auf:
+  // 24 (nur Schrägstrich) + 4 (Schrägstrich UND ein zweiter Marker) + 41.
+  // Nachgemessen am 23.09.2026, die Zahl des Designers stimmt.
+  //
+  // Sie stehen hier ausgeschrieben statt als Zahl — aus demselben Grund wie
+  // die 28 oben: eine Zahl sagt nicht, welcher Titel dazugekommen ist.
+  const MARKER_OHNE_SCHRAEGSTRICH = [
+    'Abgehängte Decke (GK)',
+    'Alten Teppichboden entfernen (verklebt)',
+    'Ausgleichsmasse einbringen (45 mm)',
+    'Boden abdecken (Abdeckvlies)', // zwei Zeilen: Pauschale und m²
+    'Dachschrägen streichen 2x',
+    'Decke streichen 2x',
+    'Doppelbeplankung (2× GK)',
+    'Estrich grundieren (Haftgrund)',
+    'Fassade reinigen (druckwaschen)',
+    'Fassadenfläche streichen 2x',
+    'Fenster lackieren (Lack, 2× Anstrich)',
+    'Fenster lackieren (Ölfarbe, 2× Anstrich)',
+    'Fugen thermisch verschweißen (inkl. Schweißdraht)',
+    'Gerüst stellen (Pauschale)',
+    'Grundieren (Tiefengrund)',
+    'Heizkörper lackieren (2× Anstrich)',
+    'Kniestockwände streichen 2x',
+    'Lasur auftragen (transparent)',
+    'Leitungen verlegen (Pauschale)',
+    'Parkett abschleifen (2 Schleifgänge)',
+    'Parkett ölen (maschinell, 1-lagig)',
+    'Parkett versiegeln (Lack, 2-lagig)',
+    'Rohrleitungen erneuern (Pauschale)',
+    'Silikatfarbe auftragen (2×)',
+    'Sockelleisten entfernen (alt)',
+    'Sockelleisten lackieren (2× Anstrich)',
+    'Spachteltechnik (Betonoptik)',
+    'Ständerwand errichten (GK)',
+    'Ständerwerk CW-Profil',
+    'Türen lackieren (2× Anstrich)',
+    'Untergrund schleifen (Unebenheiten, Kleberreste)',
+    'Untergrundprüfung (Ebenheit, Feuchte, Tragfähigkeit)',
+    'Wand streichen 2x (Blau, Zone oben)',
+    'Wand streichen 2x (Zone oben)',
+    'Wand streichen 2x (ohne Akzentwand)',
+    'Wände schleifen nach Q2',
+    'Wände schleifen nach Q3',
+    'Wände schleifen nach Q4',
+    'Wände spachteln Q2',
+    'Wände spachteln Q3',
+    'Wände spachteln Q4',
+  ]
+
+  it('PM-147-B · Sperre gegen Wachstum: die Katalogsprache ohne Schrägstrich steht namentlich fest', () => {
+    // Hier steht kein Soll — die Regeln dafür sind R1–R5 in DC-145, und ob
+    // ein Vorschlag den Preis behält, misst `PM-151-A` in
+    // `pruefmeister-pm150-151-umbenennen.test.ts`. Hier steht nur: es darf
+    // nicht MEHR werden, und die Liste ist die, auf die sich DC-145 bezieht.
+    expect(MARKER_OHNE_SCHRAEGSTRICH).toHaveLength(41)
+    // Kein Schrägstrich — die vier, die beide Marker tragen, gehören in die
+    // 28er-Liste oben und nicht hierher.
+    expect(MARKER_OHNE_SCHRAEGSTRICH.filter(t => t.includes('/'))).toEqual([])
+    // Jeder Titel trägt mindestens einen der vier Marker.
+    const MARKER = [/\([^)]*\)/, /\bQ[1-4]\b/, /\d\s*[×x]\b/, /\b(?:GK|CW|UW|inkl\.)\b/]
+    for (const titel of MARKER_OHNE_SCHRAEGSTRICH) {
+      expect(MARKER.some(m => m.test(titel)), `${titel}: trägt keinen Marker`).toBe(true)
+    }
+    // Und die Rechnung, mit der die 69 aufgehen: 28 mit Schrägstrich
+    // (davon 4 mit zweitem Marker) + 41 ohne.
+    expect(MIT_SCHRAEGSTRICH.length + MARKER_OHNE_SCHRAEGSTRICH.length).toBe(69)
+  })
+
+  it('PM-147-B-1 · die Zusicherung zu „2×" — und was sie ausdrücklich NICHT sagt', () => {
+    // 🔴 Die Stelle, an der ich mich verrannt hätte. Der Designer schreibt es
+    // selbst hin: **die Marker-Zahl „Mal-Zeichen" fällt nach R2 NICHT auf
+    // 0.** Die Anzahl der Anstriche ist kein Fachjargon, sondern der
+    // Preisunterschied — 3,50 €/m² zwischen einem und zwei Anstrichen. Sie
+    // bleibt gedruckt. Wer gegen 0 prüft, prüft gegen eine Regel, die
+    // niemand getroffen hat, und würde die Regel beim ersten roten Lauf
+    // „reparieren", indem er die Information vom Kundenpapier nimmt.
+    //
+    // Die richtige Zusicherung ist die Schreibweise, nicht die Anzahl:
+    // kein `2x` ohne `×`, kein `2×` allein in Klammern, kein `2x` als
+    // Wortanhang. Sie steht als ausführbare Regel in
+    // `pruefmeister-pm150-151-umbenennen.test.ts` (`PM-147-B-2`), weil dort
+    // die 36 Vorschläge liegen, auf die sie angewandt wird.
+    //
+    // Was hier steht, ist der Ist-Zustand, gegen den sie geschnitten ist:
+    // heute verletzen sieben Titel sie — genau die, die DC-145 umbenennt.
+    const MIT_MAL_ZEICHEN = MARKER_OHNE_SCHRAEGSTRICH.filter(t => /\d\s*[×x]\b/.test(t))
+    expect(MIT_MAL_ZEICHEN.length).toBeGreaterThan(0)
+    const WORTANHANG_HEUTE = MIT_MAL_ZEICHEN.filter(t => /\d\s*x\b/.test(t))
+    expect(WORTANHANG_HEUTE).toEqual([
+      'Dachschrägen streichen 2x',
+      'Decke streichen 2x',
+      'Fassadenfläche streichen 2x',
+      'Kniestockwände streichen 2x',
+      'Wand streichen 2x (Blau, Zone oben)',
+      'Wand streichen 2x (Zone oben)',
+      'Wand streichen 2x (ohne Akzentwand)',
+    ])
   })
 })
 

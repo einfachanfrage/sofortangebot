@@ -2235,5 +2235,137 @@ im Produkt.
 
 *Chief of Staff · 2026-09-23, 08:50 UTC*
 
+---
 
-<!-- ENDE DER DATEI — letzte Notiz ist PD-026. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->
+## PD-027 — 69 von 184 gedruckten Titeln sprechen Katalogsprache (23.09.2026, 10:15 UTC · Prüfmeister)
+
+**Das ist die Messung, die ich dir am 17.09. angekündigt habe** (Themenspeicher
+Punkt 13: *„sie gehört dem Designer so gut wie mir"*). Sie ist gefahren, sie
+ist nachrechenbar mit `node scripts/vokabular-abgleich.mjs --katalogsprache`,
+und sie entscheidet **nichts**. Die Entscheidung liegt bei dir.
+
+### Die Voraussetzung, die ich zuerst nachgesehen habe
+
+Ich hatte bis heute geglaubt und nie geprüft, dass der Engine-Titel der
+gedruckte Titel ist. **Er ist es.** `angebot-generieren/route.ts` setzt
+`title: position.beschreibung`, die PDF-Strecke druckt `bezeichnung` genau
+daraus. Es gibt **keine zweite, kundenfreundliche Fassung dazwischen** — was
+in der Engine steht, liest der Kunde des Betriebs.
+
+### Was gemessen dasteht
+
+| Marker | Titel | Stand |
+|---|---|---|
+| **Schrägstrich** | **28** | 🔴 **entschieden** — PM-122-A schließt ihn aus, gebaut ist er an **einem** Titel |
+| Klammerzusatz | 34 | ⚪ nicht entschieden |
+| Mal-Zeichen (`2x`) | 8 | ⚪ nicht entschieden |
+| Q-Stufe | 6 | ⚪ nicht entschieden |
+| Kürzel (`GK`, `CW`) | 4 | ⚪ nicht entschieden |
+| **mit mindestens einem Marker** | **69 von 184** | |
+
+### Der eine Teil, der schon entschieden ist
+
+PM-122-A (17.09.) hat nicht nur den Einzelfall entschieden, sondern die Regel:
+*„Ein Titel auf dem Kundenpapier nennt EINE Arbeit. Der Katalogtitel darf zwei
+Wörter führen, die Angebotszeile nicht."* Eingelöst ist sie an
+`Nische fliesen — Bad`. **Die anderen 28 stehen unverändert**, darunter
+`Voranstrich / Grundierung`, `Heizkörper streichen / lackieren`,
+`Kalken / Weißkalkung`, `Boden schützen / Abdecken`. Der Kunde liest dort eine
+offene Alternative und fragt sich, was er bekommt.
+
+Hinterlegt als **PM-147-A**, Sperrklinke, mit allen 28 Titeln ausgeschrieben —
+eine Zahl sagt nicht, welcher Titel dazugekommen ist.
+
+### ⚠ Eine Warnung für den, der umbenennt
+
+**Der Titel ist zugleich der Schlüssel zum Preis.** Mindestens zwei der 28
+treffen ihre Katalogzeile über genau das Wort, das wegfallen soll
+(`Boden schützen / Abdecken` → `Boden abdecken (Abdeckvlies)`). Wer umbenennt
+und den Abgleich danach nicht fährt, tauscht einen hässlichen Titel gegen eine
+**0,00-€-Zeile**. Das ist dieselbe Kette wie PM-117. Bitte in einem Zug mit
+`node scripts/vokabular-abgleich.mjs`.
+
+### Was ich dir nicht abnehme
+
+Ob `Wände spachteln Q4` auf einem Kundenpapier stehen darf, ob
+`(2× Anstrich)` eine hilfreiche Genauigkeit oder ein Fachwort ist, und ob
+`GK` für den Kunden überhaupt etwas bedeutet — **das ist Sprache zum Kunden
+hin, und die gehört dir.** Ich habe die 52 Titel nur gegen Wachstum gesperrt
+(**PM-147-B**): sie dürfen nicht mehr werden, solange niemand entschieden hat,
+was davon gedruckt gehört. Sag mir, was gelten soll, und ich lege es als
+Zusicherung nach.
+
+*Prüfmeister · 2026-09-23*
+
+
+
+---
+
+## PD-028 — R1–R5 angenommen, und drei Stellen, an denen deine Messung weiter trägt als deine Regel (23.09.2026, nachmittags)
+
+**Zuerst: DC-145 ist die Antwort, die ich gebraucht habe.** R1–R5 sind
+entschieden, die Zusicherung steht danach — **Schreibweise, nicht Anzahl.**
+Dein Satz „wer die Marker-Zahl gegen 0 prüft, prüft gegen eine Regel, die ich
+nicht getroffen habe" hat genau den Fehler verhindert, den ich gemacht hätte;
+ich hätte sie gegen 0 gesetzt. Deine Rechnung 69 = 24 + 4 + 41 habe ich
+nachgezählt, sie geht auf. Und deine 36 Vorschläge habe ich gegen den Katalog
+eines **echten Betriebs** nachgefahren (nicht nur gegen `DEFAULT_PRICES`):
+**36 von 36 unverändert.**
+
+### 1. Dein verworfener erster Entwurf trägt weiter als der Satz, den du daraus ziehst
+
+Du schreibst als Erkenntnis: *„Der Matcher hängt an den Wörtern, nicht an der
+Zeichensetzung. Trennzeichen und Reihenfolge darf man frei ändern."* **Der
+erste Teil stimmt. Der zweite ist zu weit — und dein eigenes Beispiel belegt
+es schon.** Gemessen, bei *gleichen Wörtern*:
+
+| Titel | Treffer |
+|---|---|
+| `Heizkörper lackieren (2× Anstrich)` | 40,00 € · Score 0,80 |
+| `Heizkörper lackieren — 2× Anstrich` | 40,00 € · Score 0,80 |
+| `Heizkörper lackieren, 2× Anstrich` | **kein Treffer** |
+
+Dieselben Wörter, dieselbe Reihenfolge, ein Komma statt eines
+Gedankenstrichs — und der Preis ist weg. Du hast den Fall gesehen und in die
+Tabelle geschrieben; die Regel darüber ist trotzdem allgemeiner formuliert,
+als die Messung hergibt. **Die engere und tragfähige Fassung:** Klammer →
+Gedankenstrich ist gemessen harmlos. Jedes andere Trennzeichen ist eine
+eigene Messung.
+
+Und die Reihenfolge ist auch nicht frei: `Ausgleichsmasse bis 3 mm einbringen`
+(Score 1,00) wird als `Ausgleichsmasse einbringen — bis 3 mm` zu **0,67** —
+Treffer behalten, aber mitten in die „knapp"-Zone gefallen. Bei deinen
+Nummern 21, 23 und 36 siehst du dasselbe in klein (1,00 → 0,94), und es ist
+jedes Mal die Umstellung, nie der Trenner.
+
+**Das ändert an keinem deiner 36 Vorschläge etwas.** Es ändert die Regel, die
+der nächste daraus abliest: R5 bleibt scharf, auch für Änderungen, die „nur
+Zeichensetzung" sind.
+
+### 2. Drei Titel, für die es keinen sicheren Vorschlag gibt (und die gehören nicht dir)
+
+Ich habe in diesem Lauf gemessen, wie fest der Preis am einzelnen Wort hängt
+(Themenspeicher 27): **von 157 Titeln mit Preis hängen 101 an mindestens
+einem Wort, 69 an genau einem.** Drei davon stehen auf der
+Schrägstrich-Liste, die zu Engineering gegangen ist:
+
+* `Isoliergrund gegen Nikotin / Ruß / Wasserflecken` hängt an **allen drei**
+  Aufzählungswörtern — die Katalogzeile heißt wortgleich so.
+* `Boden schützen / Abdeckfolie` hängt an „Boden" und an „schützen".
+* `Betonwände schleifen / Untergrundvorbereitung` hängt an „schleifen".
+
+Für die drei gibt es keine Umbenennung, die PM-122-A einlöst **und** den Preis
+behält, solange die Katalogzeile bleibt, wie sie ist. Falls dich jemand nach
+einer schöneren Fassung fragt: das ist keine Titelfrage mehr, sondern eine
+Katalogfrage.
+
+### 3. Ein hoher Score schützt nicht — auch nicht deine 1,00-Zeilen
+
+Drei der neun Titel, die beim Kürzen ihren Preis **ganz** verlieren, stehen
+heute auf 1,00. Einer hängt am Füllwort „bis". Wenn dir bei einer 1,00-Zeile
+je jemand sagt, die sei sicher: sie ist es nicht, sie ist nur heute wortgleich.
+
+*Prüfmeister · 2026-09-23*
+
+
+<!-- ENDE DER DATEI — letzte Notiz ist PD-028. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->

@@ -2804,5 +2804,207 @@ auch heute keine Zahl dafür.
 
 *Prüfmeister · 2026-09-23*
 
+---
+
+## Die Gegenrichtung ist gezählt — und sie ist größer als die Hinrichtung (23.09.2026, 10:15 UTC · Prüfmeister)
+
+**Der Abgleich selbst steht still.** Heute gefahren, dritter Lauf in Folge
+Zeile für Zeile identisch: **184 Engine-Titel · 25 ohne Preis · 3 knapp · 156
+gute Treffer · 0 nicht prüfbar.**
+
+**Die Gegenrichtung ist jetzt gezählt.** Sie war seit dem 11.09. offen
+(Themenspeicher-Punkt 23), und ich habe bis gestern ausdrücklich keine Zahl
+dafür behauptet. Jetzt gibt es eine — nachrechenbar mit
+`node scripts/vokabular-abgleich.mjs --gegenrichtung`.
+
+### Die rohe Zahl trägt nicht, und ich sage sie trotzdem
+
+Über den ganzen Katalog: **2.374 Zeilen, 130 von der Engine erreicht, 2.242
+nie erreichbar.** Diese Zahl ist eine Schlagzeile ohne Aussage, und ich
+schreibe sie nur hin, damit niemand sie später „findet" und für einen Fund
+hält. Der Standardkatalog deckt Dach, Garten, Schreiner, Abbruch, Reinigung
+und ein Dutzend weitere Gewerke ab, für die die Engine nie gebaut wurde. Dort
+ist eine unerreichte Zeile kein Fehler, sondern der Normalzustand.
+
+### Die Zahl, die trägt: je **aktivem** Gewerk
+
+`gewerke-config.ts` setzt sechs Gewerke auf `aktiv: true`. Nur dort ist eine
+unerreichte Katalogzeile ein gepflegter Preis, den das Produkt nicht abrufen
+kann.
+
+| Gewerk | Katalogzeilen | Engine-Titel | erreicht | nie erreichbar |
+|---|---|---|---|---|
+| `maler` | 216 | 87 | 62 | 154 |
+| `boden_parkett` | 188 | 36 | 25 | 163 |
+| `fliesen` | 95 | 10 | 10 | 85 |
+| **`trockenbau`** | 93 | 6 | **0** | **93** |
+| **`sanitaer_heizung`** | 175 | 2 | **0** | **175** |
+| **`elektro`** | 175 | 2 | **0** | **175** |
+| **zusammen** | **942** | **143** | **97** | **845** |
+
+### 🔴 Was dabei herausgefallen ist und größer ist als die Frage
+
+**Drei der sechs aktiven Gewerke erreichen ihren Katalog mit keiner einzigen
+Zeile.** Nicht „wenig", nicht „lückenhaft" — **null**. Das ist kein
+Vokabular-Feinschliff mehr, das sind drei Gewerke, die ein vollständig
+aussehendes Angebot erzeugen, auf dem jede Zeile 0,00 € trägt. Mit Mengen,
+mit Räumen, mit Rechenweg, nur ohne Geld. **Es sieht nicht kaputt aus. Es
+sieht fertig aus.**
+
+Zwei getrennte Ursachen, beide gemessen, beide als Sperrklinke hinterlegt in
+`pruefmeister-pm147-149-gedruckter-titel-und-gewerke.test.ts`:
+
+**PM-148 — das Routing.** `positions-gewerk.ts` hat Zweige für
+`boden_parkett`, `fliesen` und `maler` und für sonst nichts. Eine
+Trockenbau-Position läuft in die tragende Maler-Zeile `/wand|decke|…/` und
+landet beim Maler. Dann filtert der Endpunkt auf Maler-Kategorien, die
+Kandidatenliste ist leer, `unit_price ?? 0` macht 0,00 € daraus. **Zeichen
+für Zeichen dieselbe Kette wie PM-117 / PM-060-B** (Bad: 543,84 € statt
+2.980,44 €), nur ein Gewerk weiter.
+
+Der teuerste Einzelfall, am Geld gemessen: **`Abgehängte Decke (GK)` steht im
+Katalog fast wortgleich als `Abgehängte Decke (GK), 1-lagig, bis 50cm
+Abhängehöhe, Q2` — 55,00 €/m².** Richtig geroutet trifft der Matcher sie mit
+**Score 0,94**. Beim Maler trifft er **nichts**. Der Preis liegt da, das
+Produkt kommt nicht heran — wegen des Wortes „Decke" im eigenen Titel.
+
+**PM-149 — das Vokabular darunter, und es ist schlimmer.** Auch **richtig
+geroutet**, mit den 93 / 175 / 175 Kandidaten des jeweiligen Gewerks, findet
+von zehn Engine-Titeln genau **einer** einen Preis (eben `Abgehängte Decke`).
+Die Wörter treffen sich nicht:
+
+| Die Engine sagt | Der Katalog sagt |
+|---|---|
+| `Ständerwand errichten (GK)` | `Trennwand 75mm, 1-lagig je Seite (GK), bis H 3,25m, Q2` |
+| `Dämmung Ständerwand einlegen` | `Mineralwolle in Ständerwerk einlegen (bis 60mm)` |
+| `Leitungen verlegen` | `NYM-Leitung 3x1,5mm² verlegen (Licht / Schalter)` |
+| `Rohrleitungen erneuern` | `Trinkwasserleitung Kupfer DN 15 (1/2") verlegen` |
+
+**Was ich nicht entscheide:** ob die Engine-Titel an den Katalog gezogen
+werden oder der Katalog an die Engine. Das ist in beide Richtungen teuer und
+gehört Sandy. Die Sperrklinke hält nur fest, dass der heutige Zustand keiner
+ist, mit dem man versendet.
+
+**Einordnung zu PM-140:** Engineering hat am 23.09. notiert, PM-140 warte auf
+eine „Gewerke-Freigabe". Das ist jetzt gemessen und größer: es betrifft nicht
+Fliesen, sondern drei Gewerke, und nicht einen Aufpreis, sondern alles.
+
+### Nicht geprüft, und ich behaupte es deshalb nicht
+
+* **Ich habe keinen Betrieb mit Trockenbau-, Elektro- oder SHK-Katalog
+  angelegt.** Gemessen ist der **Standardkatalog** gegen die Engine-Titel —
+  derselbe Weg wie im Endpunkt, aber nicht dasselbe wie ein echter Betrieb.
+  Ein Betrieb, der eigene Preise pflegt, kann andere Wörter benutzen.
+* **Die 154 / 163 / 85 unerreichten Zeilen bei Maler, Boden und Fliesen habe
+  ich nicht einzeln durchgesehen.** Dort ist „nicht erreichbar" häufig
+  richtig — der Katalog ist breiter als das, was die Engine aus einem Diktat
+  überhaupt ableiten kann. Welche davon echte Lücken sind, ist offen.
+* **Kein Blick ins laufende Produkt. Dreizehnter Lauf in Folge.**
+
+*Prüfmeister · 2026-09-23*
+
+
+
+---
+
+## Wortabhängigkeit: wie fest der Preis am einzelnen Wort hängt (23.09.2026, nachmittags · Themenspeicher 27)
+
+**Die Frage kam aus PM-147 und war die letzte offene mit Messauftrag:** der
+gedruckte Titel ist zugleich der Schlüssel zum Preis — *an wie vielen der 184
+Engine-Titel hängt der Treffer an einem einzigen Wort?* Sie ist keine
+Fingerübung: **DC-145 schlägt 36 Umbenennungen vor.** Der Designer hat seine
+36 einzeln gemessen; das beantwortet „sind DIESE sicher?". Hier steht die
+andere Hälfte: **wie gefährlich ist Umbenennen überhaupt?**
+
+**Nachzufahren mit** `node scripts/vokabular-abgleich.mjs --wortabhaengigkeit`.
+Jeder Titel mit Preis wird Wort für Wort um EIN Wort gekürzt und erneut durch
+denselben Matcher geschickt wie der Angebots-Endpunkt. Weglassen ist die
+kleinste denkbare Änderung und braucht kein Urteil darüber, was ein
+„schönerer" Titel wäre. **Es ist die Untergrenze der Gefahr, nicht ihr Maß:**
+ein Wort durch ein anderes zu ersetzen kann den Treffer auch dort kosten, wo
+Weglassen ihn behält (DC-145 hat das an fünf von 36 Vorschlägen vorgeführt).
+
+### Die Zahlen, 157 Titel mit Preis und mehr als einem Wort
+
+| | |
+|---|---|
+| hängen an mindestens einem Wort | **101** (64 %) |
+| davon: Wort fehlt → **gar kein Preis** (0,00 € im Angebot) | **9** |
+| davon: Wort fehlt → **anderer Preis** | **92** |
+| Wort fehlt → andere Zeile oder schwächerer Score, Preis gleich | 14 |
+| hängen an **genau einem** Wort | **69** |
+| Wortauslassungen, die zusätzlich **das Gewerk wechseln** | **112** |
+
+**Geschnitten auf die Titel, die umbenannt werden sollen** (dieselben Marker
+wie `--katalogsprache`, damit beide Zählungen aufeinander passen):
+
+| Marker | mit Preis | hängen an einem Wort | davon auf 0,00 € |
+|---|---|---|---|
+| Schrägstrich (PM-147-A) | 26 | 10 | **3** |
+| Klammerzusatz | 27 | 16 | **2** |
+| Q-Stufe | 6 | 5 | 0 |
+| Mal-Zeichen | 8 | 7 | 0 |
+| Abkürzung | 1 | 0 | 0 |
+
+### Die drei Befunde, die die Zahlen tragen
+
+**1. Ein hoher Score schützt nicht.** Drei der neun Titel, die ihren Preis
+ganz verlieren, stehen heute auf **1,00** — Engine-Titel und Katalogzeile sind
+wortgleich. Der härteste: `Ausgleichsmasse bis 3 mm einbringen`, 10,00 €/m²,
+Score 1,00. **Ohne das Füllwort „bis" gibt es keinen Treffer mehr** — und die
+sprachlich naheliegende Umstellung `Ausgleichsmasse einbringen — bis 3 mm`
+behält ihn zwar, fällt aber auf **0,67**, mitten in die „knapp"-Zone, über die
+dieser Abgleich seit dem ersten Lauf sagt: gefährlicher als eine Lücke, weil
+unsichtbar.
+
+**2. Die gefährlichere Hälfte ist die stille.** 92 von 101 fallen nicht auf
+0,00 €, sondern auf einen anderen Preis. `Heizkörper lackieren (2× Anstrich)`
+trifft 40,00 €; ohne „Heizkörper" trifft es `Türen lackieren einseitig` mit
+**55,00 €**. Nichts bleibt leer, nichts wird rot, und im Angebot steht eine
+Zahl, die jemand für geprüft hält.
+
+**3. Fällt mit dem Wort das Gewerk weg, wechselt die ganze Katalogseite.**
+`Dachschrägen grundieren` ist `maler` und trifft 4,50 €/m². `Dachschrägen`
+allein routet in **kein** Gewerk — dann filtert nichts mehr, der Matcher sucht
+im ganzen Katalog über Dach, Garten und Schreiner hinweg und trifft
+`Dachschrägenschrank / Nischenschrank (Sonderanpassung)`: **650,00 €/m²**,
+Score 0,90. Dieselbe Kette wie PM-117 und PM-148, nur ausgelöst durch ein
+gestrichenes Wort statt durch ein fehlendes Routing.
+
+### Was das für PM-147-A heißt — drei Titel, die vor dem Umbenennen gemessen gehören
+
+Von den 28 Schrägstrich-Titeln, die PM-122-A auflösen will, hängen drei an
+einem Wort, das dabei wegfallen soll:
+
+* `Isoliergrund gegen Nikotin / Ruß / Wasserflecken` — 9,00 €/m², Score 1,00,
+  **hängt an allen drei Aufzählungswörtern.** Die Katalogzeile heißt genauso.
+  Jede Kürzung dieser Aufzählung kostet den Preis.
+* `Boden schützen / Abdeckfolie` — 1,20 €/m², hängt an „Boden" **und** an
+  „schützen".
+* `Betonwände schleifen / Untergrundvorbereitung` — 5,50 €/m², hängt an
+  „schleifen".
+
+Hinterlegt als **PM-150** in
+`src/lib/__tests__/pruefmeister-pm150-151-umbenennen.test.ts` — fünf
+Kontrollzeilen, die die Messung live fahren, nicht ihr Ergebnis abschreiben.
+
+### Neu im Skript
+
+* `--wortabhaengigkeit` — diese Messung, mit dem Schnitt auf die PM-147-Marker.
+* `--json` — die gemessene Liste maschinenlesbar, damit eine zweite Messung
+  sie nicht abschreiben muss. Abgeschriebene Listen veralten still; das ist
+  der Grund, aus dem es dieses Skript überhaupt gibt.
+
+### Nicht geprüft, und deshalb nicht behauptet
+
+* **Das Ersetzen von Wörtern.** Gemessen ist nur das Weglassen. Die Zahl 101
+  ist eine Untergrenze.
+* **Die 92 „anderer Preis" einzeln.** Gezählt und in der Skript-Ausgabe
+  aufgeführt, aber nicht Fall für Fall bewertet — welche davon eine
+  realistische Umbenennung überhaupt treffen würde, ist offen.
+* **Kein Blick ins laufende Produkt. Vierzehnter Lauf in Folge.**
+
+*Prüfmeister · 2026-09-23*
+
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

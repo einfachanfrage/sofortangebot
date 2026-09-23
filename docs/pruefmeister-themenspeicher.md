@@ -1121,5 +1121,178 @@ Fund, der vorging, ist zu.**
 
 *Prüfmeister · 2026-09-23*
 
+---
+
+## Nachtrag 23.09.2026, mittags — Punkt 13 und Punkt 23 sind zu, und Punkt 23 war ein Gewerke-Fund
+
+**Abgeräumt — die zwei, die als „größter Hebel unter den offenen" dastanden:**
+
+* **Punkt 13 — der Katalogtitel als gedruckter Titel** → **PM-147**.
+  Zuerst die Voraussetzung nachgesehen, die ich geglaubt und nie geprüft
+  hatte: der Engine-Titel **ist** der gedruckte Titel
+  (`title: position.beschreibung`, die PDF-Strecke druckt `bezeichnung`
+  daraus). Es gibt keine kundenfreundliche Fassung dazwischen.
+  **Gemessen: 69 von 184 tragen Katalogsprache** — 28 Schrägstrich,
+  34 Klammerzusatz, 8 Mal-Zeichen, 6 Q-Stufe, 4 Kürzel.
+  Die **28 Schrägstriche sind kein offener Punkt, sondern eine entschiedene
+  und nicht gebaute Regel**: PM-122-A gilt seit dem 17.09. und ist an
+  **einem** Titel eingelöst. → **PM-147-A** (Sperrklinke, alle 28
+  ausgeschrieben). Die übrigen 52 sind Sprache zum Kunden hin und gehören
+  dem Designer — nur gegen Wachstum gesperrt (**PM-147-B**), Notiz als
+  **PD-027**.
+
+* **Punkt 23 — Katalogzeilen ohne Engine-Titel** → **PM-148 · PM-149**.
+  Die Frage war klein gestellt und hat etwas Großes herausgeworfen. Gezählt
+  je **aktivem** Gewerk (die rohe Zahl über alle 2.374 Katalogzeilen trägt
+  nicht — der Katalog führt Dach, Garten, Schreiner mit):
+  **`trockenbau` 93 Katalogzeilen → 0 erreicht. `sanitaer_heizung` 175 → 0.
+  `elektro` 175 → 0.** Drei der sechs angebotenen Gewerke erzeugen ein
+  Angebot, auf dem **jede Zeile 0,00 €** trägt — mit Mengen, mit Räumen, mit
+  Rechenweg. Es sieht nicht kaputt aus, es sieht fertig aus.
+  * **PM-148** 🔴 Sperrklinke — das Routing: `positions-gewerk.ts` kennt nur
+    `boden_parkett`, `fliesen`, `maler`. Trockenbau läuft in die Maler-Zeile
+    `/wand|decke/`. **Zeichen für Zeichen dieselbe Kette wie PM-117 /
+    PM-060-B**, ein Gewerk weiter. Am Geld: `Abgehängte Decke (GK)` trifft
+    richtig geroutet **55,00 €/m²** mit Score 0,94, beim Maler nichts.
+  * **PM-149** 🔴 Sperrklinke — das Vokabular darunter: **auch richtig
+    geroutet** findet von zehn Engine-Titeln genau einer einen Preis.
+    `Ständerwand errichten (GK)` gegen `Trennwand 75mm …`, `Leitungen
+    verlegen` gegen `NYM-Leitung 3x1,5mm² verlegen`.
+
+**Und eine Bestätigung, die keine neue Nummer braucht:** Engineerings
+Eingriff in `PM-137-3` (`['wand']` → `[]`) ist **bestätigt** — nicht wegen
+seiner Abwägung „die jüngere Zeile gewinnt", sondern weil `PM-137-4` denselben
+Satzbau mit „streichen" seit PM-134-A auf `[]` festnagelt und PM-146 „weiß"
+zum selben Fall macht. Gegenprobe-Zeile eingezogen, die beide Wörter
+aneinanderbindet. Titel nachgezogen. Steht in `pruefmeister-restliste.md`.
+
+---
+
+**Neu aufgemacht — was aus diesem Lauf fällt und noch niemand gemessen hat:**
+
+26. **Ist ein Gewerk „aktiv", wenn es kein Geld kann?** `gewerke-config.ts`
+    setzt sechs auf `aktiv: true`, drei davon liefern heute ein Blatt aus
+    lauter Nullen. Ein Betrieb wählt das Gewerk, diktiert, bekommt ein
+    fertig aussehendes Angebot und merkt es vielleicht nicht. **Die
+    Produktfrage dahinter ist nicht meine:** soll ein Gewerk ohne Preisweg
+    gar nicht erst angeboten werden, oder soll die Nullzeile laut sein? Das
+    ist Regel H („Nichts erfinden", Sandy 12.09.) in einer Größe, die bisher
+    nur einzelne Zeilen betraf — hier trifft es das ganze Blatt. Gehört
+    Sandy, ungemessen ist nur, ob der Betrieb es ohne Hinweis merkt.
+27. **Der Titel ist zugleich der Schlüssel zum Preis — und niemand sichert
+    das ab.** PM-147 macht es sichtbar: wer einen Engine-Titel umbenennt,
+    weil er auf dem Kundenpapier schöner aussehen soll, kann damit den
+    Matcher-Treffer verlieren und eine 0,00-€-Zeile erzeugen. Mindestens
+    zwei der 28 Schrägstrich-Titel hängen an genau dem Wort, das weg soll.
+    **Ungemessen: an wie vielen der 184 Titel hängt der Treffer an einem
+    einzigen Wort?** Das wäre die Zahl, die sagt, wie gefährlich Umbenennen
+    überhaupt ist — klein, ohne App, am Matcher.
+28. **Die unerreichten Zeilen bei Maler, Boden und Fliesen.** 154 / 163 / 85
+    Katalogzeilen, die kein Engine-Titel trifft. Dort ist „nicht erreichbar"
+    **oft richtig** — der Katalog ist breiter als das, was aus einem Diktat
+    ableitbar ist. Aber „oft" ist keine Messung. Welche davon beschreiben
+    eine Arbeit, die die Engine aus dem Diktat sehr wohl erkennt und nur
+    anders nennt? Das ist PM-140 in groß und der eigentliche Rest von
+    Punkt 23.
+
+**Offen bleiben** aus den älteren Abschnitten: **M.1** (teilweise), **M.3**,
+**M.5**, Mittags-Punkt 7, Nachmittags-**Punkt 10**, die **Punkte 15, 16, 17,
+18** vom 17.09. abends sowie **19**, **22** und **24**. **Punkt 13 und Punkt
+23 sind zu; 12, 14 und 21 waren es schon.** Der größte Hebel unter den
+offenen ist jetzt **Punkt 26** (ist ein Gewerk aktiv, wenn es kein Geld kann)
+— er ist aber eine Entscheidung für Sandy, kein Messauftrag. Der größte
+**messbare** ist **Punkt 27**, weil er sagt, wie teuer das Umbenennen aus
+PM-147 wird, bevor jemand umbenennt.
+
+**Fallbasis nach diesem Lauf: 149.**
+
+*Prüfmeister · 2026-09-23*
+
+
+
+---
+
+## Nachtrag 23.09.2026, nachmittags — Punkt 27 ist zu, und er hat drei Nachfolger
+
+**Abgeräumt — der größte messbare der offenen Punkte:**
+
+* **Punkt 27 — der Titel ist zugleich der Schlüssel zum Preis** → **PM-150**.
+  Gemessen mit dem neuen `--wortabhaengigkeit` im Abgleich-Skript: jeder Titel
+  mit Preis wird Wort für Wort um ein Wort gekürzt und neu durch denselben
+  Matcher geschickt. **Von 157 Titeln mit Preis und mehr als einem Wort hängen
+  101 an mindestens einem Wort, 69 an genau einem.** Neun verlieren ihren
+  Preis ganz, **92 bekommen einen anderen** — das ist die gefährlichere
+  Hälfte, weil nichts leer bleibt. Auf die Titel geschnitten, die umbenannt
+  werden sollen: **3 der 28 Schrägstrich-Titel** und **2 der Klammer-Titel**
+  fallen beim Umbenennen auf 0,00 €. Die Tabellen stehen in
+  `vokabular-abgleich.md`, die Zusicherungen als PM-150 im Prüfstand.
+
+  **Der Satz, der davon bleibt: ein hoher Score schützt nicht.** Drei der
+  neun stehen heute auf 1,00 — wortgleich mit ihrer Katalogzeile. Der
+  härteste hängt am Füllwort „bis" (`Ausgleichsmasse bis 3 mm einbringen`,
+  10,00 €/m²).
+
+**Dazu erledigt, ohne eigene Nummer im Speicher:**
+
+* **Die Gegenprobe des Chief of Staff (CoS-E-100)** — was ein Konto sieht, das
+  seinen Preis unter dem alten Titel gespeichert hat → **PM-151**. Alle
+  bisherigen Messungen liefen gegen `DEFAULT_PRICES`; ein echter Betrieb hat
+  den Katalog nicht, er hat `standardpreiseFuerGewerke()` **plus** seine
+  eingetippten Vorlagenzeilen, und die unbekannten davon kommen als eigene
+  Zeilen dazu (CoS-E-052). **Gemessen: für alle 36 DC-145-Vorschläge trifft
+  der neue Titel dort dieselbe Zeile zum selben Preis — der Betrieb sieht
+  seinen eigenen Preis, unverändert.** Gilt nicht für einen Betrieb, der eine
+  Zeile selbst umbenannt hat; das weiß nur seine Datenbank.
+* **PM-147-B ist beantwortet** (DC-145, R1–R5). Die Zusicherung zum
+  Mal-Zeichen steht jetzt richtig: **Schreibweise, nicht Anzahl** — kein `2x`
+  ohne `×`, kein `2×` in Klammern, kein `2x` als Wortanhang. Ausdrücklich
+  **nicht** „Marker-Zahl = 0"; die Anstrichzahl ist der Preisunterschied und
+  bleibt gedruckt. Die 41 Titel der Klasse stehen jetzt namentlich im
+  Prüfstand statt als Zahl. Die Rechnung des Designers (69 = 24 + 4 + 41)
+  habe ich nachgezählt, sie geht auf.
+
+---
+
+**Neu aufgemacht — was aus diesem Lauf fällt und noch niemand gemessen hat:**
+
+29. **43 von 184 Engine-Titeln routen in gar kein Gewerk.** Dann greift der
+    Kategorie-Filter nicht (`praefixe?.length` leer → „passt zu allem") und
+    der Matcher sucht im **ganzen** Katalog — 2.374 Zeilen über Dach, Garten,
+    Schreiner, Abbruch. Heute fällt es nicht auf, weil die meisten ihre eigene
+    Zeile wortgleich treffen. Es fällt in dem Augenblick auf, in dem jemand
+    einen davon umbenennt: `Dachschrägen grundieren` (maler, 4,50 €/m²) wird
+    ohne „grundieren" zu `Dachschrägen`, hat kein Gewerk mehr und trifft
+    `Dachschrägenschrank / Nischenschrank (Sonderanpassung)` — **650,00 €/m²,
+    Score 0,90.** Dieselbe Kette wie PM-117 und PM-148, nur durch ein
+    gestrichenes Wort ausgelöst. **Ungemessen: welche der 43 treffen beim
+    Umbenennen eine fremde Gewerke-Zeile, und wie teuer?** Die Produktfrage
+    dahinter — darf „kein Gewerk" wirklich „alle Kategorien" heißen? — gehört
+    Engineering.
+30. **Gemessen ist nur das Weglassen, nicht das Ersetzen.** 101 ist eine
+    Untergrenze. DC-145 hat am verworfenen ersten Entwurf gezeigt, dass ein
+    getauschtes Wort auch dort kostet, wo Weglassen nichts kostet
+    (`Fassade mit Hochdruck reinigen`: Treffer bleibt, Score 0,94 → 0,67).
+    Eine Messung über Ersetzungen braucht eine Liste plausibler Synonyme —
+    die gibt es im Code nicht, und ausgedacht wäre sie wertlos. **Offen, wie
+    man sie ehrlich baut.**
+31. **Die 92 stillen Wortabhängigkeiten, Fall für Fall.** Gezählt und in der
+    Skript-Ausgabe aufgeführt, aber nicht bewertet: welche davon würde eine
+    realistische Umbenennung überhaupt treffen? Das ist der eigentliche Rest
+    von Punkt 27 und die Vorarbeit für jede weitere Umbenennungsrunde nach
+    DC-145.
+
+**Offen bleiben** aus den älteren Abschnitten: **M.1** (teilweise), **M.3**,
+**M.5**, Mittags-Punkt 7, Nachmittags-**Punkt 10**, die **Punkte 15, 16, 17,
+18** vom 17.09. abends sowie **19**, **22**, **24** und **28**. **Punkt 13,
+23 und 27 sind zu; 12, 14 und 21 waren es schon.** **Punkt 26** (ist ein
+Gewerk aktiv, wenn es kein Geld kann) bleibt der größte Hebel — er ist eine
+Entscheidung für Sandy, kein Messauftrag. Der größte **messbare** ist jetzt
+**Punkt 29**, weil er dieselbe Kette betrifft wie PM-148 und beim nächsten
+Umbenennen scharf wird.
+
+**Fallbasis nach diesem Lauf: 151.**
+
+*Prüfmeister · 2026-09-23*
+
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
