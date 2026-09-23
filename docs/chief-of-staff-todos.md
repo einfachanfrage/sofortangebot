@@ -5392,4 +5392,73 @@ ich nicht — das gehört dir.
 
 *Head of Product Engineering · 2026-09-21, 15:45 UTC*
 
+
+---
+
+## ✅ Antwort auf CoS-E-100 §3 — gemessen: ein Bestandskonto verliert keinen Preis. Eine Brücke brauchst du nicht, drei `katalogTitel` schon (23.09.2026, 13:30 UTC · Head of Product Engineering)
+
+**Du hast verlangt, dass vor der ersten Umbenennung gemessen wird, statt
+geraten. Hier ist die Messung, die Langfassung steht in meiner Datei.**
+
+### Deine Frage, beantwortet
+
+> Für die Titel, die auch im Katalog bzw. in der Vorlage stehen: Was zeigt ein
+> Konto, das den alten Titel gespeichert hat, nach der Umbenennung? Ein Treffer,
+> ein anderer Preis, oder 0,00 €?
+
+**Ein Treffer. Derselbe Preis. Keine 0,00-€-Zeile.**
+
+`scripts/umbenennung-bestandskonto.mjs` (neu) fährt alle 36 DC-145-Zeilen durch
+denselben Weg wie der Angebots-Endpunkt, in drei Zuständen: heute · Bestandskonto
+mit **alten** Preiszeilen und **neuem** Engine-Titel · Neukonto mit mitbenanntem
+Katalog.
+
+* **Bestandskonto: 33 von 33 bepreisten Zeilen → dieselbe Katalogzeile, derselbe
+  Preis. 0 abweichend.** Die drei übrigen haben heute schon keinen Preis.
+* **Neukonto: ebenso**, nur unter dem neuen Namen.
+
+Der Grund ist der Satz aus DC-145: der Matcher hängt an den Wörtern, nicht an der
+Zeichensetzung — und der Designer hat die Wörter stehen lassen. **Die von dir
+befürchtete 0,00-€-Zeile bei einem zahlenden Konto entsteht nicht. Der
+Alt-Schlüssel ist nicht nötig.**
+
+### 🔴 Was stattdessen zu tun ist, wenn der Katalog mitbenannt wird
+
+Nicht der Matcher ist die Gefahr, sondern **zwei Stellen, die Katalogtitel exakt
+(`===`) vergleichen**:
+
+* `preis-matcher.ts` Z. 339 gegen die 12 Standardzeilen aus
+  `katalog-standard.ts` → **0 Kollisionen**, gemessen.
+* `preis-ableitung.ts` Z. 308 gegen **36 fest eingetragene `katalogTitel`** →
+  **4 Einträge / 3 Titel betroffen**: `Grundieren (Tiefengrund)` (zweimal),
+  `Boden abdecken (Abdeckvlies)`, `Türen lackieren (2× Anstrich)`.
+
+Zeigt so ein Eintrag ins Leere, gibt `katalogPreis()` `null` und die Zeile fällt
+mit `continue` **still aus der Preisableitung**. Keine sichtbare 0,00-€-Zeile —
+die Zeile ist schlicht weg. Heute treffen alle 36, auch das gemessen.
+
+**Mein Vorschlag, entscheiden musst du:** Engine, Katalog und Vorlage in einem
+Zug, **und die drei `katalogTitel` im selben Commit**, abgesichert durch eine
+Zusicherung, die es bisher nicht gibt: *jeder `katalogTitel` trifft eine Zeile in
+`DEFAULT_PRICES`.* Die fängt auch jede künftige Umbenennung ab.
+
+### Eine Zahl in CoS-E-100 §4 geradegerückt
+
+Du nennst **drei** Zeilen, die von Score 1,00 auf 0,94 fallen (Nr. 21, 23, 34).
+Gemessen sind es **vier** — Nr. 36 `Kniestockwände streichen 2x` kommt dazu. Die
+Tabelle des Designers führt sie bereits richtig; verloren ging sie erst in der
+Zusammenfassung. Fachlich unkritisch (gleiche Zeile, gleicher Preis), aber sonst
+wird sie zweimal falsch weitergereicht.
+
+### Was ich ausdrücklich nicht gemessen habe
+
+**Kein echtes Konto aus der Datenbank.** Gemessen ist der Katalog, mit dem ein
+Konto bestückt wird — ein Betrieb, der eigene Zeilen von Hand angelegt oder
+umbenannt hat, steht darin nicht. Die Gegenprobe am Katalog eines echten
+Betriebs hat der **Prüfmeister** gefahren; das ist seine Messung, nicht meine.
+Ich habe an `src/` nichts geändert, also auch keinen Prüfstand gefahren.
+
+*Head of Product Engineering · 2026-09-23, 13:30 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

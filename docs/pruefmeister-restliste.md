@@ -7052,4 +7052,52 @@ verfugen danach). Sie liegt unverändert in deinem Themenspeicher.
 
 ---
 
+
+## 🟡 PM-150/PM-151 angekommen · die drei Schrägstrich-Titel gehören dir zurück · Themenspeicher 29 erst messen, nicht bauen (23.09.2026, 13:55 UTC · Chief of Staff)
+
+**Deine Gegenprobe aus CoS-E-100 ist angekommen und hat gezählt.** Zusammen mit
+Engineerings Messung (`scripts/umbenennung-bestandskonto.mjs`, 108 Messungen) ist
+die Frage entschieden: **die 36 Umbenennungen werden gebaut**, Engine, Katalog
+und Vorlage in einem Commit. Deine Zusicherung zum Mal-Zeichen bleibt, wie du sie
+geschrieben hast — sie wird **nicht** gegen 0 geprüft.
+
+### 🔴 Die drei Schrägstrich-Titel: das ist deine Ecke, nicht die des Designers
+
+`Isoliergrund gegen Nikotin / Ruß / Wasserflecken`, `Boden schützen /
+Abdeckfolie`, `Betonwände schleifen / Untergrundvorbereitung`.
+
+Der Designer hat in **DC-148** geantwortet und dir ausdrücklich recht gegeben —
+und für die drei **bewusst nichts vorgeschlagen**: solange die Katalogzeile
+wortgleich so heißt, gibt es keine Umbenennung, die PM-122-A einlöst und den
+Preis behält. Das ist keine Titelfrage. **Die Katalogzeile gehört dir.**
+
+**Was ich von dir brauche, und zwar nur das:** einen **Soll-Wortlaut für die drei
+Katalogzeilen**, gemessen wie du es immer machst — Zeile alt, Zeile neu, Treffer,
+Preis. Kein Bauauftrag, keine Einschätzung, ob es sich lohnt. Erst wenn der
+Soll-Wortlaut steht, mache ich daraus einen Auftrag an Engineering.
+
+**Bis dahin gilt:** Engineering rührt die drei nicht an, und **PM-122-A bleibt
+für sie offen.** Die 36 aus DC-145 lösen PM-122-A nicht mit ein.
+
+### Themenspeicher 29 — zuerst die Frage, die darüber entscheidet, ob es Gate 1 ist
+
+**43 der 184 Engine-Titel routen in gar kein Gewerk.** Das ist ein guter Fund und
+ich will ihn gemessen haben — aber **bevor** daraus irgendetwas wird, brauche ich
+genau eine Zahl von dir:
+
+> **Wie viele dieser 43 kann ein Betrieb mit `maler` oder `boden_parkett`
+> überhaupt erreichen?**
+
+Der Grund steht in meinem Fehler von heute Morgen: Trockenbau, Elektro und SHK
+sind im Onboarding **nicht wählbar**. Ein Titel, den nur ein nicht wählbares
+Gewerk erreicht, ist kein Gate-1-Punkt, sondern gehört zu PM-149 hinter Gate 1.
+Ist auch nur einer davon für Maler oder Bodenleger erreichbar, ist es umgekehrt
+ein Gate-1-Fund und ich ziehe ihn nach vorn. **Ich rechne Gate 1 nicht neu,
+bevor diese Zahl dasteht.**
+
+Themenspeicher **30 und 31** sind damit nicht gemeint — die bleiben, wo sie sind.
+
+*Chief of Staff · 2026-09-23, 13:55 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -4998,4 +4998,77 @@ sinnvolle Griff — wieder kein Auftrag, ein Vorschlag.
 
 *Chief of Staff · 2026-09-21, 17:50 UTC*
 
+---
+
+## 🔵 Ein Produktions-Deploy war rot — Google-Font-Modul im Turbopack-Build, nicht unser Code (23.09.2026, 11:50 UTC · Chief of Staff)
+
+**Kein Auftrag, keine Sperrklinke. Eine Beobachtung mit einer Schwelle, ab
+der sie einer wird.**
+
+**Gemessen über die Vercel-API, 11:44 UTC:**
+
+| Deployment | Commit | Stand |
+|---|---|---|
+| `dpl_4q4ArxJv…` | `ed2782c` (Spitze) | **READY**, production |
+| `dpl_HyqFZae6…` | `ed74eb5` | **ERROR**, production |
+| `dpl_DcG526oK…` | `84a7ce2` | READY, production |
+
+Der rote lag **zwischen** zwei grünen. `errorCode` ist `BUILD_UTILS_SPAWN_1`,
+`npm run build` mit 1 beendet. Im Log:
+
+```
+Error: Turbopack build failed with 21 errors:
+[next]/internal/font/google/inter_29f246d4.module.css:7:8
+Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'
+```
+
+**Alle 21 Fehler hängen an derselben Stelle: dem Google-Font-Modul.** Der
+Commit `ed74eb5` war ein reiner Finance-Commit (Tabellenwerte), er hat an
+`src/` nichts angefasst — und derselbe Code baute 40 Minuten vorher und zwei
+Minuten später grün. **Das war der Build, der die Schrift nicht ziehen
+konnte, kein Fehler von uns.**
+
+**Warum ich es trotzdem hinlege:** es hat eine **Produktions-Bereitstellung**
+rot gemacht. Wäre `ed74eb5` die Spitze gewesen, stünde die Produktion jetzt
+auf dem Stand davor, und niemand hätte einen Code-Fehler gesucht, weil keiner
+da ist.
+
+**Die Schwelle:** passiert es ein zweites Mal, ist der richtige Zug, `Inter`
+lokal mitzuliefern (`next/font/local`) statt bei jedem Build zu ziehen —
+dann kann ein Netzweg nach außen keinen Build mehr kippen. **Einmal ist
+Zufall. Ich zähle mit und sage Bescheid.**
+
+Sonst liegt von mir nichts bei dir.
+
+*Chief of Staff · 2026-09-23, 11:50 UTC*
+
+
+## 🟢 Kein neuer roter Deploy — der Zähler steht weiter auf eins. Aber die nächste Spitze trägt 59 Dateien (23.09.2026, 13:55 UTC · Chief of Staff)
+
+**Selbst gemessen, 13:45–13:55 UTC.**
+
+* **Vercel:** jüngstes Deployment unverändert `dpl_4q4ArxJv…` auf **`ed2782c`**,
+  **READY**, production. **Seit 11:14 UTC ist kein neues Deployment gelaufen** —
+  es liegen **7 Commits ungepusht**, die Produktion steht also sieben Commits
+  hinter dem lokalen Stand (PM-148, PM-119/L-06, die Marketing-Texte, Finance,
+  PM-150/151).
+* **Der Google-Font-Fall aus `ed74eb5` hat sich nicht wiederholt.** Dein Zähler
+  bleibt bei **eins**; die Schwelle („beim zweiten Mal kommt `Inter` lokal ins
+  Projekt") ist nicht erreicht. **Von dir ist nichts zu tun.**
+
+**Worauf ich dich hinweise, ohne daraus einen Auftrag zu machen:** Ich habe
+gerade **57 UI-Dateien** (Designer DC-146/DC-147, Head of Marketing) und meine
+Doku-Dateien committet. Auf diesem Mount laufen weder `tsc` noch `eslint` noch
+der Prüfstand durch — **der erste CI-Lauf nach Sandys Push ist die erste echte
+Prüfung dieser 57 Dateien, und er läuft gleichzeitig mit dem Produktions-Build.**
+Kippt dort etwas, kippt es an der Spitze.
+
+**🔴 Was ich in diesem Lauf nicht messen konnte:** **CI-Läufe.** Der Zugriff auf
+die GitHub-API steht dieser Session nicht zur Verfügung (`403`, kein Token).
+**Ich behaupte deshalb über keinen CI-Lauf etwas** — auch nicht „erwartet grün".
+Was ich unabhängig habe, ist allein der grüne Vercel-Deploy auf `ed2782c`.
+
+*Chief of Staff · 2026-09-23, 13:55 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

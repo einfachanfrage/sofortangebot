@@ -3254,4 +3254,200 @@ Steuerberater ab KW 41. **Von Sandy ist dazu nichts mehr nötig.**
 *Chief of Staff · 2026-09-23, 08:10 UTC*
 
 
+
+---
+
+## 🔴 Eine Entscheidung von dir: drei von sechs Gewerken erzeugen ein Angebot, auf dem jede Zeile 0,00 € steht (23.09.2026, 11:05 UTC · Chief of Staff)
+
+**Das ist die wichtigste offene Sache seit Tagen. Sie kostet dich eine
+Entscheidung, keine Arbeit.**
+
+### Was ist
+
+Das Produkt bietet im Onboarding **sechs Gewerke** an: Maler, Boden/Parkett,
+Fliesen, Trockenbau, Sanitär/Heizung, Elektro. Alle sechs sind eingeschaltet.
+
+**Bei dreien davon — Trockenbau, Sanitär/Heizung, Elektro — kommt ein Angebot
+heraus, auf dem alle Mengen, alle Räume und der ganze Rechenweg stimmen, aber
+bei jeder Zeile 0,00 € steht.** Kein Fehler, keine Warnung. **Es sieht nicht
+kaputt aus, es sieht fertig aus** — und genau das ist das Gefährliche: ein
+Handwerker könnte so ein Blatt an seinen Kunden schicken.
+
+Gefunden hat es der Prüfmeister heute Morgen. **Ich habe die zwei tragenden
+Stellen selbst im Code nachgesehen und bestätige sie:** die sechs Gewerke
+stehen tatsächlich alle auf „aktiv", und die Sortier-Datei kennt tatsächlich
+nur drei davon.
+
+### Zwei getrennte Ursachen
+
+**Die erste ist klein und schon eingeteilt.** Positionen der drei Gewerke
+werden intern dem Maler zugeordnet und finden deshalb ihre Preiszeile nicht.
+Das ist ein enger Bau, Engineering hat den Auftrag seit heute (CoS-E-099), und
+der Prüfmeister hat die Sicherung dafür schon mitgeliefert. **Da brauchst du
+nichts zu tun.**
+
+**Die zweite ist deine.** Auch wenn die Zuordnung repariert ist, findet von den
+zehn Begriffen, die das Produkt für diese drei Gewerke kennt, **genau einer**
+eine Preiszeile im Katalog. Die Wörter passen nicht zueinander:
+
+| Das Produkt sagt | Der Katalog sagt |
+|---|---|
+| `Ständerwand errichten (GK)` | `Trennwand 75mm, 1-lagig je Seite (GK), bis H 3,25m, Q2` |
+| `Leitungen verlegen` | `NYM-Leitung 3x1,5mm² verlegen` |
+| `Rohrleitungen erneuern` | `Trinkwasserleitung Kupfer DN 15 (1/2") verlegen` |
+
+### Deine Entscheidung — drei Wege
+
+| | Was passiert | Was es kostet |
+|---|---|---|
+| **A** | **Die drei Gewerke vorerst abschalten.** Sie verschwinden aus dem Onboarding, bis das Vokabular steht | klein und sofort. Das Produkt kann dann ehrlich nur Maler, Boden, Fliesen — was es heute ohnehin nur kann |
+| **B** | **Das Vokabular für alle drei Gewerke aufbauen** — die Begriffe des Produkts an den Katalog ziehen | groß. Drei Gewerke, 443 Katalogzeilen. Das ist Wochen, nicht Tage, und es bindet Engineering und Prüfmeister komplett |
+| **C** | **Jetzt A, später B.** Abschalten, und das Vokabular nach Gate 1 als eigenes Vorhaben aufsetzen | wie A jetzt, B verschoben |
+
+### Meine Empfehlung: **C**
+
+Du wolltest nie die schnelle Variante, sondern die vollständige — das gilt
+weiter, und **B kommt, nur nicht jetzt**. Der Grund für den Aufschub ist nicht
+Bequemlichkeit, sondern dass Gate 1 „erste begleitete Testnutzer" heißt und die
+Testnutzer Maler und Bodenleger sind. Drei halbfertige Gewerke im Onboardingtext
+bringen für Gate 1 **keinen einzigen Nutzen** und tragen das Risiko, dass genau
+so ein 0,00-€-Blatt bei einem echten Kunden landet. **Abschalten kostet uns
+nichts, was wir heute hätten** — es macht nur sichtbar, was ohnehin der
+Wahrheit entspricht.
+
+**Wenn du B sofort willst, geht das auch** — dann sag es, und ich stelle
+Engineering und Prüfmeister darauf um. Dann verschiebt sich Gate 1.
+
+**Antworte einfach mit A, B oder C.** Alles Weitere läuft ohne dich.
+
+*Chief of Staff · 2026-09-23, 11:05 UTC*
+
+
+
+---
+
+## 🔴 Korrektur zu meiner Vorlage von 11:05 — die Prämisse war falsch. Sandys Antwort war „C", und „A" ist längst der Zustand (23.09.2026, 11:45 UTC · Chief of Staff)
+
+**Sandy hat um 11:35 UTC mit „C" geantwortet** (jetzt abschalten, Vokabular
+nach Gate 1). **Ihre Antwort steht und ist richtig einsortiert — aber die
+Vorlage, auf die sie geantwortet hat, enthielt einen Fehler von mir.**
+
+### Was ich falsch aufgeschrieben habe
+
+Ich habe geschrieben: *„Das Produkt bietet im Onboarding sechs Gewerke an…
+alle sechs sind eingeschaltet"*, und dazu gesagt, ich hätte das **selbst im
+Code nachgesehen**. Nachgesehen habe ich `KLEINMATERIAL_CONFIG` in
+`gewerke-config.ts` — dort steht `aktiv: true` an sechs Gewerken. **Diese
+Schalter haben mit dem Onboarding nichts zu tun.** Sie sagen nur, ob auf ein
+Angebot dieses Gewerks eine Kleinmaterial-Pauschale aufgeschlagen wird.
+
+**Was das Onboarding wirklich anbietet, steht zwanzig Zeilen höher in
+derselben Datei** und ich habe es jetzt aufgeschlagen:
+
+```
+AKTIVE_GEWERKE        = maler, boden_parkett          ← zwei
+INAKTIVE_GEWERKE_IDS  = fliesen, trockenbau, sanitaer_heizung, elektro, … ← sechzehn
+```
+
+`onboarding/[step]/page.tsx` Z. 14 und 532 rendert **ausschließlich
+`AKTIVE_GEWERKE`**. **Ein Betrieb kann Trockenbau, Elektro und Sanitär/Heizung
+gar nicht auswählen.** Auch Fliesen nicht.
+
+### Was daraus folgt
+
+* **Die Wahl „A — die drei Gewerke abschalten" ist bereits der Zustand.** Es
+  gibt nichts abzuschalten. Sandys „C" bedeutet damit praktisch: **so lassen,
+  Vokabular nach Gate 1** — genau da, wo die Sache hingehört. **Ihre
+  Entscheidung war richtig und ändert sich durch die Korrektur nicht.**
+* **Die Dringlichkeit war überzogen.** Ich habe geschrieben, ein Handwerker
+  könne ein 0,00-€-Blatt an seinen Kunden schicken. Über die Gewerke-Auswahl
+  kann er das nicht — der Weg dorthin ist zu.
+* **Ein echter Rest bleibt, und der ist nicht klein:** eine Trockenbau- oder
+  Elektro-**Position**, die ein **Maler** oder **Bodenleger** diktiert
+  („abgehängte Decke einziehen"), läuft weiterhin in die Maler-Zeile und kann
+  als 0,00-€-Zeile im Angebot landen. **Das ist PM-148, das ist echt, und das
+  bleibt Bauauftrag.** Es ist nur ein Sonderfall im Angebot eines aktiven
+  Gewerks, kein kaputtes Gewerk.
+
+### Woher der Fehler kam — ein Satz, weil es sich wiederholen kann
+
+Der Prüfmeister hat dieselbe Spalte gelesen und seine Gewerke-Tabelle darauf
+gebaut. Ich habe seine Tabelle **nicht** nachgerechnet, sondern nur „die zwei
+tragenden Code-Stellen" — und dabei denselben falschen Schalter aufgeschlagen
+wie er. **Zwei unabhängige Prüfungen, derselbe Fehler**, weil beide an
+derselben Stelle stehen blieben. Die Lehre steht in den Rollen-Dateien:
+Ein Schalter, der `aktiv` heißt, sagt nicht, **wofür** er aktiv ist.
+
+**Von Sandy ist dazu nichts mehr nötig.** „C" ist eingetragen, PM-148 läuft als
+Bauauftrag weiter, PM-149 (Vokabular) ist als Vorhaben nach Gate 1 geparkt.
+
+*Chief of Staff · 2026-09-23, 11:45 UTC*
+
+
+
+---
+
+## 🔵 Zwei Minuten in Stripe: wie heißt unser Produkt dort? (23.09.2026, 13:15 UTC · Head of Marketing)
+
+**Nicht dringend, nichts hängt daran — aber nur du kannst nachsehen.**
+
+Ich habe heute den Tarifnamen **„Pro"** von den Knöpfen in der App genommen.
+Es gibt seit deiner Entscheidung vom 03.09. nur noch **einen** bezahlten
+Tarif; „Pro" war der Name aus dem Modell mit zwei Tarifen. Wo vorher
+„Auf Pro upgraden" stand, steht jetzt **„Abo abschließen"**.
+
+**Eine Fläche kann ich dabei nicht sehen: die letzte vor der Zahlung.** Die
+Bezahlseite von Stripe und die Rechnung darunter zeigen den Produktnamen, der
+in **deinem** Stripe-Konto hinterlegt ist. Im Code stehen nur die Preis-IDs
+(`STRIPE_PRICE_STANDARD`, `STRIPE_PRICE_FOUNDER`) — den Namen liefert Stripe.
+
+**Was ich von dir bräuchte, wenn du ohnehin einmal in Stripe bist:**
+
+> Wie heißen die beiden Produkte/Preise dort? Steht bei einem davon noch
+> „Pro", „Starter" oder „Jahresabo"?
+
+**Warum es zählt:** Es ist der letzte Bildschirm vor der Kreditkarte und der
+erste Text auf der Rechnung. Steht dort ein Tarifname, den es nicht mehr gibt,
+hat der Betrieb im letzten Moment das Gefühl, etwas anderes zu kaufen als das,
+was er auf der Seite gelesen hat. **Es hält nichts auf** — bis zum ersten
+zahlenden Betrieb sieht diesen Bildschirm niemand.
+
+Einen Namen für den bezahlten Tarif **brauchen wir nicht**. „Sofortangebot,
+29 € im Monat" ist genug; ein Produkt mit einem Tarif braucht keine
+Tarifmarke. Sag mir einfach, was dasteht, dann sage ich dir, ob es bleiben
+kann.
+
+*Head of Marketing · 23.09.2026, 13:15 UTC*
+
+
+## 🔴 Nachtrag zum Löschrecht (Punkt vom 21.09.) — aus „spart Zeit" ist „blockiert stündlich" geworden (23.09.2026, 13:55 UTC · Chief of Staff)
+
+**Nichts Neues zu tun — derselbe eine Klick. Nur ist er jetzt dringend.**
+
+Am 21.09. habe ich dir geschrieben, das Löschrecht für den Projektordner spare
+dem Team Zeit. **Heute ist es zum ersten Mal ein Stillstand gewesen:** von
+**11:14 bis 12:21 UTC**, eine Stunde und sieben Minuten, lag eine tote
+Git-Sperrdatei im Ordner. In dieser Stunde hätte **niemand aus dem Team
+committen können**. Verloren ist nichts — der Head of Product Engineering hat
+die Sperre zur Seite geschoben und weitergearbeitet.
+
+**Warum es wiederkommt:** Git legt bei jedem Speichern eine Sperrdatei an und
+räumt sie danach selbst weg. **Dieser Ordner lässt das Wegräumen nicht zu.**
+Also bleibt nach **jedem** Commit eine tote Sperre liegen, und der nächste
+Commit scheitert daran. Lesen und Pushen gehen weiter, nur Speichern nicht.
+Ich habe die Sperre in diesem Lauf wieder zur Seite geschoben — das ist jedes
+Mal ein halber Durchlauf, den wir ans Aufräumen verlieren.
+
+**Was du tust:** In einer **ganz normalen Unterhaltung** mit mir (nicht in einem
+geplanten Lauf — dort kann ich dich nicht fragen) schreibst du mir einen Satz
+wie *„frag das Löschrecht an"*. Dann kommt bei dir ein Fenster mit dem
+Ordnernamen, und du klickst auf Erlauben. **Fünf Sekunden.**
+
+**Was damit nicht passiert:** Ich lösche nichts von dir. Das Recht wird für
+Git-Sperrdateien gebraucht — 0 Byte groß, im versteckten `.git`-Ordner. Deine
+Dateien fasst niemand an; alles Gelöschte bliebe ohnehin in Git nachsehbar.
+
+*Chief of Staff · 2026-09-23, 13:55 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

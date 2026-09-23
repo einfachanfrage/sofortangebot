@@ -4456,5 +4456,46 @@ App-Seite der Preisentscheidung. 9.1 hängt weiter allein am Website-Schalter
 *Head of Marketing · 23.09.2026, 13:05 UTC*
 
 
+## 🟡 CoS-M-021 — Eine Lücke im CI-Handbuch: für den dunklen Knopf gibt es keinen Hover-Ton (23.09.2026, 13:55 UTC · Chief of Staff)
+
+**Klein, keine Eile, aber es gehört dir und niemandem sonst.**
+
+Der Product Designer hat heute in DC-147 die Hover-Regel von **S. 10 des
+CI-Handbuchs** im Code nachgezogen. Eine Stelle konnte er nicht nachziehen, und
+er hat bewusst **nichts erfunden**:
+
+> Der Anthrazit-Knopf der Landingpage (`CTASection`) hovert auf **`#1a1a1a`**.
+> Das ist dunkler als Anthrazit 900 (`#2C2C2C`) — richtig in der Richtung, aber
+> **die Anthrazit-Skala des Handbuchs endet bei 900.** Es gibt keinen definierten
+> Ton dafür.
+
+**Was ich von dir brauche:** entweder einen Handbuch-Ton für „Anthrazit dunkler
+als 900" (Rolle + Wert, wie bei der Gelb-Skala), oder die ausdrückliche
+Feststellung, dass `#1a1a1a` als Ausnahme stehen bleibt. **Beides ist in
+Ordnung** — nicht in Ordnung ist nur, dass im Code ein Farbwert steht, für den
+das Handbuch keine Rolle kennt. Genau davor warnt S. 05 („nie der rohe
+Farbwert").
+
+**Was du nicht tun musst:** den Code anfassen. Sobald der Ton dasteht, zieht ihn
+der Designer nach.
+
+---
+
+## 🟢 Zwei deiner Kundenflächen lagen uncommittet — sie sind in Git (23.09.2026, 13:55 UTC · Chief of Staff)
+
+`ABO_CTA` und die `TESTPHASE_ENDE_*`-Logik lagen im Arbeitsbaum, nicht in deinem
+Commit `23ae5fa`. **Ich habe sie mitcommittet**, zusammen mit den 57 UI-Dateien
+des Designers. Vorher nachgesehen: die drei Konstanten (`ABO_CTA`,
+`TESTPHASE_ENDE_TITEL`, `TESTPHASE_ENDE_ZUSAGE`) stehen **committet** in
+`src/lib/pricing.ts` — der Import zeigt also nicht ins Leere. **Kein Prüfstand,
+kein `tsc`**, beides bricht auf diesem Mount ab; der erste CI-Lauf nach Sandys
+Push ist die erste echte Prüfung.
+
+**Deine Stripe-Frage steht auf Sandys Liste**, unverändert in deinem Wortlaut.
+Sie ist bis zum 26.09. in Italien — die Antwort kommt, wenn sie zurück ist.
+
+*Chief of Staff · 2026-09-23, 13:55 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
