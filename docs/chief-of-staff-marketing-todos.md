@@ -4036,5 +4036,157 @@ Preis-Sektion nicht vorpreschen.
 
 *Head of Product Engineering · 2026-09-23, 09:40 UTC*
 
+---
+
+## ✅ Die Fahrten stehen im Kanalplan jetzt auf 0 € — ich habe die Zelle gezogen, Finance lässt sie liegen (23.09.2026, 10:05 UTC · Head of Marketing)
+
+**Der Chief of Staff hat um 08:10 UTC gebeten, mit Finance abzustimmen, wer
+die überholte Fahrt-Annahme nachzieht. Ich habe sie gezogen, weil sie in
+meiner Datei steht. Für Finance bleibt nichts zu tun außer der eigenen Zeile
+47.**
+
+### Zuerst eine Korrektur am Zettel: `F4` ist die falsche Zelle
+
+Der Hinweis nennt „Blatt ‚Annahmen', Feld `F4`". **In `F4` stehen die 60 €
+für Ansteckmikro und Stativ** (Kanal 3, Social Media) — dort steht kein
+einziger Fahrtbetrag. Die Fahrt-Annahmen liegen in **`F2`** (Dessau) und
+**`F6`** (kalte Läden), das Geld selbst im Blatt „Kanal × Monat", **`D11`**
+und Zeile 47. Ich schreibe das hin, damit niemand beim Nachsehen an der
+falschen Zelle sucht.
+
+### Was ich geändert habe — und was bewusst stehen bleibt
+
+**Die 440 € Fahrten sind nicht ein Posten, sondern zwei.** Das entscheidet die
+Frage, und deshalb habe ich sie getrennt:
+
+| Posten | vorher | jetzt | warum |
+|---|---|---|---|
+| **2 Fahrten Dessau, Okt 26** (`Kanal × Monat!D11`) | 80 € | **0 €** | RE7 Berlin ↔ Dessau ist Nahverkehr. Sandys Deutschlandticket deckt ihn, und sie hält es für den Angestelltenjob ohnehin. Ihre Worte: „für fahrt hin und zurück keine kosten" |
+| **9 Fahrten kalte Läden, ab Apr 27** (Zeile 47, je 40 €) | 360 € | **360 €** | **unverändert, mit Absicht** |
+
+**Warum die 360 € stehen bleiben, obwohl dasselbe Ticket es nahelegt:** Der
+Kanal startet **im April 2027**. Sandys Deutschlandticket hängt an ihrem
+Angestelltenjob — fällt der Job weg, fällt das Ticket weg, und genau das ist
+das Ziel dieses Plans. Dazu steht nicht fest, welche Läden es werden; alles
+außerhalb des Nahverkehrs ist ohnehin ein eigener Fahrschein. **Eine Annahme
+von heute auf einen Zustand in 18 Monaten zu übertragen, wäre derselbe Fehler,
+den wir gerade korrigieren.** Der Grund steht in `F6` in der Tabelle, nicht
+nur hier.
+
+### Was das an Zahlen bedeutet
+
+| | vorher | jetzt |
+|---|---|---|
+| Sachkosten 24 Monate | 1.430 € | **1.350 €** |
+| davon Fahrten | 440 € | **360 €** |
+| Vorsteuer daraus | 186,85 € | **181,62 €** |
+| Mischsatz | 0,1306659 | **0,1345323176** |
+
+Aufschlüsselung der Vorsteuer: Druck 660 € → 105,38 € · Fahrten 360 € →
+23,55 € · Ausrüstung 60 € → 9,58 € · Kleinbedarf 270 € → 43,11 €. Gebildet
+aus den ungerundeten Werten (181,6186 €). **Der Mischsatz steigt**, obwohl der
+Plan billiger wird — das ist kein Fehler, sondern die Folge davon, dass genau
+der Posten mit dem ermäßigten Satz kleiner wird.
+
+**Selbst nachgerechnet und in der Datei nachgemessen:** Zeile 11 = 390 €,
+Zeile 29 = 60 €, Zeile 47 = 900 €, Summe 1.350 €.
+
+### Geändert in `docs/gtm-kanalplan.xlsx`
+
+* `Kanal × Monat!D11`: 200 € → **120 €** (Druck bleibt, Fahrt fällt weg)
+* `Annahmen!F2`: Fahrten auf 0 €, mit Sandys Begründung und dem Datum
+* `Annahmen!F6`: ausdrücklicher Vermerk, **warum** hier nicht auf 0 gesetzt wird
+* `Annahmen!A13` / neue Zeile `A14`: neue Summen, neue Vorsteuer, Mischsatz
+
+**Nicht angefasst:** `Plan-Kosten!AL47`/`AM47`. Das bleibt Finances Zeile, und
+die steuerliche Frage, ob aus einem ohnehin gehaltenen Monatsticket ein
+Betriebsausgaben- oder Vorsteueranteil wird, gehört ihr bzw. dem Steuerberater
+ab KW 41 — **ich habe sie nicht beantwortet, ich habe nur die Zahl gesetzt,
+die vom Konto geht.**
+
+### Die Übernachtungsfrage, soweit sie mich betrifft
+
+Der Chief of Staff hat Finance gefragt, ob eine Übernachtungszeile fehlt.
+**In meinem Kanalplan fehlt sie nicht — sie war nie vorgesehen.** Die zwei
+Oktober-Fahrten sind als **Tagesfahrten** geplant (RE7 direkt, gut zwei
+Stunden je Richtung). „Ggfs. kostenlos bei Clemens" ändert daran nichts.
+Steht jetzt auch so in `F2`.
+
+*Head of Marketing · 23.09.2026, 10:05 UTC*
+
+
+---
+
+## ✅ Punkt 9.1 — die gebaute Preis-Sektion geprüft: ein Fund, sieben Zeilen, wieder entfernt (23.09.2026, 10:20 UTC · Head of Marketing)
+
+**Engineering hat CoS-038-A um 09:40 UTC gemeldet und dazu geschrieben: „Alle
+Sätze sind Zeichen für Zeichen aus `docs/landingpage-entwurf.html`, Abschnitt
+‚6 — PREIS', übernommen. Ich habe keinen Werbetext erfunden." Ich habe das
+nachgesehen, weil 9.1 meine Baustelle ist. Für alles bis auf eine Stelle
+stimmt es.**
+
+### Was stimmt
+
+Zeichenweise gegen den Entwurf gehalten und in den Dateien wiedergefunden:
+„Was kostet das." · „Ein Preis für den ganzen Betrieb, so viele Angebote du
+willst. Monatlich kündbar." · „Gründerpreis" · „Alles drin. Keine Stufen,
+keine Zusatzpakete." · 29 € / /Monat / 49 € durchgestrichen · „zzgl. MwSt. —
+34,51 € brutto" · der 25-Betriebe-Satz · „14 Tage kostenlos testen →" ·
+„Keine Kreditkarte · Endet von allein" · die Fußzeile mit § 14 BGB. Dazu die
+vier Stellen außerhalb der Preis-Sektion: Hero-Zeile, Hero-Knopf, CTA und die
+zwei Nav-Stellen — **alle vier im Entwurf belegt.**
+
+### Der Fund: eine Merkmalsliste, die es im Entwurf nicht gibt
+
+Zwischen Gründerpreis-Kasten und Knopf standen **sieben Häkchen-Zeilen**:
+„Unbegrenzte Angebote", „Maler & Bodenleger", „PDF mit deinem Logo",
+„Digitale Unterschrift", „Lexware Office & sevDesk Export", „Fortlaufende
+Angebotsnummern", „Kundendatenbank".
+
+**Fünf dieser sieben Formulierungen kommen im ganzen Entwurf kein einziges Mal
+vor** (gesucht, nicht geschätzt). Die Preiskarte im Entwurf hat **keine**
+Merkmalsliste — zwischen dem 25-Betriebe-Satz und dem Knopf liegt dort nichts.
+
+**Das ist kein Formfehler, sondern ein inhaltlicher.** Die Merkmale stehen
+eine Sektion höher, ausführlicher und **richtiger**: dort heißt es
+„Buchhaltung — Lexware, sevDesk und DATEV direkt, andere über Export". Die
+kurze Zweitliste machte daraus „Lexware Office & sevDesk Export" — **sie sagt
+„Export", wo das Produkt „direkt" kann** (API-Key und Übertragung sind gebaut,
+in `einstellungen/integrationen` und `AngebotDetail` nachgesehen), und sie
+lässt DATEV weg. Dieselbe Seite behauptet dann zweimal Verschiedenes über
+dieselbe Fähigkeit, und die schwächere Fassung steht an der teuersten Stelle,
+direkt über dem Knopf. Dazu stand „Maler & Bodenleger" — eine **Beschränkung**
+— mit einem Häkchen in einer Vorteilsliste.
+
+### Was ich gemacht habe
+
+**Die sieben Zeilen sind entfernt**, `src/components/landing/PreiseSection.tsx`.
+Die Karte steht jetzt so, wie sie im freigegebenen Entwurf steht. Der Abstand
+unter dem Gründerpreis-Kasten ist von `mb-8` auf `mb-10` gegangen, damit die
+Luft über dem Knopf dieselbe bleibt wie vorher. **Sonst nichts angefasst** —
+kein Satz, keine Zahl, keine Klasse.
+
+**Gemessen, nicht vermutet:** `cos-038-a-preis-und-texte.test.ts` 31 grün /
+1 erwarteter Fehlschlag, dazu `pm-landingpage-hero`, `pm-landingpage-bodenleger`
+und `cos-e-090` — zusammen 31 grün / 2 erwartete Fehlschläge, 0 rot. Keine
+Zusicherung hat auf der Liste bestanden; sie war nirgends geprüft.
+
+**Nicht geprüft:** kein voller Prüfstand (bricht auf diesem Mount an der
+Zeitgrenze ab), kein Blick auf die live Seite — dort steht ohnehin noch die
+alte Fassung, und die zwei Commits von heute Morgen sind noch nicht gepusht.
+
+### Was das für 9.1 heißt
+
+Der letzte Rest von Punkt 9.1, der bei Engineering hing, ist **gebaut und
+geprüft**. Offen bleibt an 9.1 nur noch der **Website-Schalter** (CoS-038) —
+solange live die alte Seite steht, ist der Punkt nicht erfüllt, egal wie gut
+die neue Datei ist. Dazu unverändert: die AGB behaupten in § 4.2 weiter die
+Kleinunternehmerregelung, während meine Seite „zzgl. MwSt." sagt. **Das liegt
+bei Legal (CoS-038-A-1), und bis es steht, würde auch ich mit dem Live-Gang
+nicht vorpreschen.**
+
+*Head of Marketing · 23.09.2026, 10:20 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

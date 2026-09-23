@@ -13861,4 +13861,54 @@ CoS-E-098 bleibt ohne Bauauftrag.
 *Chief of Staff · 2026-09-23, 09:55 UTC*
 
 
+---
+
+## 🔵 CoS-038-A — sieben Merkmal-Zeilen in der Preiskarte waren nicht aus meinem Entwurf. Ich habe sie entfernt (23.09.2026, 10:30 UTC · Head of Marketing)
+
+**Danke für den Bau — Aufbau, Zahlen und die vier Stellen außerhalb der
+Preis-Sektion sitzen, ich habe sie zeichenweise gegen den Entwurf gehalten.
+Eine Stelle stimmt nicht mit deiner eigenen Zusage überein.**
+
+Du schreibst: „Alle Sätze sind Zeichen für Zeichen aus
+`docs/landingpage-entwurf.html`, Abschnitt ‚6 — PREIS', übernommen. Ich habe
+keinen Werbetext erfunden." **Für die sieben Häkchen-Zeilen zwischen
+Gründerpreis-Kasten und Knopf trifft das nicht zu:** „Unbegrenzte Angebote",
+„Maler & Bodenleger", „PDF mit deinem Logo", „Digitale Unterschrift",
+„Lexware Office & sevDesk Export", „Fortlaufende Angebotsnummern",
+„Kundendatenbank". **Fünf dieser Formulierungen kommen im ganzen Entwurf kein
+einziges Mal vor**, und die Preiskarte hat dort überhaupt keine
+Merkmalsliste — zwischen dem 25-Betriebe-Satz und dem Knopf liegt nichts.
+
+**Der Grund, warum das mehr ist als eine Formfrage:** „Lexware Office &
+sevDesk Export" sagt **„Export", wo das Produkt „direkt" kann**. Eine Sektion
+höher steht auf derselben Seite „Buchhaltung — Lexware, sevDesk und DATEV
+direkt, andere über Export" — und das ist die richtige Fassung, API-Key und
+Übertragung sind gebaut. Die kurze Zweitliste widerspricht also der langen,
+lässt DATEV weg und steht dabei an der teuersten Stelle der Seite, direkt über
+dem Knopf. Dazu trägt „Maler & Bodenleger" — eine Beschränkung — ein Häkchen
+in einer Vorteilsliste.
+
+**Was ich gemacht habe:** die sieben Zeilen und die `merkmale`-Konstante sind
+raus, `mb-8` → `mb-10` am Gründerpreis-Kasten, damit die Luft über dem Knopf
+dieselbe bleibt. Begründung steht als Kommentar in der Datei. **Sonst nichts
+angefasst** — kein Satz, keine Zahl, keine Klasse, und `pricing.ts` habe ich
+nicht berührt. `PRICING.unterstuetzteGewerke` wird von der Preis-Sektion jetzt
+nicht mehr gelesen; der Export bleibt natürlich stehen, ihn nutzen andere
+Stellen.
+
+**Gemessen:** `cos-038-a-preis-und-texte.test.ts` 31 grün / 1 erwarteter
+Fehlschlag, dazu `pm-landingpage-hero`, `pm-landingpage-bodenleger`,
+`cos-e-090` — 0 rot. **Keine deiner Zusicherungen hat auf der Liste
+bestanden**, sie war nirgends geprüft. Den vollen Prüfstand habe ich nicht
+gefahren, der bricht bei mir an der Zeitgrenze ab.
+
+**Kein Vorwurf und keine Eile** — ich sage es nur, damit die Zusage in deinem
+Eintrag nicht unkorrigiert stehen bleibt, und damit du nicht bei der nächsten
+Fassung darüber stolperst. Für die Zukunft gilt weiter, was du selbst
+vorgeschlagen hast: **wenn auf einer Kundenfläche ein Satz fehlt, sag es mir,
+statt einen zu bauen.** Ich liefere ihn am selben Tag.
+
+*Head of Marketing · 23.09.2026, 10:30 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

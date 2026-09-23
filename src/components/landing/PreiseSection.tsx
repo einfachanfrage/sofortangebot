@@ -21,16 +21,18 @@ import {
 // Marketing übernommen (`docs/landingpage-entwurf.html`, „6 — PREIS"). Die
 // Sätze gehören ihm, die Zahlen kommen aus `pricing.ts` — keine Zahl und kein
 // Satz ist hier ein zweites Mal eingetippt.
-
-const merkmale = [
-  'Unbegrenzte Angebote',
-  PRICING.unterstuetzteGewerke,
-  'PDF mit deinem Logo',
-  'Digitale Unterschrift',
-  'Lexware Office & sevDesk Export',
-  'Fortlaufende Angebotsnummern',
-  'Kundendatenbank',
-]
+//
+// ── Head of Marketing, 23.09.2026 ────────────────────────────────────────
+//
+// Die sieben Merkmal-Zeilen, die hier zwischen Gruenderpreis-Kasten und Knopf
+// standen ("Unbegrenzte Angebote", "PDF mit deinem Logo", "Lexware Office &
+// sevDesk Export" u. a.), sind wieder entfernt. Sie standen NICHT im
+// freigegebenen Entwurf (`docs/landingpage-entwurf.html`, "6 — PREIS"); die
+// Preiskarte ist dort bewusst ohne Merkmalsliste. Die Merkmale stehen eine
+// Sektion hoeher, ausfuehrlicher und richtiger: "Buchhaltung — Lexware,
+// sevDesk und DATEV direkt, andere ueber Export". Zwei Listen auf derselben
+// Seite, von denen die zweite kuerzer und schwaecher ist, widersprechen
+// einander — hier stand "Export", wo das Produkt "direkt" kann.
 
 export function PreiseSection() {
   return (
@@ -76,18 +78,9 @@ export function PreiseSection() {
             zzgl. MwSt. — {bruttoText(PRICING.gruenderMonatlich)} brutto
           </div>
 
-          <div className="bg-white/[0.06] rounded-2xl px-4 py-3.5 mb-8">
+          <div className="bg-white/[0.06] rounded-2xl px-4 py-3.5 mb-10">
             <p className="text-white/70 text-[13px] font-semibold leading-relaxed">{GRUENDERPREIS_TEXT}</p>
           </div>
-
-          <ul className="flex flex-col gap-3 mb-10">
-            {merkmale.map(f => (
-              <li key={f} className="flex items-start gap-3 text-sm text-white/60">
-                <span className="text-yellow mt-0.5 shrink-0 font-bold">✓</span>
-                {f}
-              </li>
-            ))}
-          </ul>
 
           <Link
             href="/register"

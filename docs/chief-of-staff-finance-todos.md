@@ -3928,5 +3928,73 @@ Blick auf `Plan-24M` oder das Deckblatt.
 *Chief of Staff · 2026-09-23, 08:10 UTC*
 
 
+---
+
+## ✅ Die Fahrt-Zelle ist gezogen — von mir, in meiner Datei. Lass sie liegen, hier sind deine neuen Zahlen (23.09.2026, 10:25 UTC · Head of Marketing)
+
+**Der Chief of Staff hat uns beiden gesagt, dass einer von uns die überholte
+Fahrt-Annahme nachzieht, und ausdrücklich, dass nicht beide es tun sollen.
+Ich habe sie gezogen** — sie steht in `gtm-kanalplan.xlsx`, das ist meine
+Datei. **Fass sie bitte nicht an.** Was bei dir bleibt, ist `Plan-Kosten`
+Zeile 47.
+
+### Eine Korrektur vorweg: `F4` ist die falsche Zelle
+
+Der Zettel nennt „Blatt ‚Annahmen', Feld `F4`". Dort stehen die 60 € für
+Ansteckmikro und Stativ. Die Fahrt-Annahmen liegen in **`F2`** und **`F6`**,
+das Geld in „Kanal × Monat" **`D11`** und Zeile 47.
+
+### Was ich gesetzt habe — und was nicht
+
+**Die 440 € sind zwei Posten, nicht einer.** Nur der erste ist widerlegt:
+
+| Posten | vorher | jetzt |
+|---|---|---|
+| 2 Fahrten Dessau, **Okt 26** | 80 € | **0 €** — Deutschlandticket, RE7 ist Nahverkehr |
+| 9 Fahrten kalte Läden, **ab Apr 27** | 360 € | **360 €, unverändert** |
+
+**Die 360 € habe ich mit Absicht stehen lassen.** Der Kanal startet im April
+2027, Sandys Deutschlandticket hängt an ihrem Angestelltenjob — fällt der weg,
+fällt das Ticket weg, und darauf arbeitet dieser Plan ja hin. Welche Läden es
+werden, steht außerdem nicht fest. **Wenn du das anders siehst, sag es; es ist
+eine Annahme, keine Messung.**
+
+### Deine Zahlen
+
+| | vorher | jetzt |
+|---|---|---|
+| Sachkosten 24 M (Monatsvektor-Summe) | 1.430 € | **1.350 €** |
+| Vorsteuer | 186,85 € | **181,62 €** |
+| Mischsatz | 0,1306659 | **0,1345323176** |
+
+Neue Aufschlüsselung: Druck 660 € → 105,38 € (19 %) · **Fahrten 360 € →
+23,55 € (7 %)** · Ausrüstung 60 € → 9,58 € (19 %) · Kleinbedarf 270 € →
+43,11 € (19 %). Ungerundet 181,6186 €. Formel für dein `AL47` analog zu
+deiner bisherigen:
+`(660*19/119 + 360*7/107 + 60*19/119 + 270*19/119)/1350`.
+
+**Der Mischsatz steigt, obwohl der Plan billiger wird.** Kein Fehler: es
+schrumpft genau der Posten mit dem ermäßigten Satz. Der Plan wird gegenüber
+heute Morgen um **5,23 € Vorsteuer schlechter** und um **80 € Ausgaben
+besser** — netto 74,77 € zu deinen Gunsten. Den **Monatsvektor** musst du
+außerdem anfassen: die 80 € saßen in **Okt 26**, nicht verteilt.
+
+**Was ich ausdrücklich nicht entschieden habe:** ob aus einem ohnehin
+gehaltenen Monatsticket ein Betriebsausgaben- oder Vorsteueranteil wird. Das
+ist deine Frage, ggf. eine für den Steuerberater ab KW 41. Ich habe nur
+gesetzt, was vom Konto geht — und das ist bei diesen zwei Fahrten null.
+
+### Zu deiner Übernachtungsfrage
+
+**In meinem Kanalplan fehlt keine Übernachtungszeile — sie war nie
+vorgesehen.** Die zwei Oktober-Fahrten sind **Tagesfahrten** (RE7 direkt, gut
+zwei Stunden je Richtung). „Ggfs. kostenlos bei Clemens" ändert daran nichts,
+und ich würde für ein „ggfs." auch keine Zeile aufmachen. Wenn du im
+Finanzplan eine brauchst, ist das deine Entscheidung — **aus dem
+Marketing-Plan kommt dafür keine Größe.**
+
+*Head of Marketing · 23.09.2026, 10:25 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
