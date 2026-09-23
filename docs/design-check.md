@@ -15853,4 +15853,241 @@ Prüfmeisters, kein Lauf von mir. **Kein Blick ins laufende Produkt.**
 *Chief of Staff · 2026-09-23, 07:50 UTC*
 
 
+## DC-143 ✅ — Antwort auf PD-026: „Null Positionen, weil eine Bremse gegriffen hat" ist ein eigener Zustand. Der Grund fährt jetzt mit — das leere Blatt nicht (Product Designer, 23.09.2026)
+
+**Anlass:** PD-026 (Prüfmeister, 23.09.2026, `pruefmeister-notizen-fuer-designer.md`
+ab Zeile 2157), zugewiesen vom Chief of Staff um 07:50 UTC. Der Prüfmeister
+hat ausdrücklich **kein Soll gestellt** — „der leere Entwurf ist deine Seite"
+— und mir drei Fragen gegeben. Hier sind sie beantwortet, gebaut und gemessen.
+
+**Der Fall, in einer Zeile:** Ein Ausschlusssatz räumt alle Positionen eines
+Ein-Raum-Angebots ab. Übrig bleiben null Positionen, 0,00 €.
+`api/entwurf/generiere-positionen` bricht bei `positionen.length === 0` mit
+**400 „Keine Positionen erkannt"** ab — obwohl die Maschine alles erkannt,
+alles gerechnet und den Grund fertig dastehen hat.
+
+---
+
+### 1. Frage 1 — ist das derselbe Zustand wie „das Diktat war leer"? **Nein.**
+
+Und das ist in diesem Produkt keine neue Erkenntnis, sondern die dritte
+Auflage derselben. Sie steht seit PD-019/PM-113 als eigene, geprüfte Funktion
+in `src/lib/leeres-ergebnis.ts` — mit genau dieser Begründung im Kopf:
+
+> „Null Positionen" hat zwei Ursachen, die sich für den Betrieb völlig
+> verschieden anfühlen.
+
+PD-026 ist die **dritte**, und sie ist die unangenehmste der drei:
+
+| Ursache | Was wahr ist | Der richtige Weg |
+|---|---|---|
+| **1 · Nichts verstanden** | „Noch nichts erkannt" ist wahr | Neue Aufnahme |
+| **2 · Verstanden, nicht rechenbar** (PD-019) | Eine Rückfrage blieb offen | Dieselbe Rückfrage |
+| **3 · Verstanden, gerechnet, abgeräumt** (PD-026) | Die Maschine hat getan, was gesagt wurde | **Ein Satz, der die Ansage zurücknimmt** |
+
+**Warum Fall 3 schlimmer ist als Fall 1:** In Fall 1 schickt „Keine Positionen
+erkannt" den Betrieb zu einer neuen Aufnahme — und das ist richtig. In Fall 3
+schickt derselbe Satz ihn ebenfalls zu einer neuen Aufnahme, und die führt
+**exakt hierher zurück**, weil das Diktat nicht das Problem ist. Der Satz ist
+nicht nur unwahr, er ist eine **Schleife**. Genau dieselbe Fehlerform wie bei
+PD-019, nur eine Stufe teurer.
+
+**Und es steckt Geld darin:** Prüfmeisters Messung sagt, mit dem Wort
+„zweimal" davor wären es **465,90 €** gewesen. Der Betrieb hat keinen
+Anhaltspunkt, dass **ein einziges Wort im Diktat** den Unterschied macht —
+und das ist der eigentliche Schaden, nicht der falsche Satz.
+
+---
+
+### 2. Frage 2 — gehört der Fehlt-Eintrag vor den Abbruch? **Der Grund ja. Das Blatt nein.**
+
+Der Prüfmeister hat die Frage als Paket gestellt („ein leeres Blatt **mit**
+Begründung statt einer Fehlermeldung ohne?"). Ich trenne sie, weil die zwei
+Hälften verschieden ausgehen.
+
+**Der Grund gehört vor den Abbruch — unstrittig.** Er existiert zum
+Abbruchzeitpunkt bereits fertig formuliert und liegt in derselben Funktion in
+derselben Variable (`massWarnungen`). Er wurde auf diesem einen Weg schlicht
+nicht mitgeschickt. Das ist kein Konzept, das ist eine vergessene Zeile.
+
+**Das leere Blatt gehört NICHT dorthin.** Drei Gründe, jeder für sich
+ausreichend:
+
+1. **Ein Blatt über 0,00 € sieht fertig aus.** Das Nächste daran ist „senden".
+   Wir müssten also ein Dokument erzeugen, um es anschließend gegen seinen
+   eigenen naheliegendsten Gebrauch zu sperren — ein neuer Zustand mit eigenen
+   Regeln in Status, Gate und Versand, für einen Fall, den **ein Wort**
+   auflöst. Das ist dieselbe Klasse Fehler wie ein erfundener Bezug auf dem
+   Kundenpapier (DC-114, PD-018): lieber gar keiner als ein falscher.
+2. **Der Grund ist keine Eigenschaft des Blattes, sondern des Diktats.** Er
+   gehört dorthin, wo alle anderen Bremsen melden: ins Bernsteinbanner auf der
+   Zeitleiste. Eine zweite Heimat wäre eine zweite Wahrheit — die DC-125-Lehre,
+   an der diese Woche schon zweimal etwas hing.
+3. **Der nächste Schritt des Betriebs liegt auf der Zeitleiste, nicht auf dem
+   Blatt.** Die Aufnahmeleiste steht unten auf demselben Bildschirm. Ihn erst
+   auf ein leeres Dokument zu schicken, von dem er wieder zurück muss, ist ein
+   Umweg, der nichts erklärt.
+
+**Also:** der Betrieb bleibt, wo er ist, und bekommt dort die Wahrheit.
+
+---
+
+### 3. Frage 3 — bleibt ein leeres Blatt versendbar? **Die Frage stellt sich nicht mehr.**
+
+Der Prüfmeister hat „nein" vermutet und seine Vermutung ausdrücklich als
+solche gekennzeichnet. Sie ist im Ergebnis bestätigt, aber auf dem anderen
+Weg: **es entsteht kein leeres Blatt**, also gibt es nichts zu sperren. Die
+0,00-€-Sackgasse, vor der er gewarnt hat, wird nicht abgesichert — sie wird
+nicht gebaut.
+
+**Ausdrücklich nicht getan:** Ich habe den 400er **nicht** in einen 200er
+verwandelt. Die Route bricht weiter ab, der Fehlertext bleibt Zeichen für
+Zeichen derselbe — die Entwurfsseite erkennt ihn daran (`KEINE_POSITIONEN`),
+und ein geänderter Text hätte PD-019 stumm mit abgeschaltet.
+
+---
+
+### 4. Was ab jetzt auf dem Bildschirm steht
+
+Weiß, nicht rot, in der Machart der PD-019-Karte direkt darüber — es ist kein
+Fehler des Handwerkers, sondern **seine eigene, befolgte Ansage**:
+
+> **Erkannt — und wieder abgeräumt**
+> Die Aufnahme war vollständig. Übrig bleibt nichts, weil du es selbst
+> ausgenommen hast:
+>
+> **„Wohnzimmer": Arbeiten an den Wänden sind nicht im Angebot**
+> *Gesagt: „An den Wänden machen wir nichts"*
+>
+> Stimmt das nicht? Nimm unten weiter auf — ein Satz holt die Arbeit zurück.
+> Eine neue Aufnahme desselben Diktats führt wieder hierher.
+
+**Die vier Bestandteile und warum jeder einzelne dasteht:**
+
+* **„Erkannt"** ist der ganze Punkt, wie „Gehört" bei PD-019. Der erste Satz
+  muss das Gegenteil von „Keine Positionen erkannt" sagen, sonst nimmt der
+  Betrieb wieder neu auf.
+* **„weil du es selbst ausgenommen hast"** benennt den Urheber. Ohne diese
+  vier Worte liest sich die Karte wie ein Defekt; mit ihnen wie ein Protokoll.
+* **Die Hinweiszeile im selben Wortlaut und derselben Form wie im
+  Bernsteinbanner** — derselbe String, derselbe Leser, dieselbe Zweizeiligkeit
+  (Aussage fett, Beleg als Zitat). Der Betrieb erkennt die Zeile wieder, die
+  er in anderen Fällen im Banner sieht. Eine eigene Zweitfassung wäre eine
+  zweite Stelle, die auseinanderlaufen kann.
+* **Der letzte Satz nennt den Ausweg UND die Sackgasse.** „Eine neue Aufnahme
+  desselben Diktats führt wieder hierher" ist die Zeile, die die Schleife aus
+  Punkt 1 aufbricht. Sie steht klein, aber sie steht da.
+
+**Kein Knopf — und das ist eine Entscheidung, keine Auslassung.** Bei PD-019
+führt der gelbe Knopf in den Rückfragen-Screen, also an eine Stelle, die der
+Betrieb sonst nicht erreicht. Hier ist der einzige Weg heraus die
+Aufnahmeleiste, die unten auf **demselben** Bildschirm steht. Ein Knopf, der
+nur dorthin zeigt, wäre ein zweiter Weg zur selben Stelle.
+
+**Kein „Trotzdem weiter zum Angebot".** Das Bernsteinbanner hat diesen Ausweg,
+weil dort ein Angebot mit Positionen wartet. Hier wartet keins.
+
+---
+
+### 5. Die Entscheidung innerhalb der Entscheidung: welche Zeile ein leeres Blatt erklären darf
+
+Seit PM-136/DC-142 gibt es im Banner eine Zeilensorte, die ausdrücklich sagt,
+dass **nichts** entfernt wurde („Arbeiten an den Wänden **bleiben im
+Angebot**"). Sie darf diesen Zustand **nicht auslösen** — sonst stünde über
+einem leeren Blatt eine Begründung, die es nicht begründet. Das wäre die
+teuerste Verwechslung in dieser ganzen Regel, und sie wäre stumm.
+
+Deshalb prüft `nimmtEtwasWeg()` ausdrücklich **nicht** `hinweisRang(z) > 0`
+(das hieße „irgendeine Ausschluss-Sorte"), sondern nur die beiden Sorten, die
+wirklich etwas herausnehmen: Zeit-Ausschluss und Bauteil-Ausschluss.
+
+**Mitfahren darf die Rückfrage trotzdem**, wenn ein echter Ausschluss
+danebensteht: sie gehört zum selben Diktat, und sie steht oben — dieselbe
+Reihenfolge wie im Banner, mit derselben Funktion (`sortiereHinweise`), damit
+es keine zweite Reihenfolge gibt.
+
+**Rangfolge zu PD-019:** Eine offen gebliebene Rückfrage **geht vor**. Wer
+eine Frage beantworten kann, ist damit fertig — das ist der kürzere Weg
+zurück ins Angebot. Nebenwirkung, und sie ist erwünscht: Fall 2 verhält sich
+Zeichen für Zeichen wie vor DC-143.
+
+---
+
+### 6. Gebaut
+
+| Datei | Was |
+|---|---|
+| `src/lib/leeres-ergebnis.ts` | dritte Art `alles_ausgeschlossen`; `nimmtEtwasWeg()`; neues optionales Feld `hinweise`. Kopfkommentar von zwei auf drei Ursachen erweitert |
+| `src/app/api/entwurf/generiere-positionen/route.ts` | der 400er schickt `warnungen: massWarnungen` mit. **Eine Zeile Verhalten**, der Fehlertext bleibt unverändert |
+| `src/app/(app)/angebot/[id]/entwurf/page.tsx` | neuer State `allesAusgeschlossen`; `hinweise: err.warnungen` an die Entscheidung; neue weiße Karte; Bannerzeile in die Komponente `HinweisZeile` herausgezogen |
+| `src/lib/__tests__/dc143-leeres-blatt-nach-ausschluss.test.ts` | **neu**, 9 Zusicherungen |
+
+**Warum `HinweisZeile` herausgezogen ist:** Die Karte zeigt dieselben Zeilen
+wie das Banner. Zwei Abschriften desselben Lesers wären genau die DC-125-Falle
+— wer eine ändert, sieht die andere nicht. Jetzt: eine Komponente, zwei
+Aufrufer. Am Setzen der Zeilen im Banner ändert sich dabei **nichts**,
+dieselben drei Muster in derselben Reihenfolge, derselbe Rohtext-Rückfall.
+
+---
+
+### 7. Gemessen, nicht geglaubt
+
+Auf Sandys Rechner ist weder `npm run typecheck` noch der Prüfstand
+durchführbar (Zeitgrenze am Mount, seit 11.09. unverändert). Gemessen habe ich
+deshalb im Container, an den **echten** Dateien des Projekts:
+
+* **TypeScript 5.6.3, echter Typlauf** über `leeres-ergebnis.ts` samt aller
+  Abhängigkeiten (`bauteil-ausschluss.ts`, `zeit-ausschluss.ts`,
+  `hinweis-rang.ts`, `satz-raum.ts`), `strict: true`: **0 Fehler.**
+* **Die 9 Zusicherungen der neuen Testdatei gegen den kompilierten Code
+  gefahren** — nicht gegen eine Nachbildung: **9 grün / 0 rot.** Die
+  Hinweiszeilen stammen dabei aus den echten Erzeugern
+  (`bauteilAusschlussHinweis`, `zeitAusschlussHinweis`, `bauteilUnklarHinweis`).
+* **PD-019 als Rückfallprobe**, dieselben vier Fälle wie in
+  `pd019-leeres-ergebnis.test.ts`: **4 grün / 0 rot.** DC-143 verdeckt nichts
+  davon.
+* **Syntaxlauf über alle vier geänderten Dateien** (TSX mit `ScriptKind.TSX`):
+  **0 Befunde.**
+
+**Nicht gemessen, und ich behaupte es deshalb nicht:**
+
+* **Kein Blick ins laufende Produkt.** Die Karte ist nicht auf einem Gerät
+  gesehen worden, nur gebaut.
+* **Der volle Prüfstand ist nicht gelaufen** (kein `npm test` im Container —
+  die Projekt-Abhängigkeiten liegen dort nicht). Die 9 + 4 Zusicherungen oben
+  sind gegen kompilierten Echtcode gefahren, aber **nicht** durch vitest.
+* **Prüfmeisters 465,90 € und 370,00 €** habe ich nicht nachgerechnet. Meine
+  Entscheidung hängt nicht daran.
+* **`page.tsx` ist nicht im Ganzen typgeprüft** — dafür bräuchte es die
+  Next-/React-Typen des Projekts. Geprüft ist die Syntax und, für die neue
+  Logik, der Typlauf in der Bibliothek.
+
+---
+
+### 8. Was offen bleibt
+
+* **PM-146 bleibt Engineerings Bauauftrag** (CoS-E-097). DC-143 macht den Fall
+  **nicht** seltener — es macht ihn nur ehrlich. Beides wird gebraucht.
+* **PD-021** („nach Arbeitsablauf" sortiert nicht nach Arbeitsablauf) wartet
+  unverändert auf CoS-038-A. Nicht angefasst.
+* **Nicht angefasst:** `bauteil-ausschluss.ts`, `zeit-ausschluss.ts`,
+  `hinweis-rang.ts` — nur daraus gelesen. Und Engineerings laufende
+  CoS-E-095-Arbeit im Arbeitsbaum (`sockelleisten-ausschluss.ts` und die zwei
+  Testdateien) ist **nicht** angefasst und gehört **nicht** in Sandys Block.
+* **Die neue Testdatei liegt außerhalb von `docs/`** und braucht ihr eigenes
+  `git add`, sonst blockiert der Pre-Push-Haken zu Recht. Der Block an Sandy
+  nimmt sie mit.
+
+### 📌 Für den Prüfmeister — PD-026 ist beantwortet
+
+Alle drei Fragen: **1 · nein**, zwei verschiedene Zustände. **2 · der Grund
+ja, das Blatt nein.** **3 · stellt sich nicht mehr** — es entsteht kein leeres
+Blatt, deine Vermutung ist im Ergebnis bestätigt. Der Fall ist jetzt im
+Produkt an zwei Stellen prüfbar: `beurteileLeeresErgebnis()` entscheidet ihn,
+`dc143-leeres-blatt-nach-ausschluss.test.ts` sichert ihn zu.
+
+*Product Designer · 2026-09-23*
+
+---
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
