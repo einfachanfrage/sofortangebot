@@ -69,6 +69,47 @@ steht die Versicherung in diesem Plan vor allem anderen.
 Du bist ab dem 02.11. in Thailand. Alles hier passt in eine Woche im Oktober,
 am besten die Woche vom **05.10.** Dann hast du drei Wochen Puffer.
 
+### Schritt 0 · Ein Blick in deinen Arbeitsvertrag — 10 Minuten, 0 €
+
+**Das gehört vor die Gewerbeanmeldung, nicht daneben.** Mit der Anmeldung gibt
+es die Nebentätigkeit; eine Anzeige danach wäre verspätet. Head of Finance hat
+dir diesen Schritt in die Behördenliste geschrieben und die Bewertung der
+Klausel an mich gegeben — hier ist sie.
+
+**Was du suchst:** einen Abschnitt mit der Überschrift „Nebentätigkeit",
+„Nebenbeschäftigung" oder „Wettbewerbsverbot". Es gibt drei Bauarten, und sie
+bedeuten sehr Verschiedenes:
+
+| Was im Vertrag steht | Was das heißt |
+|---|---|
+| **Nichts davon** | Du darfst. Was du außerhalb der Arbeitszeit tust, ist deine Sache (Art. 12 Abs. 1 GG). Eine Anzeige schuldest du dann nicht — sie kann trotzdem klug sein. |
+| **„… ist dem Arbeitgeber anzuzeigen"** | Du meldest, er nimmt zur Kenntnis. **Kein Vetorecht.** |
+| **„… bedarf der vorherigen Zustimmung"** | Liest sich hart, ist es meist nicht: Eine solche Klausel ist nur wirksam, soweit der Arbeitgeber berechtigte betriebliche Interessen hat. Liegen keine vor, **hast du einen Anspruch auf die Zustimmung**. Ein pauschales Verbot jeder Nebentätigkeit wäre unwirksam. |
+
+**Die drei Punkte, an denen es tatsächlich hängen kann:**
+
+1. **Wettbewerb.** Während des laufenden Arbeitsverhältnisses darfst du deinem
+   Arbeitgeber keine Konkurrenz machen (§ 60 HGB für kaufmännische
+   Angestellte, im Übrigen aus § 241 Abs. 2 BGB). Maßstab ist **sein**
+   Geschäftsbereich. Ein SaaS für Handwerksbetriebe berührt ihn nur, wenn er
+   selbst Software an Handwerksbetriebe verkauft.
+2. **Beeinträchtigung der Hauptleistung.** Die Nebentätigkeit darf deine
+   Arbeitskraft nicht so binden, dass die Hauptstelle leidet. Das ist eine
+   Frage des Umfangs, nicht des Gegenstands.
+3. **Betriebsmittel und Arbeitszeit.** Nichts davon für Sofortangebot
+   benutzen — kein Dienstrechner, kein Diensthandy, keine Arbeitszeit, keine
+   Daten. Daran scheitern in der Praxis die meisten Fälle, nicht an der
+   Klausel.
+
+**Was du nicht musst:** deinem Arbeitgeber Umsätze, Kundennamen oder den
+Geschäftsplan offenlegen. Eine Anzeige ist eine Anzeige — Art der Tätigkeit,
+ungefährer zeitlicher Umfang, ab wann. Mehr nicht.
+
+**Wenn du die Klausel gefunden hast und unsicher bist: schick mir den
+Wortlaut.** Dann sage ich dir, welche der drei Bauarten es ist. Ohne den Text
+kann ich das nicht entscheiden — was hier steht, ist die Lesehilfe, nicht die
+Bewertung deines Vertrags.
+
 ### Schritt 1 · Gewerbe anmelden — 20 Minuten, 15 €
 
 **Welches Gewerbe:** Ein ganz normales **Kleingewerbe als Einzelunternehmen**.
@@ -97,12 +138,25 @@ Wohnung).
 Nicht „Beratung", nicht „Dienstleistungen für das Malerhandwerk" — beides
 könnte Rückfragen zur Handwerksrolle auslösen, die du nicht brauchst.
 
-**Welches Startdatum:** Nimm den Tag der Anmeldung. Du hast entschieden, auf
-die Belege seit Mai zu verzichten, und damit ist das die aufwandsärmste
-Variante. *(Alternative, nur der Vollständigkeit halber: Mit Startdatum
-01.05.2026 wären die 17 Altbelege Betriebsausgaben. Das bringt vielleicht 100
-bis 200 € Steuerersparnis und kostet dich eine kompliziertere
-Steuererklärung. Ich würde es lassen.)*
+**Welches Startdatum:** Nimm den Tag der Anmeldung. Das ist die
+aufwandsärmste Variante, und du verlierst dadurch nichts.
+
+> **🔴 Korrigiert am 23.09.2026 (Head of Legal & Compliance).** Hier stand bis
+> heute, mit dem Startdatum „Tag der Anmeldung" verzichtest du auf die Belege
+> seit Mai, und nur mit dem Startdatum 01.05.2026 wären sie Betriebsausgaben.
+> **Diese Kopplung gibt es nicht.** Ob eine Ausgabe abziehbar ist, entscheidet
+> allein der betriebliche Veranlassungszusammenhang (§ 4 Abs. 4 EStG);
+> vorweggenommene Betriebsausgaben sind auch dann abziehbar, wenn sie vor der
+> Anmeldung angefallen sind. Die Gewerbeanmeldung ist eine gewerberechtliche
+> Anzeige nach § 14 GewO und keine steuerliche Weiche. Umsatzsteuerlich beginnt
+> die Unternehmereigenschaft mit der ersten ernsthaften Vorbereitungshandlung —
+> der Vorsteuerabzug daraus war unter § 19 verschlossen und ist es seit deinem
+> Verzicht vom 17.09.2026 nicht mehr. **Du trägst am 05.10. also nichts anders
+> ein, und die Altbelege sind trotzdem nicht verloren.** Der Fund ist vom Head
+> of Finance (21.09.2026), der die Belege nachgerechnet hat: 18 Belege,
+> 421,41 € brutto, rund 150 € Wirkung (29,97 € Vorsteuer + 120,71 €
+> Einkommensteuer). Das ist keine Entscheidung für den 05.10., sondern Frage 1
+> an die Steuerberaterin — Finance führt sie dort.
 
 ### Schritt 2 · Fragebogen zur steuerlichen Erfassung — 45 Minuten, 0 €
 
@@ -273,7 +327,7 @@ nennenswerten Umsatz gibt.
 | IT-Haftpflicht 1 Mio. € | — | geschätzt 300–600 €/Jahr |
 | IHK | 0 € | 0 € (erste zwei Jahre) |
 | Gewerbesteuer | — | 0 € |
-| Umsatzsteuer | — | 0 € (Kleinunternehmer) |
+| Umsatzsteuer | — | 0 € (durchlaufend — Regelbesteuerung: eingenommen, abgeführt, Vorsteuer gezogen) |
 | Steuerberater (optional, EÜR) | — | 0–800 €/Jahr |
 | Markenanmeldung | **0 €** | — |
 | **Summe Jahr 1** | **15 €** | **grob 300–1.400 €** |
@@ -339,8 +393,12 @@ AI Act (Art. 4) verlangt.
 
 ## Zusammengefasst: dein Oktober
 
+0. **Zuerst:** Arbeitsvertrag auf eine Nebentätigkeitsklausel ansehen — 10 Min
+   (Schritt 0, muss **vor** Punkt 1 passieren)
 1. Gewerbe online anmelden — 20 Min, 15 €
-2. ELSTER-Fragebogen, Kleinunternehmer ankreuzen — 45 Min
+2. ELSTER-Fragebogen: **Verzicht auf die Kleinunternehmerregelung**
+   ankreuzen (§ 19 Abs. 2 UStG, bindet fünf Jahre — Einzelheiten in
+   Schritt 2) — 45 Min
 3. Drei Versicherungsangebote anfordern (exali, Markel Pro IT, Hiscox) —
    30 Min
 4. Zehn Minuten DPMAregister durchsuchen

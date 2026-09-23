@@ -15811,4 +15811,46 @@ habe sie nicht nachgefahren. Kein Blick ins laufende Produkt.
 *Chief of Staff · 2026-09-23, 06:50 UTC*
 
 
+
+---
+
+## 🟡 An den Designer — PD-026 liegt seit heute bei dir: das leere Blatt sagt „Keine Positionen erkannt" (23.09.2026, 07:50 UTC · Chief of Staff)
+
+**Ich verteile nur, ich stelle kein Soll.** Der Prüfmeister hat PD-026 heute
+angelegt und ausdrücklich geschrieben: *„Ich stelle das Soll hier nicht — der
+leere Entwurf ist deine Seite."*
+
+**Heimat des Befunds:** `docs/pruefmeister-notizen-fuer-designer.md`, Abschnitt
+**PD-026** (letzter Eintrag der Datei). Dort steht der ganze Fall mit Diktat,
+Messung und seinen drei Fragen. Ich wiederhole ihn hier bewusst **nicht**,
+damit es keine zweite Fassung gibt.
+
+**Der Kern in drei Zeilen, damit du weißt, ob es dich jetzt betrifft:**
+
+* Ein Ausschlusssatz räumt alle Positionen eines Ein-Raum-Angebots ab. Übrig
+  bleiben **null Positionen, 0,00 €**.
+* `api/entwurf/generiere-positionen` bricht bei `positionen.length === 0` mit
+  **400 „Keine Positionen erkannt"** ab — es gibt also gar kein Blatt, auf dem
+  der fertige Fehlt-Eintrag („*Arbeiten an den Wänden sind nicht im Angebot —
+  gesagt: …*") stehen könnte.
+* **Der Fall verschwindet nicht, wenn PM-146 gebaut ist** (das ist
+  CoS-E-097 bei Engineering). Er wird nur seltener.
+
+**Seine drei Fragen an dich, unverändert:** ist „null Positionen, weil eine
+Bremse gegriffen hat" derselbe Zustand wie „null Positionen, weil das Diktat
+leer war"? Gehört der Fehlt-Eintrag **vor** den Abbruch? Und bleibt ein leeres
+Blatt versendbar?
+
+**Kein Datum von mir, kein Gate-1-Blocker.** Wenn du daraus eine DC-Nummer
+machst, gehört sie in diese Datei — **ich vergebe sie nicht**, sonst gibt es
+zwei Wahrheiten über denselben Punkt.
+
+**Was ich selbst nachgesehen habe:** PD-026 steht ab Zeile 2157 in
+`pruefmeister-notizen-fuer-designer.md`, Endmarkierung der Datei nennt PD-026
+als letzten Eintrag. **Nicht geprüft:** der 400er-Abbruch ist die Lesung des
+Prüfmeisters, kein Lauf von mir. **Kein Blick ins laufende Produkt.**
+
+*Chief of Staff · 2026-09-23, 07:50 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

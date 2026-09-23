@@ -4903,4 +4903,109 @@ ein — nicht früher.
 *Head of Marketing · 23.09.2026, 07:30 UTC*
 
 
+## ✅ CoS-L-014 — erledigt. Beide Zeilen in `legal-007` sind geändert, dazu eine dritte (23.09.2026 · Head of Legal & Compliance)
+
+**Der Punkt ist zu.** `docs/legal-007-plan-fuer-sandy.md`, drei Stellen
+geändert, alle drei in meiner eigenen Heimat-Datei:
+
+| Stelle | vorher | jetzt |
+|---|---|---|
+| Kurzfassung „dein Oktober", Punkt 2 | „ELSTER-Fragebogen, **Kleinunternehmer ankreuzen** — 45 Min" | „ELSTER-Fragebogen: **Verzicht auf die Kleinunternehmerregelung** ankreuzen (§ 19 Abs. 2 UStG, bindet fünf Jahre — Einzelheiten in Schritt 2) — 45 Min" |
+| Kostentabelle „Was es kostet" | „Umsatzsteuer · — · **0 € (Kleinunternehmer)**" | „Umsatzsteuer · — · **0 € (durchlaufend — Regelbesteuerung: eingenommen, abgeführt, Vorsteuer gezogen)**" |
+| Schritt 1, „Welches Startdatum" | „…nur mit Startdatum 01.05.2026 wären die 17 Altbelege Betriebsausgaben" | entschärft, mit Korrekturkasten — siehe unten |
+
+**Zur Kostentabelle:** Der Vorschlag des Head of Finance („0 € durchlaufend —
+Regelbesteuerung, Vorsteuer wird gezogen") ist fachlich richtig und ich habe
+ihn übernommen, nur im Wortlaut gestrafft. Der Saldo bleibt null, aber aus dem
+entgegengesetzten Grund — genau das musste in der Zeile stehen, sonst hätte
+die richtige Zahl weiter die falsche Begründung getragen.
+
+**Zur Kurzfassung:** Ich habe nicht nur das Wort getauscht, sondern die
+Fünf-Jahres-Bindung **in die Kurzfassung selbst** geschrieben. Der Grund, aus
+dem die Zeile gefährlich war, war ja nicht das falsche Wort allein, sondern
+dass die Kurzfassung ohne den Korrekturkasten drei Bildschirmseiten darüber
+gelesen wird. Jetzt trägt sie den Hinweis mit.
+
+**Und eine dritte Zeile, die Finance mir angeboten hat:** Der Satz in
+Schritt 1, mit dem Startdatum „Tag der Anmeldung" seien die Altbelege verloren,
+war falsch, und ich lasse falsche Sätze in meiner Datei nicht aus
+Bequemlichkeit stehen. Die Abziehbarkeit einer vorweggenommenen Betriebsausgabe
+hängt am betrieblichen Veranlassungszusammenhang (§ 4 Abs. 4 EStG), nicht am
+Datum der Gewerbeanmeldung — die ist eine gewerberechtliche Anzeige nach
+§ 14 GewO. Umsatzsteuerlich beginnt die Unternehmereigenschaft mit der ersten
+ernsthaften Vorbereitungshandlung. **Finances Richtigstellung ist zutreffend,
+sie steht jetzt als Korrekturkasten in der Datei**, und die Nachrechnung
+(18 Belege, 421,41 € brutto, rund 150 €) ist als **seine** Rechnung
+gekennzeichnet, nicht als meine — ich habe die Belege nicht nachgezählt.
+
+**Was das für Sandys 05.10. ändert: nichts.** Das Anmeldedatum bleibt der Tag
+der Anmeldung. Die Frage gehört ins Steuerberater-Erstgespräch, wo Finance sie
+als Frage 1 führt, und nicht auf ihre Entscheidungsliste.
+
+**Für den Chief of Staff:** Das Pflaster in Finances Behördenliste („Sollte die
+Zusammenfassung beim Ausfüllen noch ‚Kleinunternehmer' sagen: ignorieren") ist
+damit gegenstandslos. Es schadet nicht, wenn es stehen bleibt — aber es muss
+nicht mehr.
+
+---
+
+## ✅ Der zweite Punkt aus Finances Übergabe — Nebentätigkeit neben der Vollzeitstelle, als Schritt 0 in `legal-007` (23.09.2026 · Head of Legal & Compliance)
+
+Finance hat die arbeitsrechtliche Bewertung der Nebentätigkeitsklausel an mich
+gegeben und ausdrücklich nichts Eigenes dazu behauptet. **Der Absatz steht
+jetzt, wo Finance ihn verortet hat: in `legal-007` als „Schritt 0 · Ein Blick
+in deinen Arbeitsvertrag", vor der Gewerbeanmeldung**, und als Punkt 0 in der
+Oktober-Kurzfassung.
+
+**Was drinsteht, kurz:** drei Bauarten von Klauseln (keine / Anzeigepflicht /
+Zustimmungsvorbehalt) und was sie jeweils bedeuten — beim Zustimmungsvorbehalt
+insbesondere, dass er nur trägt, soweit berechtigte betriebliche Interessen
+bestehen, und dass ohne solche ein **Anspruch auf die Zustimmung** besteht;
+ein pauschales Nebentätigkeitsverbot wäre unwirksam. Dazu die drei Punkte, an
+denen es tatsächlich hängen kann: Wettbewerb (§ 60 HGB, sonst § 241 Abs. 2
+BGB — Maßstab ist der Geschäftsbereich **des Arbeitgebers**), Beeinträchtigung
+der Hauptleistung (Umfangsfrage, keine Gegenstandsfrage) und Betriebsmittel/
+Arbeitszeit. Plus: Eine Anzeige ist eine Anzeige — Umsätze, Kundennamen und
+Geschäftsplan gehören nicht hinein.
+
+**Was ausdrücklich nicht drinsteht: eine Bewertung ihres Vertrags.** Den Text
+habe ich nicht. Der Absatz endet deshalb mit der Bitte, mir den Wortlaut zu
+schicken, und benennt sich selbst als Lesehilfe. **Das ist keine Entscheidung
+für Sandy und kein wartender Punkt** — sie sieht ohnehin in den Vertrag, das
+steht seit Finances Behördenliste auf ihrer Liste.
+
+---
+
+## ✅ CoS-M-018 beantwortet — der Wortlaut liegt in Marketings Datei (23.09.2026 · Head of Legal & Compliance)
+
+**Antwort steht, wie erbeten, in `chief-of-staff-marketing-todos.md`** (Marketing
+hat ausdrücklich dorthin gebeten). Hier nur, was der Chief of Staff wissen muss:
+
+1. **Wortlaut:** „Alle Preise zzgl. der gesetzlichen Umsatzsteuer." — **an die
+   Preiszahl, nicht unter den Block.** Auf dem Handy stapeln sich die beiden
+   Karten (`grid md:grid-cols-2`); ein Hinweis unter der zweiten Karte steht
+   eine Bildschirmhöhe von der ersten Zahl entfernt und trägt die räumliche
+   Zuordnung nicht mehr. Ohne neues Element machbar: die bestehende Zeile
+   unter dem Pro-Preis (Z. 90) erweitern.
+2. **An der „0 €" keine Angabe.** Ohne Entgelt keine Bemessungsgrundlage
+   (§ 1 Abs. 1 Nr. 1 UStG) — „zzgl. MwSt." an einer Null wäre nicht
+   überflüssig, sondern unrichtig.
+3. **Der eigentliche Punkt, und er ist keine Wortlautfrage:** Die Beschränkung
+   auf Unternehmer steht **nur in den AGB** (`src/app/agb/page.tsx` Z. 13,
+   § 1.2, selbst nachgesehen). Auf der Landingpage steht „Für Maler und
+   Bodenleger" — eine Zielgruppenansprache, kein Ausschluss. Gegenüber
+   Verbrauchern wäre eine reine Nettoangabe **unzulässig**, nicht nur
+   unvollständig (PAngV). **Reparatur: eine Zeile unter den Preisblock,
+   „Angebot ausschließlich für Unternehmer im Sinne des § 14 BGB."** Sonst
+   müsste die Seite zusätzlich brutto nennen (20,23 € / 26,18 €), was ich
+   nicht empfehle.
+4. **Termin, nicht Aufgabe:** Bis der Verzicht im Fragebogen gesetzt ist
+   (KW 41), ist der **heutige** Zustand der richtige. Der Einbau gehört in
+   dieselbe Woche wie AGB § 4.2 — LR-21 führt das schon so.
+5. **Freigabe:** Der Wortlaut ist ein Vorschlag. Ich lege ihn **zusammen mit
+   AGB § 4.2** vor, damit Sandy einmal entscheidet statt zweimal.
+
+*Head of Legal & Compliance · 23.09.2026*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -1481,4 +1481,105 @@ Z. 379–381, `src/components/landing/PreiseSection.tsx`, `src/lib/types.ts`,
 `supabase/migrations/`. Produktionsdatenbank (`yqlledouhfovytifeekd`):
 `information_schema.columns` für `companies`, Zählung `briefpapiere`.*
 
+## Nachtrag 2026-09-23 — LR-21 erweitert: die Preiszeile hat ein zweites, größeres Loch (Head of Legal & Compliance)
+
+**Anlass:** die Wortlautfrage des Head of Marketing (CoS-M-018). Beim
+Beantworten habe ich die Seite an der Quelle aufgeschlagen und dabei mehr
+gefunden, als die Frage hergab.
+
+### Was ich selbst nachgesehen habe
+
+* `src/components/landing/PreiseSection.tsx`, Stand 23.09.: Z. 52 „0€", Z. 86
+  „17€" mit „/Monat", Z. 90 „Bei Jahresabo. Monatlich 22 €." **Kein „netto",
+  kein „MwSt.", kein „USt." in der gesamten Datei** — der Befund unter LR-21
+  („Mitzuerledigen") ist unverändert richtig.
+* `src/app/agb/page.tsx` Z. 13: *„1.2 Sofortangebot richtet sich ausschließlich
+  an Unternehmer im Sinne des § 14 BGB. Die Nutzung durch Verbraucher ist
+  ausgeschlossen."*
+* `src/components/landing/HeroSection.tsx` Z. 14: „🖌 Für Maler und Bodenleger".
+
+### Der Nachtrag zur Sache
+
+Unter LR-21 steht, die fehlende Umsatzsteuerangabe sei „Severity 1, kein
+eigener Eintrag — aber dieselbe Änderungswoche", weil **für ein B2B-Angebot
+die Nettoangabe zulässig ist, wenn sie gekennzeichnet wird.** Dieser Satz
+setzt voraus, dass die Seite erkennbar ein B2B-Angebot ist. **Das setze ich
+nicht mehr als gegeben voraus.**
+
+Die Beschränkung auf Unternehmer steht **ausschließlich in den AGB**, also
+hinter einem Link, in § 1.2. Auf der Seite selbst steht eine
+Zielgruppenansprache („Für Maler und Bodenleger") — das benennt, wen man
+gewinnen will, und schließt niemanden aus. Die Registrierung steht jedem
+offen. **Welcher Preisangaben-Maßstab gilt, entscheidet sich aber danach, an
+wen sich das Angebot erkennbar richtet, nicht danach, was in den AGB steht.**
+
+**Der Unterschied ist nicht akademisch:**
+
+| | Maßstab | Was fehlt heute | Folge |
+|---|---|---|---|
+| **B2B** (Unternehmer) | Nettopreis zulässig, muss gekennzeichnet sein | die Kennzeichnung | § 5a UWG — **Wortlautproblem**, eine Zeile |
+| **Auch Verbraucher erreichbar** | **Gesamtpreis einschließlich Umsatzsteuer** | die Bruttoangabe selbst | PAngV — **kein** Wortlautproblem, sondern eine andere Preisdarstellung |
+
+### Severity 1 heute, Severity 2 ab KW 41 — und warum es trotzdem kein eigener LR wird
+
+Heute ist Sandy Kleinunternehmerin: Auf den Nettopreis kommt nichts obendrauf,
+Netto und Brutto sind identisch, **niemand kann sich über einen Aufschlag
+täuschen, den es nicht gibt.** Das ist der eigentliche Grund, warum der Punkt
+bisher klein war — nicht die fehlende Kennzeichnung.
+
+**Mit dem Verzicht nach § 19 Abs. 2 UStG (Fragebogen, KW 41) fällt dieser
+Schutz weg.** Ab dann stehen auf der Seite Zahlen, die 19 % unter dem liegen,
+was ein Verbraucher zahlen würde, ohne dass die Seite es sagt. Der Anstieg ist
+**kalendarisch, nicht zufällig** — dieselbe Mechanik wie bei LR-21 selbst, und
+derselbe Termin. Deshalb führe ich es **als Erweiterung von LR-21** und nicht
+als eigenen Eintrag: ein Termin, eine Änderungswoche, eine Vorlage an Sandy.
+
+### Mitigation — zwei Zeilen, beide fertig formuliert
+
+**Zeile 1, an der Preiszahl** (bestehende Z. 90 erweitern, kein neues
+Element):
+
+> „Bei Jahresabo. Monatlich 22 €. **Preise zzgl. gesetzlicher Umsatzsteuer.**"
+
+**Nicht unter den Block, sondern in die Karte:** Auf dem Handy stapeln sich
+die beiden Karten (`grid md:grid-cols-2`), und ein Hinweis unter der zweiten
+steht eine Bildschirmhöhe von der ersten Zahl entfernt. Die räumliche
+Zuordnung trägt dann nicht mehr.
+
+**An der „0 €" bewusst nichts:** Ohne Entgelt keine Bemessungsgrundlage
+(§ 1 Abs. 1 Nr. 1 UStG). Ein „zzgl. MwSt." an einer Null wäre nicht
+überflüssig, sondern unrichtig — und ein pauschales „Alle Preise zzgl. …"
+unter dem Block würde die Null miterfassen. Zweiter Grund für Zeile 1 am
+Preis statt unter dem Block.
+
+**Zeile 2, unter den Preisblock** — die eigentliche:
+
+> „**Angebot ausschließlich für Unternehmer im Sinne des § 14 BGB.**"
+
+Damit ist die reine Nettoangabe getragen und der ganze Komplex wieder eine
+Wortlautfrage. **Ohne Zeile 2 ist er keine:** dann müsste die Seite zusätzlich
+brutto nennen — 17 € → **20,23 €**, 22 € → **26,18 €**. Das halte ich für den
+schlechteren Weg: es verdoppelt die Zahlen in der Karte und wirbt mit einem
+Preis, den kein vorsteuerabzugsberechtigter Betrieb je zahlt.
+
+**Nicht eingebaut, und noch nicht einzubauen.** Preisangaben auf der
+veröffentlichten Seite sind Rechtstext und gehen nur mit Sandys Freigabe raus
+— dieselbe Regel wie bei LR-21 und L-KI-01. Und solange der Verzicht nicht
+gesetzt ist, ist der **heutige** Zustand an dieser Stelle der richtige. **Die
+zwei Zeilen gehen zusammen mit AGB § 4.2 als eine Vorlage an Sandy**, damit
+sie einmal entscheidet statt zweimal.
+
+### Restrisiko nach Umsetzung: gering
+
+Es bleibt derselbe Zeitraum wie bei LR-21 — zwischen dem Absenden des
+Fragebogens und dem Deploy. Steuerbar, wenn AGB § 4.2 und die zwei Zeilen in
+denselben Deploy gehen.
+
+*Quellen dieses Nachtrags, alle selbst am Code geprüft, 23.09.2026:
+`src/components/landing/PreiseSection.tsx` Z. 52/86/90, `src/app/agb/page.tsx`
+Z. 13, `src/components/landing/HeroSection.tsx` Z. 14, `src/lib/pricing.ts`
+(`proMonatlich: 22`, `proJahresabo: 17`). Normen: § 5a UWG, PAngV,
+§ 1 Abs. 1 Nr. 1 UStG, § 19 Abs. 2 UStG, § 14 BGB.*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

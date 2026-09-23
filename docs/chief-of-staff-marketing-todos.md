@@ -3835,5 +3835,124 @@ echtes Gerät, kein Blick ins laufende Produkt.
 *Head of Finance · 23.09.2026, 07:00 UTC*
 
 
+## ✅ CoS-M-018 — Antwort: der Wortlaut für die Umsatzsteuer an der Preiszeile (23.09.2026 · Head of Legal & Compliance)
+
+**Vorab, damit wir auf demselben Stand stehen:** Ich habe die Komponente
+selbst aufgeschlagen, nicht die Beschreibung übernommen.
+`src/components/landing/PreiseSection.tsx`, Stand heute: Z. 52 „0€", Z. 86
+„{PRICING.proJahresabo}€" (= 17 €) mit „/Monat", Z. 90 „Bei Jahresabo.
+Monatlich 22 €." **In der ganzen Datei kommt weder „netto" noch „MwSt." noch
+„USt." vor.** Dein Befund stimmt.
+
+---
+
+### 1. Für die bezahlten Stufen — Wortlaut und Platz
+
+**Wortlaut, zum Abschreiben:**
+
+> **Alle Preise zzgl. der gesetzlichen Umsatzsteuer.**
+
+„MwSt." oder „USt." ist **keine Rechtsfrage** — beides ist unbeanstandet. Das
+Gesetz kennt nur die Umsatzsteuer (UStG), „Mehrwertsteuer" ist Umgangssprache.
+Ich empfehle **„Umsatzsteuer" ausgeschrieben**, weil AGB, Angebot und Rechnung
+dasselbe Wort benutzen und der Betrieb, der den Preis mit seiner eigenen
+Rechnung vergleicht, dann nicht zweimal nachdenkt. Als Kurzform an der Zahl
+ist „zzgl. USt." in Ordnung — dann aber überall dieselbe.
+
+**An jede Preiszahl oder einmal unter den Block? Antwort: an die Zahl.**
+Maßgeblich ist, dass der Hinweis dem Preis **räumlich zugeordnet** und auf
+einen Blick wahrnehmbar ist. Auf dem Desktop trüge ein Satz unter den beiden
+Karten das noch. **Auf dem Handy nicht** — dort stapeln sich die Karten
+(`grid md:grid-cols-2`), und zwischen der Zahl in der ersten Karte und einem
+Hinweis unter der zweiten liegt eine ganze Bildschirmhöhe. Ein Hinweis, für
+den man scrollen muss, ist keiner.
+
+**Konkret, ohne neues Element:** Die Zeile, die heute schon unter dem
+Pro-Preis steht (Z. 90), erweitern:
+
+> vorher: „Bei Jahresabo. Monatlich 22 €."
+> **nachher: „Bei Jahresabo. Monatlich 22 €. Preise zzgl. gesetzlicher Umsatzsteuer."**
+
+Das ist eine Zeile, sie steht direkt unter der Zahl, und sie steht in
+derselben Karte — auf jedem Gerät.
+
+---
+
+### 2. Für die kostenlose Stufe („0 €") — **keine Angabe**
+
+**Ein „zzgl. MwSt." an einer Null wäre nicht nur überflüssig, es wäre
+unrichtig.** Umsatzsteuer entsteht bei einer Leistung **gegen Entgelt**
+(§ 1 Abs. 1 Nr. 1 UStG). Ohne Entgelt gibt es keine Bemessungsgrundlage und
+damit nichts, was „hinzukäme". Der Hinweis würde eine Steuer ankündigen, die
+es nicht gibt.
+
+Ein pauschales „**Alle** Preise zzgl. …" unter dem Block würde die Null
+formal miterfassen — rechnerisch harmlos (0 × 19 % = 0), aber schlampig. Das
+ist der zweite Grund für die Antwort in Nr. 1: **Hinweis in die
+kostenpflichtige Karte, nicht unter den Block.** Dann stellt sich die Frage
+an der Null gar nicht.
+
+---
+
+### 3. Reicht B2B? — **Als Wortlautfrage ja. Als Seite, wie sie heute steht, nein.**
+
+Du hast richtig geahnt, dass hier mehr liegt. Deshalb deutlich, wie erbeten:
+
+**Die Rechtslage in zwei Sätzen.** Gegenüber **Verbrauchern** ist der
+Gesamtpreis einschließlich Umsatzsteuer anzugeben (PAngV) — eine reine
+Nettoangabe wäre dort unzulässig, nicht nur unvollständig. Gegenüber
+**Unternehmern** ist der Nettopreis zulässig; unzulässig ist allein, ihn
+**unbezeichnet** zu lassen (§ 5a UWG erfasst auch „sonstige
+Marktteilnehmer"). Welcher der beiden Maßstäbe gilt, entscheidet sich danach,
+an wen sich das Angebot **erkennbar** richtet.
+
+**Und da ist die Lücke.** Die Beschränkung auf Unternehmer steht bei uns
+**nur in den AGB**: `src/app/agb/page.tsx` Z. 13 — *„1.2 Sofortangebot richtet
+sich ausschließlich an Unternehmer im Sinne des § 14 BGB. Die Nutzung durch
+Verbraucher ist ausgeschlossen."* Auf der Landingpage selbst steht davon
+nichts; dort steht „🖌 Für Maler und Bodenleger" (`HeroSection.tsx` Z. 14).
+**Das ist eine Zielgruppenansprache, kein Ausschluss.** Eine Beschränkung, die
+erst hinter einem Link in den AGB auftaucht, prägt nicht, wie der Preis auf
+der Seite zu lesen ist — und die Registrierung steht jedem offen.
+
+**Das ist reparierbar, und zwar mit einer Zeile.** Mein Vorschlag, unter den
+Preisblock:
+
+> **Angebot ausschließlich für Unternehmer im Sinne des § 14 BGB.**
+
+Mit dieser Zeile ist die reine Nettoangabe getragen, und Nr. 1 wird wieder zu
+einer Wortlautfrage. **Ohne diese Zeile ist es keine** — dann müsste die
+Seite zusätzlich den Bruttopreis nennen: 17 €/Monat → **20,23 € brutto**,
+22 €/Monat → **26,18 € brutto**. Ich halte das für den schlechteren Weg: es
+verdoppelt die Zahlen in der Karte und wirbt mit einem Bruttopreis, den kein
+vorsteuerabzugsberechtigter Betrieb je zahlt.
+
+**Beide Zeilen zusammen sind der ganze Umbau** — keine neue Komponente, kein
+Layoutwechsel.
+
+---
+
+### 4. Zwei Dinge, die du wissen musst, bevor du es baust
+
+**a) Es geht nicht vor dem Fragebogen live.** Bis Sandy den Verzicht nach
+§ 19 Abs. 2 UStG im Fragebogen zur steuerlichen Erfassung gesetzt hat (Woche
+ab 05.10., KW 41), ist sie noch Kleinunternehmerin — und dann wäre „zzgl.
+Umsatzsteuer" die dann unrichtige Angabe. **Der Einbau gehört in dieselbe
+Woche wie die Änderung von AGB § 4.2** (LR-21 in
+`legal-002-risikobewertung-vob.md`), nicht davor. Dein „nicht früher" trifft
+es also genau — nur hängt es nicht am Anfassen der Preiszeile, sondern an
+einem Datum.
+
+**b) Der Wortlaut selbst braucht Sandys Freigabe.** Preisangaben auf der
+veröffentlichten Seite sind nach unserer Team-Regel Rechtstext. Was hier
+steht, ist ein **Formulierungsvorschlag**, keine Freigabe. Ich lege ihn
+zusammen mit AGB § 4.2 vor, damit Sandy einmal entscheidet statt zweimal —
+und melde es dir, sobald es steht.
+
+**Zur Eilfrage:** übernommen wie von dir vorgegeben, ich bewerte sie nicht neu.
+
+*Head of Legal & Compliance · 23.09.2026*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
