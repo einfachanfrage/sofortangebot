@@ -22,10 +22,13 @@
 //   * 14 Tage testen, ohne Kreditkarte, keine stille Umwandlung
 //   * Regelbesteuerung: alle Preise netto, zzgl. gesetzlicher MwSt.
 //
-// `freeAngeboteProMonat` bleibt bewusst stehen: `plan-limit.ts` ist heute die
-// wirksame Sperre und liest die Zahl von hier. Das Abschalten des
-// Gratis-Kontingents ist CoS-038-B und NICHT Teil dieses Baus — was A ändert,
-// ist ausschließlich, dass die Zahl nicht mehr BEWORBEN wird.
+// ── CoS-038-B (2026-09-23) ────────────────────────────────────────────────
+//
+// `freeAngeboteProMonat` und `FREE_KONTINGENT_TEXT` sind ENTFERNT, nicht auf
+// 0 gesetzt. Es gibt keinen Dauer-Gratis-Tarif mehr; die Schranke vor dem
+// Abo sind die 14 Testtage (`companies.trial_ends_at`, siehe
+// `plan-limit.ts`). Eine stehengelassene 0 wäre eine Zahl, die jemand später
+// wieder hochdreht, ohne die Entscheidung dahinter zu sehen.
 export const PRICING = {
   /** Regulärer Preis, netto je Monat. */
   standardMonatlich: 49,
@@ -39,8 +42,6 @@ export const PRICING = {
   mwstSatz: 0.19,
   /** Bewusst nicht „Alle 18 Gewerke" — nur diese zwei sind auf dem nötigen Qualitätsniveau. */
   unterstuetzteGewerke: 'Maler & Bodenleger',
-  /** Wirksame Grenze in `plan-limit.ts`. Nicht mehr beworben — siehe CoS-038-B. */
-  freeAngeboteProMonat: 3,
 } as const
 
 /**
@@ -72,19 +73,3 @@ export const MWST_HINWEIS =
   'Preise netto, zzgl. gesetzlicher MwSt. Sofortangebot richtet sich ausschließlich an Unternehmer (§ 14 BGB).'
 
 export const TESTPHASE_CTA = `${PRICING.testTage} Tage kostenlos testen`
-
-/**
- * CoS-M-010 (Sandy freigegeben, 07.09.2026): Seit der harten Grenze vom 06.09.
- * zählt das Kontingent nur NEU ANGELEGTE Angebote — Überarbeitungen eines
- * bestehenden zählen nicht mit (`plan-limit.ts` filtert auf `original_id`).
- *
- * ⚠ CoS-038-A (23.09.2026): Dieser Satz wird auf keiner Marketing-Fläche mehr
- * gezeigt — das Gratis-Kontingent ist kein Teil des beschlossenen Modells.
- * Er bleibt, solange `plan-limit.ts` die Zahl noch durchsetzt und
- * `einstellungen/abo` sie dem Nutzer anzeigt; angezeigte und wirksame Grenze
- * dürfen nicht auseinanderlaufen (DC-045). Fällt mit CoS-038-B.
- *
- * Die ZAHL kommt weiterhin aus PRICING, nicht aus dem Satz.
- */
-export const FREE_KONTINGENT_TEXT =
-  `${PRICING.freeAngeboteProMonat} neu angelegte Angebote pro Monat — Überarbeitungen zählen nicht mit`

@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/nextjs'
 import { createClient } from '@/lib/supabase/server'
 import { checkUserRateLimit, rateLimitResponse } from '@/lib/rate-limiter'
 import { getOrCreateErstbaustelle } from '@/lib/baustellen'
-import { pruefeAngebotsLimit, limitNachricht } from '@/lib/plan-limit'
+import { pruefeAngebotsSperre, sperrNachricht } from '@/lib/plan-limit'
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -30,15 +30,18 @@ export async function POST(req: NextRequest) {
 
   // DC-045: Hier stand eine EIGENE Grenze mit 5 Angeboten — eine dritte Zahl
   // neben den 3 aus der Werbung, auf einer Route, die nur beim Duplizieren
-  // aufgerufen wird. Jetzt dieselbe Regel wie beim Anlegen (plan-limit.ts).
-  // Ein Duplikat ist ein neues Angebot und zählt deshalb mit.
-  const limit = await pruefeAngebotsLimit(supabase, company.id, plan)
-  if (limit.erreicht && limit.limit !== null) {
+  // aufgerufen wird. Seither dieselbe Regel wie beim Anlegen (plan-limit.ts).
+  // Ein Duplikat ist ein neues Angebot und wird deshalb gleich behandelt.
+  //
+  // CoS-038-B (23.09.2026): dieselbe Regel, neuer Inhalt — abgelaufene
+  // Testphase statt Monatskontingent. Beide Anlege-Wege lesen weiterhin EINE
+  // Funktion; zwei Regeln an zwei Routen waren genau der Befund von DC-045.
+  const sperre = await pruefeAngebotsSperre(supabase, company.id)
+  if (sperre.gesperrt) {
     return NextResponse.json({
-      error: 'limit_erreicht',
-      message: limitNachricht(limit.limit),
-      anzahl: limit.anzahl,
-      limit: limit.limit,
+      error: sperre.grund,
+      message: sperrNachricht(),
+      testEnde: sperre.testEndeISO,
     }, { status: 403 })
   }
 

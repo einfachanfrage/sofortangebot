@@ -27,7 +27,6 @@ import {
   GRUENDERPREIS_TEXT,
   MWST_HINWEIS,
   TESTPHASE_CTA,
-  FREE_KONTINGENT_TEXT,
   bruttoText,
 } from '../pricing'
 
@@ -163,13 +162,20 @@ describe('CoS-038-A · Regelbesteuerung ist auf dem Preis sichtbar', () => {
 })
 
 describe('CoS-038-A · die Grenzen dieses Baus', () => {
-  // CoS-038-B, nicht A: „kein Gratis-Kontingent" greift in plan-limit.ts ein
-  // — der Sperre, die heute entscheidet, ob ein Betrieb anlegen darf. Solange
-  // sie 3 gewährt, muss der angezeigte Satz dieselbe Zahl meinen (DC-045).
-  it('die Sperre ist unangetastet und liest dieselbe Zahl', () => {
-    expect(PLAN_LIMIT).toContain('PRICING.freeAngeboteProMonat')
-    expect(PRICING.freeAngeboteProMonat).toBe(3)
-    expect(FREE_KONTINGENT_TEXT.startsWith(String(PRICING.freeAngeboteProMonat))).toBe(true)
+  // Beim Bau von A stand hier: „die Sperre ist unangetastet und liest
+  // dieselbe Zahl" — A durfte das Gratis-Kontingent nicht anfassen, und
+  // solange die Sperre 3 gewährte, musste der angezeigte Satz dieselbe Zahl
+  // meinen (DC-045).
+  //
+  // CoS-038-B (23.09.2026) hat die Sperre ersetzt. Die Zusicherung wird
+  // deshalb umgedreht: sie hält jetzt fest, dass die Schieflage aus §3 des
+  // A-Eintrags — die Seite verspricht weniger, als das Produkt gewährt —
+  // wieder aufgelöst ist. Kein Kontingent im Code, keins auf der Seite.
+  it('das Gratis-Kontingent ist aus der Sperre verschwunden', () => {
+    // Kommentare weg: der Bauhinweis in plan-limit.ts NENNT die abgelöste
+    // Konstante, um zu begründen, warum sie weg ist.
+    expect(ohneKommentare(PLAN_LIMIT)).not.toContain('freeAngeboteProMonat')
+    expect('freeAngeboteProMonat' in PRICING).toBe(false)
   })
 
   // Die Abo-Seite zeigt zwei verschiedene Preise, weil es zwei gibt. Die

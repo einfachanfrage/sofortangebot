@@ -12,7 +12,7 @@ function formatDatum(iso: string) {
 }
 
 export default async function AboPage() {
-  const { plan, laeuftBisISO, hatStripeKonto, angeboteDiesenMonat, freikontingent, limitErreicht, istGruenderpreis } = await getAboStand()
+  const { plan, laeuftBisISO, hatStripeKonto, angeboteDiesenMonat, testEndeISO, testTageRestlich, gesperrt, istGruenderpreis } = await getAboStand()
   const istPro = plan === 'pro'
   // CoS-038-A (23.09.2026): Der Preis hing an `PRICING.proMonatlich` — einer
   // Zahl aus dem abgelösten Modell, die es nicht mehr gibt. Es gibt zwei
@@ -35,8 +35,15 @@ export default async function AboPage() {
             <span className="font-syne font-black text-2xl text-anthracite">
               {istPro ? 'Pro' : 'Starter'}
             </span>
+            {/* CoS-038-B (23.09.2026): Hier stand „kostenlos" neben „Starter".
+                Das war die Beschriftung eines Dauer-Gratis-Tarifs — den gibt es
+                nicht mehr. Was der Starter-Betrieb hat, ist eine Testphase mit
+                einem Ende. Bestandskonten (ohne `trial_ends_at`) bekommen gar
+                keinen Zusatz, statt eine Zusage, die für sie nicht stimmt. */}
             <span className="text-sm font-bold text-anthracite/40">
-              {istPro ? `${monatspreis} € /Monat zzgl. MwSt.` : 'kostenlos'}
+              {istPro
+                ? `${monatspreis} € /Monat zzgl. MwSt.`
+                : testEndeISO ? (gesperrt ? 'Testphase beendet' : 'Testphase') : ''}
             </span>
           </div>
 
@@ -62,31 +69,53 @@ export default async function AboPage() {
           )}
         </div>
 
+        {/* CoS-038-B (23.09.2026): Hier stand „X von 3" — das Monatskontingent
+            aus dem abgelösten Modell. Es gibt keins mehr; was vor dem Abo
+            steht, sind die 14 Testtage. Die Zahl der Angebote bleibt als
+            Auskunft stehen, ohne Grenze dahinter.
+
+            DC-045 gilt unverändert weiter: Angezeigter und wirksamer Stand
+            kommen aus derselben Funktion (plan-limit.ts). */}
         <div className="bg-white rounded-2xl p-5 border border-anthracite/5">
           <div className="text-xs font-black text-anthracite/40 uppercase tracking-wide mb-2">Diesen Monat</div>
           <div className="font-syne font-black text-2xl text-anthracite">
-            {istPro
-              ? `${angeboteDiesenMonat} ${angeboteDiesenMonat === 1 ? 'Angebot' : 'Angebote'}`
-              : `${angeboteDiesenMonat} von ${freikontingent}`}
+            {angeboteDiesenMonat} {angeboteDiesenMonat === 1 ? 'Angebot' : 'Angebote'}
           </div>
-          {/* DC-045, Sandys Entscheidung „harte Grenze": Die Zahl hier kommt
-              aus derselben Funktion, die auch sperrt (plan-limit.ts). Eine
-              angezeigte und eine wirksame Grenze auseinanderlaufen zu lassen
-              wäre der schlimmste Ausgang. */}
           <div className="text-sm font-semibold text-anthracite/50 mt-1">
-            {istPro
-              ? 'Im Pro-Plan ohne Begrenzung.'
-              : 'Neu angelegte Angebote. Überarbeitungen eines bestehenden Angebots zählen nicht mit.'}
+            Neu angelegte Angebote. Überarbeitungen eines bestehenden Angebots zählen nicht mit.
           </div>
-          {!istPro && limitErreicht && (
-            <div className="mt-3 bg-yellow/10 border border-yellow/30 rounded-xl px-3.5 py-3">
-              <div className="font-bold text-anthracite text-sm">Dein Monat ist voll</div>
-              <div className="text-xs font-semibold text-anthracite/60 mt-0.5">
-                Angefangene Angebote kannst du weiter bearbeiten und versenden — für ein neues brauchst du Pro.
-              </div>
-            </div>
-          )}
         </div>
+
+        {!istPro && testEndeISO && (
+          <div className="bg-white rounded-2xl p-5 border border-anthracite/5">
+            <div className="text-xs font-black text-anthracite/40 uppercase tracking-wide mb-2">Testphase</div>
+            {gesperrt ? (
+              <>
+                <div className="font-syne font-black text-2xl text-anthracite">Abgelaufen</div>
+                <div className="text-sm font-semibold text-anthracite/50 mt-1">
+                  Seit {formatDatum(testEndeISO)}.
+                </div>
+                <div className="mt-3 bg-yellow/10 border border-yellow/30 rounded-xl px-3.5 py-3">
+                  <div className="font-bold text-anthracite text-sm">Deine Testzeit ist vorbei</div>
+                  <div className="text-xs font-semibold text-anthracite/60 mt-0.5">
+                    Angefangene Angebote kannst du weiter bearbeiten und versenden — für ein neues brauchst du ein Abo.
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="font-syne font-black text-2xl text-anthracite">
+                  {testTageRestlich !== null && testTageRestlich > 0
+                    ? `Noch ${testTageRestlich} ${testTageRestlich === 1 ? 'Tag' : 'Tage'}`
+                    : 'Läuft heute ab'}
+                </div>
+                <div className="text-sm font-semibold text-anthracite/50 mt-1">
+                  Bis {formatDatum(testEndeISO)}. Keine Kreditkarte, keine stille Verlängerung.
+                </div>
+              </>
+            )}
+          </div>
+        )}
 
         <AboAktionen plan={plan} hatStripeKonto={hatStripeKonto} />
 

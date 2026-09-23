@@ -33,7 +33,9 @@ function AngebotNeuInner() {
         })
         if (res.status === 403) {
           const daten = await res.json().catch(() => ({})) as { error?: string; message?: string }
-          if (daten.error === 'limit_erreicht' && daten.message) { setLimitText(daten.message); return }
+          // CoS-038-B: Der Schlüssel heißt jetzt nach dem Grund ('testphase_abgelaufen');
+          // 'limit_erreicht' bleibt für den Fall stehen, dass noch eine alte Antwort unterwegs ist.
+          if ((daten.error === 'testphase_abgelaufen' || daten.error === 'limit_erreicht') && daten.message) { setLimitText(daten.message); return }
         }
         if (!res.ok) { setError('Aufmaß konnte nicht angelegt werden. Bitte neu laden.'); return }
         const { id } = await res.json() as { id: string }

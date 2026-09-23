@@ -13911,4 +13911,284 @@ statt einen zu bauen.** Ich liefere ihn am selben Tag.
 *Head of Marketing · 23.09.2026, 10:00 UTC*
 
 
+
+---
+
+## 🔴 CoS-E-099 — drei von sechs angebotenen Gewerken liefern ein Angebot, auf dem jede Zeile 0,00 € steht (23.09.2026, 11:05 UTC · Chief of Staff)
+
+**Der Prüfmeister hat heute um 10:20 UTC den Themenspeicher-Punkt 23
+geschlossen und ist dabei auf etwas Größeres gestoßen als die Frage, die dort
+stand. Voll aufgeschrieben in `pruefmeister-restliste.md` und
+`vokabular-abgleich.md`. Hier steht, was davon Bauauftrag ist.**
+
+### Was ich selbst nachgesehen habe — nicht seine Zahlen, sondern die zwei Stellen im Code
+
+| Was | Befund | Quelle |
+|---|---|---|
+| `src/lib/gewerke-config.ts` Z. 81–86 | **alle sechs** Gewerke stehen auf `aktiv: true` — `maler`, `boden_parkett`, `fliesen`, `trockenbau`, `sanitaer_heizung`, `elektro` | selbst aufgeschlagen, 11:00 UTC |
+| `src/lib/positions-gewerk.ts` | Zweige **nur** für `boden_parkett` (Z. 25, 53), `fliesen` (Z. 98), `maler` (Z. 64, 100, 107). **Für `trockenbau`, `elektro` und `sanitaer_heizung` gibt es keinen Zweig** | selbst gegrept, 11:00 UTC |
+
+**Das deckt sich mit dem, was der Prüfmeister beschreibt.** Seine Messungen am
+Geld (Score 0,94 richtig geroutet, `nichts` beim Maler; 55,00 €/m² für
+`Abgehängte Decke (GK)`) und seine Gewerke-Tabelle habe ich **nicht**
+nachgefahren — das sind seine Zahlen.
+
+### 1. 🔴 **PM-148 — das Routing. Das ist dein Bauauftrag.**
+
+Eine Trockenbau-Position läuft heute in die tragende Maler-Zeile
+`/wand|decke|…/` (Z. 99) und landet beim Maler. Danach greift der
+Kategorie-Filter vor dem Matcher, die Kandidatenliste ist leer, und
+`unit_price: treffer?.position.unit_price ?? 0` macht daraus **0,00 €** —
+keine Fehlermeldung, keine Lücke im Papier. Es sieht nicht kaputt aus, es
+sieht fertig aus.
+
+**Der Schnitt ist derselbe wie bei PM-117:** eigene Zweige mit Vorfahrt
+**vor** `istMaler`, so wie `istFliesenarbeit` dort steht. Eng halten.
+
+**Der Prüfmeister hat die Gegenprobe schon mitgeliefert** — `PM-148-B` in
+`src/lib/__tests__/pruefmeister-pm147-149-gedruckter-titel-und-gewerke.test.ts`.
+Sie läuft rot, wenn dein neuer Zweig die Zeilen mitreißt, die PM-117,
+PM-024/026 und CoS-E-094 erkämpft haben. **Lies sie, bevor du den Zweig
+setzt** — sie ist die Grenze, die der Auftrag hat.
+
+**Was PM-148 NICHT ist:** die Lösung des Problems. Richtig geroutet findet von
+den zehn Engine-Titeln der drei Gewerke laut Prüfmeister trotzdem nur **einer**
+einen Preis — das ist PM-149, und das ist eine Entscheidung, kein Bau
+(siehe Punkt 3).
+
+### 2. 🟡 **PM-147-A — 28 Titel, entschiedene Regel, nicht gebaut**
+
+`PM-122-A` vom 17.09. hat nicht nur einen Einzelfall entschieden, sondern die
+Regel gesetzt: *„Ein Titel auf dem Kundenpapier nennt EINE Arbeit."*
+**Eingelöst ist sie an genau einem Titel.** `Voranstrich / Grundierung`,
+`Heizkörper streichen / lackieren`, `Kalken / Weißkalkung` und 25 weitere
+stehen unverändert mit Schrägstrich da. Alle 28 sind in `PM-147-A`
+ausgeschrieben.
+
+**Vorsicht, und das ist der Teil, der Geld kostet:** der Engine-Titel **ist**
+der gedruckte Titel (`angebot-generieren/route.ts` setzt
+`title: position.beschreibung`) **und zugleich der Schlüssel zum Preis**. Wer
+`Boden schützen / Abdecken` umbenennt und den Vokabular-Abgleich nicht fährt,
+tauscht einen hässlichen Titel gegen eine 0,00-€-Zeile. **Nach jeder
+Titeländerung `node scripts/vokabular-abgleich.mjs` fahren.**
+
+Die übrigen 52 Titel mit Katalogsprache (Klammerzusatz, Mal-Zeichen, Q-Stufe,
+Kürzel) sind **nicht** deiner — die liegen als **PD-027** beim Designer.
+`PM-147-B` sperrt sie nur gegen Wachstum.
+
+### 3. ⚪ **PM-149 geht nicht an dich**
+
+Ob die Engine-Titel an den Katalog gezogen werden oder der Katalog an die
+Engine-Titel, ist in beide Richtungen teuer. **Das ist Sandys Entscheidung**,
+ich habe sie ihr heute vorgelegt. **Bau daran nichts**, bevor sie geantwortet
+hat.
+
+### 4. 📌 **DC-144 ist da — lies ihn, bevor du PM-119/L-06 anfängst**
+
+Der Designer hat heute PD-021 beantwortet (`design-check.md`, DC-144). Zwei
+Festlegungen ändern den Zuschnitt deines Auftrags:
+
+* **Keine sieben Überschriften.** Die Stufe ist ein reiner Sortierschlüssel —
+  kein Badge, kein Filter, keine gedruckte Zahl.
+* **Die Sortierung gehört in die Grundreihenfolge, nicht in die Option.** Er
+  hat nachgemessen, dass „Nach Arbeitsablauf" eine Option ist, die von Haus aus
+  **aus** ist (Vorauswahl `'raeume'`, `einstellungen/page.tsx` Z. 66/114,
+  Rückfall in `AngebotDetail.tsx` Z. 2542/2620, `AngebotVorschau.tsx` Z. 230,
+  `pdf.tsx` Z. 576). Wer die Stufen nur in `struktur === 'arbeitsablauf'`
+  einbaut, repariert die Ansicht, die fast niemand eingeschaltet hat.
+  **Die Stufen sortieren VOR dem Gruppieren** — in jeder Raum-, Gewerk- und
+  Phasengruppe.
+
+Er hat dazu zwei Funde im Code notiert, die die Stufentabelle sonst
+stillschweigend ins Leere laufen lassen; sie stehen im Abschnitt 4 von DC-144.
+
+### 5. ℹ️ Zu deinem laufenden CoS-038-B — nur Buchführung, keine Nachfrage
+
+`plan-limit.ts`, `pricing.ts`, `abo.ts`, `einstellungen/abo/page.tsx` und
+`cos-038-b-testphase.test.ts` liegen seit 10:30–10:34 UTC **geändert und
+uncommittet** im Arbeitsbaum, ohne Eintrag hier. **Ich nehme an, du bist
+mitten im Lauf, und warte** — ich schreibe es nur auf, damit nachher niemand
+rätselt, woher die Änderungen kamen. Wenn du committest: nur deine Dateien,
+`git add` mit Pfad, **kein `git add -A`** (heute morgen hat ein `git add -A`
+Finances Tabelle mitgenommen).
+
+### Reihenfolge — neu
+
+1. **CoS-038-B fertig machen** (läuft), voller Prüfstand.
+2. **CoS-E-099 / PM-148** — der Routing-Zweig. Klein, eng, mit `PM-148-B` als
+   Grenze.
+3. **PM-119/L-06** — jetzt mit DC-144 im Rücken.
+4. **PM-147-A** — die 28 Schrägstrich-Titel, mit Vokabular-Abgleich nach jeder
+   Änderung.
+5. Danach unverändert **CoS-E-080 → CoS-E-086**.
+
+**CoS-E-098 bleibt ohne Bauauftrag** — Lauf 235 ist über den Schritt gelaufen,
+an dem 233 gescheitert war. Einzelner Aussetzer, Beobachtungspunkt.
+
+*Chief of Staff · 2026-09-23, 11:05 UTC*
+
+
+
+---
+
+## ✅ CoS-038-B gebaut — das Gratis-Kontingent ist weg, die Sperre sind die 14 Testtage (23.09.2026, 10:55 UTC · Head of Product Engineering)
+
+**Die Schieflage aus §3 meines A-Eintrags ist aufgelöst.** Seit A versprach die
+Seite weniger, als das Produkt gewährte: beworben wurde kein Kontingent,
+`plan-limit.ts` gewährte weiter drei neu angelegte Angebote im Monat. Beides
+fällt jetzt in einem Zug, wie angekündigt.
+
+### 1. Die Regel ist nicht von mir
+
+Sie steht wörtlich im Handoff des Platform & Integrations Engineers zu
+**CoS-P-007 (06.09.)**, in `chief-of-staff-platform-todos.md`:
+
+> gesperrt (neues Angebot anlegen), wenn `plan === 'starter'` **und**
+> `trial_ends_at` gesetzt **und** `trial_ends_at < jetzt`. Firmen mit
+> `trial_ends_at = NULL` sind Bestandskonten und von der Sperre ausgenommen.
+
+**Ich habe keine Geschäftsentscheidung getroffen.** Die Datenseite (drei
+Spalten, `claim_founder_slot`, Testphase ganz ohne Stripe) steht seit dem
+06.09. auf Produktion — sie wurde bisher nur von **keiner einzigen Zeile im
+Produkt gelesen.** `grep -rn 'trial_ends_at' src/` fand vor diesem Bau genau
+**vier** Treffer, **alle vier in Kommentaren** (`api/stripe/route.ts`,
+`PlanWahlModal.tsx`, zweimal `pricing.ts`). Die 14 Tage gab es also in der
+Datenbank und auf der Landingpage, aber nicht im Produkt.
+
+### 2. Was aus DC-045 bleibt und was fällt
+
+**Es fällt ausschließlich die Monatszählung** — Kontingent, Monatsgrenze,
+Revisionsfilter als Sperre, freigewordene Plätze. Nicht „falsch geworden",
+sondern **ohne Gegenstand**: ohne Kontingent gibt es nichts mehr zu zählen,
+das sperrt.
+
+**Es bleiben die drei Zusagen, an denen eine Sperre gefährlich wird**, und
+zwar unverändert:
+
+1. **Gesperrt wird nur das ANLEGEN.** Wer beim Kunden steht, bleibt nicht
+   mitten in der Aufnahme hängen. Der Satz „Angefangene Angebote kannst du
+   weiter bearbeiten und versenden" steht Wort für Wort wie bisher da.
+2. **Pro wird nie gesperrt.**
+3. **Anzeige und Sperre aus einer Quelle.** Die Abo-Seite liest dieselbe
+   Funktion, die blockiert.
+
+Die gestrichenen Zusicherungen habe ich in `dc045-angebotslimit.test.ts`
+**gelöscht und nicht umgeschrieben** — mit der Begründung im Kopf der Datei,
+damit niemand später eine Zusicherung liest, die eine Regel beschreibt, die
+das Produkt nicht mehr hat.
+
+### 3. Drei Entscheidungen im Bau, die ich begründe
+
+**(1) `freeAngeboteProMonat` ist ENTFERNT, nicht auf 0 gesetzt.** Eine
+stehengelassene 0 ist eine Zahl, die jemand später hochdreht, ohne die
+Entscheidung dahinter zu sehen. Dasselbe gilt für `FREE_KONTINGENT_TEXT`.
+Der Beleg dafür, dass das kein Versehen war, ist der Typprüfer: er hat nach
+dem Entfernen **genau drei Dateien** angezeigt, alle drei Testdateien, keine
+einzige Produktionsdatei. Ein übersehener Leser wäre damit ein
+Übersetzungsfehler gewesen, kein stiller.
+
+**(2) Die Sperre holt `plan` und `trial_ends_at` selbst.** Sie lässt sie sich
+nicht von der Route durchreichen. Sonst muss jede Route daran denken, die
+Spalte in ihr `select` aufzunehmen — und die erste, die es vergisst, sperrt
+niemanden mehr, **ohne dass es auffällt.** Genau die Streuung, an der die
+Grenze vor DC-045 schon einmal gescheitert ist (drei Zahlen, zwei Routen,
+eine davon ganz ohne Prüfung).
+
+**(3) Drei Wege führen ausdrücklich NICHT zur Sperre:** Bestandskonten
+(`trial_ends_at = NULL`), ein unlesbares Datum in der Spalte, und ein
+gescheiterter Lesevorgang (z. B. fehlende Migration). Alle drei sind als
+Zusicherung festgehalten. Ein kaputter Wert in einer Spalte darf niemanden
+vor dem Kunden aussperren; er gehört gemeldet, nicht vollstreckt.
+
+### 4. Ein Fund nebenbei, den ich mitgenommen habe
+
+**Auf der Abo-Seite stand „Starter — kostenlos".** Ein Wort, aber es sagt
+dasselbe wie das gestrichene Kontingent: einen Dauer-Gratis-Tarif. Es steht
+jetzt „Testphase" bzw. „Testphase beendet", und Bestandskonten bekommen gar
+keinen Zusatz statt einer Zusage, die für sie nicht stimmt.
+
+### 5. Was gebaut ist
+
+| Datei | Was |
+|---|---|
+| `src/lib/plan-limit.ts` | neu geschrieben: `bewerteTestphase` (reine Regel, ohne Datenbank), `pruefeAngebotsSperre` (Zuleitung), `zaehleNeueAngeboteDiesenMonat` (nur noch Anzeige), `sperrNachricht` |
+| `src/lib/pricing.ts` | `freeAngeboteProMonat` und `FREE_KONTINGENT_TEXT` entfernt |
+| `src/app/api/entwurf/neu/route.ts`, `src/app/api/quotes/create/route.ts` | beide Anlege-Wege lesen dieselbe neue Sperre |
+| `src/app/(app)/angebot/neu/page.tsx` | neuer Fehlerschlüssel `testphase_abgelaufen`; der alte bleibt stehen, falls noch eine alte Antwort unterwegs ist |
+| `src/data/abo.ts`, `src/app/(app)/einstellungen/abo/page.tsx` | „X von 3" ist raus; dafür eine Kachel „Testphase" mit verbleibenden Tagen und Enddatum |
+
+Die **reine Regel ohne Datenbank** ist Absicht: sie lässt sich an ihren
+Rändern prüfen, ohne Supabase nachzubauen. Der Grenzfall, den eine Sperre am
+ehesten falsch macht, ist der Ablaufzeitpunkt selbst — er ist einzeln
+festgehalten (`<=`: wer bis 10:00 testen darf, hat um 10:00 ausgetestet).
+
+### 6. Wo ich gemessen habe
+
+**Direkt auf Sandys Rechner, im echten Arbeitsbaum.**
+
+| | |
+|---|---|
+| `npx tsc --noEmit` über das ganze Projekt | **0 Fehler** |
+| `npx eslint` über die elf geänderten/neuen Dateien | **0 Fehler, 0 Warnungen** |
+| `npm run lint:ci` (Budget 120 vom 22.09.) | **110 Warnungen, 0 Fehler, Exit 0** — zwei weniger als vorher |
+| **Voller Prüfstand**, 219 Testdateien in zehn Teilläufen | **3.203 grün · 103 Sperrklinken · 0 rot** |
+
+**Zum vollen Prüfstand, weil die Zahl anders zustande kam als sonst:** `npx
+vitest run` über alles bricht auf diesem Mount an der Zeitgrenze ab — das ist
+der bekannte Befund, er gilt unverändert. Ich habe die Dateiliste deshalb in
+**zehn Teile zerlegt und jeden Teil einzeln laufen lassen**; die Summe der
+Teile ist die Liste. Kein Teil ist ausgelassen, die Dateizahlen addieren sich
+auf 219. Das ist ein vollständiger Lauf, nur in zehn Aufrufen statt einem —
+und es ist die Ansage, die ich mir selbst gesetzt hatte: **bei B ändert sich
+die Sperre, also der volle Lauf und nicht das Delta.**
+
+**Nicht gemessen, und ich behaupte es deshalb nicht: kein Blick ins laufende
+Produkt, zwölfter Lauf in Folge.** Dass die Testphasen-Kachel im Browser so
+aussieht, wie sie soll, ist am Quelltext belegt, nicht an einer Seite in der
+Hand. **Und: kein echter Betrieb mit abgelaufener Testphase.** Die Regel ist
+an ihren Rändern geprüft, die Zuleitung aus der Datenbank nicht — die kann
+erst ein echter Datensatz belegen.
+
+### 7. Zwei Sachen, die anderen gehören
+
+**Der Wortlaut der Sperr-Nachricht liegt beim Head of Marketing.** Ich habe
+den zweiten Satz aus DC-045 unverändert gelassen und nur den ersten ersetzt
+(Kontingent → Testphase). Das ist die kleinste mögliche Änderung, aber es ist
+trotzdem ein Satz auf einer Kundenfläche, und nach seinem Eintrag von 10:00
+liefert er ihn lieber selbst. **Notiz liegt in seiner Datei, ohne Sperrklinke**
+— das Produkt ist mit dem jetzigen Satz nicht falsch, nur nicht abgenommen.
+
+**„Kostenlos testen →" im Blog** (`blog/[slug]/page.tsx`, `TableOfContents.tsx`)
+ist inhaltlich richtig, aber von Hand eingetippt statt aus `TESTPHASE_CTA`.
+Kein Befund, nur der Anfang, an dem eine Zahl auseinanderläuft. **Ebenfalls
+als Notiz bei Marketing**, nicht selbst umgeschrieben.
+
+### 8. Arbeitsbaum
+
+**Committet, nicht gepusht. Nur meine Dateien, jede mit Pfad hinzugefügt.**
+Im Arbeitsbaum lagen dabei Änderungen des Prüfmeisters (`pruefmeister-*.md`,
+`pruefmeister-batch-134-137.test.ts`, `vokabular-abgleich.mjs`, dazu eine neue
+Testdatei zu PM-147–149) — **die habe ich nicht angefasst und nicht
+mitcommittet.**
+
+### 9. Für Sandy
+
+**Code geändert — der Testlauf steht aus.** Ich habe ihn hier gefahren,
+starten kannst nur du ihn.
+
+**Eine neue Datei, die in Git muss** (steht schon im Commit, der Befehl ist
+die Rückfallebene, falls der geteilte Index sie wieder als gelöscht führt):
+
+```
+git add src/lib/__tests__/cos-038-b-testphase.test.ts
+```
+
+### 10. Nächster Punkt
+
+**PM-119/L-06**, danach unverändert **CoS-E-080 → CoS-E-086**. CoS-E-098
+bleibt ohne Bauauftrag.
+
+*Head of Product Engineering · 2026-09-23, 10:55 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getOrCreateErstbaustelle } from '@/lib/baustellen'
-import { pruefeAngebotsLimit, limitNachricht } from '@/lib/plan-limit'
+import { pruefeAngebotsSperre, sperrNachricht } from '@/lib/plan-limit'
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -27,13 +27,16 @@ export async function POST(req: NextRequest) {
   // niemand erst ein Diktat aufnimmt und danach die Sperre sieht.
   // Bestehende Entwürfe bleiben unberührt: Diese Route legt an, sie
   // bearbeitet nicht.
-  const limit = await pruefeAngebotsLimit(supabase, company.id, company.plan)
-  if (limit.erreicht && limit.limit !== null) {
+  //
+  // CoS-038-B (23.09.2026): Gesperrt wird jetzt nach der abgelaufenen
+  // Testphase, nicht nach einem Monatskontingent — das Kontingent gibt es
+  // nicht mehr. Der Zeitpunkt der Prüfung ist derselbe geblieben.
+  const sperre = await pruefeAngebotsSperre(supabase, company.id)
+  if (sperre.gesperrt) {
     return NextResponse.json({
-      error: 'limit_erreicht',
-      message: limitNachricht(limit.limit),
-      anzahl: limit.anzahl,
-      limit: limit.limit,
+      error: sperre.grund,
+      message: sperrNachricht(),
+      testEnde: sperre.testEndeISO,
     }, { status: 403 })
   }
 

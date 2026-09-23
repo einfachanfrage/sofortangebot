@@ -1,105 +1,85 @@
 import { describe, it, expect } from 'vitest'
-import { istProPlan, monatsStartISO, limitNachricht, pruefeAngebotsLimit } from '../plan-limit'
+import { istProPlan, monatsStartISO, bewerteTestphase, sperrNachricht } from '../plan-limit'
 import { PRICING } from '../pricing'
 
-// ── DC-045, Sandys Entscheidung vom 06.09.2026: harte Grenze ──────────────
+// ── DC-045 (06.09.2026) nach CoS-038-B (23.09.2026) ───────────────────────
 //
-// „Ab dem 4. Angebot geht es erst nach dem Upgrade weiter."
+// Diese Datei hielt Sandys Entscheidung vom 06.09. fest: „harte Grenze — ab
+// dem 4. Angebot geht es erst nach dem Upgrade weiter." Die Grenze war ein
+// Monatskontingent von 3 neu angelegten Angeboten.
+//
+// **Was hier gestrichen ist und warum.** Das Kontingent selbst. Sandys
+// Preismodell vom 03.09. (`docs/preismodell.md`) kennt keinen
+// Dauer-Gratis-Tarif; davor stehen 14 Testtage, danach das Abo. Damit sind
+// die Zusicherungen „drei sind erlaubt, das vierte nicht", „der letzte Monat
+// zählt nicht mehr mit" und „Überarbeitungen zählen nicht mit" gegenstandslos
+// — nicht falsch geworden, sondern ohne Gegenstand: es gibt nichts mehr zu
+// zählen, das sperrt. Sie sind hier GESTRICHEN und nicht umgeschrieben,
+// damit niemand später eine Zusicherung liest, die eine Regel beschreibt,
+// die das Produkt nicht mehr hat.
+//
+// **Was von DC-045 bleibt, steht unverändert unten.** Es sind die drei
+// Zusagen, an denen eine Sperre gefährlich wird — und die sind vom
+// Modellwechsel gar nicht berührt:
+//
+//   1. Gesperrt wird nur das ANLEGEN. Wer beim Kunden steht, bleibt nicht
+//      mitten in der Aufnahme hängen.
+//   2. Pro wird nie gesperrt.
+//   3. Anzeige und Sperre kommen aus einer Quelle.
 //
 // Eine Sperre ist die gefährlichste Sorte Fix: Sie fällt erst auf, wenn
 // jemand vor einem Kunden steht und nicht weiterkommt. Deshalb sind hier
 // nicht nur die Grenze, sondern vor allem ihre AUSNAHMEN festgehalten.
 
-/** Minimaler Supabase-Doppelgänger — zählt, was die Filter zulassen. */
-function fakeSupabase(zeilen: Array<{ created_at: string; original_id: string | null }>) {
-  return {
-    from() {
-      const filter: { seit?: string; nurOriginale?: boolean } = {}
-      const kette = {
-        select: () => kette,
-        eq: () => kette,
-        gte: (_s: string, wert: string) => { filter.seit = wert; return kette },
-        is: () => { filter.nurOriginale = true; return kette },
-        then: (aufloesen: (v: { count: number; error: null }) => void) => {
-          const treffer = zeilen.filter(z =>
-            (!filter.seit || z.created_at >= filter.seit) &&
-            (!filter.nurOriginale || z.original_id === null))
-          aufloesen({ count: treffer.length, error: null })
-        },
-      }
-      return kette
-    },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } as any
-}
+const JETZT = new Date('2026-09-23T10:00:00.000Z')
+const inTagen = (n: number) => new Date(JETZT.getTime() + n * 24 * 60 * 60 * 1000).toISOString()
 
-const jetzt = new Date()
-const imMonat = (tag: number) => new Date(jetzt.getFullYear(), jetzt.getMonth(), tag, 12).toISOString()
-const letzterMonat = new Date(jetzt.getFullYear(), jetzt.getMonth() - 1, 15).toISOString()
-
-describe('DC-045 — die Grenze greift, aber nur wo sie soll', () => {
-  it('drei Angebote sind erlaubt, das vierte nicht', async () => {
-    const zwei = await pruefeAngebotsLimit(fakeSupabase([
-      { created_at: imMonat(2), original_id: null },
-      { created_at: imMonat(3), original_id: null },
-    ]), 'c1', 'starter')
-    expect(zwei.erreicht).toBe(false)
-
-    const drei = await pruefeAngebotsLimit(fakeSupabase([
-      { created_at: imMonat(2), original_id: null },
-      { created_at: imMonat(3), original_id: null },
-      { created_at: imMonat(4), original_id: null },
-    ]), 'c1', 'starter')
-    expect(drei.anzahl).toBe(3)
-    expect(drei.erreicht).toBe(true)
+describe('DC-045 — die Sperre greift, aber nur wo sie soll', () => {
+  it('Pro wird nie gesperrt — auch ohne jede Testphase', () => {
+    expect(bewerteTestphase('pro', null, JETZT).gesperrt).toBe(false)
+    expect(bewerteTestphase('pro', inTagen(-99), JETZT).gesperrt).toBe(false)
+    expect(bewerteTestphase('enterprise', inTagen(-99), JETZT).gesperrt).toBe(false)
   })
 
-  it('Pro wird nie gesperrt', async () => {
-    const viele = Array.from({ length: 50 }, (_, i) => ({ created_at: imMonat(1), original_id: null as string | null }))
-    const stand = await pruefeAngebotsLimit(fakeSupabase(viele), 'c1', 'pro')
-    expect(stand.erreicht).toBe(false)
-    expect(stand.limit).toBeNull()
+  it('während der Testphase ist nichts gesperrt', () => {
+    const stand = bewerteTestphase('starter', inTagen(5), JETZT)
+    expect(stand.gesperrt).toBe(false)
+    expect(stand.grund).toBe('keine')
+    expect(stand.tageRestlich).toBe(5)
   })
 
-  it('der letzte Monat zählt nicht mehr mit', async () => {
-    const stand = await pruefeAngebotsLimit(fakeSupabase([
-      { created_at: letzterMonat, original_id: null },
-      { created_at: letzterMonat, original_id: null },
-      { created_at: letzterMonat, original_id: null },
-      { created_at: imMonat(1), original_id: null },
-    ]), 'c1', 'starter')
-    expect(stand.anzahl).toBe(1)
-    expect(stand.erreicht).toBe(false)
+  it('nach der Testphase ist das Anlegen gesperrt', () => {
+    const stand = bewerteTestphase('starter', inTagen(-1), JETZT)
+    expect(stand.gesperrt).toBe(true)
+    expect(stand.grund).toBe('testphase_abgelaufen')
   })
 
-  it('Überarbeitungen zählen NICHT mit — sonst kostet ein Änderungswunsch den Monat', async () => {
-    const stand = await pruefeAngebotsLimit(fakeSupabase([
-      { created_at: imMonat(2), original_id: null },
-      { created_at: imMonat(3), original_id: 'q-1' },
-      { created_at: imMonat(4), original_id: 'q-1' },
-      { created_at: imMonat(5), original_id: 'q-1' },
-    ]), 'c1', 'starter')
-    expect(stand.anzahl).toBe(1)
-    expect(stand.erreicht).toBe(false)
+  // CoS-P-007 (Platform, 06.09.): Für die zwei bereits bestehenden Firmen ist
+  // `trial_ends_at` bewusst leer geblieben. Ihnen rückwirkend eine Testphase
+  // anzudichten hieße, sie über Nacht auszusperren.
+  it('Bestandskonten ohne trial_ends_at werden nie gesperrt', () => {
+    const stand = bewerteTestphase('starter', null, JETZT)
+    expect(stand.gesperrt).toBe(false)
+    expect(stand.istBestandskonto).toBe(true)
   })
 
-  it('ein leerer Monat ist nicht erreicht', async () => {
-    expect((await pruefeAngebotsLimit(fakeSupabase([]), 'c1', 'starter')).erreicht).toBe(false)
+  // Ein kaputter Wert in einer Spalte darf niemanden vor dem Kunden
+  // aussperren — dieselbe Vorsicht wie bei `baustelle_id` in den Insert-Routen.
+  it('ein unlesbares Datum sperrt nicht', () => {
+    expect(bewerteTestphase('starter', 'kein Datum', JETZT).gesperrt).toBe(false)
   })
 })
 
-describe('DC-045 — eine Zahl, nicht drei', () => {
-  it('die Grenze kommt aus der Preisliste, nicht aus dem Code', async () => {
-    const stand = await pruefeAngebotsLimit(fakeSupabase([]), 'c1', 'starter')
-    expect(stand.limit).toBe(PRICING.freeAngeboteProMonat)
-    expect(stand.limit).toBe(3)
+describe('DC-045 — der Text sagt, was weiter geht', () => {
+  it('die Nachricht nennt die Testtage aus der Preisliste', () => {
+    expect(sperrNachricht()).toContain(`${PRICING.testTage} Tage`)
+    expect(PRICING.testTage).toBe(14)
   })
 
-  it('der Text nennt dieselbe Zahl und sagt, was weiter geht', () => {
-    const text = limitNachricht(PRICING.freeAngeboteProMonat)
-    expect(text).toContain('3 Angebote pro Monat')
-    // Die wichtigste Zusage: niemand bleibt beim Kunden hängen.
-    expect(text).toMatch(/weiter bearbeiten und versenden/)
+  // Die wichtigste Zusage aus DC-045, Wort für Wort unverändert: niemand
+  // bleibt beim Kunden hängen.
+  it('die Nachricht sagt, dass Angefangenes weitergeht', () => {
+    expect(sperrNachricht()).toMatch(/weiter bearbeiten und versenden/)
   })
 })
 

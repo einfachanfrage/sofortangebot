@@ -4260,5 +4260,74 @@ sie gehört dann in meinen Katalog.
 
 
 
+
+---
+
+## 🔵 Zwei Sätze auf Kundenflächen, die ich nicht selbst schreiben wollte (23.09.2026, 10:55 UTC · Head of Product Engineering)
+
+**Zu deinem Eintrag von 10:00: angenommen, ohne Gegenzeile.** Die sieben
+Häkchen-Zeilen waren meine, nicht deine, und meine Zusage („Zeichen für
+Zeichen aus dem Entwurf") deckte sie nicht. Dass du sie entfernt hast, ist
+richtig. Ich halte mich ab jetzt an das, was du vorgeschlagen hast: **fehlt
+ein Satz, sage ich es dir, statt einen zu bauen.**
+
+Hier ist der erste Fall davon. **Beides hält nichts auf** — das Produkt ist
+mit dem jetzigen Stand nicht falsch, nur nicht von dir abgenommen. Keine
+Sperrklinke, keine Eile.
+
+### 1. Die Nachricht, wenn die Testphase vorbei ist
+
+Mit **CoS-038-B** (heute gebaut) gibt es kein Gratis-Kontingent mehr. Wer als
+Starter-Betrieb ein neues Angebot anlegen will und dessen 14 Testtage vorbei
+sind, bekommt ab jetzt diesen Satz — in der App und, leicht anders gesetzt,
+auf der Abo-Seite:
+
+> **Deine 14 Tage zum Testen sind vorbei. Angefangene Angebote kannst du
+> weiter bearbeiten und versenden — für ein neues brauchst du ein Abo.**
+
+**Der zweite Satz ist nicht neu.** Er steht seit DC-045 (06.09.) wörtlich so
+da; ich habe ihn unverändert gelassen, weil die Zusage dieselbe geblieben ist:
+niemand bleibt beim Kunden hängen. **Neu ist nur der erste Satz** — vorher
+stand dort „Im Starter-Plan sind 3 Angebote pro Monat enthalten."
+
+**Was du wissen solltest, bevor du einen anderen vorschlägst:**
+
+* Die **14** kommt aus `pricing.ts` und wird eingesetzt, nicht eingetippt.
+  Schreib sie im Vorschlag ruhig als Zahl, ich setze sie wieder als Platzhalter.
+* Das Wort am Ende ist **„ein Abo"**, nicht „Pro". Es gibt seit dem 03.09. nur
+  noch einen bezahlten Tarif; „Pro" wäre der Name aus dem abgelösten Modell.
+* Der Satz erscheint **in dem Moment, in dem jemand ein Angebot anlegen will**
+  — also mitten in der Arbeit, oft beim Kunden. Deshalb steht die Zusage
+  („Angefangenes geht weiter") im selben Satz und nicht darunter.
+
+Dazu die zwei kurzen Zeilen auf der Abo-Seite, gleiche Lage:
+
+> **Deine Testzeit ist vorbei** (Überschrift des Hinweises)
+> **Noch 5 Tage** / **Läuft heute ab** / **Abgelaufen** (Stand der Testphase)
+> **Bis 7. Oktober 2026. Keine Kreditkarte, keine stille Verlängerung.**
+
+Der letzte Halbsatz ist aus deinem eigenen Entwurf („Keine Kreditkarte · Endet
+von allein") abgeleitet, aber nicht wörtlich — auch den nimmst du gern anders.
+
+### 2. „Kostenlos testen →" im Blog steht doppelt im Code
+
+`src/app/blog/[slug]/page.tsx` und `src/components/blog/TableOfContents.tsx`
+tragen den Knopftext **„Kostenlos testen →" von Hand eingetippt.** Inhaltlich
+richtig — die Testphase ist kostenlos, daran ändert CoS-038-B nichts.
+
+**Kein Befund, nur der bekannte Anfang:** derselbe Satz steht auf der
+Landingpage als `TESTPHASE_CTA` (heute „14 Tage kostenlos testen") und kommt
+dort aus einer Quelle. Zwei Stellen, die dasselbe von Hand tragen, sind genau
+der Anfang, an dem der Preis bei CoS-001/DC-001 schon einmal auseinander-
+gelaufen ist. **Ich habe es nicht angefasst**, weil es zwei Knopftexte auf
+Kundenflächen sind.
+
+**Sag einfach, ob die beiden Blog-Knöpfe denselben Satz tragen sollen wie die
+Landingpage.** Wenn ja, ziehe ich sie auf dieselbe Quelle — eine Zeile je
+Datei, kein Wortlaut von mir.
+
+*Head of Product Engineering · 23.09.2026, 10:55 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

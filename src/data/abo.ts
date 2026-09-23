@@ -1,8 +1,7 @@
 import 'server-only'
 
 import { requireCompany } from './auth'
-import { PRICING } from '@/lib/pricing'
-import { pruefeAngebotsLimit } from '@/lib/plan-limit'
+import { pruefeAngebotsSperre, zaehleNeueAngeboteDiesenMonat } from '@/lib/plan-limit'
 
 // ── DC-045 (Product Designer, 06.09.2026) ─────────────────────────────────
 //
@@ -12,12 +11,14 @@ import { pruefeAngebotsLimit } from '@/lib/plan-limit'
 // oder später wechseln will, fand nichts: kein Plan-Wechsel, keine
 // Rechnungshistorie, keine Zahlungsmethode.
 //
-// Zweiter Teil des Befundes, bewusst NICHT hier gelöst: Das beworbene
-// Kontingent von 3 Angeboten pro Monat wird nirgends durchgesetzt. Ob es
-// eine harte Grenze wird, eine Warnung oder gestrichen gehört, ist eine
-// Geschäftsentscheidung und liegt bei Sandy. Diese Datei zählt deshalb nur
-// und sperrt nichts — die Zahl sichtbar zu machen ist in jedem Fall richtig,
-// eine Sperre einzubauen, die niemand beschlossen hat, wäre es nicht.
+// Zweiter Teil des Befundes, damals offen gelassen: Ob das Kontingent von 3
+// Angeboten pro Monat eine harte Grenze wird, eine Warnung oder gestrichen
+// gehört, war eine Geschäftsentscheidung und lag bei Sandy.
+//
+// CoS-038-B (23.09.2026): Sie ist gefallen — gestrichen. Es gibt kein
+// Kontingent mehr, sondern 14 Testtage und danach das Abo. Diese Datei zeigt
+// deshalb den Stand der Testphase an und nicht mehr „X von 3". Die Zählung
+// der Angebote bleibt als Auskunft stehen, ohne Grenze dahinter.
 
 export interface AboStand {
   plan: 'starter' | 'pro'
@@ -25,12 +26,17 @@ export interface AboStand {
   laeuftBisISO: string | null
   /** Ist bei Stripe ein Kunde hinterlegt? Ohne das gibt es kein Portal. */
   hatStripeKonto: boolean
-  /** In diesem Kalendermonat angelegte Angebote. */
+  /** In diesem Kalendermonat angelegte Angebote. Reine Auskunft, keine Grenze. */
   angeboteDiesenMonat: number
-  /** Freikontingent laut Preisliste — im Starter-Plan die harte Grenze. */
-  freikontingent: number
-  /** Ist die Grenze erreicht? Dann sind neue Angebote gesperrt. */
-  limitErreicht: boolean
+  /**
+   * CoS-038-B: Ende der 14-Tage-Testphase (`companies.trial_ends_at`).
+   * null = Pro oder Bestandskonto ohne Testphase.
+   */
+  testEndeISO: string | null
+  /** Volle Tage bis zum Ende der Testphase; negativ = abgelaufen, null = keine. */
+  testTageRestlich: number | null
+  /** Ist das Anlegen neuer Angebote gesperrt? */
+  gesperrt: boolean
   /**
    * CoS-038-A (23.09.2026): Zahlt dieser Betrieb den Gründerpreis?
    *
@@ -50,18 +56,20 @@ export async function getAboStand(): Promise<AboStand> {
     .eq('id', company.id).single()
 
   const plan = (firma?.plan ?? 'starter') === 'starter' ? 'starter' : 'pro'
-  // Dieselbe Funktion, die auch sperrt. Eine Zahl, die der Nutzer sieht, und
-  // eine andere, die ihn blockiert, wäre der schlimmste Ausgang — genau die
+  // Dieselbe Funktion, die auch sperrt. Ein Stand, den der Nutzer sieht, und
+  // ein anderer, der ihn blockiert, wäre der schlimmste Ausgang — genau die
   // Sorte Widerspruch, die diese Woche mehrfach Geld gekostet hat.
-  const limit = await pruefeAngebotsLimit(supabase, company.id, firma?.plan)
+  const sperre = await pruefeAngebotsSperre(supabase, company.id)
+  const angeboteDiesenMonat = await zaehleNeueAngeboteDiesenMonat(supabase, company.id)
 
   return {
     plan,
     laeuftBisISO: (firma?.plan_expires_at as string | null) ?? null,
     hatStripeKonto: Boolean(firma?.stripe_customer_id),
-    angeboteDiesenMonat: limit.anzahl,
-    freikontingent: PRICING.freeAngeboteProMonat,
-    limitErreicht: limit.erreicht,
+    angeboteDiesenMonat,
+    testEndeISO: sperre.testEndeISO,
+    testTageRestlich: sperre.tageRestlich,
+    gesperrt: sperre.gesperrt,
     istGruenderpreis: Boolean(firma?.is_founder_price),
   }
 }
