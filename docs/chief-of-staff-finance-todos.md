@@ -4177,5 +4177,149 @@ richtig; er hätte genauso gut zutreffen können.
 
 
 
+---
+
+## ✅ Die vier Zahlen, die Sandy in zwei Wochen in ein bindendes Formular schreibt, waren nicht mehr richtig — jetzt sind sie es (23.09.2026, 13:10 UTC · Head of Finance)
+
+**In einem Satz:** Auf meiner Spur ist alles blockiert oder liegt im Januar, also
+habe ich den einzigen Termin angesehen, der wirklich näher rückt — **Sandy füllt
+in KW 41 den Fragebogen zur steuerlichen Erfassung aus**, und die Zahlen, die ich
+ihr dafür vorgelegt habe, stammten vom 21.09. **Zwei von vier stimmen nicht mehr.**
+
+### 1. Warum ich das gemacht habe und nicht etwas anderes
+
+Alle sechs Punkte auf meiner offenen Liste hängen an jemand anderem: Apple
+Developer am Fragebogen (ab 26.09.), Kleinbedarf am ersten Beleg,
+Übernachtungen an Marketing, die Sicherungskontrolle an Sandy (Oktober), die
+Archivkopie am Januar 2027, und **4.7 an deiner Zahl** — mein Vorschlag 95/100
+steht seit dem 21.09., 16:10. Der Chief of Staff bestätigt es in der
+Arbeitsreihenfolge von 11:50: *„Finance: von mir liegt nichts bei dir."*
+
+**Was nicht blockiert war, ist das, was Sandy am 26.09. in die Hand nimmt.**
+`finance-002-behoerdenliste-fuer-sandy.md` ist meine Datei, sie ist für sie
+geschrieben, und sie trägt ein Datum vom 21.09. Seitdem hat sich der Finanzplan
+zweimal geändert — zuletzt heute um 10:00 durch mich selbst.
+
+### 2. Nachgerechnet, nicht durchgesehen — die vier Felder einzeln
+
+Beide Planstände (`0d13db6` vom 21.09. und der heutige) mit LibreOffice headless
+gerechnet und die Kalenderjahre aus dem Monatsraster `Plan-24M` selbst summiert.
+
+| Feld im Fragebogen | eingetragen | Plan heute | Urteil |
+|---|---|---|---|
+| Umsatz 2026 | 100 € | 29 € | ✅ bleibt — bewusst aufgerundet |
+| Umsatz 2027 | 4.500 € | 4.457,16 € | ✅ bleibt — unverändert seit 21.09. |
+| **Gewinn 2026** | −2.700 € | **−3.203,67 €** | 🔴 **geändert auf −3.200 €** |
+| **Gewinn 2027** | −1.200 € | **−1.067,26 €** | 🔴 **geändert auf −1.100 €** |
+
+### 3. Der Fehler bei der 2026-Zahl ist der interessantere, und er war meiner
+
+**Die −2.721 €, aus denen die −2.700 € wurden, waren die Summe der Monate 2–4.
+Der September fehlte.** Das war kein Vertipper, sondern ein **übertragener
+Ausschnitt**: Genau so — ohne Monat 1 — rechne ich die
+Verlustverrechnungs-Reserve auf dem Plan-Deckblatt, und **dort ist es richtig**,
+weil der September sonst doppelt zählt (er steckt in der getrennt gerechneten
+Altbeleg-Wirkung). **In einem Formular, das nach dem Kalenderjahr fragt, ist
+derselbe Ausschnitt falsch.** Eine Zahl, die an einer Stelle stimmt, stimmt
+nicht automatisch an der nächsten.
+
+**Und ein zweiter Posten fehlte ganz:** die **18 Belege aus April bis August
+2026**. Der Finanzplan beginnt im September, diese Ausgaben stehen nur im
+Rechnungsjournal — als vorweggenommene Betriebsausgaben gehören sie ins Jahr
+2026. Betrieblicher Anteil **367,41 € brutto**, davon **38,73 € Vorsteuer**,
+also **328,68 € Aufwand**.
+
+| 2026 | |
+|---|---|
+| Plan September–Dezember 2026, realistisch, nach Vorsteuer | −2.874,99 € |
+| 18 Belege April–August, netto | −328,68 € |
+| **Summe** | **−3.203,67 € → −3.200 €** |
+
+Die 2027-Zahl ist der schlichtere Fall: **−1.157,39 € am 21.09., −1.067,26 €
+heute.** Die 90 € Unterschied sind die Fahrtkosten, die ich heute früh selbst
+aus dem Plan genommen habe.
+
+### 4. Was das praktisch ändert — nichts, und das steht auch so in ihrer Liste
+
+**Jeder Verlust führt zum selben Ergebnis: keine Einkommensteuer-Vorauszahlungen.**
+Ich habe die Zahlen trotzdem geradegezogen, und zwar aus einem Grund, der nichts
+mit Rechenliebe zu tun hat: **Sandy nimmt dieselbe Datei zum Steuerberater mit**
+(Schritt 4), und dort ist Frage 1 ausgerechnet die nach den 18 Altbelegen. Wenn
+ihre eigenen Unterlagen diese Belege in der Gewinnschätzung nicht enthalten,
+fragt sie nach etwas, das sie selbst nicht eingerechnet hat.
+
+**In ihre Liste ist deshalb auch der umgekehrte Fall geschrieben:** Sagt der
+Steuerberater, die April–August-Belege gehen nicht mit, ist der Verlust rund
+330 € kleiner — **immer noch ein Verlust, die Angabe im Fragebogen bleibt
+richtig, nichts ist nachzumelden.** Eine Schätzung darf danebenliegen; sie darf
+nur nicht aus der Luft gegriffen sein.
+
+### 5. Eine dritte Zahl in derselben Datei war ebenfalls tot
+
+Der Abschnitt „Was dein Vollzeitjob damit zu tun hat" nennt die
+Verlustverrechnungs-Reserve mit **„1.214 bis 1.761 €"**. Das Plan-Deckblatt
+rechnet sie seit dem 21.09. als **Formel** und liefert heute **1.175 / 1.282 /
+1.683 €** — weniger Kosten, weniger Verlust, weniger Erstattung. **Das Deckblatt
+hat sich selbst nachgezogen, der Fließtext in Sandys Liste konnte das nicht.**
+Jetzt steht dort die neue Spanne samt Grund für den Unterschied.
+
+**Das ist das Argument für Formeln statt eingetippter Zahlen, in einem Satz
+belegt:** dieselbe Änderung, zwei Stellen — die Formel stimmte noch, der Text
+nicht.
+
+### 6. Geändert wurde ausschließlich `finance-002-behoerdenliste-fuer-sandy.md`
+
+| Stelle | was |
+|---|---|
+| Kopfzeile | Stand 21.09. → **23.09.**, mit Änderungshinweis |
+| Schritt 2, Feld 4 | Herleitung präzisiert (4.457,16 €), Wert **unverändert** |
+| Schritt 2, Feld 5 | **−2.700 / −1.200 → −3.200 / −1.100** |
+| Schritt 2, neuer Kasten | vollständige Herleitung beider Jahre, drei Gründe für die Änderung, der Entwarnungs-Absatz zum Steuerberater |
+| „Vollzeitjob"-Abschnitt | Reserve **1.214–1.761 € → 1.175–1.683 €** |
+
+**Die Tabellendatei ist in diesem Lauf nicht geändert worden** — geöffnet ja,
+gerechnet ja, geschrieben nein. Keine Zahl im Finanzplan kann sich verschoben
+haben.
+
+### 7. Was bei mir offen bleibt
+
+| Punkt | Wartet auf | Wann |
+|---|---|---|
+| **Apple Developer 99 €/Jahr** | Sandys Fragebogen (USt-IdNr. → Vorsteuer oder Reverse Charge) | ⏸ ab 26.09. |
+| **270 € Kleinbedarf** | den ersten echten Beleg | offen, kein Datum |
+| **Übernachtungen** | eine Zulieferung von Marketing ab ~4 Nächten | offen, kein Datum |
+| **Vierteljährliche Sicherungskontrolle** | Sandy (4 von 5 Punkten) | erstmals Oktober 2026 |
+| **Archivkopie / Jahresausleitung** | — | Januar 2027, letzte 5 Punkte in 4.7 |
+| **Gate-1-Punkt 4.7** | die Zahl des Chief of Staff | Vorschlag **95/100** steht seit 21.09., 16:10 |
+
+**Neu dazu, als eigene Merkposten:** **Nach jeder Änderung am Finanzplan gehört
+`finance-002` gegengelesen**, solange Sandy die Behördenschritte noch vor sich
+hat. Und **ab dem ersten echten Umsatz** sind die beiden Umsatzschätzungen im
+Fragebogen keine Schätzungen mehr — dann prüfe ich, ob der
+Voranmeldungsrhythmus noch stimmt.
+
+**Geprüft, nicht behauptet:** beide Planstände (`0d13db6`, Arbeitsbaum) einzeln
+mit LibreOffice headless gerechnet und die Kalenderjahre 2026/2027/2028 in allen
+drei Szenarien selbst aus `Plan-24M` summiert · die 18 Belege Zeile für Zeile aus
+dem `Rechnungsjournal` gezogen, betrieblicher Anteil und Vorsteuer getrennt
+(367,41 € / 38,73 €) · Deckblatt-Zeilen 84/86 als Formel gelesen und ihr heutiges
+Ergebnis geprüft · `node scripts/belege-pruefen.mjs` → *„25 Belegdateien
+unveraendert, keine unerfasste Datei."* · `node scripts/docs-sichern.mjs pruefen`
+→ *„Alle 59 Doku-Dateien in Ordnung."* · ENDE-Markierung beider berührter Dateien
+nach dem Schreiben nachgesehen. **Nicht geprüft:** ob das Finanzamt die
+April–August-Belege anerkennt — das ist die Frage an den Steuerberater und
+bleibt es; die Umsatzzahlen 2026/2027 habe ich nur gegen den Plan gestellt, nicht
+gegen die Wirklichkeit, die es noch nicht gibt.
+
+**Quellen:** `kostenuebersicht-finance.xlsx` (Plan-24M Zeilen 8–31 / 37–60 /
+66–89, Plan-Kosten 57–61, Plan-Deckblatt 82–88, Rechnungsjournal Zeilen 5–22) ·
+`finance-002-behoerdenliste-fuer-sandy.md` · `docs/arbeitsreihenfolge.md`
+(Stand 11:50 UTC) · Git-Stand `0d13db6` zum Vergleich · § 4 Abs. 3 EStG (EÜR) ·
+§ 15 UStG · § 138 AO · § 37 EStG (Vorauszahlungen).
+
+*Head of Finance · 23.09.2026, 13:10 UTC*
+
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

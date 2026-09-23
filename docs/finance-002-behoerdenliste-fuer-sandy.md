@@ -1,6 +1,7 @@
 # Deine Behördenliste — vier Schritte, ein Nachmittag
 
-**Für Sandy · Stand 21.09.2026 · Head of Finance**
+**Für Sandy · Stand 23.09.2026 · Head of Finance**
+*(Änderung vom 23.09.: die beiden Gewinn-Zahlen in Schritt 2 sind neu gerechnet — Begründung dort im gelben Kasten. Sonst nichts geändert.)*
 *Fällig war diese Liste zum 26.09. — dem Tag deiner Rückkehr aus Italien. Sie ist fertig.*
 
 > **Wofür diese Datei da ist:** Du arbeitest sie von oben nach unten ab und
@@ -113,9 +114,49 @@ sagen: **ignorieren.**
 | **1** | **Kleinunternehmerregelung § 19 UStG** | **Verzicht nach § 19 Abs. 2 UStG — ja.** Im Formular heißt der Abschnitt „Angaben zur Anmeldung und Abführung der Umsatzsteuer". Es gibt dort zwei Möglichkeiten: Kleinunternehmerregelung *anwenden* oder *darauf verzichten*. **Du verzichtest.** Das ist deine Entscheidung vom 17.09.2026, und **hier wird sie zum ersten Mal wirksam** — bis zum Absenden ist nichts unwiderruflich. **Bindung: fünf Jahre** (§ 19 Abs. 2 S. 2 UStG) |
 | **2** | **Ist- oder Sollversteuerung** | **Istversteuerung (§ 20 UStG) — ja, beantragen.** Im Formular steht sie als „Berechnung der Steuer nach vereinnahmten Entgelten". Du darfst sie, weil dein Umsatz weit unter **800.000 €** liegt. **Sie kostet nichts und bringt nur Vorteile:** die Umsatzsteuer wird erst fällig, wenn ein Kunde tatsächlich gezahlt hat, statt wenn du die Rechnung geschrieben hast. Ein separates Schreiben ist nicht nötig, das Kreuz im Fragebogen genügt. **Wenn du es vergisst, bekommst du automatisch die Sollversteuerung** — schlechter, und später nur mit Antrag zu ändern |
 | **3** | **Umsatzsteuer-Identifikationsnummer** | **Beantragen — ja.** Du brauchst sie für Supabase, OpenAI und Anthropic (Reverse-Charge-Leistungen aus dem Ausland). **Sie wird mit genau diesem Formular beantragt, nicht vorher und nicht separat** |
-| **4** | **Voraussichtlicher Umsatz** (Gründungsjahr / Folgejahr) | **2026: 100 € · 2027: 4.500 €.** Das sind die Zahlen aus deinem eigenen Finanzplan, realistisches Szenario, aufgerundet (Plan: 29 € und 4.457 €). **Schätz hier nicht höher, „um sicher zu gehen"** — die Zahl steuert, wie oft du Voranmeldungen abgeben musst |
-| **5** | **Voraussichtlicher Gewinn** (Gründungsjahr / Folgejahr) | **2026: −2.700 € · 2027: −1.200 €**, also jeweils ein **Verlust** (Plan: −2.721 € und −1.157 €). Ein Verlust im Gründungsjahr ist der Normalfall und kein Alarmzeichen. Praktische Folge: **es werden keine Einkommensteuer-Vorauszahlungen festgesetzt** |
+| **4** | **Voraussichtlicher Umsatz** (Gründungsjahr / Folgejahr) | **2026: 100 € · 2027: 4.500 €.** Das sind die Zahlen aus deinem eigenen Finanzplan, realistisches Szenario, aufgerundet (Plan: **29 €** und **4.457,16 €** — am 23.09.2026 gegen den aktuellen Planstand neu nachgerechnet, **unverändert**). **Schätz hier nicht höher, „um sicher zu gehen"** — die Zahl steuert, wie oft du Voranmeldungen abgeben musst |
+| **5** | **Voraussichtlicher Gewinn** (Gründungsjahr / Folgejahr) | **2026: −3.200 € · 2027: −1.100 €**, also jeweils ein **Verlust**. **Geändert am 23.09.2026** — vorher standen hier −2.700 € und −1.200 €; die Herleitung steht im Kasten direkt unter dieser Tabelle. Ein Verlust im Gründungsjahr ist der Normalfall und kein Alarmzeichen. Praktische Folge: **es werden keine Einkommensteuer-Vorauszahlungen festgesetzt** — und zwar bei **jeder** Verlustzahl gleich, die genaue Höhe ändert daran nichts |
 | **6** | **Gewinnermittlungsart** | **Einnahmen-Überschuss-Rechnung (EÜR).** Bilanzieren musst du erst über **800.000 € Umsatz oder 80.000 € Gewinn** (§ 141 AO) — und selbst dann erst, nachdem das Finanzamt dich dazu auffordert |
+
+> ### 🟡 Woher die beiden Gewinn-Zahlen kommen — und warum sie sich am 23.09. geändert haben
+>
+> **Du musst das nicht lesen, um den Fragebogen auszufüllen.** Es steht hier,
+> damit die Zahlen nachvollziehbar sind, falls der Steuerberater oder das
+> Finanzamt fragt, wie du darauf kommst.
+>
+> **2026**
+>
+> | | |
+> |---|---|
+> | Finanzplan, September–Dezember 2026 (realistisches Szenario, nach Vorsteuer) | **−2.874,99 €** |
+> | 18 Belege aus April–August 2026, betrieblicher Anteil, abzüglich Vorsteuer (rund 367 € brutto − rund 39 € Vorsteuer) | **−328 €** |
+> | **Summe, kaufmännisch gerundet** | **≈ −3.200 €** |
+>
+> **2027**
+>
+> | | |
+> |---|---|
+> | Finanzplan, Januar–Dezember 2027 (realistisches Szenario) | **−1.067,26 €** |
+> | **gerundet** | **≈ −1.100 €** |
+>
+> **Warum die alten Zahlen weg sind — drei Gründe, alle drei geprüft:**
+>
+> 1. **Die alte 2026-Zahl ließ den September aus.** Sie stammte aus derselben
+>    Rechnung wie die Verlustverrechnungs-Reserve auf dem Plan-Deckblatt, und
+>    **dort** gehört der September bewusst nicht hinein (er steckt schon in der
+>    getrennt gerechneten Altbeleg-Wirkung). **Für eine Kalenderjahr-Angabe im
+>    Fragebogen ist das falsch** — das Finanzamt fragt nach dem ganzen Jahr.
+> 2. **Die 18 Belege aus April bis August fehlten ganz.** Der Finanzplan beginnt
+>    im September; diese Ausgaben stehen nur im Rechnungsjournal. Als
+>    vorweggenommene Betriebsausgaben gehören sie ins Jahr 2026.
+> 3. **Der Plan selbst hat sich am 23.09. geändert** (Deutschlandticket, 80 €
+>    weniger Fahrtkosten im Oktober 2026).
+>
+> **🟢 Und falls der Steuerberater die Belege aus April–August nicht mitgehen
+> lässt** (das ist Frage 1 in Schritt 4): dann ist der Verlust 2026 rund 330 €
+> kleiner — **immer noch ein Verlust**, die Angabe im Fragebogen bleibt richtig,
+> und du musst nichts nachmelden. Eine Schätzung darf danebenliegen; sie darf
+> nur nicht aus der Luft gegriffen sein.
 
 ### Drei weitere Felder, kurz
 
@@ -244,8 +285,10 @@ weißt, dass nichts übersehen wurde:
 mindert der Verlust aus dem Gewerbe dein zu versteuerndes Einkommen — also
 auch das aus dem Gehalt, von dem längst Lohnsteuer abgezogen wurde. Das kommt
 als **Erstattung** zurück. Über den Planhorizont sind das je nach Szenario
-**1.214 bis 1.761 €.** Der Finanzplan rechnet diesen Vorteil **bewusst nicht
-mit** — er ist Reserve, nicht Planung. **Aber er ist echt, und du bekommst ihn
+**1.175 bis 1.683 €** (Stand 23.09.2026; bis zum 21.09. standen hier 1.214
+bis 1.761 € — der Unterschied kommt allein daher, dass der Plan seither 80 €
+weniger Kosten enthält, und weniger Verlust heißt weniger Erstattung). Der
+Finanzplan rechnet diesen Vorteil **bewusst nicht mit** — er ist Reserve, nicht Planung. **Aber er ist echt, und du bekommst ihn
 mit dem Steuerbescheid.**
 
 ---
