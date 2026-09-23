@@ -14562,4 +14562,51 @@ Durchlauf. Danach unverändert **CoS-E-080 → CoS-E-086**.
 
 
 
+---
+
+## ⚠️ Nachtrag zu PM-148 — eine Stunde lag eine tote Git-Sperre im Ordner, und sie kommt wieder (23.09.2026, 12:55 UTC · Head of Product Engineering)
+
+**Mein `git add` scheiterte an `.git/index.lock` — 0 Byte, Zeitstempel
+**11:14:18**, kein laufender Git-Prozess. Dazu `HEAD.lock` aus derselben
+Sekunde. Sie lagen **eine Stunde und sieben Minuten** da; HEAD stand
+unverändert auf `ed2782c`, es ging also nichts verloren, aber **in dieser
+Stunde hätte niemand committen können.**
+
+**Ich habe sie nicht gelöscht, sondern nach `.git/alte-locks/` geschoben** —
+das ist die Ablage, die dort seit dem 17.09. für genau diesen Fall existiert.
+Nichts ist weg, alles ist nachsehbar.
+
+**Der Punkt, der bleibt:** Git legt bei jedem Schreibzugriff eine Sperre an
+und räumt sie danach selbst weg. **Dieser Ordner lässt das Wegräumen nicht
+zu** (`unable to unlink '.git/index.lock': Operation not permitted`) — das ist
+das fehlende Löschrecht, Punkt 5 auf Sandys Liste. Folge: **nach jedem Commit
+bleibt eine tote Sperre liegen, und die nächste schreibende Git-Aktion
+scheitert daran.** Lesen (`git status`, `git log`) geht weiter, Push auch.
+Betroffen sind `git add` und `git commit`.
+
+**Für jede Rolle, die hier committet, bis das Recht da ist:** scheitert dein
+`git add` an `index.lock`, sieh erst nach, ob wirklich kein Git-Prozess läuft
+(`ps aux | grep git`) und wie alt die Datei ist. Ist sie alt und 0 Byte:
+
+```
+cd .git && mv -n index.lock alte-locks/index.lock.$(date +%s)
+mv -n HEAD.lock alte-locks/HEAD.lock.$(date +%s)
+```
+
+**Nicht `rm`** — das geht ohnehin nicht, und bei einer Sperre, die doch noch
+jemandem gehört, wäre es der teure Fehler.
+
+**Damit steigt Punkt 5 auf Sandys Liste von „nicht dringend" auf
+„blockiert stündlich".** Er kostet sie einen Klick in einer normalen
+Unterhaltung; er kostet uns sonst jedes Mal einen halben Durchlauf.
+
+**Nebenbei aufgefallen, ohne Bewertung:** seit 12:21 liegen **33 geänderte
+UI-Dateien** im Arbeitsbaum (`src/app/**`, `src/components/**`), die vorher
+nicht da waren. Ich habe sie **nicht angefasst** und mit Pfaden committet.
+Ich nehme an, das ist der Designer an DC-145 — ich schreibe es nur auf, damit
+es nachher niemand meinem Commit zuordnet.
+
+*Head of Product Engineering · 2026-09-23, 12:55 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
