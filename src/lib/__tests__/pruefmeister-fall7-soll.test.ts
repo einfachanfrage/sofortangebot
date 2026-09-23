@@ -122,15 +122,21 @@ const T_OHNE_TUEREN = 'Flur, 6 mal 1,50, 2,50 hoch. Wände und Decke zweimal wei
 // Frage 1 · Das Soll zu Fall 7
 // ───────────────────────────────────────────────────────────────────────────
 describe('Fall 7 · das Soll nach PM-106', () => {
+  // PM-119 / L-06 (Engineering, 23.09.2026): **dieselben acht Zeilen, neue
+  // Reihenfolge** — Schutz (1), Abschleifen (3), Grundieren (4), dann die
+  // Anstriche (5). Kein Titel, keine Menge und kein Betrag hat sich
+  // geändert; PM-106-S2 misst die 1.198,05 € unverändert. Was die
+  // Zusicherung prüft — acht Zeilen, keine Flächen-Grundierung — steht
+  // unverändert da.
   it('PM-106-S1 · genau acht Zeilen, keine Grundierung der Wand oder Decke', () => {
     const pos = lauf('maler', T_FALL7, FLUR())
     expect(titel(pos)).toEqual([
-      'Wand streichen 2x — Flur',
-      'Decke streichen 2x — Flur',
       'Boden schützen — Flur',
       'Sockelleisten abkleben — Flur',
       'Türen abschleifen',
       'Türen grundieren',
+      'Wand streichen 2x — Flur',
+      'Decke streichen 2x — Flur',
       'Türen lackieren (2× Anstrich)',
       'Türzarge lackieren',
     ])
@@ -159,14 +165,28 @@ describe('Fall 7 · das Soll nach PM-106', () => {
     const mit = lauf('maler', T_FALL7, FLUR())
     const ohne = lauf('maler', T_OHNE_TUEREN, FLUR())
     expect(titel(ohne)).toEqual([
-      'Wand streichen 2x — Flur',
-      'Decke streichen 2x — Flur',
       'Boden schützen — Flur',
       'Sockelleisten abkleben — Flur',
+      'Wand streichen 2x — Flur',
+      'Decke streichen 2x — Flur',
     ])
     // Der Unterschied zwischen beiden Fassungen sind genau die vier
     // Türzeilen — 720,00 €, und keine Grundierung mehr dazwischen.
-    expect(titel(mit).slice(0, 4)).toEqual(titel(ohne))
+    //
+    // PM-119 / L-06: vorher stand hier `titel(mit).slice(0, 4)`. Das ging nur,
+    // solange der Wandblock vorn stand; seit der Ausführungsreihenfolge
+    // stehen `Türen abschleifen` und `Türen grundieren` (Stufe 3 und 4)
+    // zwischen dem Schutz und den Anstrichen. Die Aussage — „der Wandblock
+    // steht unverändert da, dazu genau die vier Türzeilen" — ist dieselbe,
+    // sie wird nur nicht mehr über die Position geprüft, die sich ändern
+    // darf, sondern über die Zeilen selbst.
+    expect(titel(mit).filter(t => titel(ohne).includes(t))).toEqual(titel(ohne))
+    expect(titel(mit).filter(t => !titel(ohne).includes(t))).toEqual([
+      'Türen abschleifen',
+      'Türen grundieren',
+      'Türen lackieren (2× Anstrich)',
+      'Türzarge lackieren',
+    ])
     expect(Number((summeNetto(mit) - summeNetto(ohne)).toFixed(2))).toBe(720)
   })
 })

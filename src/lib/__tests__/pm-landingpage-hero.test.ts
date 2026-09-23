@@ -156,12 +156,18 @@ describe('PM-129 · Landingpage Hero — das Wohnzimmer-Diktat', () => {
   })]
   const pos = () => lauf(T, R()).positionen
 
+  // PM-119 / L-06 (Engineering, 23.09.2026): **dieselben vier Zeilen, neue
+  // Reihenfolge.** Der Schutz (Stufe 1) steht seit dem Bau der
+  // Ausführungsreihenfolge vor der Hauptarbeit (Stufe 5) — vorher wurde auf
+  // dem Papier gestrichen und danach der Boden abgedeckt. Die Zusicherung
+  // ist nicht abgeschwächt: es sind weiter genau vier Zeilen, wortgleich,
+  // und der Geldweg in PM-129-H (703,00 €) ist unverändert gemessen.
   it('PM-129-A · vier Zeilen, und die Seite zeigt drei', () => {
     expect(titel(pos())).toEqual([
-      'Wand streichen 2x — Wohnzimmer',
-      'Decke streichen 2x — Wohnzimmer',
       'Boden schützen — Wohnzimmer',
       'Sockelleisten abkleben — Wohnzimmer',
+      'Wand streichen 2x — Wohnzimmer',
+      'Decke streichen 2x — Wohnzimmer',
     ])
   })
 
@@ -285,11 +291,15 @@ describe('PM-130 · Landingpage „So funktioniert es" — Raufaser runter', () 
 
   it('PM-130-K1 Kontrolle · mit Höhe 2,50 m stimmt alles: vier Zeilen, 645,90 €', () => {
     const r = lauf(T, MIT_HOEHE())
+    // PM-119 / L-06: dieselben vier Zeilen, neue Reihenfolge. `Tapete
+    // entfernen` (Stufe 2) stand bisher **hinter** dem Anstrich derselben
+    // Wand — genau der Fund, gegen den L-06 gebaut ist. Menge und Summe
+    // unten sind unverändert: 45 m², 45 m², 645,90 €.
     expect(titel(r.positionen)).toEqual([
-      'Wand streichen 2x — Wohnzimmer',
       'Boden schützen — Wohnzimmer',
       'Sockelleisten abkleben — Wohnzimmer',
       'Tapete entfernen',
+      'Wand streichen 2x — Wohnzimmer',
     ])
     expect(finde(r.positionen, /^Wand streichen/)!.menge).toBe(45)
     expect(finde(r.positionen, /^Tapete entfernen/)!.menge).toBe(45)

@@ -3,6 +3,7 @@
 // PDF können die Gruppen unverändert rendern (raumName = Gruppen-Überschrift).
 
 import { gruppiereNachRaum, istAllgemeinPosition, type GruppierungsErgebnis, type GruppenItem } from './angebot-gruppierung'
+import { sortiereNachAusfuehrung, stufeFuer } from './ausfuehrungs-stufen'
 
 export type AngebotStruktur = 'raeume' | 'arbeitsablauf' | 'gewerk'
 
@@ -21,19 +22,36 @@ const PHASE_META: Record<Phase, { label: string; emoji: string }> = {
   abschluss: { label: 'Abschluss', emoji: '✨' },
 }
 
-// Reihenfolge = Priorität (spezifisch vor generisch)
-const PHASE_REGELN: { test: RegExp; phase: Phase }[] = [
-  // Abschluss zuerst prüfen — "Sockelleisten montieren" ist kein Vorarbeit-Abkleben
-  { test: /versiegel|parkettlack|sockelleisten\s*montier|stuckleisten\s*montier|übergangs?profil|anschlussprofil|endreinigung|feinreinigung/i, phase: 'abschluss' },
-  // Vorarbeiten: schützen, demontieren, Untergrund herrichten
-  { test: /abkleb|abdeck|schütz|demontage|entfern|aufnehm|rausreiß|kleberreste|spachtel|glätt|schleif|grundier|voranstrich|tiefengrund|ausgleich|untergrund|feuchtigkeitssperre|quarzsand|trittschall|fräsen/i, phase: 'vor' },
-  // Hauptarbeit
-  { test: /streich|anstrich|tapezier|aufzieh|verleg|verkleb|lackier|verschweiß|verschweiss/i, phase: 'haupt' },
-]
-
+// ── PM-119 / L-06 + DC-144 §3 (23.09.2026) ───────────────────────
+//
+// Hier stand `PHASE_REGELN`: ein zweiter Satz Regexe, der eine **zweite
+// Meinung** zur Reihenfolge hatte. Er ist ersatzlos weg. Die drei Phasen
+// sind jetzt ein Bündel der sieben Ausführungsstufen:
+//
+//   Stufe 1–4  (Schutz · Abbruch · Untergrund · Grundierung) → Vorarbeiten
+//   Stufe 5    (Hauptarbeit)                                 → Hauptarbeit
+//   Stufe 6–7  (Abschluss · Zuschlag)                        → Abschluss
+//
+// Das ist dieselbe Lehre wie DC-125 und DC-143: eine Quelle, mehrere
+// Aufrufer. Vorher gab es zwei Ordnungen im Produkt — die
+// Entstehungsreihenfolge und `phaseFuer` — und keine von beiden war richtig.
+//
+// Die alte Regel warf `entfern`, `spachtel` und `grundier` gemeinsam in
+// `vor`, also genau die drei Schritte, deren Reihenfolge untereinander der
+// ganze Fund war. Die Gliederung hieß nach dem Arbeitsablauf und sortierte
+// nicht danach. Der Unterschied zum alten Satz ist an einer Stelle sichtbar
+// und gewollt: **Zuschläge** (Erschwernis, Kleinmaterial) trafen keine der
+// drei alten Regeln und fielen auf `haupt` zurück — sie stehen jetzt unter
+// „Abschluss", wo sie hingehören. Echte Allgemein-Positionen sind davon
+// nicht betroffen, die sind an dieser Stelle längst aussortiert.
+//
+// Der Beschreibungstext in den Einstellungen („Vorarbeiten → Hauptarbeit →
+// Abschluss") bleibt wortgleich richtig; umbenannt wird nichts.
 function phaseFuer(titel: string): Phase {
-  for (const r of PHASE_REGELN) if (r.test.test(titel)) return r.phase
-  return 'haupt'
+  const stufe = stufeFuer(titel)
+  if (stufe <= 4) return 'vor'
+  if (stufe === 5) return 'haupt'
+  return 'abschluss'
 }
 
 // ── Gewerk: Maler vs. Boden ────────────────────────────────────────────────
@@ -97,7 +115,10 @@ export function gruppiereNachStruktur<T extends {
   if (struktur === 'raeume') return gruppiereNachRaum(items, bekannteRaeume)
   if (items.length === 0) return null
 
-  const alle: GruppenItem[] = items.map(i => ({
+  // PM-119 / L-06: stufenweise sortieren, bevor gebündelt wird — derselbe
+  // Grund wie in `gruppiereNachRaum`. Innerhalb einer Phase stand bisher die
+  // vorhandene (falsche) Reihenfolge; jetzt steht dort die Ausführung.
+  const alle: GruppenItem[] = sortiereNachAusfuehrung(items, i => i.title).map(i => ({
     id: i.id,
     title: i.title,
     // Raum-Suffix als Zusatz im Titel behalten — hier gruppieren wir ja anders

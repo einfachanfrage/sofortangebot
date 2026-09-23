@@ -82,6 +82,24 @@
 // abgedichtet wird aber VOR dem Verlegen und verfugt danach. Das ist eine
 // zweite, kleinere Frage, die die Stufenregel nicht beantwortet; sie steht
 // als eigener Punkt im Themenspeicher und ist nicht Gegenstand von L-06.
+// ── L-06 ist gebaut (Engineering, 23.09.2026, 12:xx UTC) ─────────────────
+//
+// Die vier Sperrklinken PM-119-A bis -D waren `it.fails` und sind jetzt
+// `it`. Geändert wurde nur das — **kein Soll, keine Regel, keine Erwartung.**
+// Die Stufentabelle unten und die drei gemessenen Fälle stehen Zeile für
+// Zeile so da, wie der Prüfmeister sie am 17.09. hinterlegt hat; sie messen
+// ab jetzt in die andere Richtung.
+//
+// Gebaut ist die Tabelle als `src/lib/ausfuehrungs-stufen.ts` — dieselbe
+// Regelliste, dieselbe Vorrangfolge. Sie greift in der Grundreihenfolge
+// (letzter Schritt von `normalisiereBodenPositionenAusAufnahme`) und damit
+// in JEDER Gliederung, nicht nur in „Nach Arbeitsablauf" (DC-144 §2).
+// `STUFEN` hier unten bleibt bewusst eine eigene Kopie: eine Zusicherung,
+// die dieselbe Datei importiert, die sie prüft, misst sich selbst.
+//
+// PM-119-Z bleibt unverändert die Kontrolle darunter: ohne sie wäre eine
+// Regel, die alles auf Stufe 5 wirft, immer „sortiert".
+
 import { describe, expect, it } from 'vitest'
 import { berechneMengen } from '../mengen/engine'
 import { verarbeiteExtraktion } from '../mengen/extraktion-pipeline'
@@ -192,14 +210,14 @@ describe('PM-119 / L-06 — Positionen in der Reihenfolge der Ausführung', () =
     expect(stufeFuer('Erschwerniszuschlag Raumhöhe > 3m — Büro')).toBe(7)
   })
 
-  it.fails('PM-119-A 🔴 Soll: PM-051 steht in der Reihenfolge der Ausführung', () => {
+  it('PM-119-A ✅ Soll: PM-051 steht in der Reihenfolge der Ausführung', () => {
     // IST 17.09.2026: Grundierung · Anstrich · Bodenschutz · Abkleben ·
     // Spachteln Q3  →  Stufen 4, 5, 1, 1, 3
     // SOLL: Bodenschutz · Abkleben · Spachteln Q3 · Grundierung · Anstrich
     expect(istSortiert(stufenfolge(F_Q3()))).toBe(true)
   })
 
-  it.fails('PM-119-B 🔴 Soll: beim Raufaser-Flur steht „Tapete entfernen" vor der Grundierung', () => {
+  it('PM-119-B ✅ Soll: beim Raufaser-Flur steht „Tapete entfernen" vor der Grundierung', () => {
     // Der schwerste der drei. IST: die Tapete wird an fünfter Stelle
     // entfernt — hinter Grundierung und Spachtelung derselben Wand.
     const pos = F_RAUFASER()
@@ -211,14 +229,14 @@ describe('PM-119 / L-06 — Positionen in der Reihenfolge der Ausführung', () =
     expect(iSpachtel).toBeLessThan(iGrund)
   })
 
-  it.fails('PM-119-C 🔴 Soll: der alte Boden kommt raus, bevor der neue verlegt wird', () => {
+  it('PM-119-C ✅ Soll: der alte Boden kommt raus, bevor der neue verlegt wird', () => {
     // IST: Laminat verlegen · Altbelag entfernen · Sockelleisten montieren.
     const t = titel(F_LAMINAT())
     expect(t.findIndex(x => /altbelag entfernen/i.test(x)))
       .toBeLessThan(t.findIndex(x => /laminat verlegen/i.test(x)))
   })
 
-  it.fails('PM-119-D 🔴 Soll: alle drei Fälle sind stufenweise sortiert', () => {
+  it('PM-119-D ✅ Soll: alle drei Fälle sind stufenweise sortiert', () => {
     // Die zusammenfassende Sperrklinke — sie ist die, die grün wird, wenn
     // L-06 wirklich gebaut ist, und nicht nur der Einzelfall repariert.
     expect([F_Q3(), F_RAUFASER(), F_LAMINAT()].map(f => istSortiert(stufenfolge(f))))

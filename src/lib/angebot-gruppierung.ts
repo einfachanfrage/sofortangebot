@@ -1,4 +1,5 @@
 import { istProzentZuschlag } from './zuschlag-basis'
+import { sortiereNachAusfuehrung } from './ausfuehrungs-stufen'
 
 const DASH = /\s+[-–—]\s+/
 
@@ -189,7 +190,21 @@ export function gruppiereNachRaum<T extends {
   const allgemein: GruppenItem[] = []
   let hatRaeume = 0
 
-  for (const item of items) {
+  // PM-119 / L-06 (23.09.2026): stufenweise sortieren, BEVOR gruppiert wird.
+  //
+  // Die Grundreihenfolge stimmt seit L-06 schon beim Erzeugen. Hier steht
+  // die Sortierung ein zweites Mal, und zwar aus zwei Gründen, die beide
+  // gemessen sind: **Angebote, die vor dem Bau erzeugt wurden**, liegen mit
+  // ihrer alten Reihenfolge in der Datenbank — sie kommen nur über diesen
+  // Weg noch richtig aufs Papier. Und der **Erschwerniszuschlag** ist keine
+  // Allgemein-Position, sondern eine echte Zeile im Raum (DC-073/DC-144 §4b);
+  // ohne die Sortierung hier stünde er dort, wo die Vollständigkeitsprüfung
+  // ihn angehängt hat, statt am Ende seiner Raumgruppe.
+  //
+  // Es wird ausschließlich umsortiert: keine Zeile kommt hinzu, keine fällt
+  // weg, `total_price` und Summen bleiben unberührt. Innerhalb einer Stufe
+  // bleibt die bestehende Reihenfolge stehen.
+  for (const item of sortiereNachAusfuehrung(items, i => i.title)) {
     const m = item.title.match(DASH)
     if (m) {
       const raum = item.title.slice(m.index! + m[0].length).trim()

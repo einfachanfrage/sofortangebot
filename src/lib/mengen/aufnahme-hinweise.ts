@@ -3,6 +3,7 @@ import { istWandStreichen } from '../positions-titel'
 import { ersetzeZahlenWorte } from '@/lib/zahlen-parser'
 import { pruefeTrittschalldaemmung } from '../vollstaendigkeit/boden-sonder'
 import { entferneRedundantesSockelAbkleben } from './mehrgewerk'
+import { sortiereNachAusfuehrung } from '../ausfuehrungs-stufen'
 
 function raumSuffix(position: BerechnetePosition | undefined): string {
   const raum = position?.beschreibung.match(/\s[—–-]\s*(.+)$/)?.[1]?.trim()
@@ -339,8 +340,30 @@ export function ergaenzeAusAufnahmeHinweisen(
  * Letzte fachliche Normalisierung direkt vor dem Speichern/Bepreisen.
  * Damit bleibt der exakte Katalogtitel auch dann erhalten, wenn ein vorgelagerter
  * Extraktionspfad nur das allgemeine "Fertigparkett verlegen" geliefert hat.
+ *
+ * PM-119 / L-06 (23.09.2026): Diese Funktion ist der letzte Schritt der
+ * Kette — danach wird nur noch gefiltert (`filtereErschwernis`) und
+ * gespeichert. Deshalb steht hier die **Grundreihenfolge**: die Positionen
+ * verlassen die Kette in der Reihenfolge, in der auf der Baustelle
+ * gearbeitet wird (`sortiereNachAusfuehrung`, sieben Stufen).
+ *
+ * Warum am Ende und nicht früher: die Zeile darüber benennt Positionen um
+ * ("Fertigparkett verlegen vollflächig verklebt"). Die Stufe hängt am Titel,
+ * also wird sie auf dem **endgültigen** Titel bestimmt, nicht auf einem
+ * Zwischenstand. Umsortiert wird ausschließlich; keine Zeile kommt hinzu,
+ * keine fällt weg, kein Betrag ändert sich.
  */
 export function normalisiereBodenPositionenAusAufnahme(
+  positionen: BerechnetePosition[],
+  quelltext: string,
+): BerechnetePosition[] {
+  return sortiereNachAusfuehrung(
+    normalisiereBodenTitel(positionen, quelltext),
+    p => p.beschreibung,
+  )
+}
+
+function normalisiereBodenTitel(
   positionen: BerechnetePosition[],
   quelltext: string,
 ): BerechnetePosition[] {
