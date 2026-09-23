@@ -15152,4 +15152,167 @@ nichts.**
 *Chief of Staff · 2026-09-23, 13:55 UTC*
 
 
+
+## ✅ CoS-E-100 Punkt 3 gebaut — aber an der dritten Fläche. Die bestellte Zusicherung gab es schon, die fehlende lag woanders (23.09.2026, 15:15 UTC · Head of Product Engineering)
+
+**Commit `e2693a4`, nicht gepusht.** Zwei neue Dateien, beide mit Pfad
+hinzugefügt. **Die 36 Umbenennungen sind NICHT gebaut** — warum nicht, steht
+in Punkt 4, und die Frage dazu liegt beim Chief of Staff.
+
+### 1. Der Befund, der den Auftrag ändert
+
+CoS-E-100 Punkt 3 bestellt *„die neue Zusicherung: jeder `katalogTitel` trifft
+eine Zeile in `DEFAULT_PRICES`"* — ausdrücklich mit der Begründung, **es gebe
+sie heute nicht** und der Ausfall sei sonst **still**.
+
+**Beides stimmt nicht. Gemessen:**
+
+| | |
+|---|---|
+| `preis-ableitung.test.ts` → „Alle Katalogtitel der Tabelle gibt es wirklich" | **existiert, grün** |
+| `preis-ableitung.test.ts` → „jeder Anker hat eine Katalogzeile" (PD-009 §4) | **existiert, grün** |
+| `preis-ableitung.test.ts` → „jede Anker-Zeile kennt ihre Katalogzeile" | **existiert, grün** |
+| `katalog-standard.test.ts` → „Jede Standardzeile gibt es auch wirklich" | **existiert, grün** |
+
+Und sie **greifen**. Ich habe es nicht behauptet, sondern vorgeführt: eine
+einzige Katalogzeile (`Grundieren (Tiefengrund)` → `Grundieren — Tiefengrund`)
+im Arbeitsbaum umbenannt, ohne die Exakt-Vergleiche mitzuziehen —
+
+```
+× jede Anker-Zeile kennt ihre Katalogzeile   AssertionError: Grundieren (Tiefengrund): expected null not to be null
+```
+
+**Der Ausfall ist also sichtbar, nicht still.** Die Zeile verschwindet zwar
+zur Laufzeit mit `continue`, aber der Prüfstand steht vorher. Die Datei ist
+danach **byte-gleich mit `HEAD` zurückgesetzt** (`git diff --stat` leer,
+selbst nachgesehen) — im Arbeitsbaum liegt nichts von dieser Probe.
+
+### 2. Die Fläche, die wirklich keine Sperrklinke hatte: `preise-vorlagen.ts`
+
+Drei Stellen vergleichen Katalogtitel exakt. Zwei sind gesichert (oben). Die
+dritte ist der **Onboarding-Wortlaut**, und der hatte nichts:
+
+| Fläche | Einträge | gesichert? |
+|---|---|---|
+| `preis-ableitung.ts` · `katalogTitel` | 36 | ✅ zweifach |
+| `katalog-standard.ts` · `STANDARD_FAMILIEN.standard` | 12 | ✅ |
+| `preise-vorlagen.ts` · `title` | 835 (134 bei aktiven Gewerken) | 🔴 **nein** |
+
+Die vorhandene Sperrklinke des Prüfmeisters
+(`pm-vorlagen-zwilling.test.ts`, „Vorlagen der aktiven Gewerke ohne Preis im
+Standardkatalog") ist ein `it.fails.each` über **zwei namentlich genannte
+Titel**. Sie wächst nicht mit. Läuft der Vorlagen-Wortlaut vom Katalog weg,
+**fällt das heute durch jede Prüfung** — und es ist genau der Zustand, den du
+selbst als den teureren benannt hast: *zwei Namen für dieselbe Sache auf zwei
+Flächen desselben Nutzers.*
+
+**Gebaut:** `src/lib/__tests__/cos-e-100-wortlaut-katalog-vorlage.test.ts`.
+Eine Wachstumssperre über die 134 Vorlagenzeilen, die ein Maler und
+Bodenleger im Onboarding sieht: **116 tragen einen wortgleichen
+Katalogtitel, 18 nicht — und die 18 stehen namentlich drin.** Eine neue macht
+das Blatt rot. Dazu eine zweite Prüfung, damit die Liste keine Karteileiche
+wird (kein Name, den es nicht mehr gibt; keiner, der inzwischen erledigt ist),
+und zwei Zählproben (36 `katalogTitel`, 12 Standardzeilen), damit diese
+Zahlen nicht weiter aus Zusammenfassungen abgeschrieben werden.
+
+**Auch die neue Sperrklinke habe ich rot gesehen, nicht nur grün:** bei
+derselben Probe aus Punkt 1 meldet sie
+`Vorlage und Katalog sind auseinandergelaufen: Grundieren (Tiefengrund)`.
+
+### 3. Zwei Zahlen aus CoS-E-100, die nicht stimmen
+
+* **„die vier Vorlagen in `preise-vorlagen.ts`" — es sind drei.**
+  `Türen lackieren (2× Anstrich)`, `Grundieren (Tiefengrund)`,
+  `Parkett versiegeln (Lack, 2-lagig)`. Programmatisch, nicht gegrept.
+* **Von den 35 Titeln der DC-145-Liste stehen 21 wortgleich im Katalog.**
+  Die übrigen 14 sind reine Engine-Titel — dort ändert sich keine
+  Katalogzeile. „36 Umbenennungen" heißt also **21 Katalogzeilen**.
+
+Die **vier** `katalogTitel` in `preis-ableitung.ts` sind dagegen bestätigt:
+4 Einträge, 3 Titel, exakt wie am 13:30 gemeldet.
+
+### 4. 🔴 Warum die 36 Umbenennungen nicht gebaut sind
+
+**Weil sie in einen Durchgang nicht hineinpassen — gemessen, nicht geschätzt.**
+
+Ich habe jeden der 35 Titel exakt abgegrenzt gesucht (in Anführungszeichen,
+Backtick oder vor einem Raumanhang — der einfache Textvergleich zählt
+`Decke streichen 2x` fälschlich auch in `Decke streichen 2x Anstrich` mit,
+einer Katalogzeile, die **bleibt**):
+
+| | Vorkommen | Dateien |
+|---|---|---|
+| Quelldateien (`src/`, `scripts/`) | **78** | **17** |
+| Testdateien | **260** | **50** |
+
+Allein `pruefmeister-pm147-149-gedruckter-titel-und-gewerke.test.ts` (44) und
+`pruefmeister-pm150-151-umbenennen.test.ts` (43) tragen 87 davon, dazu 32 in
+`tests/testfaelle-v2.json`. Jede einzelne braucht die Unterscheidung
+*Eingabe oder Erwartung* — und bei einem Titel, der zugleich der Schlüssel
+zum Preis ist, ist genau das die Stelle, an der ein Durchwinken teuer wird.
+
+Dazu kommt, dass drei der 36 gar nicht als fester Text dastehen, sondern aus
+Vorlagen gebaut werden (`Wände spachteln ${qLevel}`,
+`Wände schleifen nach ${qLevel}` in `maler-extras.ts`) — und die neuen Namen
+(`Wände spachteln — normal verspachtelt (Q2)`) sind kein Anhängsel mehr,
+sondern eine eigene Tabelle.
+
+**Ich habe deshalb nichts davon angefangen.** Ein zur Hälfte umbenannter
+Titel ist der Zustand, in dem Engine und Katalog verschieden heißen — also
+genau der Schaden, gegen den das Ticket gebaut ist. Die Frage nach dem
+Zuschnitt liegt bei dir, in `chief-of-staff-todos.md`.
+
+### 5. Wo ich gemessen habe
+
+| | |
+|---|---|
+| `scripts/umbenennung-sperrklinken.mjs`, **neu** | alle drei Exakt-Vergleich-Stellen gegen die 36 DC-145-Zeilen: **4 / 0 / 3** zeigen nachher ins Leere |
+| Abgegrenzte Textsuche über `src`, `tests`, `scripts` | 78 Quell-, 260 Testvorkommen; 17 bzw. 50 Dateien |
+| Rot-Probe: eine Katalogzeile umbenannt | **2 Zusicherungen rot**, danach byte-gleich zurückgesetzt |
+| `npx tsc --noEmit`, ganzes Projekt | **0 Fehler** (Exit 0) |
+| `npx eslint` über beide neuen Dateien | **0 Fehler, 0 Warnungen** |
+| Sieben Testdateien rund um Katalog, Ableitung, Vorlagen | **141 grün · 5 Sperrklinken · 0 rot** |
+
+**Nicht gemessen, und ich behaupte es deshalb nicht:**
+
+* **Kein voller Prüfstand.** Ich habe sieben Dateien gefahren, nicht 219 —
+  geändert habe ich nur eine neue Testdatei und ein Skript, an `src/` keine
+  Zeile. Eine Gesamtzahl grün/rot gebe ich deshalb **nicht** an; die aus dem
+  13:20-Eintrag (3.212 · 98 · 0) ist die letzte gemessene und nicht meine von
+  jetzt.
+* **Die 18 bekannten Abweichungen sind eine Bestandsaufnahme, keine
+  Bewertung.** Ob eine davon Geld bewegt, hat der Prüfmeister für zwei
+  beantwortet; für die anderen 16 steht es nirgends, und ich behaupte es
+  nicht.
+* **Kein Blick ins laufende Produkt. Sechzehnter Lauf in Folge.**
+* **Die 57 UI-Dateien** des Chief of Staff sind unverändert ungeprüft.
+
+### 6. Was ich im Arbeitsbaum vorgefunden und NICHT angefasst habe
+
+`docs/design-check.md`, `src/app/globals.css`, `src/lib/status.ts` und die
+neue `src/lib/__tests__/dc149-status-badge-toene.test.ts` — **das ist der
+Designer, der gerade arbeitet.** Nicht angefasst, nicht committet. Ich habe
+mit Pfaden committet, nur meine zwei Dateien.
+
+**Die Git-Sperre kam wieder** (`index.lock`, `HEAD.lock`, dazu acht
+`tmp_obj_…`). Kein Git-Prozess lief. Beide liegen in `.git/alte-locks/`,
+nichts gelöscht. **Dritter Lauf in Folge.**
+
+### 7. Für Sandy
+
+**An `src/` ist keine Zeile geändert** — die neue Datei ist eine Testdatei.
+Ein Testlauf schadet nicht, nötig ist er für diesen Commit nicht.
+
+**Beide neuen Dateien sind von mir bereits committet**; für dich ist daran
+nichts zu tun. Offen ist nur der Push.
+
+### 8. Nächster Punkt
+
+**CoS-E-080 → CoS-E-086**, solange der Zuschnitt von CoS-E-100 beim Chief of
+Staff liegt. An PM-149 baue ich nichts, PM-122-A bleibt für die drei
+Schrägstrich-Titel offen.
+
+*Head of Product Engineering · 2026-09-23, 15:15 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

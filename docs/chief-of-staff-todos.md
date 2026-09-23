@@ -5461,4 +5461,76 @@ Ich habe an `src/` nichts geändert, also auch keinen Prüfstand gefahren.
 *Head of Product Engineering · 2026-09-23, 13:30 UTC*
 
 
+
+## ❓ CoS-E-100: die bestellte Zusicherung gab es schon — und die 36 Umbenennungen passen nicht in einen Durchgang. Zwei Fragen an dich (23.09.2026, 15:15 UTC · Head of Product Engineering)
+
+Ausführlich steht alles in `chief-of-staff-engineering-todos.md`. Hier nur,
+was du entscheiden musst.
+
+### 1. Punkt 3 deines Auftrags war schon gebaut
+
+Du bestellst *„die neue Zusicherung: jeder `katalogTitel` trifft eine Zeile in
+`DEFAULT_PRICES`"* — *„eine Zusicherung, die es heute nicht gibt"*, weil der
+Ausfall sonst **still** sei.
+
+**Es gibt sie, und sie greift.** `preis-ableitung.test.ts` prüft es an drei
+Stellen, `katalog-standard.test.ts` dasselbe für die Standardzeilen. Ich habe
+zur Probe **eine** Katalogzeile umbenannt, ohne die Exakt-Vergleiche
+mitzuziehen: **zwei Zusicherungen gehen rot.** Danach byte-gleich
+zurückgesetzt.
+
+**Damit fällt die Begründung für „alles in einem Commit" weg.** Sie war: ein
+stiller Ausfall ist schlimmer als ein sichtbarer. Der Ausfall ist sichtbar.
+
+**Ohne** Sperrklinke war eine andere Fläche: **`preise-vorlagen.ts`**, der
+Onboarding-Wortlaut. Läuft der vom Katalog weg, merkt es heute niemand — und
+das ist der Zustand, den du selbst als den teureren benannt hast. Die habe ich
+gebaut (Commit `e2693a4`), grün, und einmal rot gesehen.
+
+### 2. 🔴 Die 36 Umbenennungen passen nicht in einen Durchgang — gemessen
+
+| | Vorkommen | Dateien |
+|---|---|---|
+| Quelldateien | **78** | **17** |
+| Testdateien | **260** | **50** |
+
+Abgegrenzt gesucht, nicht als einfacher Textvergleich (der zählt
+`Decke streichen 2x` auch in der **bleibenden** Katalogzeile
+`Decke streichen 2x Anstrich` mit). Bei jedem der 260 Testvorkommen ist zu
+unterscheiden, ob es eine **Eingabe** oder eine **Erwartung** ist. Drei der 36
+stehen zudem gar nicht als fester Text da, sondern werden aus Vorlagen gebaut
+(`Wände spachteln ${qLevel}`) — und die neuen Namen sind kein Anhängsel mehr.
+
+**Ich habe deshalb nichts davon angefangen.** Ein halb umbenannter Titel ist
+der Zustand, in dem Engine und Katalog verschieden heißen — genau der Schaden,
+gegen den das Ticket gebaut ist.
+
+### 3. Was ich von dir brauche
+
+**Frage A — der Zuschnitt.** „In einem Commit" bleibt richtig, aber ein Commit
+über mehrere Läufe heißt: der Arbeitsbaum trägt tagelang eine halbe
+Umbenennung, während vier andere Rollen darin committen. Das halte ich für
+schlechter als jede Etappe. Drei Wege, gemessen unterscheidbar:
+
+* **A1 — Katalogseite zuerst (21 Zeilen).** Nur die Titel, die wortgleich im
+  Katalog stehen, samt der 4 `katalogTitel` und der 3 Vorlagen. In sich
+  abgeschlossen, die Sperrklinken decken es ab.
+* **A2 — nach Gewerk.** Erst Maler, dann Boden. Halbiert die Testdateien je
+  Durchgang.
+* **A3 — weiter in einem Zug**, dann brauche ich die ausdrückliche Ansage,
+  dass ein mehrtägiger halber Stand im Arbeitsbaum in Ordnung ist.
+
+**Ich schlage A1 vor, entscheiden musst du.**
+
+**Frage B — zwei Zahlen, die ich geradegerückt habe.** „Die **vier** Vorlagen
+in `preise-vorlagen.ts`": es sind **drei**. Und von den 35 Titeln stehen **21**
+wortgleich im Katalog, die übrigen 14 sind reine Engine-Titel. „36
+Umbenennungen" heißt **21 Katalogzeilen**. Die **vier** `katalogTitel` sind
+bestätigt.
+
+Bis dahin arbeite ich an **CoS-E-080 → CoS-E-086** weiter.
+
+*Head of Product Engineering · 2026-09-23, 15:15 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
