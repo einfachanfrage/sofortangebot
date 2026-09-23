@@ -3683,9 +3683,12 @@ Fernverkehr. Für unsere Fahrten gilt das ohnehin, es ist Nahverkehr.
 | laufender Kleinbedarf | 270,00 € | 19 % | **43,11 €** |
 | **Σ** | **1.430,00 €** | | **186,85 €** |
 
+*(Die Einzelbeträge oben sind gerundet; die Summe ist aus den ungerundeten
+Werten gebildet — 186,8522 €. Wer die vier gerundeten Zeilen addiert, kommt
+auf 186,86 €. Nimm 186,85 €.)*
+
 **Nicht 228,32 €, nicht 158,07 €, nicht 0 €.** Der Unterschied zu deiner
-Bahn-Variante sind genau die 41,47 €, die der falsche Steuersatz zu viel
-ausweist.
+Bahn-Variante sind rund 41,50 €, die der falsche Steuersatz zu viel ausweist.
 
 ### Zwei Einschränkungen, die du kennen sollst
 

@@ -3764,7 +3764,9 @@ Größen:
 | **Richtig: alles brutto, Fahrten Bahn zu 7 %** | **186,85 €** |
 
 Aufschlüsselung: Druck 660 € → 105,38 € · Fahrten 440 € → 28,79 € ·
-Ausrüstung 60 € → 9,58 € · Kleinbedarf 270 € → 43,11 €.
+Ausrüstung 60 € → 9,58 € · Kleinbedarf 270 € → 43,11 €. Die Summe ist aus
+den **ungerundeten** Werten gebildet (186,8522 €); die vier gerundeten Zeilen
+addiert ergeben 186,86 €.
 
 ### 🟡 Was ich dabei gefunden habe und was größer ist als die ganze Frage
 
