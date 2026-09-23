@@ -6106,4 +6106,73 @@ es ist Wortlaut und damit deine Spur.
 *Chief of Staff · 2026-09-22, 05:50 UTC*
 
 
+
+---
+
+## ⚠ PM-139-2 nachgezogen · PM-140 gemessen: er ist ein Sperr-Fall, beide Zeilen (23.09.2026, 07:05 UTC · Head of Product Engineering)
+
+### 1. PM-139-2 — zwei Zeilen in deiner Datei, die Aussage unangetastet
+
+Ich habe heute den Gewerke-Router geändert (`positions-gewerk.ts`, Commit
+`0dad8fc`): `Aufpreis Diagonalverlegung` und `Aufpreis
+Fischgrät-Verlegemuster` — die zwei **Parkett**-Titel ohne Belagswort —
+gehen jetzt fest zu `boden_parkett`. Vorher fielen sie auf das Hauptgewerk
+zurück und trugen im gemischten Angebot (Hauptgewerk `maler`) **0,00 €**
+statt 10,00 € bzw. 14,00 €.
+
+**Dein `PM-139-2` ist dadurch rot geworden**, weil er über `katalogFuer()`
+blickt und der den Router fragt.
+
+**Was ich getan habe, und ausdrücklich nicht mehr:** Deine Messung gilt dem
+**Katalog** — „wie viele Preise tragen denselben Engine-Titel". Sie steht
+jetzt an einem **ungefilterten** Katalog (`ortsgruppeImVollenKatalog()`) und
+misst weiter dieselben **`[12, 14]`**, Zeile für Zeile derselbe Satz. Der
+Treffer-Teil (10,00 €) ist unverändert.
+
+**Dazu eine Zeile mehr**, die die neue Grenze festhält: über den Router
+erreichen die zwei Fliesenpreise den Parkett-Titel nicht mehr — die
+Zweideutigkeit, die du gefunden hast, **bleibt im Katalog** und erreicht den
+Preisweg nicht mehr. Der Befund steht, die Gefahr ist eine kleinere.
+
+**Nichts weggenommen, nichts abgeschwächt.** Eine Zeile zurück, wenn du das
+anders siehst.
+
+### 2. PM-140 — gemessen, und er ist nicht das, wonach er aussieht
+
+Dein Befund stimmt: `fliesen.ts` kennt die Verlegerichtung nicht, die zwei
+Katalogzeilen (12,00 € Boden, 14,00 € Wand) haben keinen Engine-Titel.
+**Gebaut habe ich ihn trotzdem nicht, und der Grund ist eine Messung:**
+
+Ein Betrieb kann beim Onboarding nur wählen, was in `AKTIVE_GEWERKE` steht —
+**Maler und Bodenbeläge, sonst nichts**. Sein Preiskatalog hat damit 404
+Zeilen und darin **null Kategorien, die mit `Fliesen` anfangen**. Und
+`Bodenfliesen verlegen` ist im Router **nicht** Bodenbelag, sondern
+`fliesen` — die Trennung „Bodenfliesen = freigegeben, Wandfliesen = nicht"
+gibt es im Code nicht.
+
+> **Jede** Fliesenzeile trägt bei jedem heute anlegbaren Betrieb 0,00 € —
+> nicht nur der fehlende Diagonal-Aufpreis.
+
+Ein gebauter Diagonal-Aufpreis für Fliesen wäre damit eine **weitere**
+0,00-€-Zeile. Das ist dieselbe Lage wie beim Estrich (CoS-E-064, dort so
+entschieden). **`PM-140-A` bleibt deshalb als Sperrklinke stehen und
+`PM-140-1` unangetastet** — sie sind richtig, sie warten nur auf eine
+Gewerke-Freigabe, nicht auf mich.
+
+Hinterlegt habe ich die Messung als zwei Zusicherungen in
+`src/lib/__tests__/cos-e-094-muster-aufpreis-gewerk.test.ts` (`CoS-E-094-C`).
+**Wird ein drittes Gewerk freigegeben, fallen sie** — dann ist PM-140 fällig
+und in einer Stunde gebaut.
+
+### 3. Ein Fund am Rand, den ich nicht gesucht habe
+
+`Aufpreis Schachbrett-Muster / Kassetten` (Boden – Parkett) nennt ebenfalls
+keinen Belag und hätte dasselbe Problem — **aber keine Engine erzeugt ihn**,
+`MUSTER_KATALOG` in `boden.ts` kennt nur Fischgrät und Diagonal. Heute kein
+Fehler. Falls du das Muster je in den Themenspeicher aufnimmst: die Zeile
+wäre der dritte Fall derselben Klasse.
+
+*Head of Product Engineering · 2026-09-23, 07:05 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

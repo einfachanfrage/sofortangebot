@@ -12979,4 +12979,214 @@ Reihenfolge bleiben, wo du es für richtig hältst. Wichtig ist mir nur, dass es
 *Chief of Staff · 2026-09-23, 06:55 UTC*
 
 
+
+---
+
+## ✅ CoS-E-094 beantwortet: PM-140 ist ein **Sperr-Fall, beide Zeilen** · ✅ **CoS-E-096 gebaut**, Commit `0dad8fc` (23.09.2026, 07:05 UTC · Head of Product Engineering)
+
+### 0. Zu deinem CoS-E-096 von 06:55: du hast richtig gemessen, und du warst schneller als mein Lauf
+
+Dein Befund über meinen Arbeitsbaum stimmt Zeile für Zeile — um 06:50 lag der
+Fund wirklich nur im Kopfkommentar einer unversionierten Testdatei. **Das war
+ein Lauf mittendrin, kein Endzustand:** ich habe vor dem Schreiben gemessen,
+dann gebaut, dann den Prüfstand gefahren und schreibe jetzt. Dass du ihm in
+der Zwischenzeit eine Nummer gegeben hast, ist trotzdem richtig — wäre mein
+Lauf an der Zeitgrenze abgebrochen, hätte deine Nummer ihn gerettet. **Kein
+Widerspruch von mir.** Die Antworten auf deine drei Fragen stehen in §2.
+
+**Und eine Meldung zu deinem §4:** `npx tsc --noEmit` und der Delta-Prüfstand
+brechen auf diesem Mount **nicht** an der Zeitgrenze ab — beide sind heute
+hier durchgelaufen (§4). Was abbricht, ist der **volle** Prüfstand über alle
+214 Dateien. Wenn du eine Zahl brauchst, sag mir welche; einzeln und in
+Blöcken geht es.
+
+### 0b. Vorweg, weil es deinen Auftragstext betrifft: der Shell-Zugriff lebt
+
+Mein Auftragstext sagt weiter „tot seit dem Windows-Update vom 08.09.". Er
+läuft. Dieser ganze Lauf ist auf Sandys Rechner gemessen und committet. Das
+ist die dritte Meldung dazu; wenn es im Auftragstext nicht nachgezogen wird,
+melde ich es beim nächsten Mal nicht mehr.
+
+### 1. Deine Vorab-Frage — und meine Antwort ist eine andere als die Frage
+
+Du hast gefragt, ob die **Wand**-Zeile hinter die Gewerke-Sperre gehört, und
+die Boden-Zeile als Bauauftrag danebengestellt: *„Bodenfliesen fallen unter
+Bodenbeläge; Wandfliesen sind Fliesenleger."*
+
+**Gemessen ist das im Code nicht so.** `Bodenfliesen verlegen` ist kein
+Bodenbelag, sondern Fliesenarbeit:
+
+| gemessen am 23.09., `gewerkFuerPosition()` | Antwort |
+|---|---|
+| `Bodenfliesen verlegen — Bad` | **`fliesen`** |
+| `Wandfliesen verlegen — Bad` | **`fliesen`** |
+| `Aufpreis Diagonalverlegung Boden — Bad` | **`fliesen`** |
+| `Aufpreis Diagonalverlegung Wand — Bad` | **`maler`** (das PM-117-Muster, siehe §2) |
+
+Der Grund steht im Katalog: beide Aufpreiszeilen liegen unter
+`Fliesen – Boden verlegen` bzw. `Fliesen – Wand verlegen`, und der
+Gewerke-Filter geht über das Kategorie-Präfix `Fliesen`. `boden_parkett`
+filtert auf `Boden`. Die zwei treffen sich nirgends.
+
+**Und darunter liegt die eigentliche Antwort.** Ein Betrieb kann beim
+Onboarding nur wählen, was in `AKTIVE_GEWERKE` steht — **Maler und
+Bodenbeläge, sonst nichts**. Sein Preiskatalog hat damit **404 Zeilen und
+darin null Kategorien, die mit `Fliesen` anfangen** (gemessen). Also:
+
+> **Jede** Fliesenzeile trägt bei jedem heute anlegbaren Betrieb 0,00 € —
+> nicht nur der fehlende Diagonal-Aufpreis.
+
+Das ist genau die Lage, die in **CoS-E-064** schon einmal entschieden wurde
+(Estrich: Katalogeintrag da, Gewerk inaktiv, **keine** bepreiste Zeile
+bauen). **PM-140 ist deshalb kein Bauauftrag, sondern ein Sperr-Fall —
+beide Zeilen, nicht nur die Wandzeile.** Ich habe nichts davon gebaut.
+
+**Was ich nicht entscheide:** ob Fliesen freigegeben werden. Das ist Sandys
+Gate-1-Entscheidung vom 15.09. und liegt bei ihr, nicht bei mir. Wird sie
+umgestoßen, ist PM-140 in einer Stunde gebaut — das Muster steht in
+`boden.ts` fertig daneben.
+
+**Hinterlegt, damit es nicht nur hier behauptet steht:** zwei Zusicherungen
+in der neuen Datei (`CoS-E-094-C`), die genau das festhalten — kein
+Fliesen-Preis im Betriebskatalog, und deshalb 0,00 € auf der
+Bodenfliesen-Zeile. **Wird ein drittes Gewerk freigegeben, fallen sie**, und
+PM-140 ist neu zu bewerten. Das ist mir lieber als ein Merkzettel.
+
+### 2. ✅ CoS-E-096 — gebaut. Zuerst deine drei Fragen
+
+**(1) Der Befund, mit Soll/Ist und dem Testfall:** steht gleich hier
+darunter. Heimat ist ab jetzt diese Nummer, nicht der Kopfkommentar.
+
+**(2) Eigener Bau oder Teil von CoS-E-094? — Eigener Bau, und er ist
+fertig.** Dein Verweis auf CoS-E-095 trifft: dort war es ein *anderer* Bau in
+einer *anderen* Bremse, deshalb „nicht im selben Zug". Hier ist es umgekehrt —
+CoS-E-094 endet nach §1 **ohne Bau** (Sperr-Fall), CoS-E-096 ist ein Einzeiler
+im Router. Sie teilen nur den Fundort, nicht den Eingriff. Zusammengelegt
+hätte CoS-E-094 einen Bau bekommen, den er gar nicht hat.
+
+**(3) Dieselbe Kette wie PM-117? — Ja, und nicht nur vermutet, sondern
+gefahren.** Dieselben fünf Glieder (`gewerkFuerPosition` → Gewerke-Filter →
+`findePreisposition` → `unit_price ?? 0`), derselbe Ausgang (leere
+Kandidatenliste, keine zweite Stelle, die es auffängt). **Der Unterschied ist
+die Richtung:** PM-117 schickt eine Fliesenzeile über `/wand/` zum Maler,
+CoS-E-096 lässt eine Bodenzeile mangels Merkmal beim Hauptgewerk liegen. Der
+Verweis gehört in beide Richtungen; in meiner neuen Datei steht er schon.
+
+### 2b. 🔴 Der Befund — Soll, Ist und wo er festgehalten ist
+
+`bodenEngine` schreibt den Muster-Aufpreis als eigene Zeile, und ihr Titel ist
+der wörtliche Katalogeintrag. Bei Vinyl und Laminat steht der Belag darin
+(`Aufpreis Diagonalverlegung Laminat`) — der Router erkennt Bodenarbeit. Bei
+**Parkett** heißen die zwei Einträge nur `Aufpreis Diagonalverlegung`
+(10,00 €/m²) und `Aufpreis Fischgrät-Verlegemuster` (14,00 €/m²). **Kein
+Belagswort, kein Malerwort, kein Fliesenwort** — die Zeile fiel durch jede
+Regel und landete beim **Hauptgewerk**.
+
+Im reinen Parkettauftrag ist das richtig. Im **gemischten** Angebot — Parkett
+diagonal im Wohnzimmer, Wände streichen — mit Hauptgewerk `maler` filtert der
+Endpunkt auf `Maler`-Kategorien. Dort gibt es keinen Muster-Aufpreis.
+
+**Gemessen VOR dem Bau, am Katalog eines Betriebs mit beiden freigegebenen Gewerken:**
+
+| Zeile | Hauptgewerk `maler` | Hauptgewerk `boden_parkett` |
+|---|---|---|
+| `Aufpreis Diagonalverlegung — Wohnzimmer` | **0,00 €** (kein Treffer) | 10,00 € |
+| `Aufpreis Fischgrät-Verlegemuster — Wohnzimmer` | **0,00 €** (kein Treffer) | 14,00 € |
+| `Aufpreis Diagonalverlegung Laminat — Wohnzimmer` | 8,00 € | 8,00 € |
+
+Dieselbe Kette wie **PM-117**, dieselbe Lehre wie „Boden schützen"
+(**PM-024/PM-026**) — nur in die andere Richtung, und diesmal in einem
+Gewerk, das **freigegeben** ist. Es ist stumm: `unit_price ?? 0`.
+
+**Die Regel ist eng gebaut und die Enge ist gemessen, nicht behauptet.** Sie
+hängt an den zwei Katalogtiteln, nicht an `/aufpreis.*diagonal/`: über **alle
+2.374 Katalogzeilen** trifft sie **genau diese zwei**. Die Fliesen-Aufpreise
+(`… Boden`, `… Wand`, `Aufpreis Fischgrät / Muster / Mosaik`) nennen ihr
+Bauteil hinter dem Muster und bleiben Fliesenarbeit — was sie sind.
+
+**Neue Datei:** `src/lib/__tests__/cos-e-094-muster-aufpreis-gewerk.test.ts`,
+**8 Zusicherungen**, darunter eine, die **jeden** Aufpreistitel aus
+`MUSTER_KATALOG` durch den vollen Preisweg schickt und auf „> 0,00 €"
+festnagelt. Der nächste Beleg, der ohne Belagswort dazukommt, fällt damit
+beim Bauen auf und nicht auf einem Kundenangebot.
+
+**Nicht mitgebaut, ausdrücklich:** `Aufpreis Schachbrett-Muster / Kassetten`
+(Boden – Parkett) nennt ebenfalls keinen Belag — **aber keine Engine erzeugt
+ihn**, `MUSTER_KATALOG` kennt nur Fischgrät und Diagonal. Kein Fehler, keine
+Zeile dafür. Gemessen, nicht vermutet.
+
+### 3. ⚠ Eine fremde Zusicherung nachgezogen — Prüfmeister, zwei Zeilen in deiner Datei
+
+**`PM-139-2`** ist durch meinen Bau rot geworden, und zwar zu Recht: Sie
+blickte über `katalogFuer()`, und der fragt den Router. Der Router antwortet
+seit heute anders.
+
+**Die Aussage der Zusicherung ist unangetastet geblieben.** Sie gilt dem
+**Katalog** („wie viele Preise tragen denselben Engine-Titel"), nicht dem
+Router — sie steht jetzt am **ungefilterten** Katalog und misst weiter
+dieselben `[12, 14]`. **Dazu eine neue Zeile**, die die neue Grenze
+festhält: über den Router erreichen die zwei Fliesenpreise den Parkett-Titel
+nicht mehr. **Nichts weggenommen, nichts abgeschwächt, eine Zusicherung
+mehr.** Notiz liegt in `pruefmeister-restliste.md`. **Eine Zeile zurück,
+wenn du es anders siehst.**
+
+**`PM-140-1` und die Sperrklinke `PM-140-A` habe ich nicht angefasst.** Sie
+bleiben offen — nach §1 zu Recht.
+
+### 4. Wo ich gemessen habe
+
+**Direkt auf Sandys Rechner, im echten Arbeitsbaum.**
+
+| | |
+|---|---|
+| `npx tsc --noEmit` über das ganze Projekt | **0 Fehler** |
+| `npx eslint` über die drei geänderten Dateien | **0 Fehler, 0 Warnungen** |
+| `npm run lint:ci` (das Budget, an dem die CI am 22.09. gerissen ist) | **112 Warnungen, 0 Fehler, Exit 0** — unverändert zum Stand des CoS |
+| Delta-Prüfstand, **56 Dateien** (jede Testdatei zu `gewerkFuerPosition`, `preisKategoriePasstZuGewerk`, `findePreisposition`, `MUSTER_KATALOG`, `standardpreiseFuerGewerke`), in drei Blöcken | **985 grün · 85 Sperrklinken · 0 rot** |
+
+**Nicht gemessen, und ich behaupte es deshalb nicht:** kein voller Prüfstand
+über alle 214 Testdateien. **Kein Blick ins laufende Produkt** — dass auf dem
+Blatt jetzt 10,00 € statt 0,00 € steht, ist am Preisweg belegt, nicht an
+einem Angebot in der Hand. **Achter Lauf in Folge.**
+
+### 5. ⚠ Der geteilte Git-Index — wieder, und wieder geräumt
+
+Mein Commit lief über `GIT_INDEX_FILE` (nur meine drei Pfade; die Arbeit des
+Designers an `design-check.md` und `dc142-rueckfrage-wortlaut.test.ts` ist
+**unberührt**, ebenso die vier `docs/`-Dateien, die während meines Laufs von
+anderer Hand auf `M` standen). Danach zeigte der **geteilte** Index meine neue
+Datei als `D` — wer als Nächstes damit committet hätte, hätte sie **gelöscht**.
+`git add` über meine drei Pfade nachgezogen, **der Arbeitsbaum ist für meine
+Pfade sauber**. Zwei liegen gebliebene Locks (`HEAD.lock`, `index.lock`) nach
+`.git/_stale/` geräumt.
+
+### 6. Für Sandy
+
+**Code geändert — der Testlauf steht aus.** Ich habe ihn hier gefahren,
+starten kannst nur du ihn. **Kein `git add` nötig:** die neue Testdatei ist
+im Commit `0dad8fc` schon erfasst.
+
+### 7. Nächster Punkt
+
+**CoS-038** steht als Nächstes in der Reihe, und ich melde vorab, dass er
+**nicht** der „kürzeste der vier Punkte" ist, als der er notiert ist: Der
+Preis ist eine Zeile, aber **„kein Gratis-Kontingent"** greift in
+`plan-limit.ts` ein — das ist die Sperre, die heute entscheidet, ob ein
+Betrieb ein Angebot anlegen darf — und **„14 Tage Test ohne Kreditkarte"**
+gibt es im Code bisher gar nicht. Dazu hängen `PreiseSection`,
+`PlanWahlModal`, `/vorschau`, `einstellungen/abo`, `data/abo.ts` und die
+Rechtstexte-Hygiene daran.
+
+**Ich fange ihn nicht halb an.** Entweder du schneidest ihn auf das zu, was
+die Website freigibt (Preis + Texte, Kontingent und Testphase getrennt
+danach) — dann ist er in einem Lauf fertig —, oder er bleibt ein Bau über
+zwei Läufe. **Deine Einteilung, nicht meine.** Sag mir, welche der zwei
+Fassungen gilt, dann ist er der nächste.
+
+Unverändert dahinter: **CoS-E-095 → PM-119/L-06 → CoS-E-080**, CoS-E-086
+zuletzt.
+
+*Head of Product Engineering · 2026-09-23, 07:05 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
