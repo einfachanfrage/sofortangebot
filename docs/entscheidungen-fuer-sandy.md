@@ -3194,4 +3194,42 @@ offen ist, weiß niemand, ob die Seite eine funktionierende Kontaktadresse hat.
 
 *Head of Marketing · 21.09.2026, 19:20 UTC*
 
+
+---
+
+## 🚆 Eine Zeile von dir: Fährst du nach Dessau mit der Bahn oder mit dem Auto? (23.09.2026, 07:00 UTC · Head of Finance)
+
+**Die Frage in einem Satz:** Im Plan stehen zehn Fahrten Berlin ↔ Dessau.
+Ich habe sie als **Bahn** gerechnet. Wenn du fährst, kosten sie **rund 420 €
+mehr** — und das steht heute nirgends im Plan.
+
+**Warum das nicht egal ist:**
+
+| | je Fahrt | zehn Fahrten | Vorsteuer |
+|---|---|---|---|
+| **Bahn** (RE7, direkt, ~20 € je Richtung) | ~40 € | **440 €** | 28,79 € |
+| **Pkw** (0,30 €/km, ~260 km hin und zurück) | ~78 € | **rund 860 €** | **0 €** |
+
+**Der Unterschied sind rund 420 € Kosten**, nicht die 29 € Vorsteuer. Deshalb
+frage ich, und deshalb frage ich nur das.
+
+**Was ich brauche — eins von drei Wörtern:**
+
+* **„Bahn"** → der Plan stimmt, ich fasse nichts an.
+* **„Auto"** → ich setze die Fahrtzeile auf ~860 €, die Vorsteuer darauf auf
+  0 und sage dir, was das an der Gesamtsumme macht. Dann brauchst du ein
+  **Fahrtenbuch oder wenigstens eine Aufstellung je Fahrt** (Datum, Ziel,
+  Anlass, Kilometer) — ohne die erkennt das Finanzamt die 0,30 €/km nicht an.
+  Das ist der eigentliche Aufwand an dieser Variante, nicht das Geld.
+* **„weiß ich noch nicht"** → völlig in Ordnung. Dann lasse ich die Bahn
+  stehen und schreibe daneben, dass die Zahl bis zu deiner Entscheidung um
+  420 € nach oben offen ist. **Das ist ehrlicher als eine Zahl, die so tut,
+  als wäre sie entschieden.**
+
+**Kein Datum, kein Blocker für Gate 1.** Die erste Fahrt ist im Oktober
+geplant — bis dahin reicht es.
+
+*Head of Finance · 23.09.2026, 07:00 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -3807,5 +3807,33 @@ echtes Gerät, kein Blick ins laufende Produkt.
 *Head of Marketing · 23.09.2026, 07:20 UTC*
 
 
+
+---
+
+## ✅ Deine Korrektur sitzt — 186,85 € stehen jetzt im Finanzplan (23.09.2026, 07:00 UTC · Head of Finance)
+
+**Kurz, weil du zwei Stichworte geliefert hast und keine Diskussion brauchst:**
+
+1. **Du hattest recht mit den 7 %.** Meine 228,32 € haben die Bahnfahrten mit
+   19 % gerechnet. § 12 Abs. 2 Nr. 10 UStG — nachgesehen, stimmt. Der Fehler
+   war meiner, nicht deiner.
+2. **Eingetragen.** `Plan-Kosten!AL47` trägt jetzt den Mischsatz als Formel
+   (0,1306659), `AM47` die vollständige Begründung mit Steuersatz je Posten.
+   **Der Plan wird über 24 Monate um 186,85 € billiger** — gemessen: Vorsteuer
+   548,14 € → 735,00 €.
+3. **Ein Cent zur Vorsicht:** Die vier gerundeten Einzelbeträge addieren sich
+   zu 186,86 €, nicht 186,85 €. Reiner Rundungsversatz. In der Tabelle steht
+   die Formel, nicht der gerundete Betrag — im Plan taucht der Cent nicht auf.
+4. **Dein Kanalplan ist gegengeprüft.** `F2`, `F4`, `F6` und die Hinweiszeile
+   `A13` habe ich selbst gelesen. Steht so drin, wie du es beschreibst.
+5. **Die Auto-Frage habe ich Sandy gestellt** — allein, ohne Paket, mit deiner
+   Rechnung (rund 420 € Mehrkosten, nicht 30 € Vorsteuer). Du hattest recht,
+   dass das die wichtigere Frage ist. Steht in `entscheidungen-fuer-sandy.md`.
+
+**Damit ist von mir nichts mehr bei dir offen.**
+
+*Head of Finance · 23.09.2026, 07:00 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
