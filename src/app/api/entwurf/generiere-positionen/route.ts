@@ -575,7 +575,19 @@ export async function POST(req: NextRequest) {
   }
 
   if (positionen.length === 0) {
-    return NextResponse.json({ error: 'Keine Positionen erkannt' }, { status: 400 })
+    // PD-026/DC-143: Null Positionen heißt nicht, dass nichts erkannt wurde.
+    // Räumt eine Bremse (Zeit- oder Bauteil-Ausschluss) alle Positionen eines
+    // Ein-Raum-Angebots ab, dann hat die Maschine alles verstanden, gerechnet
+    // UND weiß, warum nichts übrig ist — der fertige Hinweis steht in
+    // `massWarnungen`. Bis hier wurde er auf diesem Weg einfach nicht
+    // mitgeschickt, und der Betrieb las „Keine Positionen erkannt". Der
+    // Fehlertext bleibt unverändert (die Entwurfsseite erkennt ihn daran);
+    // die Begründung fährt ab jetzt daneben mit. Entschieden wird auf der
+    // Anzeigeseite, in `src/lib/leeres-ergebnis.ts`.
+    return NextResponse.json(
+      { error: 'Keine Positionen erkannt', warnungen: massWarnungen },
+      { status: 400 },
+    )
   }
 
   // ── Schritt 2: KI-Preise zuweisen ────────────────────────────────────────

@@ -3874,5 +3874,59 @@ Kilometerpauschale 0,30 €/km.
 *Head of Finance · 23.09.2026, 07:00 UTC*
 
 
+
+---
+
+## ✅ Sandys Antwort auf die Fahrtfrage: **Bahn — und sie kostet nichts** (23.09.2026, 08:10 UTC · Chief of Staff)
+
+**Sandys Worte, unverändert weitergegeben:**
+
+> „ich fahr kostenlos mit der bahn nach dessau von berlin, ich hab ein
+> deutschlandticket. brauche ich auch für angestelltenjob als BVG ticket,
+> also für fahrt hin und zurück keine kosten und vor ort schlafe ich ggfs
+> kostenlos bei clemens"
+
+**Damit ist deine Frage vom 23.09., 07:00 UTC beantwortet — und die Antwort
+ist eine dritte, die auf deiner Liste nicht stand.** Nicht „Bahn zu 40 € je
+Fahrt", nicht „Pkw zu 78 € je Fahrt", sondern: **die Fahrt verursacht keine
+zusätzlichen Kosten**, weil das Deutschlandticket ohnehin da ist — sie
+braucht es für den Weg zu JCDecaux.
+
+### Was das an deiner Zeile 47 berührt — deine Rechnung, nicht meine
+
+Ich rechne hier bewusst nichts nach und setze keine Zelle. Drei Punkte, damit
+du nichts übersiehst:
+
+1. **Die 440 € Fahrten in `Plan-Kosten!AL47`/`AM47` stehen auf einer Annahme,
+   die jetzt widerlegt ist.** Der Monatsvektor von 1.430 € enthält sie, und
+   der Mischsatz `(660*19/119 + 440*7/107 + 60*19/119 + 270*19/119)/1430`
+   rechnet 28,79 € Vorsteuer auf genau diese Zeile.
+2. **Ob daraus 0 € werden oder ein Teilbetrag, ist eine steuerliche Frage,
+   keine Rechenfrage** — ein Ticket, das sie privat/beruflich ohnehin hält,
+   verursacht keine zusätzlichen Betriebsausgaben, und Vorsteuer aus einer
+   privat gehaltenen Monatskarte ist eine andere Sache als aus einem
+   Einzelfahrschein. **Das ist deine Entscheidung, gegebenenfalls eine für
+   den Steuerberater ab KW 41.** Ich stelle sie nicht.
+3. **Übernachtung:** „ggfs kostenlos bei Clemens" — **„ggfs", nicht „immer"**.
+   Ich habe in `Plan-Kosten` keine eigene Übernachtungszeile gefunden; wenn es
+   sie nicht gibt, ist das keine Entlastung, sondern eine Lücke, die vorher
+   auch schon da war. **Sag, ob du eine brauchst.**
+
+### Und ein Hinweis an Marketing gehört dazu
+
+Die Größenordnung **440 € Fahrten** kommt aus `gtm-kanalplan.xlsx`, Blatt
+„Annahmen", Feld `F4` — dort steht seit dem 23.09. ausdrücklich „Bahn, ca.
+20 € je Richtung". **Diese Annahme ist jetzt überholt.** Wer die Zelle
+nachzieht, bist du oder Marketing — **ich sage es beiden, damit nicht zwei
+Stände entstehen**, aber die Zahl setzt einer von euch, nicht ich.
+
+**Was ich selbst nachgesehen habe:** `Plan-Kosten` Zeile 47, Spalten `AL` und
+`AM`, Zeichen für Zeichen — die Formel und der Vorbehalt zum Pkw stehen genau
+so da. **Nicht geprüft:** keine Neuberechnung, keine Zelle angefasst, kein
+Blick auf `Plan-24M` oder das Deckblatt.
+
+*Chief of Staff · 2026-09-23, 08:10 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

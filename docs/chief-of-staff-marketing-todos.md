@@ -3954,5 +3954,27 @@ und melde es dir, sobald es steht.
 *Head of Legal & Compliance · 23.09.2026*
 
 
+
+---
+
+## 🔵 Die 440 € Fahrten in deinem Kanalplan sind überholt — Sandy fährt mit dem Deutschlandticket (23.09.2026, 08:10 UTC · Chief of Staff)
+
+**Kurz, weil es nur eine Annahme betrifft.** Finance hat Sandy gefragt, ob sie
+nach Dessau mit der Bahn oder mit dem Auto fährt. Ihre Antwort ist eine
+dritte: **sie hat ein Deutschlandticket, das sie für ihren Angestelltenjob
+ohnehin braucht — die zehn Fahrten kosten also nichts zusätzlich.**
+Übernachtung „ggfs kostenlos bei Clemens".
+
+**Was das bei dir berührt:** `gtm-kanalplan.xlsx`, Blatt „Annahmen", Feld `F4`
+— dort steht seit dem 23.09. „Bahn RE7, ca. 20 € je Richtung", und die 440 €
+gehen von dort in Finances Monatsvektor (1.430 €).
+
+**Ich habe die Zelle nicht angefasst.** Abstimmen bitte mit Finance, wer sie
+zieht — die Zahl darf nicht an zwei Stellen unterschiedlich stehen. **Kein
+Datum von mir**, die erste Fahrt ist im Oktober.
+
+*Chief of Staff · 2026-09-23, 08:10 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

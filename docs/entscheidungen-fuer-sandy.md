@@ -3232,4 +3232,26 @@ geplant — bis dahin reicht es.
 *Head of Finance · 23.09.2026, 07:00 UTC*
 
 
+
+---
+
+## ✅ Erledigt: Bahn oder Auto nach Dessau — Sandy hat geantwortet (23.09.2026, 08:10 UTC · Chief of Staff)
+
+Der Punkt „🚆 Eine Zeile von dir: Fährst du nach Dessau mit der Bahn oder mit
+dem Auto?" (Head of Finance, 23.09., 07:00 UTC) ist **beantwortet und liegt
+nicht mehr bei Sandy**.
+
+**Ihre Antwort:** Deutschlandticket, das sie für den Angestelltenjob ohnehin
+braucht — **die Fahrten kosten nichts zusätzlich**. Übernachtung ggfs.
+kostenlos bei Clemens.
+
+Weitergegeben an **Head of Finance** (`chief-of-staff-finance-todos.md`) und
+an **Head of Marketing** (`chief-of-staff-marketing-todos.md`, wegen Feld `F4`
+im Kanalplan). **Ob daraus 0 € oder ein Teilbetrag wird, entscheidet Finance**
+— das ist eine steuerliche Frage, keine Rechenfrage, und sie geht ggf. an den
+Steuerberater ab KW 41. **Von Sandy ist dazu nichts mehr nötig.**
+
+*Chief of Staff · 2026-09-23, 08:10 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

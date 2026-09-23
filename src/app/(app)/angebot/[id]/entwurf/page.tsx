@@ -36,6 +36,77 @@ import {
 import { sortiereHinweise } from '@/lib/hinweis-rang'
 
 
+/**
+ * Eine Zeile des Bernsteinbanners, gelesen und gesetzt.
+ *
+ * Sie stand bis DC-143 als `.map()`-Rumpf mitten im Banner. Seit DC-143 gibt
+ * es eine ZWEITE Stelle, an der dieselben Zeilen stehen müssen — die Karte
+ * „Erkannt, und wieder abgeräumt" (PD-026). Zwei Abschriften desselben
+ * Lesers wären genau die Falle aus DC-125: wer eine ändert, sieht die andere
+ * nicht. Deshalb eine Komponente, zwei Aufrufer.
+ *
+ * Die Zeile kommt als EIN Stück Text an und wird hier in ihre zwei Teile
+ * zerlegt: Aussage fett, Beleg-Satz als Zitat darunter. Passt eine Zeile auf
+ * kein Muster, steht sie unverändert da — lieber der rohe Satz als ein
+ * verschluckter.
+ */
+function HinweisZeile({ zeile }: { zeile: string }) {
+  // DC-128 (DC-116/PM-116): Ein Bauabschnitt, den der Handwerker ausdrücklich
+  // auf später geschoben hat, steht nicht im Angebot — das muss man SEHEN,
+  // nicht nur nicht merken. Raumname als Aussage, Beleg-Satz als Zitat.
+  const ausgenommen = zerlegeZeitAusschlussHinweis(zeile)
+  if (ausgenommen) {
+    return (
+      <div className="flex flex-col gap-0.5">
+        <p className="text-amber-900 font-black text-[13px]">
+          „{ausgenommen.raum}" steht nicht in diesem Angebot
+        </p>
+        <p className="text-amber-800/90 font-semibold text-[12px] italic leading-snug">
+          Gesagt: „{ausgenommen.satz}"
+        </p>
+      </div>
+    )
+  }
+  /* PM-136 / DC-142: die Rückfrage — gleiche zwei Zeilen, gleicher Beleg,
+     aber die Aussage ist die umgekehrte: es ist NICHTS weggefallen, und der
+     Betrieb muss sagen, wo der Satz gilt. Deshalb steht die Folge vorn und
+     die Frage hinten, spiegelbildlich zur Nachbarzeile („bleiben im Angebot"
+     ↔ „sind nicht im Angebot") — und deshalb steht diese Sorte im Banner ganz
+     oben (`hinweisRang`): sie ist die einzige, die ohne eine Antwort des
+     Betriebs nicht zu Ende geht. */
+  const offen = zerlegeBauteilUnklarHinweis(zeile)
+  if (offen) {
+    return (
+      <div className="flex flex-col gap-0.5">
+        <p className="text-amber-900 font-black text-[13px]">
+          Arbeiten {offen.arbeiten} bleiben im Angebot. Zu welchem Raum galt das?
+        </p>
+        <p className="text-amber-800/90 font-semibold text-[12px] italic leading-snug">
+          Gesagt: „{offen.satz}"
+        </p>
+      </div>
+    )
+  }
+  /* PD-024/DC-135: dieselbe Form eine Ebene tiefer — nicht ein ganzer Raum,
+     sondern ein Bauteil darin. Gleiche zwei Zeilen, gleiches Gewicht,
+     gleicher Beleg. */
+  const bauteil = zerlegeBauteilAusschlussHinweis(zeile)
+  if (bauteil) {
+    return (
+      <div className="flex flex-col gap-0.5">
+        <p className="text-amber-900 font-black text-[13px]">
+          {bauteil.raum ? <>„{bauteil.raum}": </> : null}
+          Arbeiten {bauteil.arbeiten} sind nicht im Angebot
+        </p>
+        <p className="text-amber-800/90 font-semibold text-[12px] italic leading-snug">
+          Gesagt: „{bauteil.satz}"
+        </p>
+      </div>
+    )
+  }
+  return <p className="text-amber-800 font-semibold text-[13px]">{zeile}</p>
+}
+
 // Bereits berechnete quote_items — vollständig geladen (nicht nur die Anzahl),
 // damit sie sich zusammen mit frischen Vorschau-Positionen raum-gruppieren
 // lassen (Nachtrag-Fall: Rückkehr nach "Entwurf erstellen").
@@ -628,6 +699,14 @@ export default function EntwurfPage() {
   // Wortlaut, mit dem einzigen Weg zurück, der hilft: derselbe
   // Rückfragen-Screen. Leer = der Normalfall, es gibt nichts zu zeigen.
   const [offenGeblieben, setOffenGeblieben] = useState<string[]>([])
+  // PD-026/DC-143 (Prüfmeister, 23.09.2026): der Gegenfall zu `offenGeblieben`.
+  // Dort war etwas gehört, aber nicht rechenbar; hier war alles gehört UND
+  // gerechnet — und eine Bremse („An den Wänden machen wir nichts") hat jede
+  // Position wieder abgeräumt. Beides endet in null Positionen, und beide
+  // bekamen bis DC-143 denselben roten Satz „Keine Positionen erkannt". Hier
+  // stehen dann die Bannerzeilen im Rohtext, in derselben Reihenfolge und mit
+  // demselben Leser wie im Bernsteinbanner. Leer = Normalfall.
+  const [allesAusgeschlossen, setAllesAusgeschlossen] = useState<string[]>([])
   const [basisExtraktion, setBasisExtraktion] = useState<ExtrahierteDaten | null>(null)
   // PM-007: `null` als Wert = „diese Frage wurde bewusst übersprungen".
   const [gesammelteAntworten, setGesammelteAntworten] = useState<Record<string, RueckfragenAntwort | null>>({})
@@ -834,6 +913,7 @@ export default function EntwurfPage() {
     setFehler('')
     setMassWarnungen([])
     setOffenGeblieben([])
+    setAllesAusgeschlossen([])
     setLoadingMsg('Alle Aufnahmen werden zusammengeführt…')
 
     const nochwarten = aufnahmen.some(a => a.typ === 'sprache' && a.verarbeitung_status === 'verarbeitung')
@@ -869,6 +949,9 @@ export default function EntwurfPage() {
         const err = await res.json().catch(() => ({})) as {
           error?: string
           fehlende_positionen?: Array<{ beschreibung: string; einheit: string }>
+          // DC-143: die Route schickt ihre Hinweiszeilen jetzt auch auf dem
+          // 400er-Weg mit. Fehlt das Feld, verhält sich alles wie vorher.
+          warnungen?: string[]
         }
         const fehlende = err.fehlende_positionen ?? []
 
@@ -876,14 +959,22 @@ export default function EntwurfPage() {
         // verschiedene Ursachen, und bisher bekamen beide denselben roten
         // Satz. Die Regel, die sie trennt, steht als eigene, geprüfte
         // Funktion in `src/lib/leeres-ergebnis.ts` — mit der Begründung.
+        // PD-026/DC-143: dieselbe Funktion entscheidet jetzt auch den dritten
+        // Fall — alles erkannt, alles gerechnet, alles wieder abgeräumt.
         const befund = beurteileLeeresErgebnis({
           fehlerText: err.error ?? '',
           anzahlFehlendePreise: fehlende.length,
           fragen: rueckfragen,
           antworten: alleAntworten,
+          hinweise: err.warnungen,
         })
         if (befund.art === 'offene_angaben') {
           setOffenGeblieben(befund.fragen)
+          setScreen('timeline')
+          return
+        }
+        if (befund.art === 'alles_ausgeschlossen') {
+          setAllesAusgeschlossen(befund.hinweise)
           setScreen('timeline')
           return
         }
@@ -1002,6 +1093,9 @@ export default function EntwurfPage() {
       // PD-019 Punkt 1: dieselbe Begründung wie eine Zeile darüber — die
       // Karte erklärt einen Stand, den die neue Aufnahme gerade überholt hat.
       setOffenGeblieben([])
+      // DC-143: derselbe Grund, dieselbe Zeile. Die Abgeräumt-Karte beschreibt
+      // ein Diktat, das die neue Aufnahme gerade überholt hat.
+      setAllesAusgeschlossen([])
     }
   }
 
@@ -1526,6 +1620,45 @@ export default function EntwurfPage() {
         </div>
       )}
 
+      {/* PD-026/DC-143: Alles gehört, alles gerechnet — und auf Ansage des
+          Betriebs wieder abgeräumt. Bis hier stand dafür „Keine Positionen
+          erkannt" in Rot: der eine Satz, der in genau diesem Fall unwahr ist
+          und den Betrieb zu einer zweiten Aufnahme desselben Diktats schickt.
+
+          Weiß, nicht rot, und in derselben Machart wie die PD-019-Karte
+          darüber: es ist kein Fehler des Handwerkers, sondern seine eigene,
+          befolgte Ansage.
+
+          Kein leeres Blatt: Ein Angebot über 0,00 € sieht fertig aus, und das
+          Nächste daran wäre „senden". Der Grund gehört außerdem nicht aufs
+          Blatt, sondern zum Diktat — und dort steht er schon. Deshalb bleibt
+          der Betrieb auf der Zeitleiste, wo der nächste Satz eine Antippweite
+          entfernt ist.
+
+          Kein Knopf: Der Weg heraus ist die Aufnahmeleiste, die unten auf
+          demselben Bildschirm steht. Ein Knopf, der nur dorthin zeigt, wäre
+          ein zweiter Weg zur selben Stelle (DC-125). */}
+      {allesAusgeschlossen.length > 0 && (
+        <div className="mx-4 mt-4 bg-white border border-anthracite/10 rounded-2xl px-4 py-4">
+          <h2 className="font-syne font-extrabold text-anthracite text-[17px] mb-2">
+            Erkannt — und wieder abgeräumt
+          </h2>
+          <p className="text-anthracite/50 font-semibold text-[13px] mb-4 leading-relaxed">
+            Die Aufnahme war vollständig. Übrig bleibt nichts, weil du es selbst
+            ausgenommen hast:
+          </p>
+          <div className="flex flex-col gap-2 mb-4">
+            {allesAusgeschlossen.map((w, i) => (
+              <HinweisZeile key={i} zeile={w} />
+            ))}
+          </div>
+          <p className="text-anthracite/35 font-semibold text-[12px] leading-relaxed">
+            Stimmt das nicht? Nimm unten weiter auf — ein Satz holt die Arbeit
+            zurück. Eine neue Aufnahme desselben Diktats führt wieder hierher.
+          </p>
+        </div>
+      )}
+
       {/* Fehler */}
       {fehler && (
         <div className="mx-4 mt-4 bg-red-50 border border-red-200 rounded-2xl px-4 py-3 flex items-center gap-2">
@@ -1541,71 +1674,13 @@ export default function EntwurfPage() {
           <div className="flex items-start gap-2">
             <AlertCircle size={16} className="text-amber-500 shrink-0 mt-0.5" />
             <div className="flex flex-col gap-2">
-              {/* DC-128 (DC-116/PM-116): Ein Bauabschnitt, den der Handwerker
-                  ausdrücklich auf später geschoben hat, steht nicht im
-                  Angebot — das muss man SEHEN, nicht nur nicht merken. Die
-                  Zeile kommt als ein Stück Text an und wird hier in ihre zwei
-                  Teile zerlegt: Raumname als Aussage, Beleg-Satz als Zitat
-                  darunter. Diese Einträge stehen zuerst — ein fehlender Raum
-                  wiegt mehr als ein korrigiertes Maß. Passt eine Zeile nicht
-                  auf das Muster, steht sie unverändert da: lieber der rohe
-                  Satz als ein verschluckter. */}
-              {sortiereHinweise(massWarnungen)
-                .map((w, i) => {
-                  const ausgenommen = zerlegeZeitAusschlussHinweis(w)
-                  if (ausgenommen) {
-                    return (
-                      <div key={i} className="flex flex-col gap-0.5">
-                        <p className="text-amber-900 font-black text-[13px]">
-                          „{ausgenommen.raum}" steht nicht in diesem Angebot
-                        </p>
-                        <p className="text-amber-800/90 font-semibold text-[12px] italic leading-snug">
-                          Gesagt: „{ausgenommen.satz}"
-                        </p>
-                      </div>
-                    )
-                  }
-                  /* PD-024/DC-135: dieselbe Form eine Ebene tiefer — nicht
-                     ein ganzer Raum, sondern ein Bauteil darin. Gleiche
-                     zwei Zeilen, gleiches Gewicht, gleicher Beleg. */
-                  /* PM-136 / DC-142: die Rückfrage — gleiche zwei Zeilen,
-                     gleicher Beleg, aber die Aussage ist die umgekehrte: es
-                     ist NICHTS weggefallen, und der Betrieb muss sagen, wo
-                     der Satz gilt. Deshalb steht die Folge vorn und die
-                     Frage hinten, spiegelbildlich zur Nachbarzeile
-                     („bleiben im Angebot" ↔ „sind nicht im Angebot") — und
-                     deshalb steht diese Sorte im Banner ganz oben
-                     (`hinweisRang`): sie ist die einzige, die ohne eine
-                     Antwort des Betriebs nicht zu Ende geht. */
-                  const offen = zerlegeBauteilUnklarHinweis(w)
-                  if (offen) {
-                    return (
-                      <div key={i} className="flex flex-col gap-0.5">
-                        <p className="text-amber-900 font-black text-[13px]">
-                          Arbeiten {offen.arbeiten} bleiben im Angebot. Zu welchem Raum galt das?
-                        </p>
-                        <p className="text-amber-800/90 font-semibold text-[12px] italic leading-snug">
-                          Gesagt: „{offen.satz}"
-                        </p>
-                      </div>
-                    )
-                  }
-                  const bauteil = zerlegeBauteilAusschlussHinweis(w)
-                  if (bauteil) {
-                    return (
-                      <div key={i} className="flex flex-col gap-0.5">
-                        <p className="text-amber-900 font-black text-[13px]">
-                          {bauteil.raum ? <>„{bauteil.raum}": </> : null}
-                          Arbeiten {bauteil.arbeiten} sind nicht im Angebot
-                        </p>
-                        <p className="text-amber-800/90 font-semibold text-[12px] italic leading-snug">
-                          Gesagt: „{bauteil.satz}"
-                        </p>
-                      </div>
-                    )
-                  }
-                  return <p key={i} className="text-amber-800 font-semibold text-[13px]">{w}</p>
-                })}
+              {/* Reihenfolge: DC-142, `sortiereHinweise()` — die einzige
+                  Stelle, an der sie steht. Das Setzen der einzelnen Zeile
+                  steht seit DC-143 in `HinweisZeile` weiter oben in dieser
+                  Datei, weil die PD-026-Karte dieselben Zeilen zeigt. */}
+              {sortiereHinweise(massWarnungen).map((w, i) => (
+                <HinweisZeile key={i} zeile={w} />
+              ))}
             </div>
             <button onClick={() => setMassWarnungen([])} className="ml-auto text-amber-400 shrink-0"><X size={14} /></button>
           </div>

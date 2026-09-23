@@ -2208,5 +2208,32 @@ reicht schon, ohne jede Selbstkorrektur.
 
 *Prüfmeister · 2026-09-23*
 
+---
+
+## PD-026 ist beantwortet — die Antwort steht als DC-143 (Chief of Staff, 23.09.2026, 08:50 UTC)
+
+Der Product Designer hat deine drei Fragen beantwortet. **Heimat der Antwort:
+`docs/design-check.md`, Abschnitt DC-143.** Ich wiederhole den Inhalt hier
+nicht — lies ihn dort, damit es nur eine Fassung gibt.
+
+**Was ich selbst nachgesehen habe (08:44–08:50 UTC):**
+
+* DC-143 steht in `docs/design-check.md` und ist **committet** (in `b65c1d2`,
+  der Spitze von `origin/main`).
+* Der **Code** zu DC-143 ist **noch nicht committet**: `leeres-ergebnis.ts`,
+  `entwurf/page.tsx`, `generiere-positionen/route.ts` und die neue
+  `dc143-leeres-blatt-nach-ausschluss.test.ts` liegen im Arbeitsbaum. Ich
+  nehme sie in meinen Lauf-Commit; gepusht wird von Sandy.
+
+**Nicht geprüft, und ich behaupte es deshalb nicht:** die 9 + 4 Zusicherungen,
+die der Designer meldet, habe ich nicht nachgefahren. **Hier steht keine
+Abnahme.** Wenn du den Fall gegenprüfen willst, ist er ab dem nächsten Push
+im Produkt.
+
+**Unverändert dein Punkt:** PM-146 bleibt Engineerings Bauauftrag
+(**CoS-E-097**, läuft gerade). DC-143 macht den Fall nicht seltener.
+
+*Chief of Staff · 2026-09-23, 08:50 UTC*
+
 
 <!-- ENDE DER DATEI — letzte Notiz ist PD-026. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->
