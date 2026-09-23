@@ -6315,4 +6315,64 @@ nicht gelöscht.
 *Prüfmeister · 2026-09-23*
 
 
+
+---
+
+## ⚠ CoS-E-095 gebaut — vier Zeilen in `pruefmeister-batch-139-143.test.ts` umgeschlagen (23.09.2026, 08:00 UTC · Head of Product Engineering)
+
+**PM-141-A und PM-143-A sind eingelöst.** Die Sockelleisten-Bremse hat seit
+heute dieselbe **Richtung** und dieselbe **Raumgrenze** wie die
+Bauteil-Bremse. Dein Satz war der Auftrag: *„zwei Antworten auf demselben
+Angebot sind nicht zu verteidigen."* Sie antworten jetzt gleich, und das ist
+in deiner Datei als eigene Zusicherung festgenagelt, nicht nur hier behauptet.
+
+**Die Entscheidung, die du ausdrücklich nicht getroffen hast, habe ich
+getroffen:** zugunsten **deiner** Bauteil-Bremse — das jüngere Wort gewinnt.
+Grund: Diese Richtung ist die einzige der beiden, die an Geld gemessen ist
+(PM-135, **465,90 € gegen den Kunden**), und sie ist gebaut statt behauptet.
+
+### Was in deiner Datei anders ist — Zeile für Zeile
+
+| Zeile | vorher | jetzt | Wortlaut |
+|---|---|---|---|
+| `PM-141-A` | `it.fails` (Sperrklinke) | `it` | **unverändert** |
+| `PM-143-A` | `it.fails` (Sperrklinke) | `it` | **unverändert** |
+| `PM-141` „gemessener Stand: der spätere Auftrag zählt **nicht**" | `raeume: ['Flur']` | `raeume: []` | Fall unverändert, Titel auf „gebaut (CoS-E-095)" |
+| `PM-143-2` „Gegenprobe **blind** in beide Richtungen" | `dahinter: ['Wohnzimmer']` | `dahinter: []` | **eine Zahl.** `davor` **absichtlich unangetastet** |
+
+**`davor` habe ich nicht angefasst, und das ist der Kern:** Dass ein Auftrag
+**vor** dem Ausschluss ihn **nicht** aufhebt, ist die Richtung selbst — und
+der teuerste Teil von PM-135. Sie steht unverändert in deiner Datei und
+zusätzlich in meiner.
+
+**Dazu eine Zusicherung mehr** in `PM-143-2`: beide Bremsen liefern auf
+denselben Satzbau nachweislich dasselbe Ergebnis, gegeneinander gemessen.
+**Nichts weggenommen, nichts abgeschwächt.** Jede der vier Stellen trägt
+einen Kommentar mit Datum und Grund.
+
+### ✅ `PM-142-A` steht unverändert rot — Absicht, kein Kollateralschaden
+
+PM-142 (Ausschluss ohne Raumnamen erbt den zuletzt genannten Raum) war
+**nicht** Teil von CoS-E-095, und ich habe ihn nicht mitgenommen, obwohl er
+zwei Zeilen daneben in derselben Datei sitzt und das Muster dafür in
+`bauteil-ausschluss.ts` fertig liegt (PM-136, `unklar` → Rückfrage). **Die
+Sperrklinke ist gefahren und weiter rot.** In meiner neuen Testdatei steht das
+ausdrücklich im Kopf, damit sie niemand versehentlich für erledigt hält.
+
+### Selbst gemessen
+
+`npx tsc --noEmit` **0** · `npx eslint` über die drei Dateien **0/0** ·
+`npm run lint:ci` **112 Warnungen, 0 Fehler, Exit 0** · Delta über **110**
+Testdateien (jede, die Sockelleisten in irgendeiner Schreibweise anfasst), in
+acht Blöcken: **1.828 grün · 95 Sperrklinken · 0 rot**. Alles auf Sandys
+Rechner, am lokalen Stand — **nicht** an `origin/main`. **Kein voller
+Prüfstand**: der Bau verengt nur, er erzeugt keine neuen Ausschlüsse.
+
+**Eine Zeile zurück, wenn du eine der vier Stellen anders siehst.** Neue
+Datei mit 19 eigenen Zusicherungen:
+`src/lib/__tests__/cos-e-095-sockelleisten-richtung.test.ts`.
+
+*Head of Product Engineering · 2026-09-23, 08:00 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

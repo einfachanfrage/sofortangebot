@@ -114,6 +114,24 @@ function istAusschlussSatz(satz: string, sockelSchonGenannt: boolean): boolean {
 }
 
 /**
+ * ── CoS-E-095 / PM-143-A (23.09.2026) · Ein späterer Auftrag hebt auf ──────
+ *
+ * Ist dieser Teilsatz ein ausdrücklicher Sockelleisten-AUFTRAG? Bewusst eng:
+ * Er muss die Sockelleisten selbst nennen (kein Rückbezug — ein loses „sie"
+ * als Auftragsträger ist nicht gemessen), eine Bestellung enthalten und darf
+ * nicht verneint sein.
+ *
+ * Gegenstück zu `auftraegeAb()` in `bauteil-ausschluss.ts` (PM-134/PM-135):
+ * dieselbe Lehre, dasselbe Vorzeichen — das jüngere Wort gewinnt.
+ */
+function istAuftragSatz(satz: string): boolean {
+  if (!SOCKEL.test(satz)) return false
+  if (!AUFTRAG.test(satz)) return false
+  if (STARKE_NEGATION.test(satz) || SCHWACHE_NEGATION.test(satz)) return false
+  return !BLEIBT_NICHT.test(satz) && !BLEIBT.test(satz)
+}
+
+/**
  * PM-035 (03.09.2026): „Sockelleisten nur im Flur neu. **In den Zimmern**
  * bleiben die alten." Der zweite Satz nennt keinen konkreten Raum, sondern
  * eine Gruppe. Ohne diese Behandlung wurde er dem zuletzt genannten Raum
@@ -135,9 +153,47 @@ export function erkenneSockelleistenAusschluss(
   const saetze = saetzeMitRaum(text, raumNamen)
   let sockelSchonGenannt = false
 
-  for (const { satz, raum, raumImSatz, raeumeImSatz } of saetze) {
+  /**
+   * ── CoS-E-095 · PM-141-A und PM-143-A ────────────────────────────────────
+   *
+   * Steht ab Teilsatz `ab` noch ein Auftrag, der diesen Ausschluss aufhebt?
+   *
+   * Zwei Grenzen, beide aus `bauteil-ausschluss.ts` (PM-134/PM-135)
+   * übernommen, damit die zwei Bremsen auf denselben Satzbau nicht länger
+   * verschieden antworten:
+   *
+   *   1. **Richtung.** Gezählt wird nur ab dem Ausschluss-Teilsatz und
+   *      danach. Ein Auftrag DAVOR hebt nichts auf — er ist das ältere Wort
+   *      und wird gerade zurückgenommen („Sockelleisten neu, an den
+   *      Sockelleisten machen wir nichts" bleibt ein Ausschluss).
+   *   2. **Raum statt Satzende.** Die Satzgrenze fällt — sonst bliebe
+   *      PM-141 stehen —, an ihre Stelle tritt die Raumgrenze: Ein Auftrag
+   *      im Flur hebt einen Ausschluss im Wohnzimmer nicht auf.
+   *
+   * ⚠ Ein GLOBALER Ausschluss („überall", oder gar kein Raum bekannt) behält
+   * die alte Satzgrenze — wortgleich zur Begründung in `bauteil-ausschluss.ts`:
+   * Er hat keinen Raum, gegen den sich prüfen ließe, und ein Auftrag für
+   * EINEN Raum würde ihn sonst für ALLE aufheben. Das richtige Mittel dafür
+   * wäre ein Teil-Aufheben, und das ist nicht gemessen. Hier ist davon
+   * bewusst nichts vorweggenommen.
+   *
+   * Der eigene Teilsatz ist mitgezählt und kostet nichts: Trüge er einen
+   * unverneinten Auftrag, wäre er nach `istAusschlussSatz()` gar kein
+   * Ausschluss; trägt er einen verneinten, fällt er durch `istAuftragSatz()`.
+   */
+  const aufgehobenAb = (ab: number, zielRaum: string | null): boolean => {
+    for (let k = ab; k < saetze.length; k += 1) {
+      const l = saetze[k]
+      if (zielRaum === null && l.satzIndex !== saetze[ab].satzIndex) break
+      if (zielRaum !== null && l.raum !== zielRaum && !l.raeumeImSatz.includes(zielRaum)) continue
+      if (istAuftragSatz(l.satz)) return true
+    }
+    return false
+  }
+
+  for (let i = 0; i < saetze.length; i += 1) {
+    const { satz, raum, raumImSatz, raeumeImSatz } = saetze[i]
     if (istAusschlussSatz(satz, sockelSchonGenannt)) {
-      belege.push(satz.trim())
       // „in den Zimmern", „in den anderen Räumen": eine Gruppe, nicht der
       // zuletzt genannte Raum. Nur wenn in DIESEM Satz kein konkreter Raum
       // steht — „im Wohnzimmer bleiben sie" bleibt raumgenau.
@@ -145,13 +201,35 @@ export function erkenneSockelleistenAusschluss(
         ? raumNamen.filter(n => /zimmer/i.test(n))
         : null
 
-      if (UEBERALL.test(satz) || (!raumImSatz && GENERISCH_ALLE.test(satz))) global = true
-      else if (gruppe && gruppe.length > 0) for (const n of gruppe) raeume.add(n)
-      // Aufzählung: „In Küche und Esszimmer bleiben sie" meint beide Räume,
-      // nicht nur den zuletzt genannten (PM-034).
-      else if (raeumeImSatz.length > 1) for (const n of raeumeImSatz) raeume.add(n)
-      else if (raum === null) global = true
-      else raeume.add(raum)
+      // Welche Räume DIESER Teilsatz treffen würde — null steht für „global".
+      const ziele: string[] | null =
+        UEBERALL.test(satz) || (!raumImSatz && GENERISCH_ALLE.test(satz))
+          ? null
+          : gruppe && gruppe.length > 0
+            ? gruppe
+            // Aufzählung: „In Küche und Esszimmer bleiben sie" meint beide
+            // Räume, nicht nur den zuletzt genannten (PM-034).
+            : raeumeImSatz.length > 1
+              ? raeumeImSatz
+              : raum === null
+                ? null
+                : [raum]
+
+      // CoS-E-095: je Ziel einzeln prüfen. Hebt ein späterer Auftrag nur
+      // einen von zwei Räumen auf, bleibt der andere ausgeschlossen.
+      const bleibend = ziele === null
+        ? (aufgehobenAb(i, null) ? [] : null)
+        : ziele.filter(n => !aufgehobenAb(i, n))
+
+      if (bleibend === null) {
+        belege.push(satz.trim())
+        global = true
+      } else if (bleibend.length > 0) {
+        belege.push(satz.trim())
+        for (const n of bleibend) raeume.add(n)
+      }
+      // Sonst: der Ausschluss ist aufgehoben. Kein Raum, kein Beleg — der
+      // Satz taugt nicht als Begründung für etwas, das nicht mehr gilt.
     }
     if (SOCKEL.test(satz)) sockelSchonGenannt = true
   }

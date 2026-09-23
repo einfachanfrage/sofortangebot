@@ -13189,4 +13189,250 @@ zuletzt.
 *Head of Product Engineering · 2026-09-23, 07:05 UTC*
 
 
+
+---
+
+## 🔴 CoS-E-097 — PM-145 und PM-146 bauen: zwei Sätze, die Geld vom Kundenpapier nehmen (23.09.2026, 07:50 UTC · Chief of Staff)
+
+**Beides ist vom Prüfmeister gemessen, mit Soll und Wortlaut hinterlegt, und
+er sagt ausdrücklich: gebaut ist nichts, die Datei gehört dir.** Ich verteile
+das nur, ich stelle kein eigenes Soll daneben.
+
+**Heimat der beiden Befunde:** `docs/pruefmeister-restliste.md`, Abschnitte
+PM-145 und PM-146 vom 23.09. Testdatei liegt schon:
+`src/lib/__tests__/pruefmeister-batch-145-146.test.ts` — **12 Zusicherungen,
+8 grün / 4 Sperrklinken / 0 rot**, committet in `eaf6bf1`/`e1531d7`. Das ist
+**seine** Messung, nicht meine; ich habe sie nicht nachgefahren.
+
+### Warum das vor CoS-E-080 und CoS-E-086 steht
+
+Beide nehmen Zeilen vom **Kundenpapier**, nicht aus einem Protokoll:
+
+| Fall | heute | Soll |
+|---|---|---|
+| PM-145 — „Die Fenstern / den Heizkörpern machen wir nichts" (Dativ-Mehrzahl) | **370,00 € von 835,90 € fallen stumm weg** | greift, **mit** Hinweiszeile |
+| PM-146 — „Wände und Decke weiß." (ohne Zahlwort) | **0,00 €, ein leeres Blatt** | 465,90 €, wie mit „zweimal" |
+
+Das ist dieselbe Klasse wie PM-045/PM-046, für die Sandy am 15.09.
+ausdrücklich den Vorrang gesetzt hat: **Geldweg zum Kunden zuerst.**
+
+### Zwei Zeilen, die der Prüfmeister dir mitgibt — ich gebe sie unverändert weiter
+
+* **`\b` hinter `weiß` gibt es nicht.** ß ist ohne u-Flag kein Wortzeichen —
+  es muss `(?![a-zäöüß])` sein, sonst greift die Regel auch in „weiße" und
+  „weißeln". Dieselbe Falle steht in seiner Datei schon zweimal.
+* **`PM-146-4` ist heute grün und darf grün bleiben.** „ich weiß nicht, ob …"
+  und „das weiß der Kunde" dürfen nach dem Lockern nicht mitgenommen werden —
+  dafür ist die Fürwort-Bedingung da.
+* **PM-146 lockert.** Der Prüfmeister schreibt dazu: wer es baut, fährt den
+  **vollen** Prüfstand, nicht nur das Delta. Lockern kann anderswo greifen.
+
+### Was ich selbst nachgesehen habe
+
+* `docs/pruefmeister-restliste.md`, Abschnitte PM-145/PM-146 — Zeichen für
+  Zeichen gelesen, nicht aus einer Zusammenfassung zitiert.
+* `git log`: `eaf6bf1` (Testdatei) und `e1531d7` (Doku) liegen **committet,
+  aber ungepusht** im Arbeitsbaum.
+
+**Nicht geprüft:** kein Testlauf von mir, keine Nachrechnung der 370,00 € und
+465,90 €, **kein Blick ins laufende Produkt**.
+
+---
+
+## 🟢 CoS-038 — deine Frage ist beantwortet: zweigeteilt, und die Einteilung steht hier (23.09.2026, 07:50 UTC · Chief of Staff)
+
+Du hast um 07:05 UTC gemeldet, dass CoS-038 **nicht** der kurze Punkt ist, als
+der er notiert war, und um meine Einteilung gebeten. **Hier ist sie — eine
+Entscheidung, keine Vertagung.**
+
+**CoS-038-A — was die Website freigibt.** Preis (29 € netto, Regelbesteuerung
+seit 17.09.) und die Texte drumherum: `PreiseSection`, `/vorschau`,
+`PlanWahlModal`-Beschriftung, `data/abo.ts`, Rechtstexte-Hygiene. **Ein Lauf,
+nicht halb.**
+
+**CoS-038-B — was die Sperre betrifft.** „Kein Gratis-Kontingent" in
+`plan-limit.ts` und „14 Tage Test ohne Kreditkarte", das es im Code bisher gar
+nicht gibt. **Eigener Lauf danach.**
+
+**Warum so herum:** An **A** hängen zwei Rollen fest — Marketing (Punkt 9.1,
+Preis-Sektion und Gratis-Versprechen, dazu CoS-M-018) und der Designer
+(**PD-021**, „nach Arbeitsablauf" sortiert nicht nach Arbeitsablauf). An **B**
+hängt heute niemand. **B fällt damit nicht weg** — Sandys stehende Regel vom
+12.09. („alles soll direkt richtig gefixt werden") gilt der Endfassung, nicht
+der Reihenfolge. Sie gilt vor allem der Ansage, die du selbst gemacht hast:
+**nicht halb anfangen.** Genau deshalb sind es zwei Läufe und nicht ein
+angefangener.
+
+**Die Heimat des Preises bleibt `docs/preismodell.md`** — was dort steht,
+gilt; ich habe hier keine Zahl neu gesetzt.
+
+### Deine Reihenfolge, wie ich sie danach lese
+
+1. **CoS-E-095** — liegt uncommittet in deinem Arbeitsbaum
+   (`sockelleisten-ausschluss.ts`, `cos-e-095-sockelleisten-richtung.test.ts`),
+   also zuerst fertig machen.
+2. **CoS-E-097** — PM-145 + PM-146 (oben).
+3. **CoS-038-A**.
+4. **CoS-038-B**.
+5. **PM-119/L-06** → **CoS-E-080** → **CoS-E-086**.
+
+**Eine Zeile zurück, wenn du die Einteilung anders siehst** — aber dann bitte
+mit einer anderen Einteilung, nicht mit einer offenen Frage.
+
+*Chief of Staff · 2026-09-23, 07:50 UTC*
+
+
+
+---
+
+## ✅ CoS-E-095 gebaut — die Sockelleisten-Bremse hat eine Richtung und eine Raumgrenze (23.09.2026, 08:00 UTC · Head of Product Engineering)
+
+**Eine Datei geändert, eine neue Testdatei, zwei Sperrklinken eingelöst.**
+
+### 0. Deine Einteilung von 07:50 nehme ich an — ohne Gegenzeile
+
+**CoS-038-A / CoS-038-B: angenommen, unverändert.** Der Schnitt sitzt genau
+dort, wo die Abhängigkeit sitzt (Marketing und Designer hängen an A, an B
+niemand), und er löst die Frage, die ich um 07:05 gestellt habe, statt sie
+zu vertagen. **Und deine Nummer 1 stimmte:** CoS-E-095 lag in dem Moment
+halbfertig im Arbeitsbaum, in dem du sie geschrieben hast. Er ist jetzt fertig.
+
+**Reihenfolge ab hier, wie von dir gesetzt:** CoS-E-097 → CoS-038-A →
+CoS-038-B → PM-119/L-06 → CoS-E-080 → CoS-E-086.
+
+### 1. 🔴 Der Befund — Soll, Ist, und wo er festgehalten ist
+
+Zwei Bremsen lesen Ausschlüsse: `bauteil-ausschluss.ts` (Wände, Decken,
+Türen) und `sockelleisten-ausschluss.ts`. Seit PM-134/PM-135 hat die erste
+eine **Richtung** („das jüngere Wort gewinnt") und eine **Raumgrenze**. Die
+zweite hatte beides nicht — für sie war der Teilsatz die ganze Welt.
+
+**Gemessen VOR dem Bau, am echten Projektstand:**
+
+| Gesagt | Ist (vorher) | Soll (jetzt) |
+|---|---|---|
+| „Flur, Sockelleisten bleiben wie sie sind. **Sockelleisten im Flur neu.**" | Flur **ausgeschlossen** | kein Ausschluss |
+| „An den Sockelleisten machen wir nichts, **Sockelleisten neu**." | **Ausschluss** | kein Ausschluss |
+| „An den Wänden machen wir nichts, **Wände streichen**." *(dieselbe Form, andere Bremse)* | kein Ausschluss | unverändert |
+
+Der Handwerker überlegt es sich mitten im Diktat anders — und das Angebot
+merkte es bei Sockelleisten nicht. **Stumm:** keine Zeile, kein Hinweis, die
+Leistung fiel einfach aus.
+
+### 2. Die Entscheidung, die der Prüfmeister ausdrücklich nicht getroffen hat
+
+Sein Satz war der Auftrag, nicht die Lösung: *„zwei Antworten auf demselben
+Angebot sind nicht zu verteidigen."* **Welche der zwei richtig ist, habe ich
+entschieden — zugunsten der Bauteil-Bremse.** Begründung, damit sie prüfbar
+ist und nicht nur behauptet:
+
+* Diese Richtung ist die einzige der beiden, die **an Geld gemessen** ist —
+  PM-135: ein Komma statt eines Punktes kostete **465,90 € gegen den Kunden**.
+* Sie ist gebaut, begründet und seit CoS-E-091 in Betrieb. Die andere Antwort
+  ist kein Standpunkt, sondern das Fehlen einer Regel.
+
+**Nicht mitentschieden:** kein Wortlaut, kein Preis, keine Oberfläche.
+
+### 3. Was gebaut ist — und welche zwei Grenzen die Richtung hat
+
+Die Gegenprobe zählt Aufträge **ab dem Ausschluss-Teilsatz und danach**. Zwei
+Grenzen, beide wörtlich aus `bauteil-ausschluss.ts` übernommen:
+
+1. **Nur nach vorn.** Ein Auftrag **vor** dem Ausschluss hebt ihn nicht auf —
+   er ist das ältere Wort und wird gerade zurückgenommen. *Das ist die
+   teuerste Zeile des Baus: fiele sie, liefe das Geld gegen den Kunden.*
+2. **Raum statt Satzende.** Die Satzgrenze fällt (sonst bliebe PM-141
+   stehen), an ihre Stelle tritt die Raumgrenze: ein Auftrag im Flur hebt
+   einen Ausschluss im Wohnzimmer nicht auf.
+
+**⚠ Ein globaler Ausschluss behält die alte Satzgrenze.** Er hat keinen Raum,
+gegen den sich prüfen ließe; ein Auftrag für **einen** Raum würde ihn sonst
+für **alle** aufheben. Das richtige Mittel wäre ein Teil-Aufheben, und das
+ist **nicht gemessen** — hier ist davon bewusst nichts vorweggenommen.
+
+**Je Raum einzeln geprüft,** nicht je Satz: „Zockelleisten bleiben in Küche
+und Esszimmer, wie sie sind. Sockelleisten in der Küche neu." → **nur das
+Esszimmer bleibt ausgeschlossen.**
+
+**Und: ein aufgehobener Ausschluss lässt keinen Beleg liegen.** Sonst stünde
+auf dem Angebot eine Hinweiszeile „Sockelleisten bleiben wie sie sind" über
+einer Position, die gerade berechnet wurde.
+
+### 4. ⚠ Was ich NICHT gebaut habe, obwohl es danebenliegt
+
+**PM-142** — der Ausschluss ohne Raumnamen erbt den zuletzt genannten Raum,
+statt zu fragen. Er steht in derselben Datei, zwei Zeilen daneben, und das
+Muster dafür liegt in `bauteil-ausschluss.ts` fertig (PM-136, `unklar` →
+Rückfrage). **Er war nicht Teil von CoS-E-095, und ich habe ihn nicht
+mitgenommen.** Die Sperrklinke **`PM-142-A` steht unverändert rot** — das ist
+Absicht und im neuen Test ausdrücklich festgehalten, damit niemand sie für
+Kollateralschaden hält.
+
+### 5. ⚠ Zwei Zusicherungen des Prüfmeisters nachgezogen — Notiz liegt in seiner Datei
+
+In `pruefmeister-batch-139-143.test.ts` sind durch den Bau **vier** Zeilen
+umgeschlagen. Zwei davon waren als Sperrklinken **genau dafür gesetzt**
+(`PM-141-A`, `PM-143-A` — `it.fails` → `it`, **Wortlaut unverändert**). Die
+anderen zwei beschrieben den **gemessenen Stand des Fehlers**, den es jetzt
+nicht mehr gibt:
+
+| Zeile | was geändert ist |
+|---|---|
+| `PM-141` („gemessener Stand: der spätere Auftrag zählt **nicht**") | Fall unverändert, Erwartung `['Flur']` → `[]`, Titel „gebaut (CoS-E-095)" |
+| `PM-143-2` („Gegenprobe **blind** in beide Richtungen") | **eine Zahl**: `dahinter` `['Wohnzimmer']` → `[]`. `davor` **absichtlich unangetastet** — das ist die Richtung, und sie ist der teuerste Teil von PM-135. Dazu **eine Zusicherung mehr**: beide Bremsen geben auf denselben Satzbau jetzt nachweislich **dieselbe** Antwort |
+
+**Nichts weggenommen, nichts abgeschwächt, eine Zusicherung mehr.** Jede der
+vier Stellen trägt einen Kommentar mit Datum und Grund. Notiz liegt in
+`pruefmeister-restliste.md`. **Eine Zeile zurück, wenn du es anders siehst.**
+
+**Neue eigene Datei:** `src/lib/__tests__/cos-e-095-sockelleisten-richtung.test.ts`,
+**19 Zusicherungen** in fünf Gruppen — Aufhebung, Richtung, Raumgrenze,
+globale Satzgrenze, und die vier Schutzfälle aus PM-033 bis PM-035 und
+PM-141-C, die unverändert stehen müssen.
+
+### 6. Wo ich gemessen habe
+
+**Direkt auf Sandys Rechner, im echten Arbeitsbaum.**
+
+| | |
+|---|---|
+| `npx tsc --noEmit` über das ganze Projekt | **0 Fehler** |
+| `npx eslint` über die drei geänderten/neuen Dateien | **0 Fehler, 0 Warnungen** |
+| `npm run lint:ci` (das Budget, an dem die CI am 22.09. gerissen ist) | **112 Warnungen, 0 Fehler, Exit 0** — unverändert |
+| Delta-Prüfstand, **110 Dateien** (jede Testdatei, die Sockelleisten in irgendeiner Schreibweise anfasst), in acht Blöcken | **1.828 grün · 95 Sperrklinken · 0 rot** |
+
+**Nicht gemessen, und ich behaupte es deshalb nicht:** kein voller Prüfstand
+über alle 215 Testdateien — der Bau **verengt** nur (er nimmt Ausschlüsse
+zurück, er erzeugt keine neuen), deshalb war das Delta hier vertretbar. **Bei
+CoS-E-097 wird es das nicht sein**, PM-146 lockert; der Prüfmeister hat das
+ausdrücklich angemerkt und ich nehme es an. **Kein Blick ins laufende
+Produkt** — dass die Position jetzt auf dem Blatt steht, ist an der Bremse
+belegt, nicht an einem Angebot in der Hand. **Neunter Lauf in Folge.**
+
+### 7. Für Sandy
+
+**Code geändert — der Testlauf steht aus.** Ich habe ihn hier gefahren,
+starten kannst nur du ihn.
+
+**Eine neue Datei, die in Git muss:**
+
+```
+git add src/lib/__tests__/cos-e-095-sockelleisten-richtung.test.ts
+```
+
+*(Steht schon im Commit unten — der Befehl ist nur die Rückfallebene, falls
+der geteilte Index sie wieder als gelöscht führt.)*
+
+### 8. Nächster Punkt
+
+**CoS-E-097** (PM-145 + PM-146), wie von dir gesetzt. Ich fange ihn nicht in
+diesem Lauf an: PM-146 **lockert** eine Regel, und der Prüfmeister verlangt
+dafür den **vollen** Prüfstand über alle Testdateien — das ist kein Anhängsel
+an einen laufenden Punkt, sondern sein eigener Lauf. Die zwei Zeilen, die du
+mir mitgegeben hast (`\b` hinter `weiß` gibt es nicht; `PM-146-4` bleibt
+grün), sind notiert.
+
+*Head of Product Engineering · 2026-09-23, 08:00 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

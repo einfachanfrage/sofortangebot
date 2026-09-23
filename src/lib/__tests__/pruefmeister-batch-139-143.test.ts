@@ -170,12 +170,19 @@ const sockel = (t: string) => {
 }
 
 describe('PM-141 · der Ausschluss vor dem Auftrag — auch in der Sockelleisten-Bremse', () => {
-  it('PM-141 · gemessener Stand: der spätere ausdrückliche Auftrag zählt nicht', () => {
+  // ⚠ CoS-E-095 (23.09.2026, Head of Product Engineering): Dieser Fall war bis
+  // heute der GEMESSENE STAND des Fehlers — „der spätere Auftrag zählt nicht",
+  // Ergebnis `raeume: ['Flur']`. Seit dem Bau zählt er, und damit ist die alte
+  // Zeile kein Stand mehr, sondern Geschichte. Der FALL ist unverändert, das
+  // SOLL ist unverändert (es steht eine Zeile tiefer als PM-141-A) — geändert
+  // hat sich nur die Antwort der Maschine. Eine Zeile zurück, wenn du es
+  // anders siehst.
+  it('PM-141 · gebaut (CoS-E-095): der spätere ausdrückliche Auftrag zählt', () => {
     // Gesagt, in dieser Reihenfolge: erst „bleiben wie sie sind", dann —
     // ein Satz später — „Sockelleisten im Flur neu". Der Handwerker hat es
-    // sich im Diktat anders überlegt; das Angebot merkt es nicht.
+    // sich im Diktat anders überlegt; das Angebot merkt es jetzt.
     expect(sockel('Flur, Sockelleisten bleiben wie sie sind. Sockelleisten im Flur neu.'))
-      .toEqual({ global: false, raeume: ['Flur'] })
+      .toEqual({ global: false, raeume: [] })
   })
 
   it('PM-141-C · Kontrolle: andersherum stimmt es — der spätere Ausschluss gewinnt', () => {
@@ -183,10 +190,10 @@ describe('PM-141 · der Ausschluss vor dem Auftrag — auch in der Sockelleisten
       .toEqual({ global: false, raeume: ['Flur'] })
   })
 
-  it.fails('PM-141-A · SOLL: der spätere Auftrag hebt den früheren Ausschluss auf', () => {
-    // Sperrklinke — dieselbe Sperrklinke wie PM-134-A, nur in der anderen
-    // Bremse. Wer PM-134 baut, baut diese hier im selben Zug mit; beide
-    // holen ihre Sätze aus `satz-raum.ts`.
+  it('PM-141-A · GEBAUT (CoS-E-095): der spätere Auftrag hebt den früheren Ausschluss auf', () => {
+    // War Sperrklinke — dieselbe wie PM-134-A, nur in der anderen Bremse.
+    // Eingelöst am 23.09.2026 mit CoS-E-095. Die Zusicherung ist Wort für
+    // Wort dieselbe geblieben, nur `it.fails` ist zu `it` geworden.
     expect(sockel('Flur, Sockelleisten bleiben wie sie sind. Sockelleisten im Flur neu.'))
       .toEqual({ global: false, raeume: [] })
   })
@@ -237,28 +244,37 @@ describe('PM-143 · PM-135 sitzt dort NICHT — und dafür etwas anderes', () =>
     expect(mitKomma).toEqual(mitPunkt)
   })
 
-  it('PM-143-2 · dafür ist ihre Gegenprobe über das Komma hinweg BLIND — in beide Richtungen', () => {
+  // ⚠ CoS-E-095 (23.09.2026, Head of Product Engineering): Der Befund dieser
+  // Zeile — „über das Komma hinweg blind, in beide Richtungen" — ist mit dem
+  // Bau eingelöst. Beide Fälle, beide Erwartungen und die Gegenprobe an der
+  // Bauteil-Bremse stehen unverändert da; geändert ist eine einzige Zahl:
+  // `dahinter` ist von `['Wohnzimmer']` auf `[]` gegangen. `davor` ist
+  // ABSICHTLICH unangetastet — dass der Auftrag VOR dem Ausschluss ihn nicht
+  // aufhebt, ist die Richtung, und sie ist der teuerste Teil von PM-135.
+  it('PM-143-2 · die Gegenprobe hat jetzt eine Richtung — wie die Bauteil-Bremse', () => {
     // Seit CoS-E-091 hat die Bauteil-Bremse innerhalb des Satzes eine
     // Richtung: der Auftrag HINTER dem Ausschluss hebt ihn auf, der davor
-    // nicht. Die Sockelleisten-Bremse kennt beide Richtungen nicht — für
-    // sie ist der Teilsatz die ganze Welt.
+    // nicht. Seit CoS-E-095 hat die Sockelleisten-Bremse dieselbe.
     const davor = sockel('Wohnzimmer. Sockelleisten neu, an den Sockelleisten machen wir nichts.')
     const dahinter = sockel('Wohnzimmer. An den Sockelleisten machen wir nichts, Sockelleisten neu.')
     expect(davor).toEqual({ global: false, raeume: ['Wohnzimmer'] })
-    expect(dahinter).toEqual({ global: false, raeume: ['Wohnzimmer'] })
+    expect(dahinter).toEqual({ global: false, raeume: [] })
 
-    // Und genau hier gehen die zwei Bremsen auseinander: derselbe Satzbau,
-    // zwei verschiedene Antworten. Die Bauteil-Bremse lässt den Auftrag
-    // dahinter gewinnen, die Sockelleisten-Bremse nicht.
+    // Und genau hier gingen die zwei Bremsen auseinander: derselbe Satzbau,
+    // zwei verschiedene Antworten. Jetzt antworten beide gleich — die
+    // Bauteil-Bremse unverändert, die Sockelleisten-Bremse neu.
     const wand = (t: string) =>
       [...(erkenneBauteilAusschluss(t, ['Wohnzimmer']).jeRaum.get('Wohnzimmer') ?? [])]
     expect(wand('Wohnzimmer. An den Wänden machen wir nichts, Wände streichen.')).toEqual([])
+    expect(dahinter.raeume).toEqual(wand('Wohnzimmer. An den Wänden machen wir nichts, Wände streichen.'))
   })
 
-  it.fails('PM-143-A · SOLL: beide Bremsen antworten auf denselben Satzbau gleich', () => {
-    // Sperrklinke. Kein Bauauftrag von mir, welche der beiden Antworten die
-    // richtige ist — aber ZWEI Antworten auf denselben Satzbau sind auf
-    // demselben Angebot nicht zu verteidigen. Gehört an PM-134 angehängt.
+  it('PM-143-A · GEBAUT (CoS-E-095): beide Bremsen antworten auf denselben Satzbau gleich', () => {
+    // War Sperrklinke. Der Prüfmeister hat ausdrücklich nicht entschieden,
+    // welche der beiden Antworten die richtige ist — entschieden wurde sie
+    // in CoS-E-095 zugunsten der Bauteil-Bremse (das jüngere Wort gewinnt),
+    // weil diese Richtung gebaut, begründet und gemessen ist. Die
+    // Zusicherung ist Wort für Wort dieselbe geblieben.
     const dahinter = sockel('Wohnzimmer. An den Sockelleisten machen wir nichts, Sockelleisten neu.')
     expect(dahinter).toEqual({ global: false, raeume: [] })
   })
