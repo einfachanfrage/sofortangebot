@@ -53,10 +53,10 @@ export interface StatusInfo {
    * DC-072 (2026-09-11, Manfred/TN-062): „Grauer Punkt unter der Summe ohne
    * Text = Entwurf-Status. Sieht kaputt aus."
    *
-   * Ein Label gibt es dort seit DC-003 — es ist nur unsichtbar: Der
-   * Angebots-Header ist auf dem Handy `bg-anthracite`, und `draft` bringt
-   * `bg-anthracite/8` + `text-anthracite/50` mit. Dunkelgrau auf Dunkelgrau.
-   * Übrig bleibt der Punkt, und der sieht dann tatsächlich nach
+   * Ein Label gab es dort seit DC-003 — es war nur unsichtbar: Der
+   * Angebots-Header ist auf dem Handy `bg-anthracite`, und `draft` brachte
+   * damals `bg-anthracite/8` + `text-anthracite/50` mit. Dunkelgrau auf
+   * Dunkelgrau. Übrig blieb der Punkt, und der sah dann tatsächlich nach
    * Rendering-Fehler aus.
    *
    * `aufDunkel` sind die Klassen für genau diesen Fall. Warum hier und nicht
@@ -66,27 +66,69 @@ export interface StatusInfo {
    * (helle Pillen auf Dunkel sind korrekt); so muss niemand prüfen, ob es für
    * seinen Status eine gibt.
    *
-   * Der `md:`-Teil bei `draft` ist kein Ausrutscher: derselbe Header ist am
-   * Desktop hell (`md:bg-transparent`), dieselbe Schaltfläche steht also auf
-   * zwei verschiedenen Untergründen. Die Klassen stehen komplett und wörtlich
-   * hier, weil Tailwind sie im Quelltext finden muss — zusammengesetzt zur
-   * Laufzeit fielen sie aus dem fertigen Stylesheet heraus.
+   * Seit DC-149 ist `aufDunkel` durchgängig gleich `bg` + `text`: jede
+   * Badge-Fläche ist jetzt eine helle Handbuch-Fläche und steht mit
+   * mindestens 8,27:1 gegen den anthraziten Header. Damit entfällt auch der
+   * frühere `md:`-Sonderweg bei `draft`, der nötig war, weil derselbe Header
+   * am Desktop hell ist (`md:bg-transparent`) — dieselbe helle Pille
+   * funktioniert jetzt auf beiden Untergründen. Die Klassen stehen weiterhin
+   * komplett und wörtlich hier, weil Tailwind sie im Quelltext finden muss —
+   * zusammengesetzt zur Laufzeit fielen sie aus dem fertigen Stylesheet
+   * heraus.
    */
   aufDunkel: string
 }
 
+// DC-149 (23.09.2026) — die letzte offene Zeile aus DC-049: die Badge-Töne.
+// Vorher stand hier ein Farbsatz aus drei Quellen, von denen KEINE das
+// CI-Handbuch war: zwei erfundene Hex-Werte (#FEF9C3/#8B7000 für "Bereit",
+// #EDFAF0/#1A7A38 für "Beauftragt"), Tailwind-Vorgaben (blue-50/blue-700,
+// red-50/red-700, gray-100/gray-500) und zwei Deckkraft-Stufen von Anthrazit
+// (bg-anthracite/8 + text-anthracite/50). Gemessen ergab das drei Badges
+// UNTER der Handbuch-Grenze von 4,5:1 — "Entwurf" bei 2,57:1, "Bereit" bei
+// 4,43:1, "Archiviert" bei 4,39:1.
+//
+// Jeder Wert unten ist jetzt eine benannte Rolle aus dem Handbuch (S. 04/05),
+// kein roher Farbwert und keine Tailwind-Vorgabe. Zwei Regeln haben die Wahl
+// entschieden, beide stehen wörtlich im Handbuch:
+//   1. "Auf Gelb steht immer Anthrazit, nie Off-White oder Weiß." — deshalb
+//      trägt "Bereit" Anthrazit 900 auf Gelb 300, nicht dunkles Gelb auf
+//      hellem Gelb (das war der 4,43:1-Fall).
+//   2. Als helle Flächen sind nur Seite (#F7F7F5), Sunken (#F1F1EE) und
+//      Karte (#FFFFFF) vorgesehen; Off-White 200/300 sind ausdrücklich
+//      RAHMEN-Töne. Deshalb liegen alle neutralen Badges auf Sunken bzw.
+//      Seite und unterscheiden sich über die Textstufe, nicht über die
+//      Fläche.
+// Farbe trägt nur, wo es einen Ausgang gibt (Gelb = du bist dran, Success =
+// zugesagt, Danger = abgesagt). Alles andere bleibt neutral.
+//
+// Gelb 300 statt Gelb 500: 500 ist die Fläche der primären Aktion ("pro
+// Ansicht genau eine primäre Aktion"). Ein Badge in 500 stünde in der Liste
+// gleichwertig neben dem gelben Aufnahme-Knopf.
+//
+// OFFEN und bewusst nicht hier entschieden: "Beim Kunden" hatte als einziger
+// Status einen eigenen Farbton (Blau). Blau ist im Handbuch nirgends
+// definiert — es ist eine zweite Akzentfarbe in einem Zwei-Farben-System.
+// Ich habe keinen erfunden und den Status auf die stärkste neutrale Stufe
+// gelegt; ob "unterwegs" eine eigene Rolle verdient, ist eine Frage an den
+// Eigentümer des Handbuchs (siehe design-check.md, DC-149).
 export const STATUS_CONFIG: Record<QuoteStatus, StatusInfo> = {
-  draft: { label: 'Entwurf', bg: 'bg-anthracite/8', text: 'text-anthracite/50', dot: '#9CA3AF', hilfe: 'Noch in Arbeit — du kannst weiter aufmessen und rechnen.', aufDunkel: 'bg-white/15 text-white/80 md:bg-anthracite/8 md:text-anthracite/50' },
-  in_bearbeitung: { label: 'Entwurf', bg: 'bg-anthracite/8', text: 'text-anthracite/50', dot: '#9CA3AF', hilfe: 'Noch in Arbeit — du kannst weiter aufmessen und rechnen.', aufDunkel: 'bg-white/15 text-white/80 md:bg-anthracite/8 md:text-anthracite/50' },
-  // Fertig kalkuliert, aber noch nicht beim Kunden — bewusst Gelb (Marke,
-  // "handlungsbereit"), nicht Grün: Grün bleibt für "Kunde hat zugesagt"
-  // reserviert, sonst wirken zwei ganz unterschiedlich wichtige Momente
-  // (selbst fertig vs. Kunde hat beauftragt) optisch gleich bedeutsam.
-  bereit: { label: 'Bereit', bg: 'bg-[#FEF9C3]', text: 'text-[#8B7000]', dot: '#D9A400', hilfe: 'Fertig gerechnet, aber noch nicht beim Kunden.', aufDunkel: 'bg-[#FEF9C3] text-[#8B7000]' },
-  sent: { label: 'Beim Kunden', bg: 'bg-blue-50', text: 'text-blue-700', dot: '#3B82F6', hilfe: 'Raus an den Kunden — du wartest auf Antwort.', aufDunkel: 'bg-blue-50 text-blue-700' },
-  accepted: { label: 'Beauftragt', bg: 'bg-[#EDFAF0]', text: 'text-[#1A7A38]', dot: '#22C55E', hilfe: 'Kunde hat zugesagt.', aufDunkel: 'bg-[#EDFAF0] text-[#1A7A38]' },
-  rejected: { label: 'Abgelehnt', bg: 'bg-red-50', text: 'text-red-700', dot: '#EF4444', hilfe: 'Kunde hat abgesagt.', aufDunkel: 'bg-red-50 text-red-700' },
-  archived: { label: 'Archiviert', bg: 'bg-gray-100', text: 'text-gray-500', dot: '#9CA3AF', hilfe: 'Abgelegt — taucht in der normalen Liste nicht mehr auf.', aufDunkel: 'bg-gray-100 text-gray-500' },
+  // Neutral und leise: hier ist nichts zu tun, der Entwurf liegt bei dir.
+  draft: { label: 'Entwurf', bg: 'bg-sunken', text: 'text-anthracite-600', dot: '#7A7A76', hilfe: 'Noch in Arbeit — du kannst weiter aufmessen und rechnen.', aufDunkel: 'bg-sunken text-anthracite-600' },
+  in_bearbeitung: { label: 'Entwurf', bg: 'bg-sunken', text: 'text-anthracite-600', dot: '#7A7A76', hilfe: 'Noch in Arbeit — du kannst weiter aufmessen und rechnen.', aufDunkel: 'bg-sunken text-anthracite-600' },
+  // Der eine gelbe Badge, den das Handbuch erlaubt ("eine Aktion, eine Linie,
+  // ein Badge"): fertig kalkuliert, aber noch nicht beim Kunden — bewusst
+  // Gelb (Marke, "handlungsbereit"), nicht Grün: Grün bleibt für "Kunde hat
+  // zugesagt" reserviert, sonst wirken zwei ganz unterschiedlich wichtige
+  // Momente (selbst fertig vs. Kunde hat beauftragt) optisch gleich bedeutsam.
+  bereit: { label: 'Bereit', bg: 'bg-yellow-300', text: 'text-anthracite', dot: '#D9A400', hilfe: 'Fertig gerechnet, aber noch nicht beim Kunden.', aufDunkel: 'bg-yellow-300 text-anthracite' },
+  // Neutral, aber die stärkste Textstufe: nichts zu tun, es läuft trotzdem.
+  sent: { label: 'Beim Kunden', bg: 'bg-sunken', text: 'text-anthracite', dot: '#2C2C2C', hilfe: 'Raus an den Kunden — du wartest auf Antwort.', aufDunkel: 'bg-sunken text-anthracite' },
+  accepted: { label: 'Beauftragt', bg: 'bg-success-wash', text: 'text-success', dot: '#4F6B45', hilfe: 'Kunde hat zugesagt.', aufDunkel: 'bg-success-wash text-success' },
+  rejected: { label: 'Abgelehnt', bg: 'bg-danger-wash', text: 'text-danger', dot: '#A33A2A', hilfe: 'Kunde hat abgesagt.', aufDunkel: 'bg-danger-wash text-danger' },
+  // Die leiseste Stufe: Seite statt Sunken, damit "abgelegt" auch optisch
+  // zurücktritt — auf der weißen Karte noch klar lesbar (6,06:1).
+  archived: { label: 'Archiviert', bg: 'bg-bg', text: 'text-anthracite-600', dot: '#9C9C97', hilfe: 'Abgelegt — taucht in der normalen Liste nicht mehr auf.', aufDunkel: 'bg-bg text-anthracite-600' },
 }
 
 /** Fällt nie auf "falsch eingefärbt" zurück — unbekannter/alter Status zeigt neutral Grau statt eines zufälligen anderen Status. */

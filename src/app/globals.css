@@ -46,6 +46,24 @@
      bg-accent gibt es bewusst nicht — die gelbe Flaeche heisst bg-yellow. */
   --color-sunken: #F1F1EE;
   --color-accent: #A67C00;
+
+  /* DC-149 (23.09.2026): die Funktionsfarben aus CI-Handbuch S. 04
+     ("Success und Danger ... ausschliesslich fuer Validierung und Status")
+     und die eine Anthrazit-Stufe, die die Status-Badges brauchen. Vor diesem
+     Ticket kamen alle vier Werte NULL-mal in src/ vor — die Status-Badges
+     trugen stattdessen zwei erfundene Hex-Werte und Tailwind-Vorgaben.
+     success/danger      = Textfarbe auf der zugehoerigen Wash-Flaeche.
+     success-wash/danger-wash = die helle Flaeche selbst (Badge, InlineAlert).
+     anthracite-600      = Anthrazit 600 aus der Skala S. 04. Gebraucht, weil
+                           --text-muted (#7A7A76, = Anthrazit 500) auf keiner
+                           hellen Handbuch-Flaeche 4,5:1 erreicht: 3,81:1 auf
+                           Sunken, 4,02:1 auf der Seite, 4,31:1 auf Weiss.
+                           Fuer Kleintext ist 600 die erste tragfaehige Stufe. */
+  --color-success: #4F6B45;
+  --color-success-wash: #EBF0E7;
+  --color-danger: #A33A2A;
+  --color-danger-wash: #F6EAE7;
+  --color-anthracite-600: #5E5E5C;
 }
 
 * {

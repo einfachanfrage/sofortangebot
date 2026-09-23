@@ -126,8 +126,11 @@ kann ihn unter Einstellungen → Preisdatenbank → Allgemein selbst löschen. *
 | DC-047 | Zwei gleichlautende, nicht erklärte Buchhaltungs-Integrationen in den Einstellungen: „Lexware Office" und „Lexoffice (Legacy)" verlinken beide auf dieselbe `app.lexoffice.de`, ohne dass der Unterschied irgendwo erklärt wird — verwirrend beim ersten Einrichten (Product Designer, 2026-09-06) | ✅ erledigt (15.09.2026). Die Hälfte war schon da: CoS-P-010 hatte der Legacy-Karte im September Klartext gegeben. Offen war, dass dieser Unterschied NUR auf der zweiten Karte stand — wer von oben liest und einen Zugang von vor 2025 hat, trägt seinen Key in die erste ein. Jetzt steht der Unterschied auf beiden Karten, und der Hinweis ist nicht mehr die leiseste Zeile der Karte | Product Designer |
 | DC-048 | Login/Register/Passwort-vergessen: (1) Passwort-Feld hat kein Auge-Icon zum Anzeigen, (2) Logo + Seitentitel nutzen nirgends die Marken-Schrift `font-syne`, die im Rest des Produkts (38 Dateien) konsequent für alle Seitentitel gilt — fällt auf System-Schrift zurück (Sandy, 2026-09-10, Live-Blick auf die Login-Seite: „fehlt bspw ein auge... schriftart vom titel und einloggen komisch") | ✅ erledigt (15.09.2026). (1) Neuer gemeinsamer Baustein `src/components/PasswortFeld.tsx` (Lucide `Eye`/`EyeOff`, `type="button"`, eigene Screenreader-Beschriftung) an allen vier Passwort-Feldern der `(auth)`-Gruppe — Login, Registrierung, neues Passwort + Bestätigung. (2) `font-syne` auf allen Seitentiteln der kompletten `(auth)`-Gruppe nachgezogen (5 Dateien, inkl. der Zwischenzustände „Fast geschafft.", „E-Mail gesendet!", „Link ungültig oder abgelaufen"). Das Logo selbst hatte `font-syne` bereits seit DC-049 Schritt 5 — Befund 2 war zur Hälfte schon erledigt. Siehe Detailabschnitt | Product Designer |
 | DC-049 | System-weiter Abgleich Live-Produkt vs. neues **CI-Handbuch** (`docs/Sofortangebot CI Handbuch.pdf`, 19.08.2026, „Sandy allein" verabschiedet, laut Governance verbindlich für Website/App/PDF/Anzeigen/Social/Print/Korrespondenz): Farbe (altes Markengelb `#F5C400` im Handbuch explizit „Deprecated", ersetzt durch `#D9A400`; Anthrazit `#2C2C2C` und Off-White `#F7F7F5` stimmen dagegen schon exakt), Typografie (drei-Schriften-System Bricolage Grotesque/Inter/IBM Plex Mono gefordert, Code lädt aktuell Plus Jakarta Sans + Inter, kein Mono-Font überhaupt), Logo (Handbuch fordert Wortmarke+Bildmarke/Maßband-Icon-Lockup, Code zeigt reine Text-Wortmarke ohne Icon), Rechenweg (Handbuch: „nie versteckt, nie eingeklappt" — Code versteckt ihn aktuell hinter einem Klick-auf-i-Button), Press-States (`active:scale-*` in 30 Dateien — Handbuch verbietet Scale-down explizit), Card-Muster (2 Dateien mit farbigem linken Rand — vom Handbuch explizit als „nie" gelistet) (Product Designer, 2026-09-10, auf Sandys „schau dir ALLLESSSS An... die CI gem pdf anbei gilt und muss überall gelten") | 🟡 in Arbeit, von Sandy freigegebene Reihenfolge: (a) ✅ Gelb-Token+Hex-Stellen 10.09. (`7eeecda`), (b) ✅ Schrift (Bricolage Grotesque) 10.09. (`99cd277`), (c) ✅ Rechenweg immer sichtbar + IBM Plex Mono 10.09. (`a26d81a`, nur eigene App-Ansicht — Kundenangebot/PDF zeigt weiterhin keinen Rechenweg, siehe Detailabschnitt), (d) ✅ Press-States/Ränder 10.09. (Teil 1 Button.tsx+Gelb-Skala `debae4a`, Teil 2 30-Dateien-Umbau `94d8214`, nur Bewegung — volle Hover/Press-Farbskala bislang nur in Button.tsx, siehe Detailabschnitt), (e) ✅ Logo 10.09. (`531c268`, Bildmarke von Sandy als PNG geliefert — Browser-Tab-Favicon bleibt auf Sandys Entscheidung bei „sa", siehe Detailabschnitt), (f) ✅ PDF 10.09. (`dd1d6fe`, Marken-Schriften + Rechenweg im Kunden-PDF, neutrale Farbgebung auf Sandys Wunsch — Rechenweg auf der Unterschreiben-Seite bleibt offen, siehe Detailabschnitt). Reihenfolge (a)–(f) komplett. **Nachtrag 11.09.:** In-App-Vorschau (`AngebotVorschau.tsx`) an echtes PDF angeglichen, inkl. Raumgruppierung, die beim ersten Angleich übersehen wurde (`11b609e`, `d7fbd21`). Dabei einen kritischen, seit vier Deployments bestehenden Produktions-Build-Fehler gefunden und behoben — nichts von alldem war bis dahin tatsächlich live (`9ae8dcd`, `apple-icon.tsx`). WhatsApp/Link-Versand: Fehleranzeige im Frontend repariert (`b29c999`, live), echte Ursache in der Datenbank gefunden (Storage-Bucket `public-pdfs` mit falschem MIME-Type — DB-Fix selbst noch offen, siehe Detailabschnitt). Entwurfsansicht: Rechenweg standardmäßig eingeklappt statt immer offen (`86c742d`), PDF bleibt unverändert immer sichtbar. **Nachtrag 23.09.:** Schritt (d) ist mit **DC-146** (gelbe Flächen) und
-**DC-147** (neutrale Flächen + Links) vollständig; offen bleibt aus DC-049 nur
-noch die `status.ts`-Badge-Ton-Frage. Neuer offener Punkt zur PDF-seitigen
+**DC-147** (neutrale Flächen + Links) vollständig; die letzte Zeile, die
+`status.ts`-Badge-Ton-Frage, ist am selben Tag als **DC-149** entschieden und
+gebaut. **Damit ist DC-049 abgearbeitet** — was bleibt, sind zwei Fragen an
+den Eigentümer des Handbuchs (Hover auf dunklen Flächen = CoS-M-021, und ein
+möglicher „unterwegs"-Farbton, siehe DC-149), kein offener Bauauftrag. Neuer offener Punkt zur PDF-seitigen
 Sichtbarkeits-Steuerung siehe **DC-050** | Product Designer (Konzept: Marketing, Governance S. 19) |
 | DC-050 | Sandy, 11.09.2026: Entwurfsansicht mit dauerhaft offenem Rechenweg „zu viel" (gelöst, siehe DC-049-Nachtrag); zusätzlich die Frage, ob/wie sich die Rechenweg-Sichtbarkeit auf dem Kunden-PDF steuern lässt, obwohl das Handbuch dort „nie versteckt, nie eingeklappt" fordert — echter Zielkonflikt mit der Legal-Vorgabe aus DC-049 | ✅ erledigt. Zielkonflikt mit Sandy per Rückfrage geklärt: **„Frage pro Angebot vor dem PDF-Erstellen"** gewählt (nicht „immer sichtbar, kein Schalter", nicht „globaler Schalter in den Einstellungen"). Backend (`0d2b459`, Head of Product Engineering): neue Spalte `quotes.zeige_rechenweg_auf_pdf` (boolean, nullable, `null` = noch nicht gefragt = sichtbar), `AngebotPDF` in `lib/pdf.tsx` wertet sie mit Rangfolge Prop → gespeicherte Antwort → sichtbar aus — die sechs PDF-Routen mussten dank `select('*')` nicht angefasst werden. UI (`b3ce7b0`, Product Designer): Ja/Nein-Frage im Vorschau-Tab von `VorschauUndVersand.tsx`, direkt vor „Senden →" — der einen Stelle, an der alle drei Versandwege (E-Mail/WhatsApp/Link) vorbeikommen; kein Blocker, unbeantwortet bleibt sichtbar; Antwort wird per `supabase.from('quotes').update(...)` gespeichert (gleiches Muster wie `raum_details`), einmal beantwortet mit Ändern-Link statt Frage. `AngebotVorschau.tsx` bekam dieselbe `zeigeRechenweg`-Prop/Rangfolge wie das echte PDF, zieht beim Beantworten live mit. Nachzug (`d3d4d4e`): derselbe Ja/Nein-Moment jetzt auch vor dem direkten „PDF herunterladen"-Link im Aktionen-Sheet, der anfangs bewusst ausgelassen war. Siehe Detailabschnitt | Product Designer (UI ✅) / Head of Product Engineering (Backend ✅) |
 
@@ -5096,8 +5099,10 @@ die Anzeige dort mit demselben Muster nachziehen. Noch offen aus
 früheren DC-049-Schritten: ~~volle Hover/Press-Farbskala für die
 Alt-Buttons~~ — **erledigt am 23.09. als DC-146** (es waren 54, nicht 29;
 dabei acht Stellen mit dem abgekündigten Gelb gefunden). Die allgemeinen Hover-Regeln für neutrale
-Flächen/Links sind am 23.09. als **DC-147** erledigt. Unverändert offen
-bleibt allein die `status.ts`-Badge-Ton-Frage.
+Flächen/Links sind am 23.09. als **DC-147** erledigt. Die
+`status.ts`-Badge-Ton-Frage ist am 23.09. als **DC-149** erledigt — und war
+mehr als eine Ton-Frage: drei der sechs Badges lagen unter der
+Kontrastgrenze des Handbuchs.
 
 **Nachtrag (11.09.2026) — Vorschau/Versand-Nacharbeit, kritischer
 Build-Fehler gefunden:** Sandy bemerkte beim Live-Test, dass die
@@ -17207,5 +17212,199 @@ dasteht; bis dahin bleibt `#1a1a1a` stehen.
 
 *Chief of Staff · 2026-09-23, 13:55 UTC*
 
+
+
+---
+
+## DC-149 ✅ — Die letzte Zeile aus DC-049: die Badge-Töne der Status-Quelle. Es war keine Ton-Frage — drei der sechs Badges lagen unter der Kontrastgrenze des eigenen Handbuchs (Product Designer, 23.09.2026)
+
+**Kein neuer Auftrag, der Rest eines alten.** DC-049 stand seit dem 10.09. mit
+einer einzigen Zeile offen: *„das ‚Bereit'-Badge in `status.ts`
+(`bg-[#FEF9C3]`/`text-[#8B7000]`) ist kein deprecated Hex, aber ein verwandter
+Gelb-Ton — separat zu entscheiden, sobald die Skala ansteht."* Die Skala steht
+seit DC-146. Also war die Zeile dran.
+
+### 1. Der Befund vor der Arbeit: es war nicht ein Badge, es waren sechs — aus drei Quellen
+
+`src/lib/status.ts` ist seit DC-003 die EINE Quelle für Status → Label/Farbe.
+Sie war es auch. Nur stand in ihr **kein einziger Wert aus dem CI-Handbuch**:
+
+| Status | Fläche | Text | Woher der Wert kam |
+|---|---|---|---|
+| Entwurf | `bg-anthracite/8` | `text-anthracite/50` | Deckkraft-Stufen, keine Farbrolle |
+| Bereit | `bg-[#FEF9C3]` | `text-[#8B7000]` | zwei erfundene Hex-Werte |
+| Beim Kunden | `bg-blue-50` | `text-blue-700` | Tailwind-Vorgabe |
+| Beauftragt | `bg-[#EDFAF0]` | `text-[#1A7A38]` | zwei erfundene Hex-Werte |
+| Abgelehnt | `bg-red-50` | `text-red-700` | Tailwind-Vorgabe |
+| Archiviert | `bg-gray-100` | `text-gray-500` | Tailwind-Vorgabe |
+
+Das ist dieselbe Fehlerform wie in DC-147: **die semantischen Rollen, die das
+Handbuch für genau diesen Zweck vorsieht, gab es im Code gar nicht.** Das
+Handbuch definiert auf S. 04 ausdrücklich *„Success und Danger … ausschließlich
+für Validierung und Status"* — `#4F6B45` / `#EBF0E7` und `#A33A2A` / `#F6EAE7`.
+**Gemessen kamen diese vier Werte in `src/` null-mal vor.** Statt ihrer standen
+zwei selbst gemischte Töne (`#1A7A38` auf `#EDFAF0`) an der Stelle, an der
+„Erfolg" gemeint war.
+
+### 2. Der Fund, nach dem ich nicht gesucht habe: drei Badges verfehlen 4,5:1
+
+Das Handbuch schreibt auf S. 05 *„Fließtext mindestens 4,5:1 gegen seinen
+Untergrund"*. Ich habe alle sechs Paare durchgerechnet, bevor ich etwas
+geändert habe:
+
+| Status | vorher | | nachher | |
+|---|---|---|---|---|
+| Entwurf | `#969696` auf `#EFEFEF` | **2,57:1** ❌ | `#5E5E5C` auf `#F1F1EE` | 5,74:1 ✅ |
+| Bereit | `#8B7000` auf `#FEF9C3` | **4,43:1** ❌ | `#2C2C2C` auf `#E7C459` | 8,27:1 ✅ |
+| Beim Kunden | `#1D4ED8` auf `#EFF6FF` | 6,16:1 ✅ | `#2C2C2C` auf `#F1F1EE` | 12,34:1 ✅ |
+| Beauftragt | `#1A7A38` auf `#EDFAF0` | 5,03:1 ✅ | `#4F6B45` auf `#EBF0E7` | 5,15:1 ✅ |
+| Abgelehnt | `#B91C1C` auf `#FEF2F2` | 5,91:1 ✅ | `#A33A2A` auf `#F6EAE7` | 5,58:1 ✅ |
+| Archiviert | `#6B7280` auf `#F3F4F6` | **4,39:1** ❌ | `#5E5E5C` auf `#F7F7F5` | 6,06:1 ✅ |
+
+(„Entwurf" vorher: `bg-anthracite/8` und `text-anthracite/50` sind Deckkraft,
+kein Farbwert — gerechnet auf weißer Karte, wo sie zu `#EFEFEF`/`#969696`
+werden.)
+
+**Der interessanteste Wert ist der von „Bereit": 4,43:1.** Das ist das Badge,
+das die ganze Zeile überhaupt aufgeworfen hat, und es war nicht nur
+markenfremd, es war um 0,07 zu blass. Der Grund ist derselbe, aus dem das
+Handbuch die Regel hat: **dunkles Gelb auf hellem Gelb reicht nie.**
+
+### 3. Die Entscheidung — und zwei Handbuch-Regeln, die sie mir abgenommen haben
+
+Ich hatte für sechs Status keine sechs freien Farben zu vergeben. **Zwei Sätze
+im Handbuch schließen fast alles aus, und das ist gut so:**
+
+**Regel 1 (S. 05):** *„Auf Gelb steht immer Anthrazit, nie Off-White oder
+Weiß."* Damit ist „Bereit" entschieden, ohne dass ich etwas abwägen muss:
+**Anthrazit 900 auf Gelb 300**, nicht der dunkle Gelbton auf hellem Gelb, der
+den 4,43:1-Fall erzeugt hat.
+
+Warum Gelb **300** und nicht 500: 500 ist die Fläche der primären Aktion, und
+das Handbuch erlaubt *„pro Ansicht genau eine primäre Aktion"*. Ein Badge in
+500 stünde in der Angebotsliste optisch gleichwertig neben dem gelben
+Aufnahme-Knopf. 300 ist unverkennbar gelb und nimmt der einen Aktion nichts
+weg. Dass Gelb überhaupt als Badge darf, steht wörtlich da: *„Erlaubt für:
+primäre Aktionsflächen, die aktive Tab-Linie, ein einzelnes Badge."*
+
+**Regel 2 (S. 04, Tabelle der Off-White-Stufen):** helle **Flächen** sind
+Seite (`#F7F7F5`), Sunken (`#F1F1EE`) und Karte (`#FFFFFF`). **Off-White 200
+und 300 sind dort ausdrücklich als Rahmen-Töne geführt, nicht als
+Füllungen.** Ich hatte zwischendurch genau das vor — die neutralen Badges über
+vier Grauflächen zu staffeln — und habe es verworfen, weil es eine Rolle
+zweckentfremdet hätte. **Die neutralen Badges liegen deshalb alle auf einer
+erlaubten Fläche und unterscheiden sich über die Textstufe, nicht über die
+Fläche.**
+
+Daraus folgt das Prinzip, nach dem der Satz jetzt gebaut ist:
+
+> **Farbe trägt nur, wo es einen Ausgang gibt.** Gelb = du bist dran,
+> Success = zugesagt, Danger = abgesagt. Alles andere ist neutral und
+> unterscheidet sich über die Textstufe.
+
+| Status | Fläche | Text | warum |
+|---|---|---|---|
+| Entwurf | Sunken `#F1F1EE` | Anthrazit 600 | leise — nichts zu tun |
+| Bereit | Gelb 300 `#E7C459` | Anthrazit 900 | der eine erlaubte gelbe Badge |
+| Beim Kunden | Sunken `#F1F1EE` | Anthrazit 900 | neutral, aber die stärkste Textstufe: es läuft |
+| Beauftragt | Success Wash | Success | Ausgang |
+| Abgelehnt | Danger Wash | Danger | Ausgang |
+| Archiviert | Seite `#F7F7F5` | Anthrazit 600 | die leiseste Stufe |
+
+### 4. Was ich ausdrücklich NICHT entschieden habe: das Blau von „Beim Kunden"
+
+„Beim Kunden" war der einzige Status mit einem eigenen Farbton — Tailwinds
+Blau. **Blau kommt im Handbuch an keiner Stelle vor.** Es ist nicht ein Wert,
+der zu einer definierten Rolle fehlt (das war der `#1a1a1a`-Fall aus DC-147),
+sondern **eine zweite Akzentfarbe in einem ausdrücklichen Zwei-Farben-System**.
+Einen blauen Marken-Ton zu erfinden, wäre dasselbe gewesen, was ich in DC-147
+zu Recht gelassen habe.
+
+Ich habe den Status deshalb auf die **stärkste neutrale Stufe** gelegt
+(Anthrazit 900 auf Sunken, 12,34:1) und dabei bewusst zwei Varianten
+verworfen, damit sie nachlesbar sind, falls jemand sie später doch will:
+
+* **Anthrazit-Pille** (`--surface-inverse` mit Off-White-Text). Maximal
+  unterscheidbar und handbuchrein. **Verworfen, weil sie die Hierarchie
+  umdreht:** „Beim Kunden" ist der Wartezustand, in dem die meisten Angebote
+  stehen. Eine dunkle Vollfläche pro Listenzeile wäre schwerer als „Bereit",
+  also lauter als der Zustand, in dem Sandy etwas tun muss.
+* **Off-White 200/300 als eigene Fläche.** Verworfen wegen Regel 2 oben —
+  Rahmen-Töne sind keine Füllungen.
+
+**Die Frage, die daraus bleibt und nicht mir gehört:** verdient „unterwegs /
+in Bearbeitung" im Handbuch eine eigene Farbrolle (so wie Success und Danger
+eine haben)? Wenn ja, ist das eine Handbuch-Ergänzung des Head of Marketing
+und danach eine Zeile Code. Wenn nein, bleibt es neutral und ist fertig.
+**Das ist dieselbe Sorte Frage wie CoS-M-021, und sie hält nichts auf.**
+
+### 5. Gebaut
+
+* **`src/app/globals.css`** — fünf Tokens ergänzt, alle fünf werden benutzt
+  (keine Waisenkinder): `--color-success`, `--color-success-wash`,
+  `--color-danger`, `--color-danger-wash`, `--color-anthracite-600`.
+* **`src/lib/status.ts`** — `STATUS_CONFIG` trägt nur noch benannte Rollen,
+  kein roher Hex-Wert, keine Tailwind-Vorgabe, keine Deckkraft-Stufe mehr.
+* **`aufDunkel` ist jetzt durchgängig `bg` + `text`** — der `md:`-Sonderweg
+  bei „Entwurf" ist weg. Er war nötig, weil die alte Entwurfs-Pille auf dem
+  anthraziten Handy-Header verschwand (DC-072). Jede Badge-Fläche ist jetzt
+  eine helle Handbuch-Fläche und steht mit **mindestens 8,27:1** gegen den
+  Header — der Sonderfall hat sich selbst erledigt, statt umgangen zu werden.
+* **Neu: `src/lib/__tests__/dc149-status-badge-toene.test.ts`** (32 Tests).
+
+**Warum `--color-anthracite-600` überhaupt nötig war** — das ist ein Nebenfund,
+der über dieses Ticket hinaus gilt: Das Handbuch hat für leisen Text die Rolle
+`--text-muted` (`#7A7A76`, = Anthrazit 500). **Gemessen erreicht sie auf keiner
+hellen Handbuch-Fläche 4,5:1:** 3,81:1 auf Sunken, 4,02:1 auf der Seite,
+4,31:1 selbst auf reinem Weiß. Für Kleintext ist **Anthrazit 600 die erste
+tragfähige Stufe**. Wer das nächste Mal „gedämpfter Text" braucht, sollte das
+wissen, bevor er `--text-muted` nimmt.
+
+### 6. Gemessen, nicht geglaubt
+
+* **32 Tests grün** (`npx vitest run src/lib/__tests__/dc149-status-badge-toene.test.ts`).
+  Sie prüfen nicht „sieht schön aus", sondern vier Zusicherungen, alle
+  mechanisch: jede Klasse referenziert einen existierenden `--color-`-Token
+  (das ist zugleich die Waisenkind-Prüfung); keine Tailwind-Vorgabe mehr; jedes
+  Paar ≥ 4,5:1; jede Fläche ≥ 3:1 gegen den Header. Die Kontraste rechnet der
+  Test selbst aus den Tokens in `globals.css` aus — er glaubt keiner Zahl aus
+  diesem Dokument.
+* **`npx tsc --noEmit` über das ganze Projekt: sauber, Exit 0.** (Nebenbei:
+  `tsc` und `vitest` laufen auf Sandys Rechner inzwischen wieder durch — der
+  CoS-Hinweis vom 13:55-Eintrag, sie brächen an der Zeitgrenze ab, trifft
+  heute nicht mehr zu.)
+* **Gegenprobe im Code:** `#FEF9C3`, `#8B7000`, `#EDFAF0`, `#1A7A38` kommen in
+  `src/` nur noch **in Kommentaren** vor, die erklären, warum es sie nicht
+  mehr gibt. Blau ist in `src/` von 6 auf **2** Vorkommen gefallen.
+
+### 7. Was offen bleibt — und was ich dabei gemessen habe, ohne es anzufassen
+
+Beim Zählen der Gegenprobe ist ein Feld sichtbar geworden, das größer ist als
+dieses Ticket. **Ich habe es gezählt, nicht aufgeräumt** — ein 200-Stellen-Lauf
+ohne Messung pro Stelle wäre genau der Fehler, vor dem DC-148 warnt:
+
+* **119 `red-*`** in 29 Dateien, **44 `green-*`** in 10, **38 `amber-*`** in 6,
+  **48 `gray-*`** in 3 — alles Tailwind-Vorgaben an Stellen, für die das
+  Handbuch Success/Danger und die Anthrazit-Skala hat.
+* **11× `#8B7000`** in 7 Dateien und **12× `#1A7A38`** in 4: die zwei
+  erfundenen Töne leben außerhalb der Status-Quelle weiter — im Entwurfs-Banner,
+  auf dem Dashboard, in `DashboardFilters`, im `AvatarSheet`, in der
+  Landingpage-Hero. `#8B7000` ist dort faktisch das, was das Handbuch
+  `--text-accent` (`#A67C00`) nennt; für `#1A7A38` gibt es `--color-success`.
+* **Die 2 verbliebenen `blue-*`** stehen in einer Zeile in
+  `onboarding/[step]/page.tsx` (Abzeichen „oauth" vs. dateibasiert) — ein
+  anderer Zusammenhang mit einer eigenen semantischen Frage, deshalb hier
+  bewusst nicht mitgenommen.
+
+**Das ist kein Bauauftrag an mich selbst, sondern eine Zahl für die
+Reihenfolge.** Sinnvoll wäre es als eigenes Ticket nach demselben Muster wie
+DC-146/147: erst messen, welche Stelle welche Rolle meint, dann mechanisch
+ersetzen — nicht suchen und ersetzen.
+
+**Nicht behauptet:** Ich habe das nicht auf `sofortangebot.app` gesehen. Die
+Farben sind gerechnet und getestet, nicht angeschaut — die sechs Badges live
+nebeneinander zu sehen, kann erst Sandy nach dem Push.
+
+*Product Designer · 2026-09-23*
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
