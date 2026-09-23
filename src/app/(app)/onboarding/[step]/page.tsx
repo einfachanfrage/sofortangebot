@@ -57,7 +57,7 @@ function FehlerZeile({ text, zeigen, className = '' }: { text: string; zeigen: b
     </p>
   )
 }
-const btnPrimary = 'w-full bg-yellow text-anthracite font-extrabold text-lg rounded-2xl py-4 active:translate-y-px transition-transform disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2'
+const btnPrimary = 'w-full bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow text-anthracite font-extrabold text-lg rounded-2xl py-4 active:translate-y-px transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2'
 const btnBack = 'flex-1 bg-white border-2 border-anthracite/15 text-anthracite font-extrabold text-base rounded-xl py-4 active:translate-y-px transition-transform'
 
 // ─── Progress Bar ──────────────────────────────────────────────────────────
@@ -392,7 +392,7 @@ export default function OnboardingStep() {
           </p>
           <button
             onClick={() => goTo(2)}
-            className="w-full max-w-xs bg-yellow text-anthracite font-extrabold text-xl rounded-2xl py-[18px] active:translate-y-px transition-transform flex items-center justify-center gap-3"
+            className="w-full max-w-xs bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite font-extrabold text-xl rounded-2xl py-[18px] active:translate-y-px transition-all flex items-center justify-center gap-3"
           >
             Einrichten <ArrowRight size={22} strokeWidth={2.5} />
           </button>
@@ -706,7 +706,7 @@ export default function OnboardingStep() {
             <div className="flex flex-col gap-3 flex-1">
               <button
                 onClick={() => selectPreisMode('markt')}
-                className="relative bg-white border border-anthracite/5 rounded-2xl p-5 text-left active:translate-y-px transition-transform shadow-sm"
+                className="relative bg-white hover:bg-sunken border border-anthracite/5 rounded-2xl p-5 text-left active:translate-y-px transition-all shadow-sm"
               >
                 <span className="absolute top-3 right-3 bg-yellow text-anthracite text-[10px] font-extrabold px-2 py-0.5 rounded-full">
                   Empfohlen
@@ -727,7 +727,7 @@ export default function OnboardingStep() {
 
               <button
                 onClick={() => selectPreisMode('manuell')}
-                className="bg-bg border border-anthracite/5 rounded-2xl p-5 text-left active:translate-y-px transition-transform"
+                className="bg-bg hover:bg-sunken border border-anthracite/5 rounded-2xl p-5 text-left active:translate-y-px transition-all"
               >
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 bg-anthracite rounded-xl flex items-center justify-center shrink-0">
@@ -877,7 +877,7 @@ export default function OnboardingStep() {
               <button
                 onClick={() => logoInputRef.current?.click()}
                 disabled={logoUploading}
-                className="w-full border-2 border-dashed border-anthracite/20 rounded-2xl p-10 flex flex-col items-center gap-3 active:translate-y-px transition-transform disabled:opacity-50 bg-white"
+                className="w-full border-2 border-dashed border-anthracite/20 rounded-2xl p-10 flex flex-col items-center gap-3 active:translate-y-px transition-all disabled:opacity-50 bg-white hover:bg-sunken disabled:hover:bg-white"
               >
                 {logoUploading
                   ? <Loader2 size={32} color="var(--color-yellow)" className="animate-spin" />
@@ -1009,7 +1009,7 @@ export default function OnboardingStep() {
                 <button
                   onClick={testConnection}
                   disabled={connStatus === 'testing'}
-                  className="mt-3 w-full border border-anthracite/10 rounded-xl py-2.5 text-sm font-extrabold text-anthracite hover:border-yellow transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="mt-3 w-full border border-anthracite/10 hover:bg-sunken rounded-xl py-2.5 text-sm font-extrabold text-anthracite hover:border-yellow transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:hover:bg-transparent"
                 >
                   {connStatus === 'testing' && <Loader2 size={14} className="animate-spin" />}
                   {connStatus === 'idle' && 'Verbindung testen'}
@@ -1077,7 +1077,7 @@ export default function OnboardingStep() {
           >
             <button
               onClick={() => router.push('/dashboard?welcome=new')}
-              className="w-full bg-yellow text-anthracite font-extrabold text-xl rounded-2xl py-[18px] active:translate-y-px transition-transform flex items-center justify-center gap-3"
+              className="w-full bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite font-extrabold text-xl rounded-2xl py-[18px] active:translate-y-px transition-all flex items-center justify-center gap-3"
             >
               🎙 Erstes Angebot erstellen →
             </button>

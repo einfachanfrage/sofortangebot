@@ -29,7 +29,7 @@ export default function AvvPage() {
             <p>(nachfolgend „Auftragsverarbeiter")</p>
             <p className="pt-2">
               Dieser Vertrag gilt gemäß § 8.2 der{' '}
-              <Link href="/agb" className="underline text-anthracite">AGB</Link>{' '}
+              <Link href="/agb" className="underline text-anthracite hover:text-accent transition-colors">AGB</Link>{' '}
               mit Beginn der Nutzung von sofortangebot.app als abgeschlossen.
               Eine gesonderte Unterzeichnung ist nicht erforderlich.
             </p>
@@ -121,7 +121,7 @@ export default function AvvPage() {
           <Link href="/impressum">Impressum</Link>
           <Link href="/datenschutz">Datenschutz</Link>
           <Link href="/agb">AGB</Link>
-          <Link href="/avv" className="text-anthracite">AVV</Link>
+          <Link href="/avv" className="text-anthracite hover:text-accent transition-colors">AVV</Link>
         </div>
       </footer>
     </div>

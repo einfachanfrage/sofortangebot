@@ -60,7 +60,7 @@ export function AgbUpdateModal() {
         <button
           onClick={handleAccept}
           disabled={loading}
-          className="w-full bg-yellow text-anthracite font-black text-base rounded-xl py-3.5 active:translate-y-px transition-transform disabled:opacity-50"
+          className="w-full bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow text-anthracite font-black text-base rounded-xl py-3.5 active:translate-y-px transition-all disabled:opacity-50"
         >
           {loading ? 'Einen Moment...' : 'Akzeptieren & weiter'}
         </button>

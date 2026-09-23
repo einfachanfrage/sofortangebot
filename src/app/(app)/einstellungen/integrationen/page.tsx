@@ -349,7 +349,7 @@ export default function IntegrationenPage() {
                           type="button"
                           onClick={() => testVerbindung(sw.id, keys[sw.fields[0].key])}
                           disabled={testStatus[sw.id] === 'testing'}
-                          className="text-xs font-bold text-anthracite/50 bg-bg rounded-xl px-3 py-2 disabled:opacity-50"
+                          className="text-xs font-bold text-anthracite/50 bg-bg hover:bg-sunken rounded-xl px-3 py-2 disabled:opacity-50 transition-colors disabled:hover:bg-bg"
                         >
                           {testStatus[sw.id] === 'testing' ? 'Teste...' : 'Verbindung testen'}
                         </button>
@@ -370,7 +370,7 @@ export default function IntegrationenPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="w-full bg-yellow text-anthracite font-black text-lg rounded-2xl py-4 active:translate-y-px transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
+          className="w-full bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow text-anthracite font-black text-lg rounded-2xl py-4 active:translate-y-px transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
         >
           {saved ? <><Check size={20} strokeWidth={3} /> Gespeichert</> : saving ? 'Speichert…' : 'Speichern'}
         </button>

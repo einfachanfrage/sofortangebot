@@ -167,7 +167,7 @@ export default function AufnahmeHinweisSheet({ open, onClose, schliessbar, gewer
           <button
             onClick={schliessbar ? onClose : undefined}
             disabled={!schliessbar}
-            className="w-full bg-yellow text-anthracite font-black rounded-2xl py-4 text-base disabled:opacity-50"
+            className="w-full transition-colors bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow text-anthracite font-black rounded-2xl py-4 text-base disabled:opacity-50"
           >
             Verstanden — los geht&apos;s 🎙
           </button>

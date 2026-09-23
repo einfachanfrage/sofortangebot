@@ -46,7 +46,7 @@ export default function DatenschutzPage() {
                 </div>
                 <div>
                   <strong className="font-black">Kundendaten</strong>
-                  <p className="mt-1">Für Name, Adresse, E-Mail und Telefon der Kunden eines Handwerksbetriebs sind wir <strong className="font-black">nicht Verantwortlicher, sondern Auftragsverarbeiter</strong>. Verantwortlich ist der jeweilige Handwerksbetrieb: Er entscheidet über Zwecke und Mittel der Verarbeitung und über die Rechtsgrundlage. Wir verarbeiten diese Daten ausschließlich auf seine Weisung zur Angebotserstellung. Grundlage ist der <a href="/avv" className="text-signal-yellow underline">Auftragsverarbeitungsvertrag nach Art.&nbsp;28 DSGVO</a>. Wenn Sie Kunde eines Handwerksbetriebs sind und Auskunft oder Löschung Ihrer Daten wünschen, wenden Sie sich bitte an diesen Betrieb; erreicht uns eine solche Anfrage direkt, leiten wir sie unverzüglich dorthin weiter.</p>
+                  <p className="mt-1">Für Name, Adresse, E-Mail und Telefon der Kunden eines Handwerksbetriebs sind wir <strong className="font-black">nicht Verantwortlicher, sondern Auftragsverarbeiter</strong>. Verantwortlich ist der jeweilige Handwerksbetrieb: Er entscheidet über Zwecke und Mittel der Verarbeitung und über die Rechtsgrundlage. Wir verarbeiten diese Daten ausschließlich auf seine Weisung zur Angebotserstellung. Grundlage ist der <a href="/avv" className="text-anthracite underline hover:text-accent transition-colors">Auftragsverarbeitungsvertrag nach Art.&nbsp;28 DSGVO</a>. Wenn Sie Kunde eines Handwerksbetriebs sind und Auskunft oder Löschung Ihrer Daten wünschen, wenden Sie sich bitte an diesen Betrieb; erreicht uns eine solche Anfrage direkt, leiten wir sie unverzüglich dorthin weiter.</p>
                 </div>
                 <div>
                   <strong className="font-black">Server-Logs</strong>
@@ -62,27 +62,27 @@ export default function DatenschutzPage() {
                 <p>Wir setzen folgende Dienstleister als Auftragsverarbeiter ein. Mit allen wurde ein Auftragsverarbeitungsvertrag (AVV) gemäß Art. 28 DSGVO geschlossen oder ist durch AGB abgedeckt:</p>
                 <div>
                   <strong className="font-black">Supabase Inc. (Datenbank &amp; Authentifizierung)</strong>
-                  <p className="mt-1">Datenbankhosting auf Servern in der EU (Frankfurt). Supabase verarbeitet alle gespeicherten Nutzerdaten. Datenschutzrichtlinie: <a href="https://supabase.com/privacy" className="text-yellow underline" target="_blank" rel="noopener noreferrer">supabase.com/privacy</a></p>
+                  <p className="mt-1">Datenbankhosting auf Servern in der EU (Frankfurt). Supabase verarbeitet alle gespeicherten Nutzerdaten. Datenschutzrichtlinie: <a href="https://supabase.com/privacy" className="text-anthracite underline hover:text-accent transition-colors" target="_blank" rel="noopener noreferrer">supabase.com/privacy</a></p>
                 </div>
                 <div>
                   <strong className="font-black">OpenAI, L.L.C. (Spracherkennung &amp; KI-Textverarbeitung)</strong>
-                  <p className="mt-1">Spracheingaben werden zur Transkription (Whisper) und die daraus entstandenen Texte zur KI-gestützten Angebotserstellung (GPT) an OpenAI übermittelt. OpenAI verwendet über die Programmierschnittstelle übermittelte Daten nach eigener Zusage nicht zum Training seiner Modelle. Datenschutzrichtlinie: <a href="https://openai.com/policies/privacy-policy" className="text-yellow underline" target="_blank" rel="noopener noreferrer">openai.com/policies/privacy-policy</a></p>
+                  <p className="mt-1">Spracheingaben werden zur Transkription (Whisper) und die daraus entstandenen Texte zur KI-gestützten Angebotserstellung (GPT) an OpenAI übermittelt. OpenAI verwendet über die Programmierschnittstelle übermittelte Daten nach eigener Zusage nicht zum Training seiner Modelle. Datenschutzrichtlinie: <a href="https://openai.com/policies/privacy-policy" className="text-anthracite underline hover:text-accent transition-colors" target="_blank" rel="noopener noreferrer">openai.com/policies/privacy-policy</a></p>
                 </div>
                 <div>
                   <strong className="font-black">Resend Inc. (E-Mail-Versand)</strong>
-                  <p className="mt-1">Beim Versand von Angeboten per E-Mail werden E-Mail-Adresse des Empfängers sowie der Angebotsinhalt an Resend übermittelt. Datenschutzrichtlinie: <a href="https://resend.com/privacy" className="text-yellow underline" target="_blank" rel="noopener noreferrer">resend.com/privacy</a></p>
+                  <p className="mt-1">Beim Versand von Angeboten per E-Mail werden E-Mail-Adresse des Empfängers sowie der Angebotsinhalt an Resend übermittelt. Datenschutzrichtlinie: <a href="https://resend.com/privacy" className="text-anthracite underline hover:text-accent transition-colors" target="_blank" rel="noopener noreferrer">resend.com/privacy</a></p>
                 </div>
                 <div>
                   <strong className="font-black">Stripe Payments Europe, Limited (Zahlungsabwicklung)</strong>
-                  <p className="mt-1">Für Abonnement-Zahlungen nutzen wir Stripe. Zahlungsdaten werden direkt bei Stripe eingegeben und nicht von uns gespeichert. Datenschutzrichtlinie: <a href="https://stripe.com/privacy" className="text-yellow underline" target="_blank" rel="noopener noreferrer">stripe.com/privacy</a></p>
+                  <p className="mt-1">Für Abonnement-Zahlungen nutzen wir Stripe. Zahlungsdaten werden direkt bei Stripe eingegeben und nicht von uns gespeichert. Datenschutzrichtlinie: <a href="https://stripe.com/privacy" className="text-anthracite underline hover:text-accent transition-colors" target="_blank" rel="noopener noreferrer">stripe.com/privacy</a></p>
                 </div>
                 <div>
                   <strong className="font-black">Vercel Inc. (Hosting)</strong>
-                  <p className="mt-1">Die Webanwendung wird auf Servern von Vercel gehostet. Datenschutzrichtlinie: <a href="https://vercel.com/legal/privacy-policy" className="text-yellow underline" target="_blank" rel="noopener noreferrer">vercel.com/legal/privacy-policy</a></p>
+                  <p className="mt-1">Die Webanwendung wird auf Servern von Vercel gehostet. Datenschutzrichtlinie: <a href="https://vercel.com/legal/privacy-policy" className="text-anthracite underline hover:text-accent transition-colors" target="_blank" rel="noopener noreferrer">vercel.com/legal/privacy-policy</a></p>
                 </div>
                 <div>
                   <strong className="font-black">Functional Software, Inc. dba Sentry (Fehlerprotokollierung)</strong>
-                  <p className="mt-1">Zur Erkennung und Behebung technischer Fehler übermitteln wir Fehlerberichte an Sentry. Diese enthalten technische Angaben zum Fehler (Zeitpunkt, aufgerufene Funktion, Browser- und Geräteangaben, IP-Adresse) und können im Einzelfall Inhalte der gerade verarbeiteten Daten enthalten. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einem lauffähigen und sicheren Dienst). Datenschutzrichtlinie: <a href="https://sentry.io/privacy/" className="text-yellow underline" target="_blank" rel="noopener noreferrer">sentry.io/privacy</a></p>
+                  <p className="mt-1">Zur Erkennung und Behebung technischer Fehler übermitteln wir Fehlerberichte an Sentry. Diese enthalten technische Angaben zum Fehler (Zeitpunkt, aufgerufene Funktion, Browser- und Geräteangaben, IP-Adresse) und können im Einzelfall Inhalte der gerade verarbeiteten Daten enthalten. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einem lauffähigen und sicheren Dienst). Datenschutzrichtlinie: <a href="https://sentry.io/privacy/" className="text-anthracite underline hover:text-accent transition-colors" target="_blank" rel="noopener noreferrer">sentry.io/privacy</a></p>
                 </div>
               </div>
             ),
@@ -132,8 +132,8 @@ export default function DatenschutzPage() {
                   <li><strong>Datenübertragbarkeit</strong> (Art. 20 DSGVO)</li>
                   <li><strong>Widerspruch</strong> gegen die Verarbeitung (Art. 21 DSGVO)</li>
                 </ul>
-                <p className="mt-3">Zur Ausübung Ihrer Rechte wenden Sie sich an: <a href="mailto:hallo@sofortangebot.app" className="text-yellow underline">hallo@sofortangebot.app</a></p>
-                <p>Sie haben zudem das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren. Zuständig für Berlin: <a href="https://www.datenschutz-berlin.de" className="text-yellow underline" target="_blank" rel="noopener noreferrer">Berliner Beauftragte für Datenschutz und Informationsfreiheit</a>.</p>
+                <p className="mt-3">Zur Ausübung Ihrer Rechte wenden Sie sich an: <a href="mailto:hallo@sofortangebot.app" className="text-anthracite underline hover:text-accent transition-colors">hallo@sofortangebot.app</a></p>
+                <p>Sie haben zudem das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren. Zuständig für Berlin: <a href="https://www.datenschutz-berlin.de" className="text-anthracite underline hover:text-accent transition-colors" target="_blank" rel="noopener noreferrer">Berliner Beauftragte für Datenschutz und Informationsfreiheit</a>.</p>
               </div>
             ),
           },
@@ -141,7 +141,7 @@ export default function DatenschutzPage() {
             title: '8. Accountlöschung',
             content: (
               <p>
-                Sie können Ihren Account jederzeit über die Einstellungen in der App oder per E-Mail löschen. Der Account wird sofort deaktiviert. Anschließend halten wir Ihre Daten noch 30 Tage vor, damit Sie sie exportieren oder den Account wiederherstellen können; danach werden alle mit Ihrem Account verbundenen Daten vollständig und unwiderruflich gelöscht — Angebote, Kundendaten, Sprachaufnahmen, Fotos und Ihr Zugang. Ausgenommen sind ausschließlich Daten, für die gesetzliche Aufbewahrungspflichten bestehen. Die Löschung können Sie über die Einstellungen in der App oder per E-Mail an <a href="mailto:hallo@sofortangebot.app" className="text-yellow underline">hallo@sofortangebot.app</a> beantragen.
+                Sie können Ihren Account jederzeit über die Einstellungen in der App oder per E-Mail löschen. Der Account wird sofort deaktiviert. Anschließend halten wir Ihre Daten noch 30 Tage vor, damit Sie sie exportieren oder den Account wiederherstellen können; danach werden alle mit Ihrem Account verbundenen Daten vollständig und unwiderruflich gelöscht — Angebote, Kundendaten, Sprachaufnahmen, Fotos und Ihr Zugang. Ausgenommen sind ausschließlich Daten, für die gesetzliche Aufbewahrungspflichten bestehen. Die Löschung können Sie über die Einstellungen in der App oder per E-Mail an <a href="mailto:hallo@sofortangebot.app" className="text-anthracite underline hover:text-accent transition-colors">hallo@sofortangebot.app</a> beantragen.
               </p>
             ),
           },
@@ -167,7 +167,7 @@ export default function DatenschutzPage() {
         <Logo variant="light" className="text-sm" />
         <div className="flex gap-4 text-anthracite/30 text-xs font-semibold">
           <Link href="/impressum">Impressum</Link>
-          <Link href="/datenschutz" className="text-anthracite">Datenschutz</Link>
+          <Link href="/datenschutz" className="text-anthracite hover:text-accent transition-colors">Datenschutz</Link>
           <Link href="/agb">AGB</Link>
         </div>
       </footer>

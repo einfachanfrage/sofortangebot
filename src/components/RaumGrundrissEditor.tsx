@@ -225,7 +225,7 @@ export function RaumGrundrissEditor({
             </div>
 
             <button onClick={addWand}
-              className="flex items-center justify-center gap-1.5 w-full border-2 border-dashed border-anthracite/15 rounded-xl py-2.5 text-[13px] font-extrabold text-anthracite/50 hover:border-yellow hover:text-anthracite transition-colors mb-5">
+              className="flex items-center justify-center gap-1.5 w-full border-2 border-dashed border-anthracite/15 hover:bg-sunken rounded-xl py-2.5 text-[13px] font-extrabold text-anthracite/50 hover:border-yellow hover:text-anthracite transition-colors mb-5">
               <Plus size={15} /> Wand hinzufügen
             </button>
           </>
@@ -236,11 +236,11 @@ export function RaumGrundrissEditor({
             <button
               onClick={() => onSave(waende.filter(w => w.laenge > 0))}
               disabled={!g.geschlossen}
-              className="w-full bg-yellow text-anthracite rounded-2xl py-3.5 font-extrabold text-[15px] flex items-center justify-center gap-2 active:translate-y-px transition-all disabled:opacity-40"
+              className="w-full bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow text-anthracite rounded-2xl py-3.5 font-extrabold text-[15px] flex items-center justify-center gap-2 active:translate-y-px transition-all disabled:opacity-40"
             >
               <Check size={17} strokeWidth={3} /> Übernehmen
             </button>
-            <button onClick={onClose} className="w-full border-2 border-anthracite/15 text-anthracite/60 rounded-2xl py-3 font-extrabold text-[13px]">
+            <button onClick={onClose} className="w-full border-2 border-anthracite/15 hover:bg-sunken text-anthracite/60 rounded-2xl py-3 font-extrabold text-[13px] transition-colors">
               Abbrechen
             </button>
           </div>

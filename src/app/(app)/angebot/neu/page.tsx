@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
+import { TESTPHASE_ENDE_TITEL, TESTPHASE_ENDE_ZUSAGE, ABO_CTA } from '@/lib/pricing'
 
 function AngebotNeuInner() {
   const router = useRouter()
@@ -14,6 +15,12 @@ function AngebotNeuInner() {
   // ein rotes „Aufmaß konnte nicht angelegt werden. Bitte neu laden."
   // würde jemanden, der beim Kunden steht, ratlos zurücklassen.
   const [limitText, setLimitText] = useState('')
+  // Head of Marketing (23.09.2026): Welcher Grund dasteht, entscheidet die
+  // Überschrift. „Dein Monat ist voll" war der Grund aus dem abgelösten
+  // Modell und stand hier noch, nachdem CoS-038-B das Kontingent entfernt
+  // hatte — über einem Text, der von der Testphase sprach. Zwei Gründe auf
+  // einem Bildschirm, und der größer gesetzte war der falsche.
+  const [testphaseVorbei, setTestphaseVorbei] = useState(false)
 
   useEffect(() => {
     async function create() {
@@ -35,7 +42,14 @@ function AngebotNeuInner() {
           const daten = await res.json().catch(() => ({})) as { error?: string; message?: string }
           // CoS-038-B: Der Schlüssel heißt jetzt nach dem Grund ('testphase_abgelaufen');
           // 'limit_erreicht' bleibt für den Fall stehen, dass noch eine alte Antwort unterwegs ist.
-          if ((daten.error === 'testphase_abgelaufen' || daten.error === 'limit_erreicht') && daten.message) { setLimitText(daten.message); return }
+          if (daten.error === 'testphase_abgelaufen') {
+            // Der Grund steht schon in der Überschrift — hier nur die Zusage,
+            // sonst stünde „Deine Testphase ist vorbei" zweimal untereinander.
+            setTestphaseVorbei(true)
+            setLimitText(TESTPHASE_ENDE_ZUSAGE)
+            return
+          }
+          if (daten.error === 'limit_erreicht' && daten.message) { setLimitText(daten.message); return }
         }
         if (!res.ok) { setError('Aufmaß konnte nicht angelegt werden. Bitte neu laden.'); return }
         const { id } = await res.json() as { id: string }
@@ -52,13 +66,15 @@ function AngebotNeuInner() {
       {limitText ? (
         <div className="text-center max-w-sm">
           <div className="text-4xl mb-3">📋</div>
-          <p className="text-white font-syne font-black text-lg mb-2">Dein Monat ist voll</p>
+          <p className="text-white font-syne font-black text-lg mb-2">
+            {testphaseVorbei ? TESTPHASE_ENDE_TITEL : 'Dein Monat ist voll'}
+          </p>
           <p className="text-white/60 font-semibold text-sm mb-6">{limitText}</p>
           <Link
             href="/einstellungen/abo"
-            className="block w-full bg-yellow text-anthracite font-black rounded-2xl py-3.5 mb-3"
+            className="block w-full transition-colors bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite font-black rounded-2xl py-3.5 mb-3"
           >
-            Auf Pro upgraden
+            {ABO_CTA}
           </Link>
           <button
             onClick={() => router.push('/angebote')}

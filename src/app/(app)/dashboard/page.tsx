@@ -137,12 +137,12 @@ export default async function DashboardPage({
 
         <div className="grid grid-cols-2 gap-3 mt-3">
           <Link href="/angebote?status=beauftragt"
-            className="bg-white rounded-2xl px-4 py-3.5 border border-black/5 active:opacity-70 transition-opacity">
+            className="bg-white hover:bg-sunken rounded-2xl px-4 py-3.5 border border-black/5 active:opacity-70 transition-all">
             <div className="font-syne font-black text-anthracite text-lg leading-none truncate">{monatBeauftragt}</div>
             <div className="text-[10px] font-bold text-anthracite/50 mt-1.5 uppercase tracking-wide truncate">Beauftragt · Monat</div>
           </Link>
           <Link href="/angebote?status=offen"
-            className="bg-white rounded-2xl px-4 py-3.5 border border-black/5 active:opacity-70 transition-opacity">
+            className="bg-white hover:bg-sunken rounded-2xl px-4 py-3.5 border border-black/5 active:opacity-70 transition-all">
             <div className="font-syne font-black text-anthracite text-lg leading-none truncate">{offeneGesamtCount}</div>
             <div className="text-[10px] font-bold text-anthracite/50 mt-1.5 uppercase tracking-wide truncate">Beim Kunden</div>
           </Link>
@@ -198,7 +198,7 @@ export default async function DashboardPage({
             <div className="text-[10px] font-black text-anthracite/50 uppercase tracking-widest">
               Zuletzt erstellt
             </div>
-            <Link href="/angebote" className="text-[11px] font-black text-anthracite/40 hover:text-anthracite/70">
+            <Link href="/angebote" className="text-[11px] font-black text-anthracite/40 hover:text-accent">
               Alle →
             </Link>
           </div>

@@ -150,10 +150,10 @@ export default async function AngebotePage({
                 <Link
                   key={quote.id}
                   href={`/angebot/${quote.id}`}
-                  className="grid grid-cols-[1fr_140px_110px_130px_130px] px-5 py-3.5 border-b border-anthracite/5 last:border-0 hover:bg-bg transition-colors group"
+                  className="grid grid-cols-[1fr_140px_110px_130px_130px] px-5 py-3.5 border-b border-anthracite/5 last:border-0 hover:bg-sunken transition-colors group"
                 >
                   <div className="min-w-0 self-center pr-4">
-                    <div className="font-black text-anthracite text-sm truncate group-hover:text-yellow transition-colors">
+                    <div className="font-black text-anthracite text-sm truncate group-hover:text-accent transition-colors">
                       {quote.customer?.name || 'Kunde unbekannt'}
                     </div>
                     {stichwort && (

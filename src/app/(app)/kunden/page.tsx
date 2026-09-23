@@ -22,7 +22,7 @@ export default async function KundenPage() {
           </div>
         </div>
         <Link href="/kunden/neu"
-          className="bg-yellow text-anthracite font-black text-sm rounded-xl px-4 py-2 mt-1">
+          className="transition-colors bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite font-black text-sm rounded-xl px-4 py-2 mt-1">
           + Neu
         </Link>
       </div>
@@ -48,7 +48,7 @@ export default async function KundenPage() {
             <Link
               key={customer.id}
               href={`/kunden/${customer.id}`}
-              className="bg-white rounded-2xl p-4 border border-anthracite/5 active:translate-y-px transition-transform"
+              className="bg-white hover:bg-sunken rounded-2xl p-4 border border-anthracite/5 active:translate-y-px transition-all"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">

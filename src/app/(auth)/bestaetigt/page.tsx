@@ -96,7 +96,7 @@ function BestaetigungInner() {
         </p>
         <Link
           href="/login"
-          className="w-full bg-yellow text-anthracite font-black text-lg rounded-xl py-4 text-center active:translate-y-px transition-transform"
+          className="w-full bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite font-black text-lg rounded-xl py-4 text-center active:translate-y-px transition-all"
         >
           Zum Login
         </Link>

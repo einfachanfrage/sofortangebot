@@ -111,7 +111,7 @@ export function FAQSection() {
           <p className="text-[#888] text-sm mb-2">Schreib uns einfach. Wir antworten normalerweise am selben oder am nächsten Werktag.</p>
           <a
             href="mailto:support@sofortangebot.app"
-            className="text-anthracite text-sm font-semibold hover:text-yellow transition-colors"
+            className="text-anthracite text-sm font-semibold hover:text-accent transition-colors"
           >
             support@sofortangebot.app
           </a>

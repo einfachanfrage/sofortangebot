@@ -170,14 +170,14 @@ export default function BriefpapierUebersicht() {
                 <div className="flex gap-2 mt-3">
                   <Link
                     href={`/einstellungen/briefpapier/${bp.id}`}
-                    className="flex items-center gap-1.5 text-xs font-semibold bg-bg rounded-xl px-3 py-2 text-anthracite"
+                    className="flex items-center gap-1.5 text-xs font-semibold bg-bg hover:bg-sunken rounded-xl px-3 py-2 text-anthracite transition-colors"
                   >
                     <Pencil size={11} /> Bearbeiten
                   </Link>
                   <button
                     onClick={() => duplizieren(bp)}
                     disabled={briefpapiere.length >= 5}
-                    className="flex items-center gap-1.5 text-xs font-semibold bg-bg rounded-xl px-3 py-2 text-anthracite disabled:opacity-40"
+                    className="flex items-center gap-1.5 text-xs font-semibold bg-bg hover:bg-sunken rounded-xl px-3 py-2 text-anthracite disabled:opacity-40 transition-colors disabled:hover:bg-bg"
                   >
                     <Copy size={11} /> Duplizieren
                   </button>
@@ -204,7 +204,7 @@ export default function BriefpapierUebersicht() {
             {briefpapiere.length < 5 && (
               <button
                 onClick={neu}
-                className="w-full border-2 border-dashed border-anthracite/15 rounded-2xl py-4 flex items-center justify-center gap-2 text-sm font-semibold text-anthracite/30 hover:border-yellow/50 transition-colors"
+                className="w-full border-2 border-dashed border-anthracite/15 hover:bg-sunken rounded-2xl py-4 flex items-center justify-center gap-2 text-sm font-semibold text-anthracite/30 hover:border-yellow/50 transition-colors"
               >
                 <Plus size={16} /> Neue Variante erstellen
               </button>

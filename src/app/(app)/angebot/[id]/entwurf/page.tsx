@@ -630,7 +630,7 @@ function NotizModal({ onSave, onClose }: { onSave: (text: string) => void; onClo
           className="w-full bg-bg rounded-xl px-4 py-3 text-anthracite font-semibold text-[15px] resize-none focus:outline-none focus:ring-2 focus:ring-yellow mb-4"
         />
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 border-2 border-anthracite/15 rounded-xl py-3 font-extrabold text-anthracite text-[15px]">Abbrechen</button>
+          <button onClick={onClose} className="flex-1 border-2 border-anthracite/15 hover:bg-sunken rounded-xl py-3 font-extrabold text-anthracite text-[15px] transition-colors">Abbrechen</button>
           <button onClick={() => { if (text.trim()) { onSave(text.trim()); onClose() } }} disabled={!text.trim()}
             className="flex-1 bg-anthracite text-white rounded-xl py-3 font-extrabold text-[15px] disabled:opacity-40">
             Speichern ✓
@@ -1461,13 +1461,13 @@ export default function EntwurfPage() {
               <div className="flex flex-col gap-3">
                 <button
                   onClick={() => setScreen('timeline')}
-                  className="w-full bg-yellow text-anthracite rounded-2xl py-4 font-extrabold text-[16px]"
+                  className="w-full transition-colors bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite rounded-2xl py-4 font-extrabold text-[16px]"
                 >
                   Weiter aufnehmen
                 </button>
                 <button
                   onClick={verlasseSeite}
-                  className="w-full border-2 border-anthracite/15 text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
+                  className="w-full border-2 border-anthracite/15 hover:bg-sunken text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px] transition-colors"
                 >
                   Aufnahme verwerfen und zurück
                 </button>
@@ -1485,13 +1485,13 @@ export default function EntwurfPage() {
               <div className="flex flex-col gap-3">
                 <button
                   onClick={() => { setScreen('timeline'); fertigstellen() }}
-                  className="w-full bg-yellow text-anthracite rounded-2xl py-4 font-extrabold text-[16px]"
+                  className="w-full transition-colors bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite rounded-2xl py-4 font-extrabold text-[16px]"
                 >
                   Positionen berechnen →
                 </button>
                 <button
                   onClick={verlasseSeite}
-                  className="w-full border-2 border-anthracite/15 text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
+                  className="w-full border-2 border-anthracite/15 hover:bg-sunken text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px] transition-colors"
                 >
                   Später weitermachen
                 </button>
@@ -1610,7 +1610,7 @@ export default function EntwurfPage() {
           </div>
           <button
             onClick={() => setScreen('rueckfragen')}
-            className="w-full bg-yellow text-anthracite rounded-2xl py-3.5 font-extrabold text-[15px]"
+            className="w-full transition-colors bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite rounded-2xl py-3.5 font-extrabold text-[15px]"
           >
             {offenGeblieben.length === 1 ? 'Angabe ergänzen' : 'Angaben ergänzen'}
           </button>
@@ -1814,7 +1814,7 @@ export default function EntwurfPage() {
             </p>
             <button
               onClick={() => fertigstellen()}
-              className="w-full bg-yellow text-anthracite rounded-2xl py-4 font-extrabold text-[16px] flex items-center justify-center gap-2 active:translate-y-px transition-transform shadow-lg shadow-yellow/30"
+              className="w-full bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite rounded-2xl py-4 font-extrabold text-[16px] flex items-center justify-center gap-2 active:translate-y-px transition-all shadow-lg shadow-yellow/30"
             >
               <span className="flex flex-col items-center leading-tight">
                 <span>✓ {erkannteAnzahl} {hatBestehendPositionen ? 'neue ' : ''}{erkannteAnzahl === 1 ? 'Position' : 'Positionen'} erkannt</span>
@@ -1841,7 +1841,7 @@ export default function EntwurfPage() {
             <button
               onClick={cancelRecording}
               aria-label="Aufnahme abbrechen"
-              className="shrink-0 w-14 h-[60px] flex items-center justify-center rounded-2xl bg-white border-2 border-anthracite/10 text-anthracite/50 active:translate-y-px transition-all"
+              className="shrink-0 w-14 h-[60px] flex items-center justify-center rounded-2xl bg-white hover:bg-sunken border-2 border-anthracite/10 text-anthracite/50 active:translate-y-px transition-all"
             >
               <X size={22} strokeWidth={2.5} />
             </button>
@@ -1860,7 +1860,7 @@ export default function EntwurfPage() {
               <button
                 onClick={() => zettelInputRef.current?.click()}
                 disabled={zettelUploading}
-                className="w-14 h-14 rounded-full bg-white border-2 border-anthracite/10 flex items-center justify-center shadow-lg active:translate-y-px transition-all disabled:opacity-50"
+                className="w-14 h-14 rounded-full bg-white hover:bg-sunken border-2 border-anthracite/10 flex items-center justify-center shadow-lg active:translate-y-px transition-all disabled:opacity-50 disabled:hover:bg-white"
               >
                 {zettelUploading
                   ? <Loader2 size={22} className="animate-spin text-anthracite/40" />
@@ -1887,7 +1887,7 @@ export default function EntwurfPage() {
             <div className="flex flex-col items-center gap-2 pb-[3px]">
               <button
                 onClick={() => setShowNotiz(true)}
-                className="w-14 h-14 rounded-full bg-white border-2 border-anthracite/10 flex items-center justify-center shadow-lg active:translate-y-px transition-all"
+                className="w-14 h-14 rounded-full bg-white hover:bg-sunken border-2 border-anthracite/10 flex items-center justify-center shadow-lg active:translate-y-px transition-all"
               >
                 <NotebookPen size={22} strokeWidth={2} className="text-anthracite" />
               </button>
@@ -1982,7 +1982,7 @@ export default function EntwurfPage() {
               </button>
               <button
                 onClick={() => setDeleteBestaetigen(null)}
-                className="w-full border-2 border-anthracite/15 text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
+                className="w-full border-2 border-anthracite/15 hover:bg-sunken text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px] transition-colors"
               >
                 Abbrechen
               </button>

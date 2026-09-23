@@ -317,7 +317,7 @@ export default function PreisePage() {
           <button
             key={g.key}
             onClick={() => { setSelectedGewerk(g.key); setSelectedUnit('Alle') }}
-            className="bg-white rounded-2xl p-4 border border-anthracite/5 text-left active:translate-y-px transition-transform"
+            className="bg-white hover:bg-sunken rounded-2xl p-4 border border-anthracite/5 text-left active:translate-y-px transition-all"
           >
             <div className="text-3xl mb-2">{g.emoji}</div>
             <div className="font-black text-anthracite text-sm leading-tight">{g.label}</div>
@@ -344,7 +344,7 @@ export default function PreisePage() {
             <button
               onClick={handleImport}
               disabled={importing}
-              className="bg-yellow text-anthracite font-black rounded-xl px-6 py-3 w-full disabled:opacity-50"
+              className="transition-colors bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow text-anthracite font-black rounded-xl px-6 py-3 w-full disabled:opacity-50"
             >
               {importing ? 'Importiere...' : 'Standardpreise importieren'}
             </button>
@@ -386,10 +386,10 @@ export default function PreisePage() {
             </select>
           </div>
           <div className="flex gap-2">
-            <button onClick={() => saveEdit(item.id)} className="flex-1 bg-yellow text-anthracite font-black text-sm rounded-xl py-2">
+            <button onClick={() => saveEdit(item.id)} className="flex-1 transition-colors bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite font-black text-sm rounded-xl py-2">
               <Check size={14} className="inline mr-1" strokeWidth={3} />Speichern
             </button>
-            <button onClick={() => setEditingId(null)} className="flex-1 bg-white border-2 border-anthracite/10 text-anthracite font-bold text-sm rounded-xl py-2">
+            <button onClick={() => setEditingId(null)} className="flex-1 bg-white hover:bg-sunken border-2 border-anthracite/10 text-anthracite font-bold text-sm rounded-xl py-2 transition-colors">
               <X size={14} className="inline mr-1" />Abbrechen
             </button>
           </div>
@@ -433,7 +433,7 @@ export default function PreisePage() {
             {selectedGewerk && (
               <button
                 onClick={() => { setAdding(true); setNewItem(p => ({ ...p, title: searchQuery })) }}
-                className="bg-yellow text-anthracite font-black text-sm rounded-xl px-5 py-2.5"
+                className="transition-colors bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite font-black text-sm rounded-xl px-5 py-2.5"
               >
                 + Eigene Position erstellen
               </button>
@@ -474,7 +474,7 @@ export default function PreisePage() {
               <ArrowLeft size={16} />
               {GEWERK_META[selectedGewerk]?.label ?? selectedGewerk}
             </button>
-            <button onClick={() => setAdding(true)} className="bg-yellow rounded-xl p-2">
+            <button onClick={() => setAdding(true)} className="transition-colors bg-yellow hover:bg-yellow-600 active:bg-yellow-700 rounded-xl p-2">
               <Plus size={18} color="var(--color-anthracite)" strokeWidth={3} />
             </button>
           </div>
@@ -539,8 +539,8 @@ export default function PreisePage() {
               </select>
             </div>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setAdding(false)} className="flex-1 border-2 border-anthracite/15 rounded-xl py-3 font-bold text-anthracite text-sm">Abbrechen</button>
-              <button type="submit" className="flex-[2] bg-yellow rounded-xl py-3 font-black text-anthracite text-sm">Speichern</button>
+              <button type="button" onClick={() => setAdding(false)} className="flex-1 border-2 border-anthracite/15 hover:bg-sunken rounded-xl py-3 font-bold text-anthracite text-sm transition-colors">Abbrechen</button>
+              <button type="submit" className="flex-[2] transition-colors bg-yellow hover:bg-yellow-600 active:bg-yellow-700 rounded-xl py-3 font-black text-anthracite text-sm">Speichern</button>
             </div>
           </div>
         </form>
@@ -593,7 +593,7 @@ export default function PreisePage() {
       <div className="w-[220px] shrink-0 flex flex-col border-r border-anthracite/8 bg-white">
         {/* Header */}
         <div className="px-4 pt-5 pb-3 border-b border-anthracite/8">
-          <Link href="/einstellungen" className="text-xs font-bold text-anthracite/35 hover:text-anthracite/60">← Einstellungen</Link>
+          <Link href="/einstellungen" className="text-xs font-bold text-anthracite/35 hover:text-accent">← Einstellungen</Link>
           <div className="font-syne font-black text-anthracite text-base mt-1">Preisdatenbank</div>
         </div>
         {/* Search */}
@@ -617,7 +617,7 @@ export default function PreisePage() {
               className={`w-full flex items-center justify-between px-4 py-2.5 text-left transition-colors group
                 ${selectedGewerk === g.key
                   ? 'bg-yellow/15 border-l-[3px] border-yellow'
-                  : 'border-l-[3px] border-transparent hover:bg-bg'}`}
+                  : 'border-l-[3px] border-transparent hover:bg-sunken'}`}
             >
               <div className="flex items-center gap-2.5 min-w-0">
                 <span className="text-base shrink-0">{g.emoji}</span>
@@ -639,7 +639,7 @@ export default function PreisePage() {
           <button
             onClick={handleImport}
             disabled={importing}
-            className="w-full text-xs font-black text-anthracite/40 hover:text-anthracite/70 bg-bg rounded-xl py-2 transition-colors disabled:opacity-50"
+            className="w-full text-xs font-black text-anthracite/40 hover:text-anthracite/70 bg-bg hover:bg-sunken rounded-xl py-2 transition-colors disabled:opacity-50 disabled:hover:bg-bg"
           >
             {importing ? '...' : '↻ Standardpreise'}
           </button>
@@ -682,7 +682,7 @@ export default function PreisePage() {
             {selectedGewerk && (
               <button
                 onClick={() => { setAdding(true); setNewItem(p => ({ ...p, category: selectedGewerk })) }}
-                className="flex items-center gap-1.5 bg-yellow text-anthracite font-black text-xs px-3 py-2 rounded-xl"
+                className="flex items-center gap-1.5 transition-colors bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite font-black text-xs px-3 py-2 rounded-xl"
               >
                 <Plus size={13} strokeWidth={3} />
                 Position
@@ -727,10 +727,10 @@ export default function PreisePage() {
                 </select>
               </div>
               <div className="flex gap-2 shrink-0">
-                <button type="submit" className="bg-yellow text-anthracite font-black text-sm rounded-xl px-4 py-2">
+                <button type="submit" className="transition-colors bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite font-black text-sm rounded-xl px-4 py-2">
                   <Check size={15} strokeWidth={3} />
                 </button>
-                <button type="button" onClick={() => setAdding(false)} className="border-2 border-anthracite/10 text-anthracite font-bold text-sm rounded-xl px-3 py-2">
+                <button type="button" onClick={() => setAdding(false)} className="border-2 border-anthracite/10 hover:bg-sunken text-anthracite font-bold text-sm rounded-xl px-3 py-2 transition-colors">
                   <X size={15} />
                 </button>
               </div>
@@ -825,10 +825,10 @@ export default function PreisePage() {
             </select>
           </div>
           <div className="flex justify-end gap-1">
-            <button onClick={() => saveEdit(item.id)} className="p-1.5 bg-yellow rounded-lg">
+            <button onClick={() => saveEdit(item.id)} className="p-1.5 transition-colors bg-yellow hover:bg-yellow-600 active:bg-yellow-700 rounded-lg">
               <Check size={12} color="var(--color-anthracite)" strokeWidth={3} />
             </button>
-            <button onClick={() => setEditingId(null)} className="p-1.5 border border-anthracite/15 rounded-lg">
+            <button onClick={() => setEditingId(null)} className="p-1.5 border border-anthracite/15 hover:bg-sunken rounded-lg transition-colors">
               <X size={12} color="var(--color-anthracite)" />
             </button>
           </div>
@@ -837,7 +837,7 @@ export default function PreisePage() {
     }
     return (
       <div
-        className={`grid ${showGewerk ? 'grid-cols-[1fr_140px_100px_80px]' : 'grid-cols-[1fr_120px_80px_80px]'} gap-0 px-4 py-2.5 border-b border-anthracite/5 last:border-0 items-center hover:bg-bg group ${item.ist_erschwerniszuschlag ? 'bg-amber-50/30' : ''}`}
+        className={`grid ${showGewerk ? 'grid-cols-[1fr_140px_100px_80px]' : 'grid-cols-[1fr_120px_80px_80px]'} gap-0 px-4 py-2.5 border-b border-anthracite/5 last:border-0 items-center hover:bg-sunken group ${item.ist_erschwerniszuschlag ? 'bg-amber-50/30' : ''}`}
       >
         <div className="flex items-center gap-1.5 min-w-0 pr-2">
           {item.ist_erschwerniszuschlag && <span className="text-xs shrink-0">⚡</span>}

@@ -86,7 +86,7 @@ export default function NeuerKundePage() {
         <button
           onClick={handleSave}
           disabled={saving || !kontakt.name.trim()}
-          className="w-full bg-yellow text-anthracite font-black text-lg rounded-2xl py-4 disabled:opacity-40 transition-opacity"
+          className="w-full bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow text-anthracite font-black text-lg rounded-2xl py-4 disabled:opacity-40 transition-all"
         >
           {saving ? 'Speichert…' : 'Kunde anlegen'}
         </button>

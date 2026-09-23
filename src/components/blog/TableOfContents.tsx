@@ -42,7 +42,7 @@ export function TableOfContentsSidebar({ headings }: { headings: Heading[] }) {
             className={`text-sm leading-snug py-1 pl-3 border-l-2 transition-colors ${
               activeId === h.id
                 ? 'border-yellow text-yellow font-bold'
-                : 'border-transparent text-anthracite/40 hover:text-anthracite/70 hover:border-anthracite/20'
+                : 'border-transparent text-anthracite/40 hover:text-accent hover:border-anthracite/20'
             }`}
           >
             {h.text}
@@ -60,7 +60,7 @@ export function TableOfContentsSidebar({ headings }: { headings: Heading[] }) {
         </p>
         <a
           href="/register"
-          className="block w-full text-center bg-yellow text-anthracite font-extrabold text-sm py-2.5 rounded-lg hover:bg-[#e6b800] transition-colors"
+          className="block w-full text-center bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite font-extrabold text-sm py-2.5 rounded-lg transition-colors"
         >
           Kostenlos testen →
         </a>
@@ -78,7 +78,7 @@ export function TableOfContentsMobile({ headings }: { headings: Heading[] }) {
     <div className="border border-anthracite/10 rounded-xl mb-8 overflow-hidden">
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-bg"
+        className="w-full flex items-center justify-between px-4 py-3 bg-bg hover:bg-sunken transition-colors"
       >
         <span className="text-[10px] font-extrabold text-anthracite/40 uppercase tracking-widest">Inhalt</span>
         <ChevronDown
@@ -94,7 +94,7 @@ export function TableOfContentsMobile({ headings }: { headings: Heading[] }) {
               key={h.id}
               href={`#${h.id}`}
               onClick={() => setOpen(false)}
-              className="text-sm text-anthracite/60 hover:text-anthracite font-medium"
+              className="text-sm text-anthracite/60 hover:text-accent font-medium"
             >
               → {h.text}
             </a>

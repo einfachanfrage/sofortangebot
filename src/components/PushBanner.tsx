@@ -94,7 +94,7 @@ export function PushBanner({ onClose, onGranted }: Props) {
         <button
           onClick={close}
           aria-label="Schließen"
-          className="absolute top-4 right-4 p-2 rounded-full bg-bg text-anthracite/40"
+          className="absolute top-4 right-4 p-2 rounded-full bg-bg hover:bg-sunken text-anthracite/40 transition-colors"
         >
           <X size={18} />
         </button>
@@ -145,7 +145,7 @@ export function PushBanner({ onClose, onGranted }: Props) {
                   </p>
                   <button
                     onClick={close}
-                    className="w-full border-2 border-anthracite/15 text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
+                    className="w-full border-2 border-anthracite/15 hover:bg-sunken text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px] transition-colors"
                   >
                     Schließen
                   </button>
@@ -161,7 +161,7 @@ export function PushBanner({ onClose, onGranted }: Props) {
                   </button>
                   <button
                     onClick={close}
-                    className="w-full border-2 border-anthracite/15 text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
+                    className="w-full border-2 border-anthracite/15 hover:bg-sunken text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px] transition-colors"
                   >
                     Vielleicht später
                   </button>

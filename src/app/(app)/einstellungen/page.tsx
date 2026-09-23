@@ -335,7 +335,7 @@ export default function EinstellungenPage() {
             ) : (
               <button type="button" onClick={() => logoInputRef.current?.click()}
                 disabled={logoUploading}
-                className="w-full border-2 border-dashed border-anthracite/20 rounded-xl p-6 flex flex-col items-center gap-2 hover:border-yellow transition-colors disabled:opacity-50">
+                className="w-full border-2 border-dashed border-anthracite/20 hover:bg-sunken rounded-xl p-6 flex flex-col items-center gap-2 hover:border-yellow transition-colors disabled:opacity-50 disabled:hover:bg-transparent">
                 {logoUploading
                   ? <Loader2 size={24} color="var(--color-yellow)" className="animate-spin" />
                   : <Upload size={24} color="var(--color-anthracite)" strokeWidth={1.5} className="opacity-30" />
@@ -382,7 +382,7 @@ export default function EinstellungenPage() {
 
         {/* Save Button */}
         <button type="submit" disabled={saving}
-          className="w-full md:max-w-xs bg-yellow text-anthracite font-black text-lg rounded-2xl py-4 active:translate-y-px transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+          className="w-full md:max-w-xs bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow text-anthracite font-black text-lg rounded-2xl py-4 active:translate-y-px transition-all disabled:opacity-50 flex items-center justify-center gap-2">
           {saved
             ? <><Check size={18} strokeWidth={3} /> Gespeichert</>
             : saving ? 'Speichert…' : 'Speichern'
@@ -873,7 +873,7 @@ export default function EinstellungenPage() {
 
         <div className="flex flex-col gap-3">
           <Link href="/preise"
-            className="flex items-center justify-between w-full bg-white border-2 border-anthracite/10 rounded-xl px-4 py-4 hover:border-yellow/50 transition-colors group">
+            className="flex items-center justify-between w-full bg-white hover:bg-sunken border-2 border-anthracite/10 rounded-xl px-4 py-4 hover:border-yellow/50 transition-colors group">
             <div>
               <span className="font-bold text-anthracite">Preisdatenbank</span>
               <div className="text-xs text-anthracite/40 font-semibold mt-0.5">Stunden- und Einheitspreise verwalten</div>
@@ -881,7 +881,7 @@ export default function EinstellungenPage() {
             <ExternalLink size={16} className="text-anthracite/30 group-hover:text-anthracite/60" />
           </Link>
           <Link href="/einstellungen/nummern"
-            className="flex items-center justify-between w-full bg-white border-2 border-anthracite/10 rounded-xl px-4 py-4 hover:border-yellow/50 transition-colors group">
+            className="flex items-center justify-between w-full bg-white hover:bg-sunken border-2 border-anthracite/10 rounded-xl px-4 py-4 hover:border-yellow/50 transition-colors group">
             <div>
               <span className="font-bold text-anthracite">Angebotsnummern</span>
               <div className="text-xs text-anthracite/40 font-semibold mt-0.5">GoBD-konform · Präfix, Format, Jahreswechsel</div>
@@ -889,7 +889,7 @@ export default function EinstellungenPage() {
             <ExternalLink size={16} className="text-anthracite/30 group-hover:text-anthracite/60" />
           </Link>
           <Link href="/einstellungen/briefpapier"
-            className="flex items-center justify-between w-full bg-white border-2 border-anthracite/10 rounded-xl px-4 py-4 hover:border-yellow/50 transition-colors group">
+            className="flex items-center justify-between w-full bg-white hover:bg-sunken border-2 border-anthracite/10 rounded-xl px-4 py-4 hover:border-yellow/50 transition-colors group">
             <div>
               <span className="font-bold text-anthracite">Briefpapier & Design</span>
               <div className="text-xs text-anthracite/40 font-semibold mt-0.5">Varianten, Farben, Logo, Fußzeile</div>
@@ -899,7 +899,7 @@ export default function EinstellungenPage() {
         </div>
 
         <button type="submit" disabled={saving}
-          className="w-full md:max-w-xs bg-yellow text-anthracite font-black text-lg rounded-2xl py-4 active:translate-y-px transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+          className="w-full md:max-w-xs bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow text-anthracite font-black text-lg rounded-2xl py-4 active:translate-y-px transition-all disabled:opacity-50 flex items-center justify-center gap-2">
           {saved
             ? <><Check size={18} strokeWidth={3} /> Gespeichert</>
             : saving ? 'Speichert…' : 'Speichern'
@@ -916,7 +916,7 @@ export default function EinstellungenPage() {
           <button
             type="button"
             onClick={() => setShowPwaSheet(true)}
-            className="flex items-center justify-between w-full bg-white border-2 border-anthracite/10 rounded-xl px-4 py-4 hover:border-yellow/50 transition-colors group text-left"
+            className="flex items-center justify-between w-full bg-white hover:bg-sunken border-2 border-anthracite/10 rounded-xl px-4 py-4 hover:border-yellow/50 transition-colors group text-left"
           >
             <div className="flex items-center gap-3">
               <Smartphone size={18} className="text-anthracite/40" />
@@ -938,7 +938,7 @@ export default function EinstellungenPage() {
                 if (pushPermission === 'granted') return
                 setShowPushBanner(true)
               }}
-              className="flex items-center justify-between w-full bg-white border-2 border-anthracite/10 rounded-xl px-4 py-4 hover:border-yellow/50 transition-colors group text-left"
+              className="flex items-center justify-between w-full bg-white hover:bg-sunken border-2 border-anthracite/10 rounded-xl px-4 py-4 hover:border-yellow/50 transition-colors group text-left"
             >
               <div className="flex items-center gap-3">
                 <Bell size={18} className="text-anthracite/40" />
@@ -975,7 +975,7 @@ export default function EinstellungenPage() {
             den Moment verpasst hat, fand danach nichts mehr: kein
             Plan-Wechsel, keine Rechnungen, keine Zahlungsart. */}
         <Link href="/einstellungen/abo"
-          className="flex items-center justify-between w-full bg-white border-2 border-anthracite/10 rounded-xl px-4 py-4 hover:border-yellow/50 transition-colors group mb-3">
+          className="flex items-center justify-between w-full bg-white hover:bg-sunken border-2 border-anthracite/10 rounded-xl px-4 py-4 hover:border-yellow/50 transition-colors group mb-3">
           <div>
             <span className="font-bold text-anthracite">Abo & Rechnungen</span>
             <div className="text-xs text-anthracite/40 font-semibold mt-0.5">Plan, Rechnungshistorie, Zahlungsart</div>
@@ -983,7 +983,7 @@ export default function EinstellungenPage() {
           <ExternalLink size={16} className="text-anthracite/30 group-hover:text-anthracite/60" />
         </Link>
         <Link href="/einstellungen/integrationen"
-          className="flex items-center justify-between w-full bg-white border-2 border-anthracite/10 rounded-xl px-4 py-4 hover:border-yellow/50 transition-colors group">
+          className="flex items-center justify-between w-full bg-white hover:bg-sunken border-2 border-anthracite/10 rounded-xl px-4 py-4 hover:border-yellow/50 transition-colors group">
           <div>
             <span className="font-bold text-anthracite text-sm block">Buchhaltung verbinden</span>
             <div className="text-xs text-anthracite/40 font-semibold mt-0.5">Lexoffice, sevDesk & mehr</div>

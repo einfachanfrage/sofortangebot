@@ -296,7 +296,7 @@ export default function NummernPage() {
           {showAudit && (
             <div>
               <div className="flex justify-end px-4 pb-3">
-                <button onClick={exportCsv} className="flex items-center gap-1.5 text-xs font-semibold text-anthracite/50 border border-anthracite/10 rounded-xl px-3 py-1.5">
+                <button onClick={exportCsv} className="flex items-center gap-1.5 text-xs font-semibold text-anthracite/50 border border-anthracite/10 hover:bg-sunken rounded-xl px-3 py-1.5 transition-colors">
                   <Download size={12} /> CSV exportieren
                 </button>
               </div>

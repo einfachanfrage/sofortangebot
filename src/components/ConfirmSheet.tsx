@@ -41,14 +41,14 @@ export function ConfirmSheet({
           <button
             onClick={onConfirm}
             className={`w-full rounded-2xl py-4 font-extrabold text-[16px] active:translate-y-px transition-all ${
-              destructive ? 'bg-red-500 text-white' : 'bg-yellow text-anthracite'
+              destructive ? 'bg-red-500 text-white' : 'bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite'
             }`}
           >
             {confirmLabel}
           </button>
           <button
             onClick={onCancel}
-            className="w-full border-2 border-anthracite/15 text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
+            className="w-full border-2 border-anthracite/15 hover:bg-sunken text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px] transition-colors"
           >
             {cancelLabel}
           </button>

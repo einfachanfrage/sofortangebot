@@ -164,7 +164,7 @@ export default function RegisterPage() {
           </div>
           <span className="text-sm font-semibold text-anthracite/70 leading-snug">
             Ich habe die{' '}
-            <Link href="/agb" target="_blank" className="text-anthracite underline underline-offset-2">
+            <Link href="/agb" target="_blank" className="text-anthracite underline underline-offset-2 hover:text-accent transition-colors">
               AGB
             </Link>{' '}
             gelesen und akzeptiere sie.
@@ -173,7 +173,7 @@ export default function RegisterPage() {
 
         <p className="text-xs font-semibold text-anthracite/50 leading-snug -mt-1">
           Informationen zur Verarbeitung deiner Daten findest du in unserer{' '}
-          <Link href="/datenschutz" target="_blank" className="text-anthracite/70 underline underline-offset-2">
+          <Link href="/datenschutz" target="_blank" className="text-anthracite/70 underline underline-offset-2 hover:text-accent transition-colors">
             Datenschutzerklärung
           </Link>.
         </p>
@@ -187,7 +187,7 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-yellow text-anthracite font-black text-lg rounded-xl py-4 mt-2 active:translate-y-px transition-transform disabled:opacity-50"
+          className="w-full bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow text-anthracite font-black text-lg rounded-xl py-4 mt-2 active:translate-y-px transition-all disabled:opacity-50"
         >
           {loading ? 'Einen Moment...' : 'Loslegen'}
         </button>
@@ -195,7 +195,7 @@ export default function RegisterPage() {
 
       <p className="text-center text-anthracite mt-8 font-semibold">
         Schon dabei?{' '}
-        <Link href="/login" className="text-yellow underline">
+        <Link href="/login" className="text-anthracite underline hover:text-accent transition-colors">
           Einloggen
         </Link>
       </p>

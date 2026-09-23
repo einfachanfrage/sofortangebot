@@ -31,7 +31,7 @@ export default function ImpressumPage() {
             <h2 className="font-black text-anthracite text-lg mb-2">Kontakt</h2>
             <p className="font-semibold leading-relaxed">
               Telefon: +49 151 20791652<br />
-              E-Mail: <a href="mailto:hallo@sofortangebot.app" className="text-yellow underline">hallo@sofortangebot.app</a>
+              E-Mail: <a href="mailto:hallo@sofortangebot.app" className="text-anthracite underline hover:text-accent transition-colors">hallo@sofortangebot.app</a>
             </p>
           </section>
 
@@ -101,7 +101,7 @@ export default function ImpressumPage() {
       <footer className="border-t border-anthracite/8 px-6 py-6 flex items-center justify-between">
         <Logo variant="light" className="text-sm" />
         <div className="flex gap-4 text-anthracite/30 text-xs font-semibold">
-          <Link href="/impressum" className="text-anthracite">Impressum</Link>
+          <Link href="/impressum" className="text-anthracite hover:text-accent transition-colors">Impressum</Link>
           <Link href="/datenschutz">Datenschutz</Link>
           <Link href="/agb">AGB</Link>
         </div>

@@ -31,6 +31,21 @@
   --color-yellow-500: #D9A400;
   --color-yellow-600: #BF9000;
   --color-yellow-700: #A67C00;
+
+  /* DC-147 (23.09.2026): die zwei semantischen Rollen aus CI-Handbuch S. 05,
+     die der Hover-Regel auf S. 10 zugrunde liegen ("Neutrale Flaechen nehmen
+     --surface-sunken an. Links gehen von Anthrazit auf --text-accent.") und
+     als einzige noch nicht im Code standen.
+     bg-sunken   = --surface-sunken (Off-White 100) — Hover neutraler Flaechen,
+                   eingelassene Felder. NICHT die Seitenfarbe (das ist bg-bg).
+     text-accent = --text-accent — Link-Hover und akzentuierter Text auf hell.
+                   Wertgleich mit Gelb 700, aber eigene Rolle: Gelb 700 ist der
+                   PRESS-Ton einer gelben Flaeche, text-accent ist Textfarbe.
+                   Getrennte Namen, damit eine spaetere Aenderung nur eine Rolle
+                   trifft (Handbuch S. 05, "nie der rohe Farbwert").
+     bg-accent gibt es bewusst nicht — die gelbe Flaeche heisst bg-yellow. */
+  --color-sunken: #F1F1EE;
+  --color-accent: #A67C00;
 }
 
 * {

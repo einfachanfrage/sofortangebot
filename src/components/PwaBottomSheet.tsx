@@ -55,7 +55,7 @@ export function PwaBottomSheet({ onClose }: Props) {
 
         <button
           onClick={close}
-          className="absolute top-4 right-4 p-2 rounded-full bg-bg text-anthracite/40 hover:text-anthracite"
+          className="absolute top-4 right-4 p-2 rounded-full bg-bg hover:bg-sunken text-anthracite/40 hover:text-anthracite transition-colors"
         >
           <X size={18} />
         </button>

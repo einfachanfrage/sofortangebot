@@ -63,7 +63,7 @@ export default function ApiStatusPage() {
   return (
     <div className="min-h-dvh bg-bg pb-24">
       <div className="bg-white border-b border-anthracite/8 px-4 pt-10 pb-4 flex items-center gap-3">
-        <Link href="/dashboard" className="text-anthracite/40"><ArrowLeft size={20} /></Link>
+        <Link href="/dashboard" className="text-anthracite/40 hover:text-accent transition-colors"><ArrowLeft size={20} /></Link>
         <h1 className="text-lg font-black text-anthracite flex-1">API-Status</h1>
         <button
           onClick={runTest}

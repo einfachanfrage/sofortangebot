@@ -145,7 +145,7 @@ export default function AgbPage() {
           <Link href="/impressum">Impressum</Link>
           <Link href="/datenschutz">Datenschutz</Link>
           <Link href="/avv">AVV</Link>
-          <Link href="/agb" className="text-anthracite">AGB</Link>
+          <Link href="/agb" className="text-anthracite hover:text-accent transition-colors">AGB</Link>
         </div>
       </footer>
     </div>

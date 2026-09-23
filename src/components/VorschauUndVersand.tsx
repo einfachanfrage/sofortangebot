@@ -675,7 +675,7 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
                         onClick={() => handleExport(int.id, int.label)}
                         disabled={isExporting}
                         className={`w-full flex items-center gap-3 rounded-xl px-4 py-3.5 border font-semibold text-sm transition-colors disabled:opacity-50 ${
-                          isExported ? 'border-green-200 bg-green-50 text-green-800' : 'border-gray-200 text-anthracite hover:bg-gray-50'
+                          isExported ? 'border-green-200 bg-green-50 text-green-800' : 'border-gray-200 text-anthracite hover:bg-sunken'
                         }`}
                       >
                         <span className="font-black text-anthracite/35 text-xs w-[20px] text-center flex-shrink-0">{int.short}</span>

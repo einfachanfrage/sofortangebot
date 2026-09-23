@@ -2174,7 +2174,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               </button>
             ) : (
               <button onClick={() => saveEdits()} disabled={speichernGesperrt}
-                className={`flex items-center gap-1.5 rounded-xl px-3 py-2 font-black text-sm transition-colors ${hasChanges ? 'bg-yellow text-anthracite' : 'bg-white/10 text-white/60'}`}>
+                className={`flex items-center gap-1.5 rounded-xl px-3 py-2 font-black text-sm transition-colors ${hasChanges ? 'bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow text-anthracite' : 'bg-white/10 text-white/60'}`}>
                 {saving ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} strokeWidth={3} />}
                 {speichernLabel}
               </button>
@@ -2324,7 +2324,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 )}
               </div>
               <button onClick={() => addHintItem(hint)}
-                className="bg-yellow text-anthracite font-black text-xs px-3 py-1.5 rounded-xl shrink-0">
+                className="transition-colors bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite font-black text-xs px-3 py-1.5 rounded-xl shrink-0">
                 + Hinzufügen
               </button>
               <button onClick={() => setDismissedHints(prev => new Set([...prev, hint.empfehlung_title]))}
@@ -2357,7 +2357,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             <div className="bg-white rounded-2xl p-4 border border-anthracite/5">
               <div className="flex items-center justify-between mb-2">
                 <div className="text-xs font-bold text-anthracite/40 uppercase tracking-wide">Kunde</div>
-                <button onClick={() => setShowKundenSuche(v => !v)} className={`text-xs font-bold px-2.5 py-1 rounded-full transition-colors ${currentCustomer ? 'text-yellow' : 'bg-yellow text-anthracite hover:bg-[#D4A800]'}`}>
+                <button onClick={() => setShowKundenSuche(v => !v)} className={`text-xs font-bold px-2.5 py-1 rounded-full transition-colors ${currentCustomer ? 'text-yellow' : 'bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite'}`}>
                   {currentCustomer ? 'Ändern' : '+ Kunde'}
                 </button>
               </div>
@@ -2378,7 +2378,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           <div className="px-3 py-1.5 text-[10px] font-black text-anthracite/30 uppercase tracking-wide bg-bg">Meine Kunden</div>
                           {kundenListe.map(k => (
                             <button key={k.id} onClick={() => handleKundeZuweisen(k)}
-                              className="w-full text-left px-3 py-2.5 text-sm font-semibold hover:bg-bg border-b border-anthracite/5 last:border-0">
+                              className="w-full text-left px-3 py-2.5 text-sm font-semibold hover:bg-sunken border-b border-anthracite/5 last:border-0">
                               <div className="font-bold text-anthracite">{k.name}</div>
                               {k.address && <div className="text-xs text-anthracite/40 truncate">{k.address.split('\n')[0]}</div>}
                             </button>
@@ -2390,7 +2390,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                           <div className="px-3 py-1.5 text-[10px] font-black text-[#003DA5]/60 uppercase tracking-wide bg-[#003DA5]/5">Lexware Office</div>
                           {lexwareKontakte.map(k => (
                             <button key={k.id} onClick={() => handleLexwareKontaktImportieren(k)}
-                              className="w-full text-left px-3 py-2.5 text-sm font-semibold hover:bg-bg border-b border-anthracite/5 last:border-0">
+                              className="w-full text-left px-3 py-2.5 text-sm font-semibold hover:bg-sunken border-b border-anthracite/5 last:border-0">
                               <div className="font-bold text-anthracite">{k.name}</div>
                               {k.address && <div className="text-xs text-anthracite/40 truncate">{k.address.split('\n')[0]}</div>}
                               <div className="text-[10px] text-[#003DA5]/60 font-bold mt-0.5">Importieren & zuweisen</div>
@@ -2424,7 +2424,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                   <div className="font-black text-anthracite">{currentCustomer.name}</div>
                   {currentCustomer.address && <div className="text-sm text-anthracite/60 font-semibold">{currentCustomer.address}</div>}
                   {currentCustomer.phone && (
-                    <a href={`tel:${currentCustomer.phone}`} className="flex items-center gap-2 text-sm text-anthracite font-semibold mt-1">
+                    <a href={`tel:${currentCustomer.phone}`} className="flex items-center gap-2 text-sm text-anthracite font-semibold mt-1 hover:text-accent transition-colors">
                       <Phone size={14} className="text-yellow" />{currentCustomer.phone}
                     </a>
                   )}
@@ -2438,7 +2438,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                     return (
                       <button
                         onClick={() => setShowBaustelleSheet(true)}
-                        className="mt-2 w-full flex items-center gap-1.5 bg-bg border border-anthracite/10 rounded-xl px-3 py-2 text-xs font-bold text-anthracite text-left"
+                        className="mt-2 w-full flex items-center gap-1.5 bg-bg hover:bg-sunken border border-anthracite/10 rounded-xl px-3 py-2 text-xs font-bold text-anthracite text-left transition-colors"
                       >
                         <span>🏗️</span>
                         <span>{aktuelle?.name ?? 'Baustelle wählen'}</span>
@@ -2473,7 +2473,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                       </button>
                       <button
                         onClick={() => { setShowKundenSuche(true); setKundenSucheQuery('') }}
-                        className="text-xs font-bold px-2.5 py-1.5 rounded-full border border-anthracite/15 text-anthracite/60"
+                        className="text-xs font-bold px-2.5 py-1.5 rounded-full border border-anthracite/15 hover:bg-sunken text-anthracite/60 transition-colors"
                       >
                         Anderer Kunde
                       </button>
@@ -2515,21 +2515,21 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 <div className="border-t border-b border-anthracite/5 grid grid-cols-3">
                   <Link
                     href={`/angebot/${quote.id}/entwurf`}
-                    className="flex flex-col items-center gap-1 py-3 text-anthracite/40 hover:text-anthracite/70 hover:bg-bg transition-colors"
+                    className="flex flex-col items-center gap-1 py-3 text-anthracite/40 hover:text-accent hover:bg-sunken transition-colors"
                   >
                     <Mic size={16} strokeWidth={2.5} />
                     <span className="text-[11px] font-black">Aufnahme</span>
                   </Link>
                   <button
                     onClick={addEditItem}
-                    className="flex flex-col items-center gap-1 py-3 text-anthracite/40 hover:text-anthracite/70 hover:bg-bg transition-colors border-x border-anthracite/5"
+                    className="flex flex-col items-center gap-1 py-3 text-anthracite/40 hover:text-anthracite/70 hover:bg-sunken transition-colors border-x border-anthracite/5"
                   >
                     <Plus size={16} strokeWidth={2.5} />
                     <span className="text-[11px] font-black">Position</span>
                   </button>
                   <button
                     onClick={() => setShowRaumPicker(true)}
-                    className="flex flex-col items-center gap-1 py-3 text-anthracite/40 hover:text-anthracite/70 hover:bg-bg transition-colors"
+                    className="flex flex-col items-center gap-1 py-3 text-anthracite/40 hover:text-anthracite/70 hover:bg-sunken transition-colors"
                   >
                     <span className="text-[15px] leading-none">🏠</span>
                     <span className="text-[11px] font-black">Raum</span>
@@ -2920,7 +2920,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={photoUploading}
-                className="flex items-center gap-2 bg-yellow text-anthracite font-black text-sm px-4 py-2 rounded-xl disabled:opacity-50"
+                className="flex items-center gap-2 transition-colors bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow text-anthracite font-black text-sm px-4 py-2 rounded-xl disabled:opacity-50"
               >
                 {photoUploading ? <Loader2 size={16} className="animate-spin" /> : <Camera size={16} strokeWidth={2.5} />}
                 {photoUploading ? 'Lädt...' : 'Foto hinzufügen'}
@@ -2948,7 +2948,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             {!photosLoading && photos.length === 0 && (
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full border-2 border-dashed border-anthracite/15 rounded-2xl py-10 flex flex-col items-center gap-3 text-anthracite/30 hover:border-yellow/50 transition-colors"
+                className="w-full border-2 border-dashed border-anthracite/15 hover:bg-sunken rounded-2xl py-10 flex flex-col items-center gap-3 text-anthracite/30 hover:border-yellow/50 transition-colors"
               >
                 <ImageIcon size={32} strokeWidth={1.5} />
                 <span className="font-bold text-sm">Fotos vom Aufmaß hinzufügen</span>
@@ -2980,7 +2980,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
                 ))}
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="aspect-square rounded-xl border-2 border-dashed border-anthracite/15 flex items-center justify-center text-anthracite/20 hover:border-yellow/50 transition-colors"
+                  className="aspect-square rounded-xl border-2 border-dashed border-anthracite/15 hover:bg-sunken flex items-center justify-center text-anthracite/20 hover:border-yellow/50 transition-colors"
                 >
                   <Plus size={24} strokeWidth={1.5} />
                 </button>
@@ -3066,7 +3066,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             <div className="flex gap-2">
               <button
                 onClick={() => setPendingPhotoFile(null)}
-                className="flex-1 py-3 rounded-xl bg-bg text-anthracite/60 font-semibold text-sm"
+                className="flex-1 py-3 rounded-xl bg-bg hover:bg-sunken text-anthracite/60 font-semibold text-sm transition-colors"
               >
                 Abbrechen
               </button>
@@ -3094,7 +3094,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             <div className="flex gap-2">
               <button
                 onClick={() => { setEditMode(false); setEditItems(quote.items); setEditingItemId(null); setHasChanges(false) }}
-                className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white text-anthracite/60 font-semibold text-sm border border-anthracite/10 shrink-0"
+                className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white hover:bg-sunken text-anthracite/60 font-semibold text-sm border border-anthracite/10 shrink-0 transition-colors"
               >
                 Abbrechen
               </button>
@@ -3131,14 +3131,14 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             {DRAFT_STATUSES.includes(currentStatus) || currentStatus === 'bereit' ? (
               <button
                 onClick={handleEditClick}
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-bg text-anthracite font-semibold text-sm border border-anthracite/10 shrink-0"
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-bg hover:bg-sunken text-anthracite font-semibold text-sm border border-anthracite/10 shrink-0 transition-colors"
               >
                 <Pencil size={14} strokeWidth={2.5} /> Bearbeiten
               </button>
             ) : null}
             <button
               onClick={() => { setVorschauInitialTab('vorschau'); setShowVorschau(true) }}
-              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-bg text-anthracite font-semibold text-sm border border-anthracite/10"
+              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-bg hover:bg-sunken text-anthracite font-semibold text-sm border border-anthracite/10 transition-colors"
             >
               <FileText size={15} strokeWidth={2} /> Vorschau
             </button>
@@ -3213,13 +3213,13 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             <div className="flex gap-3">
               <button
                 onClick={() => beantworteRechenwegUndDownload(false)}
-                className="flex-1 border-2 border-anthracite/15 text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px]"
+                className="flex-1 border-2 border-anthracite/15 hover:bg-sunken text-anthracite/60 rounded-2xl py-3.5 font-extrabold text-[14px] transition-colors"
               >
                 Nein
               </button>
               <button
                 onClick={() => beantworteRechenwegUndDownload(true)}
-                className="flex-1 bg-yellow text-anthracite rounded-2xl py-3.5 font-extrabold text-[14px] active:translate-y-px transition-all"
+                className="flex-1 bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite rounded-2xl py-3.5 font-extrabold text-[14px] active:translate-y-px transition-all"
               >
                 Ja
               </button>
@@ -3250,7 +3250,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
           icon: React.ReactNode; label: string; onClick?: () => void; href?: string; danger?: boolean
         }) => {
           const cls = `flex items-center gap-3 w-full text-left rounded-xl px-4 py-3.5 font-bold text-sm transition-colors ${
-            danger ? 'text-red-500 hover:bg-red-50' : 'text-anthracite hover:bg-bg'
+            danger ? 'text-red-500 hover:bg-red-50' : 'text-anthracite hover:bg-sunken'
           }`
           const inhalt = <><span className={danger ? 'text-red-400' : 'text-anthracite/35'}>{icon}</span>{label}</>
           return href
@@ -3426,7 +3426,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
             </p>
 
             <button onClick={speichereOptionen} disabled={optSaving}
-              className="w-full bg-yellow text-anthracite rounded-2xl py-3.5 font-extrabold text-[15px] flex items-center justify-center gap-2 disabled:opacity-50">
+              className="w-full transition-colors bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow text-anthracite rounded-2xl py-3.5 font-extrabold text-[15px] flex items-center justify-center gap-2 disabled:opacity-50">
               {optSaving ? <><Loader2 size={16} className="animate-spin" /> Speichert…</> : <><Check size={16} strokeWidth={3} /> Speichern</>}
             </button>
           </div>
@@ -3495,7 +3495,7 @@ export default function AngebotDetail({ quote, company, quoteNumber }: Props) {
               type="button"
               onClick={() => void addMissingDatabasePrice()}
               disabled={addingDatabasePrice}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-yellow py-3 font-black text-anthracite disabled:opacity-50"
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl transition-colors bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow py-3 font-black text-anthracite disabled:opacity-50"
             >
               {addingDatabasePrice ? <><Loader2 size={17} className="animate-spin" /> Speichert…</> : <><Check size={17} strokeWidth={3} /> Preis anlegen & übernehmen</>}
             </button>

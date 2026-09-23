@@ -57,14 +57,14 @@ export default function AvatarSheet({ initial, name, plan }: Props) {
               <Link
                 href="/einstellungen"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-3 bg-bg rounded-2xl px-4 py-3.5"
+                className="flex items-center gap-3 bg-bg hover:bg-sunken rounded-2xl px-4 py-3.5 transition-colors"
               >
                 <Settings size={18} className="text-anthracite/50" />
                 <span className="font-black text-anthracite text-[15px]">Einstellungen</span>
               </Link>
               <button
                 onClick={handleSignOut}
-                className="flex items-center gap-3 bg-bg rounded-2xl px-4 py-3.5 w-full text-left"
+                className="flex items-center gap-3 bg-bg hover:bg-sunken rounded-2xl px-4 py-3.5 w-full text-left transition-colors"
               >
                 <LogOut size={18} className="text-red-500" />
                 <span className="font-black text-red-500 text-[15px]">Abmelden</span>

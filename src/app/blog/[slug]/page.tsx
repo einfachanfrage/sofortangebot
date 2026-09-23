@@ -88,7 +88,7 @@ function InlineCTA() {
       </p>
       <Link
         href="/register"
-        className="inline-flex items-center gap-2 bg-yellow text-anthracite font-extrabold text-sm px-5 py-2.5 rounded-lg hover:bg-[#e6b800] transition-colors"
+        className="inline-flex items-center gap-2 bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite font-extrabold text-sm px-5 py-2.5 rounded-lg transition-colors"
       >
         <Mic size={14} strokeWidth={2.5} />
         Kostenlos testen →
@@ -138,9 +138,9 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
         <div className="max-w-6xl mx-auto px-5 md:px-10 py-8">
           {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-[13px] text-anthracite/40 font-medium mb-6">
-            <Link href="/" className="hover:text-anthracite/70">Startseite</Link>
+            <Link href="/" className="hover:text-accent">Startseite</Link>
             <span>›</span>
-            <Link href="/blog" className="hover:text-anthracite/70">Blog</Link>
+            <Link href="/blog" className="hover:text-accent">Blog</Link>
             <span>›</span>
             <span className="text-anthracite/60 truncate max-w-[200px]">{fm.title}</span>
           </div>
@@ -195,7 +195,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                           <span className="text-xs font-bold px-2 py-0.5 rounded-full mb-2 inline-block" style={{ color: rm.color, background: rm.bg }}>
                             {p.kategorie}
                           </span>
-                          <div className="font-extrabold text-anthracite text-sm leading-snug group-hover:text-yellow transition-colors">
+                          <div className="font-extrabold text-anthracite text-sm leading-snug group-hover:text-accent transition-colors">
                             {p.title}
                           </div>
                         </Link>

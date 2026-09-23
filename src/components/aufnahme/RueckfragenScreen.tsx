@@ -619,13 +619,13 @@ function VorschlagKarte({
       <div className="flex gap-2">
         <button
           onClick={onStimmt}
-          className="flex-1 bg-yellow text-anthracite font-extrabold text-sm rounded-xl py-2.5 active:translate-y-px transition-transform"
+          className="flex-1 bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite font-extrabold text-sm rounded-xl py-2.5 active:translate-y-px transition-all"
         >
           Stimmt ✓
         </button>
         <button
           onClick={onKorrigieren}
-          className="flex-1 bg-white border-2 border-anthracite/15 text-anthracite/60 font-extrabold text-sm rounded-xl py-2.5 active:translate-y-px transition-transform"
+          className="flex-1 bg-white hover:bg-sunken border-2 border-anthracite/15 text-anthracite/60 font-extrabold text-sm rounded-xl py-2.5 active:translate-y-px transition-all"
         >
           Korrigieren
         </button>

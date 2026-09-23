@@ -267,7 +267,7 @@ function BriefpapierEditorInner() {
           </div>
 
           {/* Firmeninfo — zentral aus dem Betrieb */}
-          <Link href="/einstellungen" className="block bg-white rounded-2xl shadow-sm border border-anthracite/5 px-5 py-4 hover:border-yellow/50 transition-colors">
+          <Link href="/einstellungen" className="block bg-white hover:bg-sunken rounded-2xl shadow-sm border border-anthracite/5 px-5 py-4 hover:border-yellow/50 transition-colors">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
                 <div className="text-xs font-black text-anthracite/50 uppercase tracking-wider mb-1">Firmenangaben</div>
@@ -305,13 +305,13 @@ function BriefpapierEditorInner() {
                 </div>
                 <button
                   onClick={() => setField('logo_url', null)}
-                  className="w-full bg-bg rounded-xl py-2.5 text-xs font-black text-anthracite"
+                  className="w-full bg-bg hover:bg-sunken rounded-xl py-2.5 text-xs font-black text-anthracite transition-colors"
                 >
                   Stattdessen das Firmenlogo verwenden
                 </button>
               </div>
             ) : (
-              <Link href="/einstellungen" className="block bg-bg rounded-xl px-4 py-3 hover:bg-[#FFF9E6] transition-colors">
+              <Link href="/einstellungen" className="block bg-bg rounded-xl px-4 py-3 hover:bg-sunken transition-colors">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
                     {company?.logo_url ? (
@@ -411,7 +411,7 @@ function BriefpapierEditorInner() {
                     const empty = fields.find(f => !bp[f])
                     if (empty) setField(empty, chip)
                   }}
-                  className="text-[10px] font-semibold bg-bg border border-anthracite/10 rounded-full px-2.5 py-1 text-anthracite/60"
+                  className="text-[10px] font-semibold bg-bg hover:bg-sunken border border-anthracite/10 rounded-full px-2.5 py-1 text-anthracite/60 transition-colors"
                 >
                   + {chip}
                 </button>

@@ -56,7 +56,7 @@ export default function LoginPage() {
             className="w-full bg-white border-2 border-anthracite rounded-xl px-4 py-3 text-anthracite font-semibold text-base focus:outline-none focus:border-yellow"
           />
           <div className="text-right mt-1.5">
-            <Link href="/passwort-vergessen" className="text-sm font-semibold text-anthracite/40 hover:text-anthracite transition-colors">
+            <Link href="/passwort-vergessen" className="text-sm font-semibold text-anthracite/40 hover:text-accent transition-colors">
               Passwort vergessen?
             </Link>
           </div>
@@ -71,7 +71,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-yellow text-anthracite font-black text-lg rounded-xl py-4 mt-2 active:translate-y-px transition-transform disabled:opacity-50"
+          className="w-full bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow text-anthracite font-black text-lg rounded-xl py-4 mt-2 active:translate-y-px transition-all disabled:opacity-50"
         >
           {loading ? 'Einen Moment...' : 'Einloggen'}
         </button>
@@ -79,7 +79,7 @@ export default function LoginPage() {
 
       <p className="text-center text-anthracite mt-8 font-semibold">
         Noch kein Konto?{' '}
-        <Link href="/register" className="text-yellow underline">
+        <Link href="/register" className="text-anthracite underline hover:text-accent transition-colors">
           Jetzt registrieren
         </Link>
       </p>

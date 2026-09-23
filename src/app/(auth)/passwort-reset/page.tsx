@@ -88,7 +88,7 @@ export default function PasswortResetPage() {
         </p>
         <Link
           href="/passwort-vergessen"
-          className="w-full bg-yellow text-anthracite font-black text-lg rounded-xl py-4 text-center active:translate-y-px transition-transform"
+          className="w-full bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite font-black text-lg rounded-xl py-4 text-center active:translate-y-px transition-all"
         >
           Neuen Link anfordern
         </Link>
@@ -145,7 +145,7 @@ export default function PasswortResetPage() {
         <button
           type="submit"
           disabled={loading || !password || !passwordConfirm}
-          className="w-full bg-yellow text-anthracite font-black text-lg rounded-xl py-4 mt-2 active:translate-y-px transition-transform disabled:opacity-50"
+          className="w-full bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow text-anthracite font-black text-lg rounded-xl py-4 mt-2 active:translate-y-px transition-all disabled:opacity-50"
         >
           {loading ? 'Speichere...' : 'Passwort speichern'}
         </button>

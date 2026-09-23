@@ -31,7 +31,7 @@ function AngebotRow({ quote }: { quote: AngebotRowData }) {
   return (
     <Link
       href={`/angebot/${quote.id}`}
-      className="bg-white rounded-2xl px-4 py-3 border border-anthracite/5 flex items-center justify-between gap-2 active:translate-y-px transition-transform"
+      className="bg-white hover:bg-sunken rounded-2xl px-4 py-3 border border-anthracite/5 flex items-center justify-between gap-2 active:translate-y-px transition-all"
     >
       <div>
         <div className="font-black text-anthracite">{formatCurrency(quote.total_gross)}</div>
@@ -96,15 +96,15 @@ export default async function KundeDetailPage({ params }: { params: Promise<{ id
             <div className="text-xs font-black text-anthracite/40 uppercase tracking-wide mb-3">Kontakt</div>
             <div className="flex flex-col gap-2">
               {customer.phone && (
-                <a href={`tel:${customer.phone}`} className="flex items-center gap-3">
+                <a href={`tel:${customer.phone}`} className="group flex items-center gap-3">
                   <div className="w-8 h-8 bg-yellow/20 rounded-xl flex items-center justify-center text-sm">📞</div>
-                  <span className="font-semibold text-anthracite">{customer.phone}</span>
+                  <span className="font-semibold text-anthracite group-hover:text-accent transition-colors">{customer.phone}</span>
                 </a>
               )}
               {customer.email && (
-                <a href={`mailto:${customer.email}`} className="flex items-center gap-3">
+                <a href={`mailto:${customer.email}`} className="group flex items-center gap-3">
                   <div className="w-8 h-8 bg-yellow/20 rounded-xl flex items-center justify-center text-sm">✉️</div>
-                  <span className="font-semibold text-anthracite">{customer.email}</span>
+                  <span className="font-semibold text-anthracite group-hover:text-accent transition-colors">{customer.email}</span>
                 </a>
               )}
             </div>
@@ -151,7 +151,7 @@ export default async function KundeDetailPage({ params }: { params: Promise<{ id
                   )}
                   <Link
                     href={`/angebot/neu?customerId=${customer.id}&baustelleId=${baustelle.id}`}
-                    className="block w-full text-center border border-dashed border-anthracite/15 text-anthracite/50 font-bold text-xs rounded-xl py-2.5 hover:border-anthracite/30 hover:text-anthracite/70 transition-colors"
+                    className="block w-full text-center border border-dashed border-anthracite/15 hover:bg-sunken text-anthracite/50 font-bold text-xs rounded-xl py-2.5 hover:border-anthracite/30 hover:text-accent transition-colors"
                   >
                     + Neues Angebot für diese Baustelle
                   </Link>

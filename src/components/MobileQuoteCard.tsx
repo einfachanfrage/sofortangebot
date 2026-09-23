@@ -170,7 +170,7 @@ export function MobileQuoteCard({ quote, formattedDate, formattedAmount, ersterI
                     key={kandidat}
                     onClick={e => setzeStatus(e, kandidat)}
                     disabled={statusSpeichert || istAktuell}
-                    className="flex items-center gap-2.5 w-full px-4 py-2.5 text-anthracite font-semibold text-sm hover:bg-bg transition-colors disabled:opacity-40"
+                    className="flex items-center gap-2.5 w-full px-4 py-2.5 text-anthracite font-semibold text-sm hover:bg-sunken transition-colors disabled:opacity-40"
                   >
                     <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: info.dot }} />
                     {info.label}
@@ -182,7 +182,7 @@ export function MobileQuoteCard({ quote, formattedDate, formattedAmount, ersterI
             <>
               <button
                 onClick={e => { e.preventDefault(); e.stopPropagation(); setShowStatusWahl(true) }}
-                className="flex items-center gap-2.5 w-full px-4 py-3 text-anthracite font-semibold text-sm hover:bg-bg transition-colors"
+                className="flex items-center gap-2.5 w-full px-4 py-3 text-anthracite font-semibold text-sm hover:bg-sunken transition-colors"
               >
                 <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: status.dot }} />
                 Status ändern

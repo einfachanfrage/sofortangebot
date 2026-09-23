@@ -317,7 +317,7 @@ export default function UnterschreibenPage({ params }: { params: Promise<{ id: s
             <span className="text-sm text-anthracite/70 font-semibold leading-relaxed">
               Ich habe die{' '}
               <a href={company.agb_url} target="_blank" rel="noopener noreferrer"
-                className="text-anthracite underline font-bold">
+                className="text-anthracite underline font-bold hover:text-accent transition-colors">
                 Allgemeinen Geschäftsbedingungen
               </a>{' '}
               von {company.name} gelesen und stimme ihnen zu.
@@ -329,7 +329,7 @@ export default function UnterschreibenPage({ params }: { params: Promise<{ id: s
         <button
           onClick={handleSubmit}
           disabled={!canSubmit || submitting}
-          className="w-full bg-yellow text-anthracite font-black text-xl rounded-2xl py-5 active:translate-y-px transition-transform disabled:opacity-40"
+          className="w-full bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow text-anthracite font-black text-xl rounded-2xl py-5 active:translate-y-px transition-all disabled:opacity-40"
         >
           {submitting ? 'Wird gespeichert...' : 'Angebot annehmen & unterschreiben'}
         </button>
@@ -341,7 +341,7 @@ export default function UnterschreibenPage({ params }: { params: Promise<{ id: s
           </div>
           <div className="text-xs text-anthracite/40 font-semibold leading-relaxed mt-2">
             <strong>Datenschutz:</strong> Ihr Name, Ihre Unterschrift sowie technische Daten (Zeitstempel, IP-Adresse) werden zur Dokumentation der Auftragserteilung gespeichert. Verantwortlicher für die Datenverarbeitung ist {company?.name}. Dieses System wird bereitgestellt durch sofortangebot.app.{' '}
-            <Link href="/datenschutz" className="underline" target="_blank">Datenschutzerklärung</Link>
+            <Link href="/datenschutz" className="underline hover:text-accent transition-colors" target="_blank">Datenschutzerklärung</Link>
           </div>
         </div>
 

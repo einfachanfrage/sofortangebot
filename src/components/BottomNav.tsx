@@ -55,8 +55,8 @@ export default function BottomNav() {
       {/* FAB */}
       <Link
         href="/angebot/neu"
-        className="absolute left-1/2 -translate-x-1/2 -top-5 w-14 h-14 rounded-full bg-yellow flex items-center justify-center active:opacity-80 transition-opacity"
-        style={{ boxShadow: '0 4px 16px rgba(245,196,0,0.5)' }}
+        className="absolute left-1/2 -translate-x-1/2 -top-5 w-14 h-14 rounded-full bg-yellow hover:bg-yellow-600 active:bg-yellow-700 flex items-center justify-center transition-all"
+        style={{ boxShadow: '0 4px 16px rgba(217,164,0,0.5)' }}
       >
         <Mic size={24} strokeWidth={2.5} className="text-white" />
       </Link>

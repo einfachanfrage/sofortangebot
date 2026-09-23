@@ -84,7 +84,7 @@ export function PreiseSection() {
 
           <Link
             href="/register"
-            className="block w-full text-center bg-yellow rounded-2xl text-anthracite font-black text-sm py-4 hover:bg-[#e6b800] transition-colors"
+            className="block w-full text-center bg-yellow hover:bg-yellow-600 active:bg-yellow-700 rounded-2xl text-anthracite font-black text-sm py-4 transition-colors"
           >
             {TESTPHASE_CTA} →
           </Link>

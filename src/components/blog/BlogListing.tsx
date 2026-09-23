@@ -39,7 +39,7 @@ function BlogCard({ post }: { post: BlogPost }) {
         </div>
 
         {/* Title */}
-        <h2 className="font-extrabold text-anthracite text-[17px] leading-snug mb-2 group-hover:text-yellow transition-colors">
+        <h2 className="font-extrabold text-anthracite text-[17px] leading-snug mb-2 group-hover:text-accent transition-colors">
           {post.title}
         </h2>
 
@@ -48,7 +48,7 @@ function BlogCard({ post }: { post: BlogPost }) {
           {post.excerpt}
         </p>
 
-        <span className="text-anthracite font-bold text-sm group-hover:text-yellow transition-colors">
+        <span className="text-anthracite font-bold text-sm group-hover:text-accent transition-colors">
           Weiterlesen →
         </span>
       </div>
@@ -106,7 +106,7 @@ export function BlogListing({ posts }: { posts: BlogPost[] }) {
               <div className="text-center mt-10">
                 <button
                   onClick={() => setPage(p => p + 1)}
-                  className="bg-white border border-anthracite/10 text-anthracite font-bold px-8 py-3 rounded-lg hover:border-anthracite/30 transition-colors"
+                  className="bg-white hover:bg-sunken border border-anthracite/10 text-anthracite font-bold px-8 py-3 rounded-lg hover:border-anthracite/30 transition-colors"
                 >
                   Mehr laden
                 </button>

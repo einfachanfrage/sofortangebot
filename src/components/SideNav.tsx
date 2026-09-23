@@ -56,7 +56,7 @@ export default function SideNav({ plan }: SideNavProps) {
       <div className="px-3 pb-4">
         <Link
           href="/angebot/neu"
-          className="flex items-center justify-center gap-2 w-full bg-yellow text-anthracite font-black text-sm rounded-lg py-3 hover:bg-[#e6b800] transition-colors"
+          className="flex items-center justify-center gap-2 w-full bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite font-black text-sm rounded-lg py-3 transition-colors"
         >
           <Mic size={15} strokeWidth={2.5} />
           Neues Angebot

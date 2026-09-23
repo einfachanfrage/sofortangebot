@@ -53,7 +53,7 @@ export default function PasswortVergessenPage() {
         <p className="text-anthracite/40 font-semibold text-sm leading-relaxed mb-8">
           Schau auch im Spam-Ordner nach. Der Link ist 1 Stunde gültig.
         </p>
-        <Link href="/login" className="text-center text-anthracite/50 font-semibold text-sm">
+        <Link href="/login" className="text-center text-anthracite/50 font-semibold text-sm hover:text-accent transition-colors">
           ← Zurück zum Login
         </Link>
       </div>
@@ -90,14 +90,14 @@ export default function PasswortVergessenPage() {
         <button
           type="submit"
           disabled={loading || !email.trim()}
-          className="w-full bg-yellow text-anthracite font-black text-lg rounded-xl py-4 mt-2 active:translate-y-px transition-transform disabled:opacity-50"
+          className="w-full bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow text-anthracite font-black text-lg rounded-xl py-4 mt-2 active:translate-y-px transition-all disabled:opacity-50"
         >
           {loading ? 'Sende...' : 'Reset-Link senden'}
         </button>
       </form>
 
       <p className="text-center mt-8">
-        <Link href="/login" className="text-anthracite/40 font-semibold text-sm hover:text-anthracite transition-colors">
+        <Link href="/login" className="text-anthracite/40 font-semibold text-sm hover:text-accent transition-colors">
           ← Zurück zum Login
         </Link>
       </p>

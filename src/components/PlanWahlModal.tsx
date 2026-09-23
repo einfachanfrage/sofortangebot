@@ -73,7 +73,7 @@ export function PlanWahlModal({ onClose }: Props) {
       <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-full bg-bg text-anthracite/40 hover:text-anthracite transition-colors z-10"
+          className="absolute top-4 right-4 p-1.5 rounded-full bg-bg hover:bg-sunken text-anthracite/40 hover:text-anthracite transition-colors z-10"
         >
           <X size={16} />
         </button>
@@ -105,7 +105,7 @@ export function PlanWahlModal({ onClose }: Props) {
             <button
               onClick={chooseFree}
               disabled={loading !== null}
-              className="w-full border-2 border-anthracite/15 rounded-xl py-3 font-extrabold text-anthracite text-sm hover:border-anthracite/30 transition-colors disabled:opacity-50"
+              className="w-full border-2 border-anthracite/15 hover:bg-sunken rounded-xl py-3 font-extrabold text-anthracite text-sm hover:border-anthracite/30 transition-colors disabled:opacity-50 disabled:hover:bg-transparent"
             >
               {loading === 'free' ? 'Wird gestartet...' : `${PRICING.testTage} Tage testen`}
             </button>
@@ -139,7 +139,7 @@ export function PlanWahlModal({ onClose }: Props) {
             <button
               onClick={choosePro}
               disabled={loading !== null}
-              className="w-full bg-yellow text-anthracite font-extrabold text-sm rounded-xl py-3 active:translate-y-px transition-transform disabled:opacity-50"
+              className="w-full bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow text-anthracite font-extrabold text-sm rounded-xl py-3 active:translate-y-px transition-all disabled:opacity-50"
             >
               {loading === 'pro' ? 'Weiterleitung...' : 'Jetzt abonnieren →'}
             </button>

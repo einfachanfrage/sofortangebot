@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { ExternalLink } from 'lucide-react'
+import { ABO_CTA } from '@/lib/pricing'
 
 interface Props {
   plan: 'starter' | 'pro'
@@ -40,9 +41,12 @@ export function AboAktionen({ plan, hatStripeKonto }: Props) {
         <button
           onClick={() => oeffne('/api/stripe', { plan: 'pro' }, 'upgrade')}
           disabled={laedt !== null}
-          className="w-full bg-yellow text-anthracite font-black text-lg rounded-2xl py-4 disabled:opacity-40 transition-opacity"
+          className="w-full bg-yellow hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow text-anthracite font-black text-lg rounded-2xl py-4 disabled:opacity-40 transition-all"
         >
-          {laedt === 'upgrade' ? 'Einen Moment…' : 'Auf Pro upgraden'}
+          {/* Head of Marketing (23.09.2026): „Auf Pro upgraden" — „Pro" ist
+              der Tarifname aus dem am 03.09. abgelösten Zwei-Tarif-Modell.
+              Es gibt einen bezahlten Tarif; er hat keinen Namen mehr. */}
+          {laedt === 'upgrade' ? 'Einen Moment…' : ABO_CTA}
         </button>
       )}
 
@@ -50,7 +54,7 @@ export function AboAktionen({ plan, hatStripeKonto }: Props) {
         <button
           onClick={() => oeffne('/api/stripe/portal', {}, 'portal')}
           disabled={laedt !== null}
-          className="flex items-center justify-between w-full bg-white border-2 border-anthracite/10 rounded-xl px-4 py-4 hover:border-yellow/50 transition-colors group disabled:opacity-40"
+          className="flex items-center justify-between w-full bg-white hover:bg-sunken border-2 border-anthracite/10 rounded-xl px-4 py-4 hover:border-yellow/50 transition-colors group disabled:opacity-40 disabled:hover:bg-white"
         >
           <div className="text-left">
             <span className="font-bold text-anthracite">

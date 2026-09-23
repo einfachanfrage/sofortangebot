@@ -31,10 +31,10 @@ const base =
   'active:translate-y-px disabled:opacity-50 disabled:active:translate-y-0'
 
 const variantStyles: Record<Variant, string> = {
-  primary: 'bg-yellow text-anthracite hover:bg-yellow-600 active:bg-yellow-700',
+  primary: 'bg-yellow text-anthracite hover:bg-yellow-600 active:bg-yellow-700 disabled:hover:bg-yellow',
   secondary:
-    'bg-white text-anthracite border-2 border-anthracite/10 hover:border-anthracite/20',
-  destructive: 'bg-white text-[#DC2626] border-2 border-[#DC2626]/20 hover:bg-[#DC2626]/5',
+    'bg-white text-anthracite border-2 border-anthracite/10 hover:border-anthracite/20 disabled:hover:border-anthracite/10',
+  destructive: 'bg-white text-[#DC2626] border-2 border-[#DC2626]/20 hover:bg-[#DC2626]/5 disabled:hover:bg-white',
 }
 
 const sizeStyles: Record<Size, string> = {

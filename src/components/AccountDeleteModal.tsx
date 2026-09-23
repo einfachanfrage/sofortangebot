@@ -84,7 +84,7 @@ export function AccountDeleteModal() {
               <button
                 type="button"
                 onClick={() => { setOpen(false); setConfirm(''); setError('') }}
-                className="flex-1 bg-bg text-anthracite font-black rounded-xl py-3 active:translate-y-px transition-transform"
+                className="flex-1 bg-bg hover:bg-sunken text-anthracite font-black rounded-xl py-3 active:translate-y-px transition-all"
               >
                 Abbrechen
               </button>

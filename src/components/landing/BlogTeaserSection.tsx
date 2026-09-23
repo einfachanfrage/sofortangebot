@@ -17,7 +17,7 @@ export function BlogTeaserSection() {
           </div>
           <Link
             href="/blog"
-            className="hidden md:block shrink-0 ml-8 text-sm font-bold text-anthracite/40 hover:text-anthracite transition-colors"
+            className="hidden md:block shrink-0 ml-8 text-sm font-bold text-anthracite/40 hover:text-accent transition-colors"
           >
             Alle Artikel →
           </Link>
@@ -54,7 +54,7 @@ export function BlogTeaserSection() {
         <div className="md:hidden text-center mt-8">
           <Link
             href="/blog"
-            className="font-bold text-anthracite text-sm border border-anthracite/15 px-6 py-3 hover:border-anthracite/30 transition-colors inline-block"
+            className="font-bold text-anthracite text-sm border border-anthracite/15 hover:bg-sunken px-6 py-3 hover:border-anthracite/30 transition-colors inline-block"
           >
             Alle Artikel lesen →
           </Link>

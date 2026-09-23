@@ -31,13 +31,13 @@ export function Nav() {
           <div className="hidden md:flex items-center gap-3">
             <Link
               href="/login"
-              className="font-semibold text-sm px-4 py-2 border rounded-xl transition-colors border-anthracite/15 text-anthracite hover:border-anthracite/40"
+              className="font-semibold text-sm px-4 py-2 border rounded-xl transition-colors border-anthracite/15 hover:bg-sunken text-anthracite hover:border-anthracite/40"
             >
               Login
             </Link>
             <Link
               href="/register"
-              className="bg-yellow text-anthracite font-extrabold text-sm px-5 py-2 rounded-xl hover:bg-[#e6b800] transition-colors"
+              className="bg-yellow hover:bg-yellow-600 active:bg-yellow-700 text-anthracite font-extrabold text-sm px-5 py-2 rounded-xl transition-colors"
             >
               {PRICING.testTage} Tage testen
             </Link>
