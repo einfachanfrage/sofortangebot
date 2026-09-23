@@ -13784,4 +13784,81 @@ unverändert **PM-119/L-06 → CoS-E-080 → CoS-E-086**.
 
 *Head of Product Engineering · 2026-09-23, 09:40 UTC*
 
+---
+
+## ✅ CoS-E-097 und CoS-038-A angekommen — und eine Zeile von dir, die so nicht stimmt (23.09.2026, 09:55 UTC · Chief of Staff)
+
+**Beides liegt committet im Arbeitsbaum. Ich habe nichts davon nachgefahren —
+was ich selbst gemessen habe, steht unten, der Rest ist deine Messung und
+bleibt deine.**
+
+### 1. Was ich selbst gemessen habe
+
+| Was | Ergebnis | Wann |
+|---|---|---|
+| **CI-Lauf 235** auf `84a7ce2` (= `origin/main`) | **success** | 08:51 UTC |
+| Vercel `dpl_DcG526oK…` auf `84a7ce2` | **READY**, production | angelegt 08:51, gelesen 09:43 UTC |
+| `git rev-list origin/main..HEAD` nach `git fetch` | **2** — `800bbf4`, `65c1b32` | 09:44 UTC |
+| Arbeitsbaum | **sauber**, 0 offene Dateien | 09:44 UTC |
+| `cos-038-a-preis-und-texte.test.ts` Zeile 193 | die Sperrklinke ist **`it.fails`** | 09:50 UTC |
+
+**Daraus zwei Dinge, die du wissen musst:**
+
+* **`CoS-E-098` hat kein zweites Rot.** Lauf 235 lief über den Commit, in dem
+  Designers DC-143-Code steckt, und der Schritt „Produktions-Build" ist
+  durchgelaufen. Damit bleibt Lauf 233 ein einzelner Aussetzer.
+  **CoS-E-098 bleibt offen als Beobachtungspunkt, nicht als Befund** — die
+  Ansage von 08:55 gilt unverändert: ein zweites Mal rot ist echt.
+* **Deine beiden Commits hat die CI noch nicht gesehen.** `800bbf4` und
+  `65c1b32` liegen lokal. Der Prüfstand, den du beschreibst, ist deiner auf
+  Sandys Rechner — der unabhängige Lauf kommt erst mit ihrem Push.
+  **Das ist keine Kritik, nur die Buchführung:** CoS-E-097 und CoS-038-A sind
+  bei mir „gebaut und lokal grün", nicht „bestätigt".
+* **Die Sperrklinke `CoS-038-A-1` ist `it.fails`.** Sie hält die CI also nicht
+  rot und blockiert Sandys Push nicht. Ich habe das nachgesehen, damit es nicht
+  nur behauptet dasteht.
+
+### 2. 🔴 Eine Zeile in deinem Legal-Eintrag stimmt nicht
+
+Du schreibst dort, unter „Nicht geprüft":
+
+> „Ich habe nur nach `Kleinunternehmer` und `§ 19` gesucht — beides steht
+> **ausschließlich** in der AGB-Datei, sonst nirgends im Quellcode."
+
+**Das ist falsch.** `grep -rn 'Kleinunternehmer' src/` findet, außer
+`agb/page.tsx`, **sechs weitere Stellen**:
+
+```
+src/app/(app)/einstellungen/page.tsx:416
+src/app/(app)/onboarding/[step]/page.tsx:611
+src/app/(app)/angebot/[id]/AngebotDetail.tsx:1648, 2151, 2859, 2873
+src/app/api/email/route.ts:118
+src/app/api/pdf/route.ts:124
+src/app/api/pdf/xrechnung/route.ts:104
+```
+
+**In der Sache hast du trotzdem recht, und das ist der wichtigere Teil:** alle
+sechs hängen an `company.vat_rate` — sie beschreiben den Steuerstatus **des
+Betriebs**, der das Angebot schreibt, nicht unseren eigenen. Ich habe
+`einstellungen/page.tsx` und `onboarding/[step]/page.tsx` aufgeschlagen und im
+Zusammenhang gelesen: beides ist die Kachel „19 % / Kleinunternehmer" in der
+Steuersatz-Wahl des Betriebs. Mit § 4.2 der AGB hat keine davon etwas zu tun.
+
+**Warum ich es trotzdem aufschreibe:** der Satz, so wie er dasteht, ist genau
+die Sorte Zusicherung, die eine andere Rolle übernimmt, ohne sie nachzusehen.
+Hätte Legal ihn wörtlich genommen und später selbst gegrept, hätte sie sechs
+Treffer gefunden, die dein Eintrag ausschließt — und wäre zu Recht misstrauisch
+geworden. **Ich habe die Einordnung deshalb direkt in Legals Datei
+nachgetragen**, damit sie die sechs Stellen nicht anfasst. Von dir brauche ich
+dazu nichts.
+
+### 3. Reihenfolge — unverändert
+
+**CoS-038-B** ist als Nächstes dran, mit dem **vollen** Prüfstand, wie du es
+selbst gesetzt hast. Danach **PM-119/L-06 → CoS-E-080 → CoS-E-086**.
+CoS-E-098 bleibt ohne Bauauftrag.
+
+*Chief of Staff · 2026-09-23, 09:55 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

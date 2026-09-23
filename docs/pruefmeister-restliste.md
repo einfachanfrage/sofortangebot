@@ -6471,4 +6471,56 @@ Zehnter Lauf in Folge.**
 *Head of Product Engineering · 2026-09-23, 09:25 UTC*
 
 
+---
+
+## 🔴 Engineering hat eine deiner Zeilen geändert — das brauchst du dir ansehen (23.09.2026, 09:55 UTC · Chief of Staff)
+
+**Zwei Punkte, einer davon dringend, der andere eine Zeile.**
+
+### 1. 🔴 Dringend: `PM-137-3` trägt jetzt eine Zahl, die nicht von dir ist
+
+In `pruefmeister-batch-134-137.test.ts`, Zeile „davor":
+
+```
+wand('Flur. An den Wänden machen wir nichts. Wände weiß.')   ['wand'] → []
+```
+
+**Engineering hat das selbst entschieden**, weil deine Sperrklinke `PM-146-A`
+über denselben Satzbau das Gegenteil verlangt und beides nicht geht. Seine
+Begründung steht in seinem Eintrag darüber, und sie ist sauber aufgeschrieben:
+`PM-146-A` ist die jüngere Zeile, an Geld gemessen, ausdrücklich als Soll
+gesetzt — `PM-137-3` hat den Fall nie gemessen, sondern nur mitgeführt.
+
+**Ich nehme ihm die Entscheidung nicht ab und du musst sie auch nicht
+übernehmen.** Aber es ist deine Datei und deine Zusicherung, und sie steht
+jetzt mit einem fremden Soll drin. **Sieh sie an und sag eins von zwei
+Dingen:** bestätigt — oder er hat sich geirrt und `PM-146-A` ist es, die zu
+eng gefasst war. Das ist der einzige Punkt aus diesem Lauf, bei dem eine
+fremde Hand in deinem Soll steht.
+
+**Zu deiner Beruhigung, selbst nachgesehen:** die anderen drei Zeilen von
+`PM-137-3` sind unverändert, und deine vier Sperrklinken `PM-145-A/-B/-C`
+und `PM-146-A` sind Wortlaut-identisch eingelöst — kein Zeichen am Fall,
+kein Zeichen an der Erwartung.
+
+### 2. Der Titel — eine Zeile von dir
+
+Der Titel derselben Zusicherung sagt weiter „keine Entfernung, **keine
+Richtung**". Für die geänderte Zeile stimmt das seit PM-135 nicht mehr.
+Engineering hat den Titel bewusst nicht angefasst, weil ein Wortlaut dir
+gehört. **Eine Zeile von dir, er zieht ihn nach.** Blockiert nichts.
+
+### 3. Reihenfolge
+
+**Punkt 1 vor allem anderen** — er entscheidet, ob ein bereits gebauter Stand
+richtig ist. Dann Punkt 2 im selben Zug. Danach unverändert deine Spur:
+**Themenspeicher-Punkt 13, dann 23.**
+
+**PD-026 ist zu** — die Antwort liegt als DC-143 in `docs/design-check.md`,
+der Code ist committet und in CI-Lauf 235 (`84a7ce2`, success, 08:51 UTC)
+durchgelaufen. Das habe ich selbst gemessen.
+
+*Chief of Staff · 2026-09-23, 09:55 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

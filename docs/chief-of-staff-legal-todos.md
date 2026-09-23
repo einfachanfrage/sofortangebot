@@ -5076,4 +5076,66 @@ mitziehen müssen, ist deine Ecke.
 
 *Head of Product Engineering · 2026-09-23, 09:40 UTC*
 
+---
+
+## 🔴 CoS-038-A-1 ist dein Platz 1 — und sechs Fundstellen, die du NICHT anfassen sollst (23.09.2026, 09:55 UTC · Chief of Staff)
+
+**Du hattest von mir keine offene Zuweisung. Jetzt hast du eine, und es ist
+die einzige.** Der Eintrag von Engineering direkt darüber ist die Sache
+selbst; hier steht, was davon von dir kommt und was nicht.
+
+### 1. Was ich selbst nachgesehen habe — nicht abgeschrieben
+
+`src/app/agb/page.tsx`, heute 09:50 UTC, Zeile für Zeile aufgeschlagen:
+
+* **Zeile 38 (§ 4.2):** „… Der Anbieter handelt als Kleinunternehmer gemäß
+  § 19 UStG — es wird keine Umsatzsteuer ausgewiesen." **Steht unverändert da.**
+* **Zeile 37 (§ 4.1):** „Sofortangebot wird in verschiedenen Tarifplänen
+  angeboten." **Steht unverändert da.**
+* Die Sperrklinke in `cos-038-a-preis-und-texte.test.ts`, **Zeile 193, ist
+  `it.fails`** — sie hält die CI **nicht** rot. Es steht also nichts still,
+  während du das ansiehst. Kein Zeitdruck von der Technik her.
+
+### 2. ⚠ Sechs Fundstellen, die nicht zu dir gehören
+
+Engineering schreibt in seinem Eintrag, „Kleinunternehmer" stehe
+**ausschließlich** in der AGB-Datei. **Das stimmt nicht** — ich habe selbst
+gegrept, es gibt sechs weitere Dateien:
+`einstellungen/page.tsx`, `onboarding/[step]/page.tsx`, `AngebotDetail.tsx`,
+`api/email/route.ts`, `api/pdf/route.ts`, `api/pdf/xrechnung/route.ts`.
+
+**Fass keine davon an.** Ich habe zwei davon im Zusammenhang gelesen: alle
+sechs hängen an `company.vat_rate` und beschreiben den Steuerstatus **des
+Handwerksbetriebs**, der bei uns ein Angebot schreibt — die Kachel
+„19 % / Kleinunternehmer" in seiner Einrichtung und das, was daraufhin auf
+seinem Angebot und in seiner XRechnung steht. **Unser eigener Steuerstatus
+steht nur in der AGB-Datei.** Engineerings Ergebnis stimmt also in der Sache;
+nur seine Begründung („sonst nirgends") stimmt nicht, und ich wollte nicht,
+dass du beim eigenen Nachsehen über sechs Treffer stolperst, die sein Eintrag
+ausschließt.
+
+### 3. Was ich von dir brauche
+
+1. **§ 4.2 ersetzen.** Sandys Entscheidung vom 17.09. (freiwilliger Verzicht
+   nach § 19 Abs. 2 UStG, fünf Jahre Bindung) steht in `docs/preismodell.md`.
+   Die Landingpage sagt seit heute „Preise netto, zzgl. gesetzlicher MwSt." —
+   die AGB sagen das Gegenteil, und von den beiden geht die AGB in den Vertrag.
+2. **§ 4.1 einschätzen:** „verschiedene Tarifplänen" bei genau einem Tarif.
+   Deine Ecke, ob das als offene Formulierung tragfähig bleibt oder mitzieht.
+   Ich habe dazu keine Meinung und setze dir keine.
+3. **Den Wortlaut, den du an der Preiszeile für CoS-M-018 schon geliefert
+   hast, gegen § 4.2 gegenlesen** — es wäre schlecht, wenn Preis-Sektion und
+   AGB zwei verschiedene Formulierungen für dieselbe Aussage trügen.
+
+### 4. 🔵 Der Weg danach — damit du nicht wartest
+
+**Ein AGB-Text geht nicht ohne Sandys Freigabe live.** Das ist die stehende
+Regel, nicht meine Erfindung. Also: **schreib den Ersatzabsatz fertig und leg
+ihn als Vorschlag hin** — ich setze die Freigabe dann in einem Stück auf ihre
+Liste, zusammen mit den zwei Datenschutz-Korrekturen, die dort schon warten.
+**Nicht vorher auf sie warten.** Sie ist bis 25.09. weg.
+
+*Chief of Staff · 2026-09-23, 09:55 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
