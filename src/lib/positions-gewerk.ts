@@ -23,6 +23,34 @@ export function gewerkFuerPosition(beschreibung: string, hauptgewerk?: string): 
   const text = beschreibung.toLocaleLowerCase('de-DE')
   const istBoden = /vinyl|laminat|parkett|teppich|kork|linoleum|designboden|bodenbelag|trittschall|altbelag|sockelleisten montier|boden (?:verleg|entfern|schleif)|untergrund schleifen.*kleberreste|kleberreste.*schleifen/i.test(text)
   if (istBoden) return 'boden_parkett'
+  // ── CoS-E-094-Beifang: die zwei Parkett-Aufpreise nennen keinen Belag ────
+  //
+  // Gemessen am 23.09.2026, bevor diese Zeilen entstanden sind. `bodenEngine`
+  // schreibt den Muster-Aufpreis als eigene Position, und ihr Titel ist der
+  // wörtliche Katalogeintrag (`MUSTER_KATALOG`). Bei Vinyl und Laminat steht
+  // der Belag darin — `Aufpreis Diagonalverlegung Laminat` — und `istBoden`
+  // oben greift. Bei **Parkett** heißen die zwei Einträge nur
+  // `Aufpreis Diagonalverlegung` (10,00 €/m²) und
+  // `Aufpreis Fischgrät-Verlegemuster` (14,00 €/m²). Darin steht kein Belag,
+  // kein Maler-Wort und kein Fliesen-Wort — die Position fiel bis hierher
+  // durch alle Regeln und landete beim **Hauptgewerk**.
+  //
+  // Im reinen Bodenauftrag ist das richtig. Im gemischten Angebot
+  // (Parkett diagonal + Wände streichen), dessen Hauptgewerk `maler` ist,
+  // filtert der Endpunkt danach auf Kategorien, die mit „Maler" beginnen —
+  // dort gibt es keinen Muster-Aufpreis. Kandidatenliste leer, kein Treffer,
+  // `unit_price ?? 0`: **10,00 € bzw. 14,00 €/m² werden auf dem Kundenpapier
+  // zu 0,00 €, und zwar stumm.** Dieselbe Kette wie PM-117, dieselbe Lehre
+  // wie „Boden schützen" (PM-024/PM-026) — nur in die andere Richtung.
+  //
+  // Die Regel ist bewusst an den beiden Katalogtiteln festgemacht und nicht
+  // an `/aufpreis.*diagonal/`: Gemessen über alle 2.374 Katalogzeilen trifft
+  // sie genau diese zwei. Die Fliesen-Aufpreise (`… Boden`, `… Wand`,
+  // `Aufpreis Fischgrät / Muster / Mosaik`) nennen ihr Bauteil hinter dem
+  // Muster und bleiben deshalb Fliesenarbeit — was sie sind.
+  const istMusterAufpreisOhneBelag =
+    /^\s*aufpreis\s+(?:diagonalverlegung|fischgr(?:ä|ae|a)t-verlegemuster)\s*(?:$|—|–|-)/i.test(text)
+  if (istMusterAufpreisOhneBelag) return 'boden_parkett'
   // PM-024/PM-026-Nachtest (Sandy, 2026-08-30): „Boden schützen" enthält kein
   // einziges Maler-Wort — kein „streichen", kein „abdecken". In einem reinen
   // Malerauftrag fiel das nie auf, weil dann ohnehin auf 'maler' gefiltert

@@ -50,6 +50,24 @@ function ortsgruppe(titel: string, einheit: string): Zeile[] {
   return kat.filter(p => rumpf(p.title) === rumpf(ziel.title) && ORT.test(p.title))
 }
 
+/**
+ * Dieselbe Ortsgruppe, aber am UNGEFILTERTEN Katalog.
+ *
+ * Nachgezogen am 23.09.2026 (Head of Product Engineering, CoS-E-094-Beifang):
+ * `katalogFuer()` fragt den Gewerke-Router, und der beantwortet
+ * `Aufpreis Diagonalverlegung` seit diesem Tag mit `boden_parkett` — der
+ * Titel nennt keinen Belag, und genau das hat ihn im gemischten Angebot zum
+ * Maler und auf 0,00 € geschickt. Die Messung des Prüfmeisters in PM-139-2
+ * gilt aber dem KATALOG und nicht dem Router: „wie viele Preise tragen
+ * denselben Engine-Titel". Sie steht deshalb ab jetzt hier, wörtlich dieselbe
+ * Aussage, und die neue Grenze steht als eigene Zeile daneben.
+ */
+function ortsgruppeImVollenKatalog(zielTitel: string): Zeile[] {
+  return DEFAULT_PRICES
+    .map((p, i) => ({ id: `v${i}`, title: p.title, category: p.category, unit: p.unit, unit_price: p.unit_price }))
+    .filter(p => rumpf(p.title) === rumpf(zielTitel) && ORT.test(p.title))
+}
+
 describe('PM-139 · Punkt 12 — eine Engine-Zeile über zwei Katalogpreisen', () => {
   it('PM-139-1 · `Altfliesen abstemmen` nennt den Ort nicht, der Katalog schon — 18,00 € vs. 22,00 €', () => {
     const gruppe = ortsgruppe('Altfliesen abstemmen', 'm²')
@@ -74,10 +92,14 @@ describe('PM-139 · Punkt 12 — eine Engine-Zeile über zwei Katalogpreisen', (
     // trifft die Parkett-Zeile mit 10,00 € — richtig, solange nur Parkett
     // ihn erzeugt. Daneben stehen zwei Fliesen-Zeilen mit 12,00 € und
     // 14,00 €, die denselben Namen tragen und teurer sind.
-    const gruppe = ortsgruppe('Aufpreis Diagonalverlegung', 'm²')
+    const gruppe = ortsgruppeImVollenKatalog('Aufpreis Diagonalverlegung')
     expect(gruppe.map(p => p.unit_price).sort((a, b) => a - b)).toEqual([12, 14])
     const treffer = findePreisposition('Aufpreis Diagonalverlegung', 'm²', katalogFuer('Aufpreis Diagonalverlegung'))
     expect((treffer?.position as Zeile).unit_price).toBe(10)
+    // Seit dem 23.09.2026 hält der Gewerke-Router die zwei Fliesenzeilen vom
+    // Parkett-Titel fern — die Zweideutigkeit aus dem Katalog erreicht den
+    // Preisweg nicht mehr. Der Befund bleibt, die Gefahr ist eine kleinere.
+    expect(ortsgruppe('Aufpreis Diagonalverlegung', 'm²')).toEqual([])
   })
 
   it('PM-139-3 · die Gegenprobe: `Verfugung` und `streichen` nennen den Ort selbst', () => {
