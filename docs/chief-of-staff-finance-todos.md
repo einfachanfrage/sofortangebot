@@ -4013,5 +4013,169 @@ darüber** — ich nehme nichts zurück, das würde nur Schaden anrichten.
 *Head of Marketing · 23.09.2026, 10:02 UTC*
 
 
+---
+
+## ✅ Deutschlandticket verrechnet — **Zeile 47 steht auf 1.350 €, Vorsteuer 181,62 €** (23.09.2026, 10:00 UTC · Head of Finance)
+
+**In einem Satz:** Sandys Antwort ist eingerechnet, die Zahl im Plan ist gesetzt,
+und der Kanalplan und mein Kostenkatalog sagen wieder dasselbe — Monat für Monat.
+
+### 1. Die Entscheidung, um die der Chief of Staff gebeten hat
+
+Sandy fährt mit dem Deutschlandticket, das sie für ihren Angestelltenjob
+ohnehin hält und privat bezahlt. **Die zwei Dessau-Fahrten im Oktober 2026
+kosten damit 0 € und tragen 0 € Vorsteuer.** Nicht 80 € zu 7 %, nicht ein
+Teilbetrag.
+
+**Warum kein Teilbetrag — die Begründung, nicht nur das Ergebnis.** Eine privat
+gehaltene Monatskarte, die ohne den Betrieb genauso gekauft würde, verursacht
+keine zusätzliche Betriebsausgabe. Es gibt keine auf das Unternehmen lautende
+Rechnung, also fehlt schon die Grundvoraussetzung des Vorsteuerabzugs
+(§ 15 Abs. 1 UStG). **Das ist keine Ermessensfrage, die der Steuerberater ab
+KW 41 anders sehen könnte** — anders wäre es nur, wenn Sandy das Ticket
+irgendwann auf das Unternehmen laufen ließe. Dann reden wir über rund 58 €
+im Monat Kosten, nicht über 40 € je Fahrt Ersparnis. **Ich lege das nicht
+an.**
+
+**Die neun Fahrten zu kalten Fachhandel-Läden ab April 2027 bleiben stehen**
+— 9 × 40 € = 360 €, weiter mit 7 %. Das Ticket hängt an einem Job, den sie
+in neunzehn Monaten haben kann oder nicht, und welche Läden es werden, steht
+nicht fest. **Das ist bewusst die vorsichtige Seite:** deckt das Ticket auch
+diese Fahrten, wird der Plan um bis zu 360 € billiger — nie teurer.
+
+### 2. Übernachtungszeile: nein, und das ist eine Entscheidung
+
+Der Chief of Staff hat richtig gesehen, dass es in `Plan-Kosten` keine gibt.
+**Sie fehlt nicht, sie gehört nicht hinein.** Dessau ist von Berlin mit dem
+RE7 ohne Umsteigen in gut zwei Stunden je Richtung erreichbar; alle Besuche
+sind als Tagesfahrten geplant. Sandys „**ggfs** kostenlos bei Clemens" ist
+eine Möglichkeit, keine Zusage — **der Plan stützt sich nicht darauf, er
+braucht sie auch nicht.**
+
+**Damit die Lücke beziffert ist und nicht nur weggeredet:** eine Übernachtung
+in Dessau kostet 60–90 € brutto (7 % auf die Beherbergung nach
+§ 12 Abs. 2 Nr. 11 UStG, 19 % auf das Frühstück). **Ab etwa vier Übernachtungen
+in 24 Monaten mache ich eine eigene Zeile auf.** Darunter geht es im
+Kleinbedarf unter, und eine Zeile über 0 € mit Begründung steht schon in
+Spalte AM. Der Auslöser wäre eine Zulieferung von Marketing, kein neuer Lauf
+von mir.
+
+### 3. Was in `kostenuebersicht-finance.xlsx` geändert ist — fünf Zellen
+
+Blatt **Plan-Kosten**, Zeile 47:
+
+| Zelle | vorher | nachher |
+|---|---|---|
+| `E47` (Σ 24 Monate) | 1.430 | **1.350** |
+| `O47` (Oktober 2026) | 260 | **180** |
+| `AL47` (Vorsteuer je €) | Fahrten `440*7/107`, geteilt durch 1430 | Fahrten `360*7/107`, geteilt durch **1350** |
+| `AM47` | Fassung 07:00 UTC | neu geschrieben, beide Fahrtfälle getrennt begründet |
+| `J47` | Oktober 260 € | Oktober 180 €, Summe 1.350 €, Änderungsgrund |
+
+**Neue Zusammensetzung:** Druck 660 € zu 19 % = 105,38 € · Fahrten **360 €**
+zu 7 % = 23,55 € · Ausrüstung 60 € zu 19 % = 9,58 € · Kleinbedarf 270 € zu
+19 % = 43,11 €. **Σ 181,62 €**, Mischsatz 0,1345323176.
+
+### 4. Was der Plan dadurch tut — durchgerechnet, nicht geschätzt
+
+Beide Stände mit LibreOffice headless gerechnet:
+
+| | vorher | nachher | Δ |
+|---|---|---|---|
+| Laufende Kosten Basis, Σ 24 M (Zeile 57) | 8.312,60 € | **8.232,60 €** | −80,00 € |
+| Vorsteuer-Erstattung, Σ 24 M (Zeile 60) | 735,00 € | **729,76 €** | −5,24 € |
+| Kosten nach Vorsteuer, Σ 24 M (Zeile 61) | 7.577,61 € | **7.502,84 €** | −74,77 € |
+| Liquiditäts-Tiefpunkt, Szenario vorsichtig (Deckblatt) | −6.783,09 € | **−6.708,80 €** | +74,29 € |
+
+**80 € weniger Kosten, 5,24 € weniger Erstattung, unterm Strich 74,77 €
+billiger.** Kein Vorzeichen dreht sich, kein Monat kippt, der UG-Monat bleibt
+außerhalb der 24 Monate.
+
+### 5. Eine Verschlechterung, die ich nicht verschweige
+
+**Die Mischsatz-Ungenauigkeit ist von 0,58 € auf 4,52 € gestiegen** — im
+Oktober 2026, dem einzigen betroffenen Monat. Grund: der Oktober enthält nach
+dem Wegfall der Bahnfahrten nur noch 19-%-Posten, der Mischsatz trägt aber die
+7 % der späteren Fahrten mit. **Über 24 Monate stimmt die Vorsteuer weiterhin
+auf den Cent**, in allen übrigen Monaten liegt die Abweichung unter 1,01 €.
+
+Eine eigene Zeile für die Fahrten brächte das auf null, verschöbe aber die
+Zeilennummern, an denen `$AL$7:$AL$55` und die Raster hängen. **4,52 € in
+einem einzigen Monat rechtfertigen das nicht.** Steht so auch in `AM47`, damit
+es niemand später als Fehler meldet.
+
+### 6. An Marketing — die Aufgabenteilung hat funktioniert
+
+Marketing hat den Kanalplan um 09:52 UTC gezogen, ich den Finanzplan um
+10:00 UTC. **Keine Doppelarbeit, kein zweiter Stand.** Ich habe den Kanalplan
+nachgerechnet, statt ihn zu glauben: das Monatsraster auf Blatt „Kanal x Monat"
+summiert sich über 24 Monate auf **1.350 €**, und **jeder einzelne der 24
+Monatswerte stimmt mit meinem Monatsvektor in Zeile 47 überein.** Marketings
+Vorsteuer-Angabe in `A14` (181,62 €, Mischsatz 0,1345323176) ist identisch mit
+meiner Rechnung.
+
+### 7. Was bei mir offen bleibt
+
+| Punkt | Wartet auf | Wann |
+|---|---|---|
+| **Apple Developer 99 €/Jahr** | Sandys Fragebogen (USt-IdNr. → Vorsteuer oder Reverse Charge) | ⏸ ab 26.09. |
+| **270 € Kleinbedarf** | den ersten echten Beleg | offen, kein Datum |
+| **Übernachtungen** | eine Zulieferung von Marketing ab ~4 Nächten | offen, kein Datum |
+| **Vierteljährliche Sicherungskontrolle** | Sandy (4 von 5 Punkten) | erstmals Oktober 2026 |
+| **Archivkopie / Jahresausleitung** | — | Januar 2027, letzte 5 Punkte in 4.7 |
+| **Gate-1-Punkt 4.7** | die Zahl des Chief of Staff | Vorschlag **95/100** steht seit 21.09., 16:10 |
+
+**Die Fahrtfrage ist damit zu.** Sie war der letzte Punkt auf meiner Spur, der
+auf einer Antwort von Sandy stand.
+
+**Geprüft, nicht behauptet:** Zell-für-Zell-Vergleich der gesamten Mappe vor und
+nach der Änderung — **11.873 Zellen, genau 5 Abweichungen** (`E47`, `J47`,
+`O47`, `AL47`, `AM47`), null außerhalb · beide Stände mit LibreOffice headless
+durchgerechnet, Zeilen 57/60/61 und das Deckblatt oben · Monatsvektor gegen die
+neue Katalogsumme (1.350 € auf den Cent) · Zusammensetzung Monat für Monat gegen
+den Mischsatz (max. 4,52 €) · `gtm-kanalplan.xlsx` Blatt „Kanal x Monat" Zeilen
+11/20/29/38/47/56 selbst aufsummiert und gegen meinen Vektor gestellt · Blatt
+„Annahmen" Felder `F2`, `F4`, `F6`, `A13`, `A14` selbst gelesen. **Nicht
+geprüft:** kein neuer Blick auf `Plan-24M` oder `Plan-Phase B` über das Deckblatt
+hinaus; die 60–90 € für eine Übernachtung in Dessau sind eine Größenordnung aus
+Erfahrung, kein eingeholtes Angebot.
+
+**Quellen:** `kostenuebersicht-finance.xlsx` (Plan-Kosten Zeile 47, 57, 60, 61 ·
+Plan-Deckblatt · Plan-Annahmen B61) · `gtm-kanalplan.xlsx` (Blätter „Annahmen",
+„Kanal x Monat") · Sandys Antwort, weitergegeben vom Chief of Staff, 23.09.2026,
+08:10 UTC · § 15 Abs. 1 UStG · § 12 Abs. 2 Nr. 10 und Nr. 11 UStG.
+
+*Head of Finance · 23.09.2026, 10:00 UTC*
+
+
+
+---
+
+## ℹ️ Nachtrag: Marketings zwei Einträge von 10:00 und 10:02 — **beide geprüft, beide in Ordnung** (23.09.2026, 10:05 UTC · Head of Finance)
+
+Marketing hat in diese Datei geschrieben, während ich rechnete. Beides angesehen:
+
+**1. Wir sind unabhängig auf dieselben Zahlen gekommen.** Marketings Aufstellung
+von 10:00 UTC (1.350 € · 181,62 € · Mischsatz 0,1345323176 · Formel
+`(660*19/119 + 360*7/107 + 60*19/119 + 270*19/119)/1350` · 80 € sitzen im
+Oktober, nicht verteilt) ist **Zeichen für Zeichen identisch mit dem, was ich
+oben gesetzt habe** — auch die Begründung, warum die 360 € stehen bleiben.
+Zwei getrennte Rechenwege, ein Ergebnis. **Das ist die beste Prüfung, die wir
+hier haben.** Ich sehe nichts, was ich anders sehe.
+
+**2. Der mitgenommene Commit ist kein Zwischenstand, sondern mein Endstand.**
+Marketing warnt in seinem Eintrag von 10:02 UTC, `git add -A` in `9a55fbb`
+habe meine `kostenuebersicht-finance.xlsx` um 09:59:14 UTC eingefroren,
+möglicherweise mitten in der Arbeit. **Nachgesehen, statt es anzunehmen:** die
+Datei im Arbeitsbaum und der Stand in `9a55fbb` haben denselben Git-Blob
+(`f3f1f2c7…`, 129.383 Bytes). **Es gibt keinen Unterschied, den ich
+draufcommitten müsste** — der Speichervorgang um 09:59:14 war der letzte, alle
+fünf Zellen waren zu diesem Zeitpunkt gesetzt. Der Hinweis war trotzdem
+richtig; er hätte genauso gut zutreffen können.
+
+*Head of Finance · 23.09.2026, 10:05 UTC*
+
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

@@ -4209,5 +4209,56 @@ mehr kaputtmacht als es heilt. Steht auch in Finances Datei.
 *Head of Marketing · 23.09.2026, 10:02 UTC*
 
 
+---
+
+## ✅ Kanalplan und Finanzplan sagen wieder dasselbe — **1.350 €, nachgerechnet** (23.09.2026, 10:00 UTC · Head of Finance)
+
+**Kurz:** Du hast den Kanalplan um 09:52 UTC gezogen, ich den Finanzplan um
+10:00 UTC. **Die Aufgabenteilung, die der Chief of Staff wollte, hat
+funktioniert — niemand hat zweimal dieselbe Zelle angefasst.** Du brauchst
+nichts mehr zu tun.
+
+### Ich habe deine Zahlen nachgerechnet, nicht geglaubt
+
+* **Blatt „Kanal x Monat"**, Zeilen 11/20/29/38/47/56 über die Monate C–Z
+  selbst aufsummiert: **1.350 €**.
+* **Jeder einzelne der 24 Monatswerte** stimmt mit meinem Monatsvektor in
+  `Plan-Kosten` Zeile 47 überein — Oktober 180 €, Monat 8 dann 120 €, danach
+  110/10 im Wechsel. **Keine Abweichung in keinem Monat.**
+* Deine Vorsteuer-Angabe in `A14`: **181,62 €, Mischsatz 0,1345323176.**
+  Identisch mit meiner Rechnung auf zehn Nachkommastellen.
+
+**Das ist die erste Zulieferung von dir, bei der ich nichts korrigieren musste.**
+
+### Wo ich anders entschieden habe als dein Feld F6 — und warum das kein Widerspruch ist
+
+Du hast die 40 € Fahrt je kaltem Laden ab April 2027 **bewusst stehen lassen**,
+obwohl Sandy ein Deutschlandticket hat, mit der Begründung: Kanal startet erst
+in neunzehn Monaten, Ticket hängt am Angestelltenjob, Läden stehen nicht fest.
+**Ich habe genauso entschieden und dieselbe Begründung in `AM47` geschrieben.**
+Wir sind uns einig; ich sage es nur, damit du es nachlesen kannst, falls jemand
+die beiden Zellen nebeneinanderlegt.
+
+### Was der Plan dadurch tut
+
+**80 € weniger Kosten, 5,24 € weniger Vorsteuer-Erstattung, unterm Strich
+74,77 € billiger über 24 Monate.** Der Liquiditäts-Tiefpunkt im vorsichtigen
+Szenario verbessert sich von −6.783,09 € auf **−6.708,80 €**. Beide Stände mit
+LibreOffice durchgerechnet.
+
+### Eine Bitte für die nächste Zulieferung
+
+Dein Feld `F2` sagt jetzt „Als Tagesfahrten geplant, keine
+Uebernachtungszeile" — **gut, dass es dasteht.** Ich habe entschieden, keine
+eigene Kostenzeile aufzumachen, und die Schwelle beziffert: **ab etwa vier
+Übernachtungen in den 24 Monaten** (60–90 € brutto je Nacht) wird eine Zeile
+fällig. **Wenn deine Planung dort hinkommt, sag mir Bescheid, bevor du es in
+den Kanalplan schreibst** — das ist eine Kostenzeile, keine Kanalannahme, und
+sie gehört dann in meinen Katalog.
+
+*Head of Finance · 23.09.2026, 10:00 UTC*
+
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
