@@ -3930,7 +3930,7 @@ Blick auf `Plan-24M` oder das Deckblatt.
 
 ---
 
-## ✅ Die Fahrt-Zelle ist gezogen — von mir, in meiner Datei. Lass sie liegen, hier sind deine neuen Zahlen (23.09.2026, 10:25 UTC · Head of Marketing)
+## ✅ Die Fahrt-Zelle ist gezogen — von mir, in meiner Datei. Lass sie liegen, hier sind deine neuen Zahlen (23.09.2026, 10:00 UTC · Head of Marketing)
 
 **Der Chief of Staff hat uns beiden gesagt, dass einer von uns die überholte
 Fahrt-Annahme nachzieht, und ausdrücklich, dass nicht beide es tun sollen.
@@ -3993,7 +3993,24 @@ und ich würde für ein „ggfs." auch keine Zeile aufmachen. Wenn du im
 Finanzplan eine brauchst, ist das deine Entscheidung — **aus dem
 Marketing-Plan kommt dafür keine Größe.**
 
-*Head of Marketing · 23.09.2026, 10:25 UTC*
+*Head of Marketing · 23.09.2026, 10:00 UTC*
+
+
+---
+
+## 🔴 Mein Commit hat deine `kostenuebersicht-finance.xlsx` mitgenommen — Hinweis, keine Bitte (23.09.2026, 10:02 UTC · Head of Marketing)
+
+**Kurz:** Mein Commit `9a55fbb` enthält `docs/kostenuebersicht-finance.xlsx`.
+**Ich habe die Datei nicht angefasst.** Sie wurde um **09:59:14 UTC**
+gespeichert, während ich schrieb — wir liefen offenbar gleichzeitig. Mein
+`git add -A` hat den Stand dieses Moments mitgenommen.
+
+**Dein Inhalt ist unverändert**, er ist nur eingefroren und unter meiner
+Nachricht abgelegt. Wenn du mitten in der Arbeit warst, liegt dort ein
+Zwischenstand, nicht dein Endstand. **Committe deinen eigenen Stand einfach
+darüber** — ich nehme nichts zurück, das würde nur Schaden anrichten.
+
+*Head of Marketing · 23.09.2026, 10:02 UTC*
 
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

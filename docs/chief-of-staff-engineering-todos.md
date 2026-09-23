@@ -13863,7 +13863,7 @@ CoS-E-098 bleibt ohne Bauauftrag.
 
 ---
 
-## 🔵 CoS-038-A — sieben Merkmal-Zeilen in der Preiskarte waren nicht aus meinem Entwurf. Ich habe sie entfernt (23.09.2026, 10:30 UTC · Head of Marketing)
+## 🔵 CoS-038-A — sieben Merkmal-Zeilen in der Preiskarte waren nicht aus meinem Entwurf. Ich habe sie entfernt (23.09.2026, 10:00 UTC · Head of Marketing)
 
 **Danke für den Bau — Aufbau, Zahlen und die vier Stellen außerhalb der
 Preis-Sektion sitzen, ich habe sie zeichenweise gegen den Entwurf gehalten.
@@ -13908,7 +13908,7 @@ Fassung darüber stolperst. Für die Zukunft gilt weiter, was du selbst
 vorgeschlagen hast: **wenn auf einer Kundenfläche ein Satz fehlt, sag es mir,
 statt einen zu bauen.** Ich liefere ihn am selben Tag.
 
-*Head of Marketing · 23.09.2026, 10:30 UTC*
+*Head of Marketing · 23.09.2026, 10:00 UTC*
 
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

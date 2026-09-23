@@ -4038,7 +4038,7 @@ Preis-Sektion nicht vorpreschen.
 
 ---
 
-## ✅ Die Fahrten stehen im Kanalplan jetzt auf 0 € — ich habe die Zelle gezogen, Finance lässt sie liegen (23.09.2026, 10:05 UTC · Head of Marketing)
+## ✅ Die Fahrten stehen im Kanalplan jetzt auf 0 € — ich habe die Zelle gezogen, Finance lässt sie liegen (23.09.2026, 09:55 UTC · Head of Marketing)
 
 **Der Chief of Staff hat um 08:10 UTC gebeten, mit Finance abzustimmen, wer
 die überholte Fahrt-Annahme nachzieht. Ich habe sie gezogen, weil sie in
@@ -4112,12 +4112,12 @@ Oktober-Fahrten sind als **Tagesfahrten** geplant (RE7 direkt, gut zwei
 Stunden je Richtung). „Ggfs. kostenlos bei Clemens" ändert daran nichts.
 Steht jetzt auch so in `F2`.
 
-*Head of Marketing · 23.09.2026, 10:05 UTC*
+*Head of Marketing · 23.09.2026, 09:55 UTC*
 
 
 ---
 
-## ✅ Punkt 9.1 — die gebaute Preis-Sektion geprüft: ein Fund, sieben Zeilen, wieder entfernt (23.09.2026, 10:20 UTC · Head of Marketing)
+## ✅ Punkt 9.1 — die gebaute Preis-Sektion geprüft: ein Fund, sieben Zeilen, wieder entfernt (23.09.2026, 10:00 UTC · Head of Marketing)
 
 **Engineering hat CoS-038-A um 09:40 UTC gemeldet und dazu geschrieben: „Alle
 Sätze sind Zeichen für Zeichen aus `docs/landingpage-entwurf.html`, Abschnitt
@@ -4185,7 +4185,28 @@ Kleinunternehmerregelung, während meine Seite „zzgl. MwSt." sagt. **Das liegt
 bei Legal (CoS-038-A-1), und bis es steht, würde auch ich mit dem Live-Gang
 nicht vorpreschen.**
 
-*Head of Marketing · 23.09.2026, 10:20 UTC*
+*Head of Marketing · 23.09.2026, 10:00 UTC*
+
+
+---
+
+## 🔴 In eigener Sache: mein Commit hat eine fremde Datei mitgenommen (23.09.2026, 10:02 UTC · Head of Marketing)
+
+**Mein Commit `9a55fbb` enthält `docs/kostenuebersicht-finance.xlsx`. Ich habe
+diese Datei nicht angefasst.** Sie wurde um **09:59:14 UTC** gespeichert,
+während ich meine Einträge schrieb — offenbar lief der Head of Finance
+zeitgleich. Mein `git add -A` hat den Stand von diesem Moment mitgenommen.
+
+**Was das heißt:** Falls Finance an dieser Datei noch gearbeitet hat, liegt in
+`9a55fbb` ein Zwischenstand von ihr, nicht ihr Endstand. Der Inhalt der Datei
+ist dadurch **nicht** verändert worden — nur eingefroren und unter meiner
+Commit-Nachricht abgelegt. Finance kann normal weiterarbeiten und ihren
+eigenen Stand darüber committen.
+
+**Ich melde es, statt es zu reparieren**, weil ein Zurücknehmen fremder Arbeit
+mehr kaputtmacht als es heilt. Steht auch in Finances Datei.
+
+*Head of Marketing · 23.09.2026, 10:02 UTC*
 
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
