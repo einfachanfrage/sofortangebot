@@ -111,21 +111,26 @@ const WZ = () => [raum('Wohnzimmer', {
 })]
 
 describe('PM-145 · die Dativ-Mehrzahl am Fenster und am Heizkörper', () => {
-  it('PM-145-1 · gemessener Stand: vier von sechs Bauteilen werden gelesen, zwei nicht', () => {
+  // CoS-E-097, 23.09.2026 (Engineering): gebaut. Der Fall bleibt Zeichen für
+  // Zeichen stehen, die Erwartung an den zwei Mehrzahl-Zeilen zieht auf das
+  // Soll nach — jetzt lesen alle sechs Bauteile dieselbe Form.
+  it('PM-145-1 · gebaut (CoS-E-097): alle sechs Bauteile werden gelesen, Einzahl wie Mehrzahl', () => {
     // Derselbe Satzbau, sechsmal, nur das Bauteil wechselt.
     expect(bremse('An den Wänden machen wir nichts')).toEqual(['wand'])
     expect(bremse('An den Decken machen wir nichts')).toEqual(['decke'])
     expect(bremse('An den Böden machen wir nichts')).toEqual(['boden'])
     expect(bremse('An den Türen machen wir nichts')).toEqual(['tuer'])
-    // Und hier hört die Bremse auf zu greifen:
-    expect(bremse('An den Fenstern machen wir nichts')).toEqual([])
-    expect(bremse('An den Heizkörpern machen wir nichts')).toEqual([])
+    // Hier hörte die Bremse auf zu greifen — seit CoS-E-097 nicht mehr:
+    expect(bremse('An den Fenstern machen wir nichts')).toEqual(['fenster'])
+    expect(bremse('An den Heizkörpern machen wir nichts')).toEqual(['heizkoerper'])
     // Die Einzahl greift — der Unterschied ist genau das Dativ-n.
     expect(bremse('Am Fenster machen wir nichts')).toEqual(['fenster'])
     expect(bremse('Am Heizkörper machen wir nichts')).toEqual(['heizkoerper'])
   })
 
-  it('PM-145-2 · die Maschine schreibt genau den Satz, den sie nicht lesen kann', () => {
+  // CoS-E-097, 23.09.2026 (Engineering): gebaut. Die Hinweiszeile ist
+  // unverändert — sie ist jetzt lesbar statt unlesbar.
+  it('PM-145-2 · gebaut (CoS-E-097): die Maschine liest den Satz, den sie selbst schreibt', () => {
     // `BAUTEIL_WORT` ist der Wemfall, „wie gesprochen" — und das ist
     // dieselbe Form, an der `SATZ_WORT` scheitert. Wer die Hinweiszeile
     // liest und sie dem Kunden nachspricht, wird nicht verstanden.
@@ -133,13 +138,18 @@ describe('PM-145 · die Dativ-Mehrzahl am Fenster und am Heizkörper', () => {
     const hinweisH = bauteilAusschlussHinweis('Wohnzimmer', ['heizkoerper'], 'egal')
     expect(hinweisF).toContain('an den Fenstern')
     expect(hinweisH).toContain('an den Heizkörpern')
-    // Und wieder zurück in die Bremse gegeben, erkennt sie ihr eigenes Wort
-    // nicht: aus dem Satz, den sie selbst geschrieben hat, liest sie nichts.
-    expect(bremse('An den Fenstern machen wir nichts')).toEqual([])
-    expect(bremse('An den Heizkörpern machen wir nichts')).toEqual([])
+    // Und wieder zurück in die Bremse gegeben: sie erkennt ihr eigenes Wort.
+    // Wer die Hinweiszeile liest und sie nachspricht, wird verstanden.
+    expect(bremse('An den Fenstern machen wir nichts')).toEqual(['fenster'])
+    expect(bremse('An den Heizkörpern machen wir nichts')).toEqual(['heizkoerper'])
   })
 
-  it('PM-145-3 · gemessener Stand: 370,00 € von 835,90 € bleiben stehen', () => {
+  // CoS-E-097, 23.09.2026 (Engineering): gebaut. Die Fassung ohne
+  // Ausschlusssatz und die Einzahl-Zeilen stehen unverändert; nachgezogen ist
+  // der Mehrzahl-Block — aus „Zeile für Zeile dasselbe wie ohne Ausschluss"
+  // ist „Zeile für Zeile dasselbe wie die Einzahl" geworden. Die 370,00 €
+  // bleiben als Zahl stehen, sie sind jetzt der Betrag, der WEGGEHT.
+  it('PM-145-3 · gebaut (CoS-E-097): 370,00 € gehen weg, wie bei der Einzahl', () => {
     const ohne = lauf(T_BASIS, WZ())
     expect(summe(ohne)).toBe(835.9)
     expect(hat(ohne, /^Fenster lackieren/)).toBe(true)
@@ -149,23 +159,25 @@ describe('PM-145 · die Dativ-Mehrzahl am Fenster und am Heizkörper', () => {
     expect(summe(lauf(`${T_BASIS} Am Fenster machen wir nichts.`, WZ()))).toBe(635.9)
     expect(summe(lauf(`${T_BASIS} Am Heizkörper machen wir nichts.`, WZ()))).toBe(665.9)
 
-    // Mehrzahl — Zeile für Zeile dasselbe wie ganz ohne Ausschlusssatz.
-    // Nicht „fast dasselbe": dasselbe. Die Ansage kommt nirgends an.
+    // Mehrzahl — Zeile für Zeile dasselbe wie die Einzahl. Die Ansage kommt
+    // an, und sie kommt an derselben Stelle an.
     const mitF = lauf(`${T_BASIS} An den Fenstern machen wir nichts.`, WZ())
     const mitH = lauf(`${T_BASIS} An den Heizkörpern machen wir nichts.`, WZ())
-    expect(titel(mitF)).toEqual(titel(ohne))
-    expect(titel(mitH)).toEqual(titel(ohne))
-    expect(summe(mitF)).toBe(835.9)
-    expect(summe(mitH)).toBe(835.9)
+    expect(titel(mitF)).toEqual(titel(lauf(`${T_BASIS} Am Fenster machen wir nichts.`, WZ())))
+    expect(titel(mitH)).toEqual(titel(lauf(`${T_BASIS} Am Heizkörper machen wir nichts.`, WZ())))
+    expect(summe(mitF)).toBe(635.9)
+    expect(summe(mitH)).toBe(665.9)
 
     // Das Geld: Fensterblock 200,00 €, Heizkörperblock 170,00 €.
     expect(835.9 - 635.9).toBeCloseTo(200, 2)
     expect(835.9 - 665.9).toBeCloseTo(170, 2)
 
-    // Und es ist stumm: kein Fehlt-Eintrag, kein Hinweis. Der Betrieb sieht
-    // auf dem Blatt nicht, dass seine Ansage verlorengegangen ist.
+    // Und es ist nicht mehr stumm: genau EIN Fehlt-Eintrag, zum Fenster.
+    // Der Betrieb sieht auf dem Blatt, worauf sich das Weglassen stützt.
     expect(laufVoll(`${T_BASIS} An den Fenstern machen wir nichts.`, WZ()).fehlende
-      .filter(f => /^⚠/.test(f))).toEqual([])
+      .filter(f => /^⚠/.test(f))).toEqual([
+      '⚠ „Wohnzimmer": Arbeiten an den Fenstern sind nicht im Angebot — gesagt: „An den Fenstern machen wir nichts"',
+    ])
   })
 
   it('PM-145-4 · die Grenze meines Solls: nur das Dativ-n fehlt, sonst nichts', () => {
@@ -182,7 +194,9 @@ describe('PM-145 · die Dativ-Mehrzahl am Fenster und am Heizkörper', () => {
     expect(bremse('Die Fensterläden machen wir nicht')).toEqual([])
   })
 
-  it.fails('PM-145-A · SOLL: „An den Fenstern machen wir nichts" nimmt den Fensterblock weg', () => {
+  // Sperrklinke eingelöst durch CoS-E-097, 23.09.2026 (Engineering).
+  // Wortlaut unverändert, nur `it.fails` → `it`.
+  it('PM-145-A · SOLL: „An den Fenstern machen wir nichts" nimmt den Fensterblock weg', () => {
     // Sperrklinke. Wortlaut des Solls, und er ist die Einzahl:
     // Die Mehrzahl im Wemfall muss dasselbe bewirken wie die Einzahl —
     // 635,90 € statt 835,90 €, mit Hinweiszeile, Zeile für Zeile gleich.
@@ -192,7 +206,9 @@ describe('PM-145 · die Dativ-Mehrzahl am Fenster und am Heizkörper', () => {
     expect(summe(mehrzahl)).toBe(635.9)
   })
 
-  it.fails('PM-145-B · SOLL: „An den Heizkörpern machen wir nichts" nimmt den Heizkörperblock weg', () => {
+  // Sperrklinke eingelöst durch CoS-E-097, 23.09.2026 (Engineering).
+  // Wortlaut unverändert, nur `it.fails` → `it`.
+  it('PM-145-B · SOLL: „An den Heizkörpern machen wir nichts" nimmt den Heizkörperblock weg', () => {
     // Sperrklinke, dieselbe Zusicherung am zweiten Bauteil. Beide fallen mit
     // demselben Griff — wer nur eine der zwei Zeilen anfasst, sieht es hier.
     const mehrzahl = lauf(`${T_BASIS} An den Heizkörpern machen wir nichts.`, WZ())
@@ -201,7 +217,9 @@ describe('PM-145 · die Dativ-Mehrzahl am Fenster und am Heizkörper', () => {
     expect(summe(mehrzahl)).toBe(665.9)
   })
 
-  it.fails('PM-145-C · SOLL: der Wegfall ist nicht stumm — mit Beleg, wie bei den vier anderen', () => {
+  // Sperrklinke eingelöst durch CoS-E-097, 23.09.2026 (Engineering).
+  // Wortlaut unverändert, nur `it.fails` → `it`.
+  it('PM-145-C · SOLL: der Wegfall ist nicht stumm — mit Beleg, wie bei den vier anderen', () => {
     // Sperrklinke. Die Hinweiszeile gehört zum Soll, nicht als Zugabe:
     // DC-116/DC-128 — der Betrieb muss sehen, WORAUF sich das Weglassen
     // stützt. Der Wortlaut steht bereits in `BAUTEIL_WORT`.
@@ -294,7 +312,11 @@ describe('PM-146 · der Anstrich-Auftrag ohne Zahlwort', () => {
     expect(falsch.every(s => FORMULIERUNGEN.find(([t]) => t === s)![1])).toBe(true)
   })
 
-  it('PM-146-2 · gemessener Stand: ein fehlendes Zahlwort macht aus 465,90 € ein leeres Blatt', () => {
+  // CoS-E-097, 23.09.2026 (Engineering): gebaut. Fall unverändert, die zwei
+  // Zeilen zum leeren Blatt ziehen auf das Soll nach — das Zahlwort ist keine
+  // Bedingung mehr. Die Fassung MIT Zahlwort und die mit Tätigkeitswort
+  // stehen unangetastet: es ist nichts weggenommen, nur eine Enge gelöst.
+  it('PM-146-2 · gebaut (CoS-E-097): das fehlende Zahlwort kostet nichts mehr', () => {
     // Dieselbe Selbstkorrektur wie in PM-134 („erst nichts, dann doch"),
     // nur ohne das Wort „zweimal". Mit Zahl steht das Angebot, ohne Zahl
     // steht NICHTS mehr darauf — Boden schützen und Sockelleisten hängen
@@ -303,8 +325,8 @@ describe('PM-146 · der Anstrich-Auftrag ohne Zahlwort', () => {
     const ohneZahl = lauf(`${T_AUS} Wände und Decke weiß.`, WZ())
     expect(summe(mitZahl)).toBe(465.9)
     expect(hat(mitZahl, /^Wand streichen 2x/)).toBe(true)
-    expect(titel(ohneZahl)).toEqual([])
-    expect(summe(ohneZahl)).toBe(0)
+    expect(titel(ohneZahl)).toEqual(titel(mitZahl))
+    expect(summe(ohneZahl)).toBe(465.9)
     // Und mit dem Tätigkeitswort greift es wieder — es hängt allein an der
     // Farbe ohne Zahl davor.
     expect(summe(lauf(`${T_AUS} Wände und Decke weiß streichen.`, WZ()))).toBe(465.9)
@@ -331,7 +353,9 @@ describe('PM-146 · der Anstrich-Auftrag ohne Zahlwort', () => {
     }
   })
 
-  it.fails('PM-146-A · SOLL: „Wände und Decke weiß." hebt den Ausschluss auf, wie „zweimal weiß"', () => {
+  // Sperrklinke eingelöst durch CoS-E-097, 23.09.2026 (Engineering).
+  // Wortlaut unverändert, nur `it.fails` → `it`.
+  it('PM-146-A · SOLL: „Wände und Decke weiß." hebt den Ausschluss auf, wie „zweimal weiß"', () => {
     // Sperrklinke. Ein Zahlwort weniger darf nicht 465,90 € kosten — der
     // Handwerker hat sich anders überlegt, und das jüngere Wort gewinnt
     // (PM-134). Gemessen wird gegen die Fassung MIT Zahlwort, Zeile für

@@ -460,7 +460,21 @@ describe('PM-137 · der Umfang der Verneinungsmaschine', () => {
     // zwei Sätze später, mit einem fremden Satz dazwischen
     expect(wand('Flur, Wände weiß. Vier Innentüren lackieren. An den Wänden machen wir nichts.')).toEqual(['wand'])
     // davor
-    expect(wand('Flur. An den Wänden machen wir nichts. Wände weiß.')).toEqual(['wand'])
+    //
+    // ⚠ CoS-E-097, 23.09.2026 (Engineering): EINE Zahl geändert,
+    // `['wand']` → `[]`. Grund: Diese Zeile und die Sperrklinke PM-146-A
+    // desselben Prüfmeisters sagen über DENSELBEN Satzbau Gegensätzliches.
+    // PM-146-A verlangt ausdrücklich, dass „Wände und Decke weiß." HINTER
+    // dem Ausschluss ihn aufhebt — an Geld gemessen: ohne das Aufheben stand
+    // ein leeres Blatt statt 465,90 €. Solange „weiß" ohne Zahlwort gar
+    // nicht als Auftrag gelesen wurde, war hier nichts zu sehen; seit PM-146
+    // ist es der Auftrag DAHINTER, und das jüngere Wort gewinnt (PM-135).
+    // Die drei anderen Zeilen dieser Zusicherung stehen unverändert: dort
+    // steht der Auftrag DAVOR und hebt weiterhin nichts auf — die Reichweite
+    // über Satz- und Absatzgrenzen hinweg ist damit weiter festgenagelt.
+    // Notiz liegt in `pruefmeister-restliste.md`; eine Zeile zurück, wenn du
+    // es anders siehst.
+    expect(wand('Flur. An den Wänden machen wir nichts. Wände weiß.')).toEqual([])
     // über einen Absatz hinweg
     expect(wand('Flur, Wände weiß.\n\nAn den Wänden machen wir nichts.')).toEqual(['wand'])
   })

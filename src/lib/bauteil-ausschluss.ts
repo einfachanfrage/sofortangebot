@@ -46,8 +46,15 @@ const SATZ_WORT: Array<[Bauteil, RegExp]> = [
   ['decke',       /\bdecke(?:n)?\b/i],
   ['boden',       /\bb[öo]den\b|\bfu(?:ß|ss)b[öo]den\b/i],
   ['tuer',        /\bt[üu]r(?:e|en)?\b|\bzarge(?:n)?\b/i],
-  ['fenster',     /\bfenster\b/i],
-  ['heizkoerper', /\bheizk[öo]rper\b/i],
+  // PM-145 (23.09.2026): das Dativ-n stand hier nicht, und es kostete auf
+  // einem Angebot über 835,90 € genau 370,00 € — „An den Fenstern machen wir
+  // nichts" und „An den Heizkörpern machen wir nichts" liefen Zeile für
+  // Zeile ins Leere, während die Einzahl griff. Bei den vier Bauteilen
+  // darüber steht die Mehrzahl seit jeher daneben. `n?` und nicht `(?:n)?`,
+  // weil es genau ein Buchstabe ist; die Wortgrenze dahinter bleibt und
+  // hält „Fensterläden" und „Fensternische" weiter draußen (PM-145-4).
+  ['fenster',     /\bfenstern?\b/i],
+  ['heizkoerper', /\bheizk[öo]rpern?\b/i],
 ]
 
 /** Wie das Bauteil im Positionstitel steht (Katalogwörter). */
@@ -84,7 +91,7 @@ const TAETIGKEIT = /streich|lackier|tapezier|spachtel|schleif|grundier|verputz|v
 const UEBERALL = /[üu]berall|generell|insgesamt|nirgend|in allen r[äa]umen|\bwohnung\b/i
 
 /**
- * Der Anstrich ohne das Wort dafür: „Wände und Decke zweimal weiß."
+ * Der Anstrich ohne das Wort dafür: „Wände und Decke weiß."
  *
  * Gemessen (PM-134, 21.09.2026, am echten Projektstand): In diesem Teilsatz
  * findet `TAETIGKEIT` oben NICHTS — kein „streichen", kein „Anstrich". Die
@@ -93,18 +100,51 @@ const UEBERALL = /[üu]berall|generell|insgesamt|nirgend|in allen r[äa]umen|\bw
  * `Wand streichen 2x` auf das Blatt — nur die Gegenprobe hier kannte ihn
  * nicht. Ohne diese Zeile hätte die Satzgrenze unten nichts zu finden.
  *
- * Bewusst ENGER als dort: `weiß` allein ist auch die Gegenwart von „wissen"
- * („ich weiß nicht, ob die Wände drankommen"). Verlangt wird deshalb die
- * Zahlangabe unmittelbar davor — „zweimal weiß", „2x weiß", „dreimal in
- * Weiß". Vor dem Verb „weiß" steht nie ein Zahlwort, und genau das trennt
- * die beiden Fälle. Andere Farben bleiben draußen, bis sie gemessen sind.
+ * ── PM-146 (23.09.2026, Prüfmeister) · Die Zahlangabe fällt ──────────────
+ *
+ * Bis hierhin war die Zahlangabe unmittelbar vor der Farbe Bedingung:
+ * „zweimal weiß" zählte, „weiß" allein nicht. Das war ENGER als die
+ * Erkennung eine Stufe davor, und die Lücke kostete: dieselbe Maschine
+ * setzte die Zeile und nahm sie im selben Lauf wieder weg.
+ *
+ *   „An den Wänden machen wir nichts. Wände und Decke zweimal weiß."  465,90 €
+ *   „An den Wänden machen wir nichts. Wände und Decke weiß."        0,00 €
+ *
+ * Ein leeres Blatt für ein fehlendes Zahlwort — Boden schützen und
+ * Sockelleisten abkleben hängen als Folgepositionen an der Wand und fielen
+ * mit ihr. An 17 Formulierungen gemessen lag die alte Regel sechsmal daneben,
+ * und NIE zu weit: immer zu eng, immer ein nicht erkannter Auftrag.
+ *
+ * Der Wortlaut des Solls (Prüfmeister, unverändert übernommen): „weiß" zählt
+ * als Anstrich-Auftrag, AUSSER unmittelbar davor oder dahinter steht ein
+ * Fürwort. Das trennt die Farbe vom Zeitwort „wissen" — „das weiß der
+ * Kunde", „weiß ich noch nicht". Der zweite Schutz, die Verneinung, trägt
+ * für „ich weiß nicht, ob …" ohnehin; für „das weiß der Kunde" trägt nach
+ * dem Lockern NUR NOCH das Fürwort (PM-146-4).
  *
  * `\b` steht hier NICHT hinter `weiß` — ß ist ohne u-Flag kein Wortzeichen,
  * die Grenze gäbe es also nach „weiß " gar nicht (dieselbe Falle wie oben bei
- * `SATZ_WORT`). Der Negativ-Ausblick tut, was gemeint ist.
+ * `SATZ_WORT`). Der Negativ-Ausblick tut, was gemeint ist, und hält „weiße"
+ * und „weißeln" draußen.
+ *
+ * ⚠ Andere Farben bleiben draußen, bis sie gemessen sind. „Wände zweimal in
+ * einem hellen Grau" ist hier weiterhin keine Tätigkeit — hier ist davon
+ * bewusst NICHTS vorweggenommen.
  */
-const ANSTRICH_OHNE_TAETIGKEITSWORT =
-  /(?:\b(?:ein|zwei|drei|vier)\s*-?\s*mal|\b\d+\s*(?:x|mal))\s+(?:in\s+)?wei(?:ß|ss)(?![a-zäöüß])/i
+const ANSTRICH_FARBE_WEISS = /wei(?:ß|ss)(?![a-zäöüß])/i
+
+/**
+ * „weiß" als Gegenwart von „wissen": ein Fürwort unmittelbar davor
+ * („das weiß der Kunde") oder dahinter („weiß ich noch nicht").
+ * Wortlaut vom Prüfmeister, Zeichen für Zeichen übernommen (PM-146).
+ */
+const WEISS_ALS_ZEITWORT =
+  /\b(?:ich|du|er|sie|es|man|wer|wir|ihr|das|dies|jemand|keiner|niemand)\s+wei(?:ß|ss)(?![a-zäöüß])|wei(?:ß|ss)\s+(?:ich|du|er|sie|es|man|wer|wir|ihr)(?![a-zäöüß])/i
+
+/** Ein Anstrich-Auftrag, der ohne Tätigkeitswort auskommt (PM-134/PM-146). */
+function istAnstrichOhneTaetigkeitswort(teil: string): boolean {
+  return ANSTRICH_FARBE_WEISS.test(teil) && !WEISS_ALS_ZEITWORT.test(teil)
+}
 
 /** Verneint dieser Teilsatz — egal auf welchem der drei Wege? */
 function istVerneint(teil: string): boolean {
@@ -113,7 +153,7 @@ function istVerneint(teil: string): boolean {
 
 /** Steht in diesem Teilsatz eine Arbeit — egal ob beauftragt oder verneint? */
 function istTaetigkeit(teil: string): boolean {
-  return TAETIGKEIT.test(teil) || ANSTRICH_OHNE_TAETIGKEITSWORT.test(teil)
+  return TAETIGKEIT.test(teil) || istAnstrichOhneTaetigkeitswort(teil)
 }
 
 /** Ein Teilsatz samt Raum und den Bauteilen, für die dort ein Auftrag steht. */
