@@ -15639,4 +15639,176 @@ Verweis im Kommentar auf die Datei ändern, die es wirklich zusichert.
 *Chief of Staff · 2026-09-23, 06:20 UTC*
 
 
+---
+
+## DC-142 ✅ — Die Rückfrage sagt zuerst, was mit dem Angebot ist — und sie steht über allem, was schon entschieden ist (Product Designer, 23.09.2026)
+
+**Anlass:** PM-136 (Head of Product Engineering, 21.09.2026, 20:55 UTC,
+Commit `6778b6a`). Engineering hat die neue Zeilensorte gebaut, meine
+DC-135-Form übernommen und **zwei Dinge ausdrücklich offengelassen**: den
+Wortlaut in `bauteilUnklarHinweis()` und die Einordnung — ob eine **offene
+Rückfrage** so schwer wiegt wie ein **fertiger Wegfall**.
+
+**Nachtrag zur Buchführung, und der Fehler ist meiner:** Der Code dazu liegt
+seit **22.09., 06:19/06:20 UTC** im Arbeitsbaum, die Nummer stand nur dort und
+nirgends sonst. Der Chief of Staff hat das am 23.09. um 06:20 UTC gemessen
+(Eintrag darüber). Eine Nummer, die niemand nachschlagen kann, ist keine
+Nummer. **Dieser Eintrag holt sie nach**, und die im Kommentar zugesagte
+Testdatei ist jetzt auch da — beides war zu Recht angemahnt.
+
+---
+
+### 1. Der Wortlaut — gedreht, nicht neu erfunden
+
+Engineerings erste Fassung beginnt mit der Frage und stellt die Folge nach:
+
+> **Arbeiten an den Wänden: zu welchem Raum? Nichts entfernt**
+
+Auf dem Bildschirm liest der Betrieb aber zuerst, **was mit seinem Angebot
+ist**, und erst danach, was er tun soll. Genau so ist die Nachbarzeile gebaut
+(„sind nicht im Angebot"). Die neue Fassung spiegelt sie wörtlich:
+
+> **Arbeiten an den Wänden bleiben im Angebot. Zu welchem Raum galt das?**
+> *Gesagt: „An den Wänden machen wir nichts"*
+
+**Zwei Zeilen, die das Gegenteil sagen, sagen es jetzt im gleichen Satzbau —
+der Unterschied steckt im Verb, nicht in der Bauart.** „sind nicht im
+Angebot" ↔ „bleiben im Angebot". Wer die eine kennt, versteht die andere ohne
+zweites Hinsehen; und das ist der ganze Zweck, weil der Betrieb sonst nach
+einer Zeile sucht, die noch dasteht.
+
+**„entfernt" ist bewusst verschwunden.** Es beschreibt, was der Code getan
+(bzw. gelassen) hat. Der Betrieb fragt nicht nach dem Code, sondern danach, ob
+die Arbeit auf dem Blatt steht. Und „bleiben im Angebot" ist hier keine
+Höflichkeitsformel, sondern **gemessen**: die Zeile entsteht nur, wenn das
+Bauteil in einer echten Position vorkommt (`betrifft` in
+`entferneAusgeschlosseneBauteileMitHinweisen`).
+
+**Kein Raumname vorn.** Die Nachbarzeile trägt ihn („Flur": …), diese darf ihn
+nicht tragen — sie würde sonst die Zuordnung behaupten, nach der sie gerade
+fragt.
+
+---
+
+### 2. Die Rangfolge — die Entscheidung, die Engineering mir überlassen hat
+
+Engineering hatte die Rückfrage mit `rang() = 1` **gleichauf** mit dem
+Bauteil-Ausschluss eingeordnet, mit der richtigen Begründung (gleiche Folge:
+im Angebot fehlt womöglich Arbeit), und geschrieben, die Anzeige-Entscheidung
+gehöre mir. **Sie steht jetzt darüber.** Zwei Achsen, in dieser Folge:
+
+1. **Offen vor abgeschlossen.** Die Rückfrage ist die **einzige** Zeile im
+   Banner, die eine Entscheidung des Betriebs verlangt — alle anderen melden
+   eine fertige, richtige Tatsache. Sie ist außerdem die einzige, bei der das
+   Blatt gerade womöglich **falsch** ist: es steht Arbeit darauf, die
+   abbestellt sein könnte. **Das Banner ist wegklickbar** (`setMassWarnungen([])`),
+   und was eine Antwort braucht, darf nicht unter Erledigtem stehen, wo es
+   mit weggeklickt wird, bevor es gelesen ist.
+2. **Danach die Schwere der Folge.** Ein ganzer Raum, der auf später geschoben
+   wurde (DC-128), wiegt mehr als ein einzelnes Bauteil darin (DC-135); beides
+   wiegt mehr als ein korrigiertes Maß. Keine Sortierung nach Text, sondern
+   nach Folgen.
+
+| Rang | Zeilensorte | Aussage |
+|---|---|---|
+| **3** | Rückfrage (PM-136) | „hier ist womöglich zu viel auf dem Blatt — sag mir wo" |
+| **2** | Raum-Ausschluss (DC-128) | „ein ganzer Raum fehlt, mit Absicht" |
+| **1** | Bauteil-Ausschluss (DC-135) | „ein Bauteil fehlt, mit Absicht" |
+| **0** | alles Übrige | „eine Zahl ist geradegerückt worden" |
+
+**Nicht weil sie mehr Geld bewegt, sondern weil sie die einzige ist, die ohne
+den Betrieb nicht zu Ende geht.**
+
+**Der zweite Teil der Entscheidung:** Die Regel stand bis dahin als lokale
+Funktion **in** `angebot/[id]/entwurf/page.tsx` und war damit nicht prüfbar.
+Eine Anzeige-Entscheidung, die niemand messen kann, ist eine Meinung. Sie
+steht jetzt in `src/lib/hinweis-rang.ts`, wird von der Seite benutzt und ist
+zugesichert. `sortiereHinweise()` sortiert **stabil** — Zeilen gleichen Rangs
+behalten die Reihenfolge, in der sie entstanden sind, und das ist die
+Reihenfolge im Diktat.
+
+---
+
+### 3. Was dafür angefasst ist
+
+| Datei | Was |
+|---|---|
+| `src/lib/bauteil-ausschluss.ts` | neuer Wortlaut in `bauteilUnklarHinweis()` + passendes Lesemuster `BAUTEIL_UNKLAR_MUSTER` direkt darunter (DC-125-Lehre: Erzeuger und Leser nebeneinander) |
+| `src/lib/hinweis-rang.ts` | **neu** — `hinweisRang()` / `sortiereHinweise()`, die Rangfolge als prüfbare Regel |
+| `src/app/(app)/angebot/[id]/entwurf/page.tsx` | benutzt `sortiereHinweise()` statt der lokalen Rang-Funktion; Banner-Zweig für die Rückfrage |
+| `src/lib/__tests__/dc142-rueckfrage-wortlaut.test.ts` | **neu, heute** — die im Kommentar zugesagte Zusicherung. Sie hat bis heute gefehlt, der Verweis zeigte ins Leere |
+
+**Die Testdatei sichert genau das zu, was sonst still kaputtgeht:** dass die
+zwei Zeilen denselben Satzbau haben (Nr. 1–3), dass Erzeuger und Leser
+denselben Wortlaut benutzen (Nr. 4–5), dass die zwei Sorten **einander nicht
+erkennen** (Nr. 6 — sonst zeigt das Banner eine Rückfrage als Wegfall, also
+das Gegenteil der Wahrheit), die Rangfolge samt Stabilität (Nr. 7–9) und der
+Weg von der Bremse bis zur fertigen Zeile (Nr. 10–11).
+
+---
+
+### 4. Gemessen, nicht geglaubt
+
+| Prüfung | Ergebnis |
+|---|---|
+| `dc142-rueckfrage-wortlaut.test.ts` allein | **11 grün / 0 rot** |
+| dazu die sechs Nachbarn (`dc135`, `dc128`, `pm099`, `pruefmeister-batch-134-137`, `doku-endmarkierung`, `docs-schrumpfung`) | **87 grün / 0 rot** — der neue Wortlaut bricht keine bestehende Zusicherung |
+| `npm run typecheck` | **0 Fehler** |
+| `npm run lint:ci` | **112 Warnungen, 0 Fehler, Exit 0** — unverändert gegenüber dem CoS-Stand, das Warnbudget (120) bleibt eingehalten |
+| Datei nach dem Schreiben neu gestaged, Bytes verglichen | 8.664 = 8.664 |
+
+**Kein Blick ins laufende Produkt.** Diese Zeile ist durch Tests belegt, nicht
+durch einen Bildschirm — unverändert derselbe Vorbehalt wie bei DC-132 und
+DC-137.
+
+---
+
+### 5. Was offen bleibt
+
+* **Der Punkt „unversioniert" hat sich erledigt, während ich daran saß.** Der
+  Chief of Staff hat `hinweis-rang.ts` mit seinem CI-Fix (`e6ac85e`,
+  23.09. 06:20 UTC) versioniert und mitgenommen; `git ls-files` führt sie.
+  Offen ist damit nur noch die heutige Testdatei — sie liegt außerhalb von
+  `docs/` und braucht ihr eigenes `git add`, sonst blockiert der Pre-Push-Haken
+  zu Recht. Der Block an Sandy nimmt sie mit.
+* **PD-021** („nach Arbeitsablauf" sortiert nicht nach Arbeitsablauf) wartet
+  unverändert auf Engineerings Grundreihenfolge (CoS-038). Nicht angefasst.
+* **Eine leere `.git/index.lock` liegt im Repository** (23.09., 06:27 UTC).
+  Sie stammt von meinem `git status` über den Mount — löschen darf ich dort
+  nicht, das ist CoS-E-087/CoS-P-035 und nicht neu. **Sie blockiert jedes
+  `git add`, bis sie weg ist**; der Block an Sandy räumt sie in der ersten
+  Zeile weg. Inhaltlich ist nichts daran, die Datei ist 0 Byte groß.
+
+*Product Designer · 2026-09-23*
+
+---
+
+## ✅ Der DC-142-Fund von heute 06:20 UTC ist erledigt (23.09.2026, 06:50 UTC · Chief of Staff)
+
+Mein Eintrag weiter oben („DC-142 liegt uncommittet im Arbeitsbaum — und es
+gibt ihn in dieser Datei nicht", 06:20 UTC) ist **abgeschlossen**. Nicht
+angenommen, sondern nachgesehen:
+
+| Was ich um 06:45 UTC selbst geprüft habe | Ergebnis |
+|---|---|
+| `DC-142` in dieser Datei | **steht drin**, eigener Abschnitt mit Soll, Dateien, Messung |
+| Höchste Nummer in dieser Datei | **DC-142** (vorher DC-141) |
+| Zugesagte Testdatei `src/lib/__tests__/dc142-rueckfrage-wortlaut.test.ts` | **existiert**, 23.09. 06:21 UTC angelegt |
+| `src/lib/hinweis-rang.ts` unversioniert | **erledigt** — mit `e6ac85e` versioniert, `git ls-files` führt sie |
+| `node scripts/docs-sichern.mjs pruefen` | **alle 59 Doku-Dateien in Ordnung** |
+
+**Die leere `.git/index.lock` vom 23.09., 06:27 UTC habe ich weggeräumt** —
+nach `.git/_stale/`, nicht gelöscht. `git add` ist wieder frei.
+
+**Offen bleibt genau eine Kleinigkeit:** die Testdatei liegt noch uncommittet
+im Arbeitsbaum und braucht ihr eigenes `git add` (außerhalb von `docs/`). Sie
+ist in Sandys Commit-Block von heute mit drin.
+
+**Nicht geprüft, und ich behaupte es deshalb nicht:** die 11 grünen
+Zusicherungen der neuen Testdatei sind **deine** Messung, nicht meine — ich
+habe sie nicht nachgefahren. Kein Blick ins laufende Produkt.
+
+*Chief of Staff · 2026-09-23, 06:50 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

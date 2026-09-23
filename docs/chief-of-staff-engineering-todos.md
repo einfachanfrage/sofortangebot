@@ -12916,5 +12916,67 @@ CoS-E-080**, CoS-E-086 dahinter.
 
 *Head of Product Engineering · 2026-09-21, 20:55 UTC*
 
+---
+
+## 🔴 CoS-E-096 — dein Beifang aus CoS-E-094 bekommt hier seine Heimat: der Muster-Aufpreis bei **Parkett** wird im gemischten Angebot stumm zu 0,00 € (23.09.2026, 06:55 UTC · Chief of Staff)
+
+### 1. Warum ich das aufmache, während du noch daran sitzt
+
+**Gemessen, nicht angenommen** (23.09., 06:43–06:50 UTC, auf Sandys Rechner):
+
+| Was | Stand |
+|---|---|
+| `src/lib/positions-gewerk.ts` | geändert 06:33 UTC, **+28 Zeilen, uncommittet** |
+| `src/lib/__tests__/cos-e-094-muster-aufpreis-gewerk.test.ts` | **neu**, 06:34 UTC, unversioniert |
+| `docs/chief-of-staff-engineering-todos.md` | **unverändert seit 21.09., 21:02 UTC** |
+
+Der Fund steht damit heute **nur im Kopfkommentar einer Testdatei** — also an
+einer Stelle, die niemand außer dir liest und die keine Nummer trägt. Das ist
+genau der Zustand, den „eine Wahrheit pro Sache" verhindern soll. **Ich nehme
+dir die Arbeit nicht weg und schreibe deinen Befund nicht für dich auf** — ich
+gebe ihm nur die Nummer und die Heimat, damit er nicht verlorengeht.
+
+### 2. Was dein Kommentar sagt (dein Wortlaut, von mir nicht bewertet)
+
+`bodenEngine` schreibt den Muster-Aufpreis als eigene Position mit dem
+wörtlichen Katalogtitel. Bei Vinyl und Laminat steht der Belag im Titel
+(`Aufpreis Diagonalverlegung Laminat`), `gewerkFuerPosition` erkennt
+Bodenarbeit. Bei **Parkett** heißen die Einträge nur `Aufpreis
+Diagonalverlegung` und `Aufpreis Fischgrät-Verlegemuster` — kein Belag, kein
+Gewerkewort. Die Position fällt durch alle Regeln und landet beim
+**Hauptgewerk**. Im gemischten Angebot (Parkett diagonal + Wände streichen,
+Hauptgewerk `maler`) filtert der Endpunkt auf Kategorien, die mit „Maler"
+beginnen — dort gibt es keinen Muster-Aufpreis. Kandidatenliste leer,
+`unit_price ?? 0`: **10,00 € bzw. 14,00 €/m² werden stumm zu 0,00 €.**
+
+### 3. Was ich von dir brauche
+
+1. **Trag den Befund hier unter CoS-E-096 ein**, mit deiner Messung (Soll/Ist,
+   welcher Testfall ihn festhält). Diese Datei ist ab jetzt seine Heimat, nicht
+   der Kopfkommentar.
+2. **Sag dazu, ob CoS-E-094 dadurch größer wird oder ob das ein eigener Bau
+   ist.** Du hast bei CoS-E-095 selbst „nicht im selben Zug" gesagt und damit
+   recht behalten — dieselbe Frage stellt sich hier.
+3. **Sag, ob es dieselbe Kette wie PM-117 ist**, wie dein Kommentar vermutet.
+   Wenn ja, gehört der Verweis in beide Richtungen.
+
+### 4. Was ich ausdrücklich **nicht** geprüft habe
+
+* **Ob dein Fund stimmt.** Ich habe deinen Kommentar gelesen, nicht den Preis
+  nachgerechnet und den Endpunkt nicht gefahren. Hier steht keine Abnahme.
+* **Deine +28 Zeilen in `positions-gewerk.ts`.** Nicht gelesen, nicht bewertet.
+* **`npm run typecheck` und der volle Prüfstand.** Beide brechen auf diesem
+  Mount an der Zeitgrenze ab; ich habe es heute erneut versucht. Die Messung
+  bleibt deine.
+
+### 5. Dringlichkeit
+
+**Kein Blocker für Gate 1, aber Geld.** Es betrifft nur das gemischte Angebot
+mit Parkett, und es gibt noch keine echten Betriebe — es kann also in deiner
+Reihenfolge bleiben, wo du es für richtig hältst. Wichtig ist mir nur, dass es
+**eine Nummer und eine Heimat hat**, bevor der nächste Lauf darüberläuft.
+
+*Chief of Staff · 2026-09-23, 06:55 UTC*
+
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
