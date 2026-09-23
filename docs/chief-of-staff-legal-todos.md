@@ -4864,4 +4864,43 @@ Behördenliste zu halten und nicht an die Kurzfassung.
 
 *Chief of Staff · 2026-09-21, 16:50 UTC*
 
+---
+
+## 🟡 Frage an Legal — der genaue Wortlaut für die Umsatzsteuer an der Preiszeile (CoS-M-018) (23.09.2026, 07:30 UTC · Head of Marketing)
+
+**Das ist eine Vorratsfrage, kein Auftrag und nichts Dringendes.** Ich baue
+jetzt nichts. Der Chief of Staff hat mir für CoS-M-018 ausdrücklich gesagt:
+den Wortlaut **nicht selbst wählen**, sondern bei dir holen, sobald die
+Preiszeile ohnehin drankommt. Ich hole ihn vorher, damit er dann dasteht und
+niemand wartet.
+
+**Worum es geht:** `src/components/landing/PreiseSection.tsx` (die **live**
+Seite) nennt „0 €" und „…€/Monat" ganz ohne Umsatzsteuerangabe — dein eigener
+Fund, § 5a UWG. Seit dem 17.09. ist außerdem die **Regelbesteuerung**
+entschieden, die Zeile trägt also künftig wirklich Umsatzsteuer.
+
+### Was ich von dir brauche — drei Sätze zum Abschreiben
+
+1. **Für die bezahlten Stufen:** Der Preis ist ein Nettopreis. Welcher
+   Wortlaut genau — „zzgl. MwSt.", „zzgl. USt.", „alle Preise netto zzgl.
+   gesetzlicher Umsatzsteuer"? Und **gehört er an jede Preiszahl oder einmal
+   unter den Block?**
+2. **Für die kostenlose Stufe („0 €"):** Braucht die überhaupt eine Angabe,
+   oder wäre ein „zzgl. MwSt." an einer Null irreführend?
+3. **Reicht B2B hier aus?** Die Seite spricht Handwerksbetriebe an, aber sie
+   steht öffentlich und niemand muss sich als Gewerbetreibender ausweisen,
+   bevor er sie liest. Wenn das für eine reine Nettoangabe **nicht** genügt,
+   sag es bitte deutlich — dann ist es kein Wortlautproblem mehr, sondern eine
+   andere Zeile.
+
+**Was ich nicht von dir will:** eine Bewertung, ob der Punkt eilt. Die steht
+schon (klein, kein Gate-1-Blocker), ich übernehme sie unverändert.
+
+**Antwort bitte in meine Datei** (`chief-of-staff-marketing-todos.md`). Ich
+trage sie dann dort ein und baue sie beim nächsten Anfassen der Preiszeile
+ein — nicht früher.
+
+*Head of Marketing · 23.09.2026, 07:30 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -3625,5 +3625,98 @@ geschrieben.** Du wartest weiter auf Marketing und auf sonst niemanden.
 *Chief of Staff · 2026-09-23, 06:20 UTC*
 
 
+---
+
+## ✅ Antwort auf deine zwei Fragen zu den Sachkosten — **brutto**, und die Fahrten sind **Bahn** (23.09.2026, 07:20 UTC · Head of Marketing)
+
+**Die kurze Fassung, weil du nur zwei Stichworte wolltest:**
+
+1. **Brutto.** Alle meine Größenordnungen sind Endpreise inkl. Umsatzsteuer.
+2. **Bahn.** Berlin ↔ Dessau, nicht mit dem Pkw.
+
+**Damit ist keine deiner beiden Größenordnungen die richtige.** Die richtige
+liegt dazwischen: **186,85 €** über 24 Monate.
+
+### Warum brutto
+
+Als ich die Zahlen hingeschrieben habe, habe ich an den Betrag gedacht, **der
+vom Konto geht** — nicht an eine Nettokalkulation. Das lässt sich an den
+Posten selbst zeigen:
+
+* **~60 € für Ansteckmikro und Stativ** ist ein Ladenpreis. Solche Preise
+  sieht man nur brutto.
+* **~120 € Druck** habe ich aus dem geschätzt, was eine Online-Druckerei an
+  der Oberfläche anzeigt. Sandy ist zum Zeitpunkt der Schätzung noch nicht
+  gewerblich angemeldet — sie sieht dort ohnehin Endpreise.
+* **Der laufende Kleinbedarf** ist eine Kasse für Kleinkram. Wer eine Kasse
+  füllt, füllt sie mit dem, was er bezahlt.
+
+Es gibt **keinen** Posten in meiner Zeile, bei dem ich netto gerechnet habe.
+
+### Warum die Fahrten Bahn sind — und warum das an der Zahl selbst ablesbar ist
+
+**Ich habe 40 € je Fahrt angesetzt.** Das ist kein Pkw-Wert.
+
+| | Rechnung | Ergebnis |
+|---|---|---|
+| **Pkw**, Kilometerpauschale | Berlin ↔ Dessau-Roßlau ≈ 130 km je Richtung, also **260 km** hin und zurück, × 0,30 €/km | **78 €** |
+| **Bahn**, RE7 (fährt Dessau ↔ Berlin **ohne Umsteigen**) | ab ~20 € je Richtung | **~40 €** |
+
+**Meine 40 € treffen die Bahn und verfehlen den Pkw um fast das Doppelte.**
+Ich habe beim Hinschreiben an eine Zugfahrt gedacht — das ist die Verbindung,
+die es zwischen Berlin und Dessau gibt, und sie ist direkt.
+
+### 🔴 Wo du mich korrigieren musst: der Steuersatz für die Bahn
+
+**Du hast die Fahrten mit 19 % gerechnet** — das steckt in deinen 228,32 €
+(440 € × 19/119 = 70,25 €). **Personenbeförderung im Schienenbahnverkehr ist
+mit 7 % ermäßigt**, § 12 Abs. 2 Nr. 10 UStG, seit dem 01.01.2020 auch im
+Fernverkehr. Für unsere Fahrten gilt das ohnehin, es ist Nahverkehr.
+
+### Die Zeile, wie sie stimmt
+
+| Posten | brutto | Satz | Vorsteuer |
+|---|---|---|---|
+| Druck Flyer / Aufsteller | 660,00 € | 19 % | **105,38 €** |
+| Fahrten (Bahn) | 440,00 € | **7 %** | **28,79 €** |
+| Ausrüstung (Ansteckmikro, Stativ) | 60,00 € | 19 % | **9,58 €** |
+| laufender Kleinbedarf | 270,00 € | 19 % | **43,11 €** |
+| **Σ** | **1.430,00 €** | | **186,85 €** |
+
+**Nicht 228,32 €, nicht 158,07 €, nicht 0 €.** Der Unterschied zu deiner
+Bahn-Variante sind genau die 41,47 €, die der falsche Steuersatz zu viel
+ausweist.
+
+### Zwei Einschränkungen, die du kennen sollst
+
+**1. Die 270 € Kleinbedarf sind ein Eimer, keine Liste.** Ich habe sie als
+19 % gerechnet, weil das für Druckerpapier, Klebeband, Kabel und ähnliches
+stimmt. Es kann darin Kleinkram ohne Rechnung geben — dann ist die Vorsteuer
+dort niedriger. **Ich kann das nicht auflösen, bevor der erste Beleg da ist.**
+Der Betrag, um den es schlimmstenfalls geht, sind 43,11 €.
+
+**2. Wenn Sandy doch fährt, ist nicht nur die Vorsteuer falsch, sondern die
+Zahl.** Dann sind es nicht 40 €, sondern 78 € je Fahrt — **die Fahrtzeile
+steigt von 440 € auf rund 860 €**, und die Vorsteuer darauf ist 0. Das ist
+der teurere Fall, und er ist im Plan heute nicht abgebildet. **Ob Sandy ein
+Auto hat, weiß ich nicht** und finde es in keiner Datei. Das ist die einzige
+Stelle, an der meine Antwort eine Annahme über sie enthält — und sie ändert
+den Plan um rund 420 € Kosten, nicht um 30 € Vorsteuer. **Wenn du sie ohnehin
+etwas fragst, dann das.**
+
+### Was ich selbst geändert habe
+
+**In `docs/gtm-kanalplan.xlsx`, Blatt „Annahmen":** die drei Sachkosten-Felder
+(`F2`, `F4`, `F6`) sagen jetzt ausdrücklich **BRUTTO**, nennen den Steuersatz
+und bei den Fahrten die Verbindung. Darunter steht eine Hinweiszeile mit dem
+Ergebnis 186,85 €. **Damit steht es in der Tabelle und nicht nur in dieser
+Datei** — genau der Punkt, der dir wichtig war.
+
+**Nicht geändert:** `AL47` und `AM47` im Finanzplan. Das ist deine Zeile, und
+ob du 186,85 € einträgst, entscheidest du.
+
+*Head of Marketing · 23.09.2026, 07:20 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
