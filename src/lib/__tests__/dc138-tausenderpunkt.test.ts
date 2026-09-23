@@ -9,8 +9,10 @@
 // `20 % auf 2,301,14 €` gemacht. In der App, in der Vorschau und im PDF
 // gleichzeitig.
 //
-// Diese Datei hält beide Seiten fest: die heutige Form (ohne Tausenderpunkt)
-// und die Form, die nach CoS-E-092 entsteht.
+// CoS-E-092 ist seit `5191791` gebaut, die Falle damit scharf. Diese Datei
+// hält beide Schreibweisen fest, die dadurch gleichzeitig im Umlauf sind: die
+// neue mit Tausenderpunkt und die alte ohne, die in jedem vorher angelegten
+// Angebot gespeichert stehen bleibt.
 import { describe, it, expect } from 'vitest'
 import { mitDeutschenZahlen } from '@/lib/zahlen-text'
 import { zuschlagBerechnungsweg, zuschlagsBezugAus } from '@/lib/zuschlag-basis'
@@ -49,15 +51,21 @@ describe('DC-138 — deutsche Tausenderzahlen bleiben unangetastet', () => {
 })
 
 describe('DC-138 — der heutige Zuschlags-Rechenweg überlebt die Hilfe unverändert', () => {
-  it('seit CoS-E-092: mit Tausenderpunkt, und die Hilfe laesst ihn stehen', () => {
+  it('seit CoS-E-092: mit Tausenderpunkt, und die Hilfe lässt ihn stehen', () => {
     const weg = zuschlagBerechnungsweg(20, 2301.14, null, null)
     expect(weg).toBe('20 % auf 2.301,14 € (Leistungen dieses Angebots)')
     expect(mitDeutschenZahlen(weg)).toBe(weg)
   })
 
-  it('nach CoS-E-092: mit Tausenderpunkt ebenfalls unverändert', () => {
-    const nachher = '20 % auf 2.301,14 € (Leistungen dieses Angebots)'
-    expect(mitDeutschenZahlen(nachher)).toBe(nachher)
+  it('und Bestandsangebote von vor CoS-E-092 tragen die alte Schreibweise weiter', () => {
+    // Nicht historisch, sondern dauerhaft: `berechnungsweg` wird beim Anlegen
+    // des Angebots gespeichert (`quotes/create`, `quotes/[id]/revise`) und
+    // nicht bei jeder Anzeige neu gebildet. Jedes Angebot von vor `5191791`
+    // trägt die alte Schreibweise also für immer in der Spalte und läuft
+    // trotzdem durch dieselbe Hilfe. Ohne Punkt greift die Regel gar nicht —
+    // hier ist genau das die Zusicherung, nicht ein Nebeneffekt.
+    const bestand = '20 % auf 2301,14 € (Leistungen dieses Angebots)'
+    expect(mitDeutschenZahlen(bestand)).toBe(bestand)
   })
 
   it('und der Leser aus DC-137 findet die Grundlage in beiden Schreibweisen', () => {

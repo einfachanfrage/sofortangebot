@@ -622,14 +622,31 @@ export function bauteilAusschlussHinweis(
 // „zwei Bremsen, die dasselbe tun, dürfen sich nicht verschieden anfühlen".
 // Der Beleg-Satz steht auch hier hinten, und zwar unverzichtbar: ohne ihn
 // weiß niemand, WELCHE Ansage gemeint ist.
+//
+// DC-142 · der Wortlaut, den Engineering offengelassen hat.
+//
+// Gedreht, nicht neu erfunden: Die erste Fassung hat mit der Frage begonnen
+// („Nicht eindeutig: Arbeiten an den Wänden — zu welchem Raum? Es wurde nichts
+// entfernt") und die Folge nachgestellt. Auf dem Bildschirm liest der Betrieb
+// aber zuerst, WAS mit seinem Angebot ist, und erst danach, was er tun soll —
+// genau so ist die Nachbarzeile gebaut („sind nicht im Angebot"). Die neue
+// Fassung spiegelt sie Wörtlich: dort „sind nicht im Angebot", hier „bleiben
+// im Angebot". Zwei Zeilen, die das Gegenteil sagen, sagen es jetzt im
+// gleichen Satzbau — der Unterschied steckt im Verb, nicht in der Bauart.
+//
+// „entfernt" ist dabei bewusst verschwunden: es beschreibt, was der Code
+// getan (bzw. gelassen) hat. Der Betrieb fragt nicht nach dem Code, sondern
+// danach, ob die Arbeit auf dem Blatt steht — und „bleiben im Angebot" ist
+// hier keine Vermutung, sondern gemessen: die Zeile entsteht nur, wenn das
+// Bauteil in einer echten Position vorkommt (`betrifft`, oben).
 
 export function bauteilUnklarHinweis(bauteile: Bauteil[], satz: string): string {
-  return `⚠ Nicht eindeutig: Arbeiten ${aufzaehlungDer(bauteile)} — zu welchem Raum? `
-    + `Es wurde nichts entfernt — gesagt: „${satz}"`
+  return `⚠ Arbeiten ${aufzaehlungDer(bauteile)} bleiben im Angebot. `
+    + `Zu welchem Raum galt das? — gesagt: „${satz}"`
 }
 
 const BAUTEIL_UNKLAR_MUSTER =
-  /^⚠\s*Nicht eindeutig:\s*Arbeiten ((?:an|am)\s[\s\S]+?) — zu welchem Raum\? Es wurde nichts entfernt\s+—\s+gesagt:\s*„([\s\S]+)"$/
+  /^⚠\s*Arbeiten ((?:an|am)\s[\s\S]+?) bleiben im Angebot\. Zu welchem Raum galt das\?\s+—\s+gesagt:\s*„([\s\S]+)"$/
 
 export interface BauteilUnklarHinweis {
   /** Die Aufzählung, fertig gesetzt: „an den Wänden und an der Decke". */

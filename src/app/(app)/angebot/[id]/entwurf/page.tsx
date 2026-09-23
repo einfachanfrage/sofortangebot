@@ -25,31 +25,16 @@ import RueckfragenScreen, { type RueckfragenAntwort } from '@/components/aufnahm
 import { gruppiereNachRaum } from '@/lib/angebot-gruppierung'
 import { istProzentZuschlag } from '@/lib/zuschlag-basis'
 import { nutzerFehler } from '@/lib/fehlertexte'
-import { istZeitAusschlussHinweis, zerlegeZeitAusschlussHinweis } from '@/lib/zeit-ausschluss'
+import { zerlegeZeitAusschlussHinweis } from '@/lib/zeit-ausschluss'
 import {
-  istBauteilAusschlussHinweis,
   zerlegeBauteilAusschlussHinweis,
-  istBauteilUnklarHinweis,
   zerlegeBauteilUnklarHinweis,
 } from '@/lib/bauteil-ausschluss'
+// DC-142: die Reihenfolge der Bannerzeilen ist eine Anzeige-Entscheidung und
+// steht deshalb nicht mehr als lokale Funktion hier, sondern prüfbar in der
+// Bibliothek.
+import { sortiereHinweise } from '@/lib/hinweis-rang'
 
-/**
- * Reihenfolge im Bernsteinbanner (DC-128, erweitert um PD-024/DC-135).
- *
- * Ein ganzer Raum, den der Handwerker auf später geschoben hat, wiegt mehr
- * als ein einzelnes Bauteil darin; beides wiegt mehr als ein korrigiertes
- * Maß. Das ist keine Sortierung nach Text, sondern nach Folgen: die zwei
- * oberen Sorten sagen „hier fehlt Arbeit im Angebot", die untere sagt
- * „hier ist eine Zahl geradegerückt worden".
- */
-function rang(zeile: string): number {
-  if (istZeitAusschlussHinweis(zeile)) return 2
-  if (istBauteilAusschlussHinweis(zeile)) return 1
-  // PM-136: dieselbe Sorte Folge wie ein Ausschluss — nur ist hier noch offen,
-  // WO er gilt. Eine offene Frage wiegt nicht weniger als eine beantwortete.
-  if (istBauteilUnklarHinweis(zeile)) return 1
-  return 0
-}
 
 // Bereits berechnete quote_items — vollständig geladen (nicht nur die Anzahl),
 // damit sie sich zusammen mit frischen Vorschau-Positionen raum-gruppieren
@@ -1565,8 +1550,7 @@ export default function EntwurfPage() {
                   wiegt mehr als ein korrigiertes Maß. Passt eine Zeile nicht
                   auf das Muster, steht sie unverändert da: lieber der rohe
                   Satz als ein verschluckter. */}
-              {[...massWarnungen]
-                .sort((a, b) => rang(b) - rang(a))
+              {sortiereHinweise(massWarnungen)
                 .map((w, i) => {
                   const ausgenommen = zerlegeZeitAusschlussHinweis(w)
                   if (ausgenommen) {
@@ -1584,16 +1568,21 @@ export default function EntwurfPage() {
                   /* PD-024/DC-135: dieselbe Form eine Ebene tiefer — nicht
                      ein ganzer Raum, sondern ein Bauteil darin. Gleiche
                      zwei Zeilen, gleiches Gewicht, gleicher Beleg. */
-                  /* PM-136: die Rückfrage — gleiche zwei Zeilen, gleicher
-                     Beleg, aber die Aussage ist die umgekehrte: es ist
-                     NICHTS weggefallen, und der Betrieb muss sagen, wo der
-                     Satz gilt. */
+                  /* PM-136 / DC-142: die Rückfrage — gleiche zwei Zeilen,
+                     gleicher Beleg, aber die Aussage ist die umgekehrte: es
+                     ist NICHTS weggefallen, und der Betrieb muss sagen, wo
+                     der Satz gilt. Deshalb steht die Folge vorn und die
+                     Frage hinten, spiegelbildlich zur Nachbarzeile
+                     („bleiben im Angebot" ↔ „sind nicht im Angebot") — und
+                     deshalb steht diese Sorte im Banner ganz oben
+                     (`hinweisRang`): sie ist die einzige, die ohne eine
+                     Antwort des Betriebs nicht zu Ende geht. */
                   const offen = zerlegeBauteilUnklarHinweis(w)
                   if (offen) {
                     return (
                       <div key={i} className="flex flex-col gap-0.5">
                         <p className="text-amber-900 font-black text-[13px]">
-                          Arbeiten {offen.arbeiten}: zu welchem Raum? Nichts entfernt
+                          Arbeiten {offen.arbeiten} bleiben im Angebot. Zu welchem Raum galt das?
                         </p>
                         <p className="text-amber-800/90 font-semibold text-[12px] italic leading-snug">
                           Gesagt: „{offen.satz}"

@@ -3710,5 +3710,26 @@ damit sie nicht nur in dieser Datei lebt.
 
 ---
 
+---
+
+## 🟡 Zwei Stichworte, und Finance kommt weiter — sie liegen seit 19:05 UTC bei dir (21.09.2026, 20:50 UTC · Chief of Staff)
+
+**Kein neuer Auftrag, eine Erinnerung.** Finance hat alles abgeräumt, was
+ohne dich ging, und steht jetzt auf genau einer Zeile still:
+
+1. Sind die **1.430 € Sachkosten** im Kanalplan **brutto oder netto** gemeint?
+2. Sind die Fahrten **Pkw oder Bahn**?
+
+**Zwei Stichworte genügen.** Daran hängen rund **230 € Vorsteuer über 24
+Monate** — und seit Sandys Entscheidung vom 17.09. (Regelbesteuerung statt
+Kleinunternehmerregelung) ist Vorsteuer keine Rechengröße mehr, sondern Geld.
+
+**Danach bei dir unverändert:** CoS-M-018 nur mitnehmen, wenn die Preiszeile
+ohnehin drankommt, **Wortlaut vorher bei Legal holen**. Der Website-Schalter
+bleibt hinter CoS-038 bei Engineering.
+
+*Chief of Staff · 2026-09-21, 20:50 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

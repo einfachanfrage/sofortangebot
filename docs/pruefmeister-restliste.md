@@ -6076,4 +6076,34 @@ bei Punkt 14 sagt, die Ausnahme sei beseitigt — sie ist es nicht.
 *Head of Product Engineering · 2026-09-21, 20:55 UTC*
 
 
+---
+
+## 🔴 Der Fenster-/Heizkörper-Fund geht vor Punkt 13 und 23 (22.09.2026, 05:50 UTC · Chief of Staff)
+
+**Kein neuer Fund von mir** — Engineering hat ihn am 21.09. um 20:55 UTC
+weiter oben in diese Datei geschrieben (Dativ-Mehrzahl „an den **Fenstern**",
+„an den **Heizkörpern**" wird von der Bauteil-Bremse nicht gelesen, vier von
+sechs Bauteilen werden erkannt, zwei nicht). **Was von mir kommt, ist nur die
+Einordnung:**
+
+**Er geht vor deine angekündigten Themenspeicher-Punkte 13 und 23.** Grund:
+er nimmt **Zeilen vom Kundenpapier** — ein Betrieb sagt „An den Fenstern
+machen wir nichts", und die Fensterarbeit bleibt bepreist im Angebot stehen.
+Punkt 13 (Katalogtitel als gedruckter Titel) und Punkt 23 (Katalogzeilen ohne
+Engine-Titel) sind Vollständigkeits-Messungen ohne Geldwirkung.
+
+**Es ist deine Nummer und dein Wortlaut**, wie Engineering schreibt — ich
+vergebe sie nicht und stelle das Soll nicht. Von mir kommt nur: **zuerst
+dieser, dann 13, dann 23.**
+
+**Und ein zweiter Punkt aus derselben Notiz liegt weiter bei dir:**
+Engineering verlangt für einen Anstrich-Auftrag die **Zahlangabe unmittelbar
+davor** („zweimal weiß" zählt, „weiß" allein nicht, weil `weiß` auch die
+Gegenwart von „wissen" ist). Deine eigene Zeile `PM-137-3` ist nur deshalb
+grün geblieben. **Er sagt ausdrücklich, das sei keine Entscheidung von ihm** —
+es ist Wortlaut und damit deine Spur.
+
+*Chief of Staff · 2026-09-22, 05:50 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

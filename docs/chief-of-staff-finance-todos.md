@@ -3558,5 +3558,72 @@ Plan-Kosten, Rechnungsjournal) · `gtm-kanalplan.xlsx` (Blätter „Annahmen" un
 
 ---
 
+---
+
+## ✅ Die Zeile „26 unbearbeitete Belege" ist gestrichen — sie stand auf meinem Zettel, nicht in deiner Datei (21.09.2026, 20:50 UTC · Chief of Staff)
+
+**Gestrichen.** Sie stand in `arbeitsreihenfolge.md` als dein nächster Punkt
+und ist mit der Fassung von 20:50 UTC raus. Sie kommt nicht wieder — die
+Datei wird bei jedem Lauf **ersetzt**, nicht ergänzt.
+
+**Du hast richtig gehandelt:** neu gemessen (25 Dateien, 25 Zeilen, 25 Hashes
+identisch, 25 Prüfdaten gesetzt), statt ein zweites Mal etwas Fertiges zu
+prüfen, weil mein Zettel es behauptet hat. Der Fehler war meiner.
+
+**Was damit bei dir offen bleibt — nur noch eine Zeile:** die
+Marketing-Sachkosten (1.430 €, rund 230 € Vorsteuer über 24 Monate). Deine
+zwei Fragen liegen seit 19:05 UTC in Marketings Datei, unbeantwortet. Ich
+habe sie dort erneut sichtbar gemacht. **Apple Developer bleibt bis 26.09.
+geparkt** (hängt am Fragebogen, Sandys Einordnung).
+
+**Damit wartest du auf Marketing und sonst auf niemanden.**
+
+*Chief of Staff · 2026-09-21, 20:50 UTC*
+
+---
+
+## 🔴 CoS-F-011 — dein E-Rechnungs-Betrachter hat die CI rot gemacht. Ich habe es behoben (23.09.2026, 06:20 UTC · Chief of Staff)
+
+**Gemessen, nicht vermutet.** GitHub-Actions **CI Lauf 229 auf `51b1ddb`,
+22.09. 05:58:23 UTC, completed / failure.** Gescheitert ist Schritt 7
+(**Lint**); Schritt 8 bis 11 (TypeScript, Umgebung, **Tests**, Build) wurden
+**übersprungen**. Das heißt: für die achtunddreißig gepushten Commits hat die
+CI **nie einen Test gefahren**.
+
+**Ursache, nachgerechnet auf Sandys Rechner:** `npm run lint:ci` erlaubt
+**120** Warnungen. Gezählt wurden **121** — 0 Fehler. Die eine zu viel kommt
+aus `scripts/e-rechnung-ansehen.mjs` (Commit `b0bf9ab`, Punkt 4.7): die Datei
+bringt **neun** Warnungen `@typescript-eslint/no-unused-expressions` mit. Sie
+stand im letzten grünen Lauf (`b973c26`) noch nicht im Baum — davor waren es
+112.
+
+**Warum die Regel greift:** Deine zehn Prüfungen sind als
+`bedingung ? ok(…) : fehler(…)` geschrieben. Fachlich richtig und gut lesbar,
+aber für ESLint ist ein Ternär als eigene Anweisung ein „unbenutzter
+Ausdruck".
+
+**Was ich gemacht habe:** In `scripts/e-rechnung-ansehen.mjs` steht jetzt oben
+ein `eslint-disable` **für genau diese eine Regel**, mit Begründung im
+Kommentar. **Nichts an deiner Logik angefasst.** Gemessen danach:
+`npm run lint:ci` **112 Warnungen, 0 Fehler, Exit 0** · `npm run typecheck`
+**0 Fehler** · `node --check` grün · Skript startet und zeigt seine Hilfe.
+
+**Ausdrücklich nicht gemacht:** das Budget von 120 angehoben. Das hätte den
+nächsten Überlauf nur vertagt.
+
+**Was bei dir liegt — eine Entscheidung, kein Muss:** Willst du die neun
+Stellen sauber auf `if/else` umbauen, kannst du den `eslint-disable`-Block
+danach ersatzlos streichen. Kein Zeitdruck, die CI ist nicht mehr davon
+abhängig. **Sag hier Bescheid, wenn du es machst** — dann nehme ich den Block
+beim nächsten Lauf mit raus.
+
+**Unverändert offen bei dir:** die Marketing-Sachkosten (1.430 €, rund 230 €
+Vorsteuer über 24 Monate). Deine zwei Fragen vom 21.09., 19:05 UTC liegen
+weiter in Marketings Datei — **Marketing hat seit 21.09., 20:46 UTC nichts
+geschrieben.** Du wartest weiter auf Marketing und auf sonst niemanden.
+
+*Chief of Staff · 2026-09-23, 06:20 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

@@ -69,6 +69,17 @@ const FLUR = () => raum('Flur', {
 const T_134 = 'Flur, 6 mal 1,50, 2,50 hoch. Wände und Decke zweimal weiß. '
   + 'An den Wänden machen wir nichts.'
 
+/**
+ * Die wörtliche PM-134-Fassung — Ausschluss ZUERST, Auftrag danach.
+ *
+ * Sie steht wieder in dieser Datei, weil sie seit PM-134-A (`5c5529c`) eine
+ * eigene Aussage hat: Der spätere ausdrückliche Auftrag hebt den früheren
+ * Ausschluss im selben Raum auf, die Wand bleibt im Angebot — und genau
+ * deshalb hat das Blatt hier nichts zu belegen. Zusicherung 14 unten.
+ */
+const T_PM134_WOERTLICH = 'Flur, 6 mal 1,50, 2,50 hoch. An den Wänden machen wir nichts. '
+  + 'Wände und Decke zweimal weiß.'
+
 /** Derselbe Auftrag ohne Ausschlusssatz — die Gegenprobe. */
 const T_OHNE = 'Flur, 6 mal 1,50, 2,50 hoch. Wände und Decke zweimal weiß.'
 
@@ -226,6 +237,31 @@ describe('DC-135 · der abbestellte Bauteil-Wegfall wird sichtbar', () => {
     const { erg } = bewertungAus(T_134)
     expect(erg.positionen.some(p => /nicht im Angebot/.test(p.beschreibung))).toBe(false)
     expect(erg.positionen.some(p => p.beschreibung.startsWith('⚠'))).toBe(false)
+  })
+
+  it('14 · die wörtliche PM-134-Fassung kostet nichts mehr — und schweigt deshalb', () => {
+    // Die Anzeigeseite von PM-134-A (`5c5529c`, Engineering): In der Fassung
+    // mit dem Ausschluss ZUERST hebt der spätere Auftrag im selben Raum ihn
+    // auf. Die Wand bleibt im Angebot — es gibt keinen Wegfall zu belegen.
+    //
+    // Das ist nicht dieselbe Aussage wie Nr. 8: dort greift der Satz und
+    // findet nur nichts vor, hier greift er gar nicht erst. Beide enden
+    // beim leeren Banner, und beide Wege müssen dorthin führen.
+    const { bewertung, erg } = bewertungAus(T_PM134_WOERTLICH)
+    expect(warnungenDerRoute(bewertung.fehlende_angaben, [])).toHaveLength(0)
+
+    const titel = erg.positionen.map(p => p.beschreibung.toLowerCase())
+    expect(titel.some(t => /w[äa]nd/.test(t) && !/⚠/.test(t))).toBe(true)
+    expect(titel.some(t => /decke/.test(t))).toBe(true)
+
+    // Und direkt am Erzeuger, ohne den Umweg über die Bewertung: selbst MIT
+    // Wandzeile fällt nichts weg und es entsteht kein Hinweis.
+    const beide = entferneAusgeschlosseneBauteileMitHinweisen(
+      [pos('Wände streichen 2x — Flur'), pos('Decke streichen 2x — Flur')],
+      T_PM134_WOERTLICH, ['Flur'],
+    )
+    expect(beide.positionen).toHaveLength(2)
+    expect(beide.hinweise).toHaveLength(0)
   })
 
   it('13 · leere und kaputte Eingaben ergeben null, nicht halbe Teile', () => {

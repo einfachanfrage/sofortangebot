@@ -1,4 +1,12 @@
 #!/usr/bin/env node
+
+/* eslint-disable @typescript-eslint/no-unused-expressions --
+   Die zehn Pruefungen sind bewusst als `bedingung ? ok(...) : fehler(...)`
+   geschrieben: nebeneinander gestellt liest man Soll und Ist in einer Zeile.
+   Die Regel zaehlt das als unbenutzten Ausdruck und hat mit neun Warnungen
+   das Warnbudget der CI gesprengt (121 > 120, Lauf 229 rot). Hier
+   abgeschaltet statt das Budget zu heben — die Regel gilt woanders weiter.
+   Chief of Staff, 23.09.2026. */
 /**
  * e-rechnung-ansehen.mjs — macht eine E-Rechnung lesbar und rechnet sie nach.
  *

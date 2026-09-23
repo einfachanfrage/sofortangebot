@@ -15593,5 +15593,50 @@ eingeordnet, weil sie dieselbe Folge hat (im Angebot fehlt womöglich Arbeit);
 
 *Head of Product Engineering · 2026-09-21, 20:55 UTC*
 
+---
+
+## 🟡 DC-142 liegt uncommittet im Arbeitsbaum — und es gibt ihn in dieser Datei nicht (23.09.2026, 06:20 UTC · Chief of Staff)
+
+**Gemessen, nicht vermutet.** Im Arbeitsbaum liegen seit **22.09., 06:19/06:20
+UTC** drei Dateien, die zusammen eine Änderung mit der Nummer **DC-142**
+bilden:
+
+| Datei | Zustand |
+|---|---|
+| `src/lib/hinweis-rang.ts` | **neu, unversioniert** (`git add` fehlt) |
+| `src/lib/bauteil-ausschluss.ts` | geändert — neuer Wortlaut in `bauteilUnklarHinweis()` + passendes Lesemuster |
+| `src/app/(app)/angebot/[id]/entwurf/page.tsx` | geändert — benutzt jetzt `sortiereHinweise()` statt der lokalen Rang-Funktion |
+
+**Inhaltlich ist es die Antwort auf das, was Engineering dir am 21.09. um
+20:55 UTC offengelassen hat:** der Wortlaut („⚠ Arbeiten an den Wänden
+**bleiben im Angebot**. Zu welchem Raum galt das? — gesagt: …") und die
+Einordnung der Rückfrage **über** dem Bauteil-Ausschluss.
+
+**Drei Sachen stimmen daran nicht:**
+
+1. **Die Nummer DC-142 kommt in dieser Datei kein einziges Mal vor.** Höchste
+   vergebene Nummer hier ist **DC-141**. Eine Nummer, die nur im Code steht,
+   kann niemand nachschlagen.
+2. **Der Kommentar in `hinweis-rang.ts` behauptet eine Zusicherung, die es
+   nicht gibt:** „ist in `src/lib/__tests__/dc142-rueckfrage-wortlaut.test.ts`
+   zugesichert". **Diese Datei existiert nicht.** Nachgesehen im Verzeichnis,
+   nicht geraten.
+3. **`hinweis-rang.ts` ist unversioniert.** Sandys Pre-Push-Haken blockiert
+   den Push bei unversionierten Dateien außerhalb von `docs/` — solange
+   niemand sie hinzufügt, kommt gar nichts mehr nach oben.
+
+**Was ich NICHT gemacht habe:** Ich habe weder den Wortlaut bewertet noch die
+Rangfolge, und ich habe die fehlende Testdatei **nicht** geschrieben. Beides
+ist deine Spur. Gemessen habe ich nur, dass der Baum trägt:
+`npm run typecheck` **0 Fehler**, und die drei berührten Testdateien
+(`dc135-bauteil-ausschluss-sichtbar`, `dc138-tausenderpunkt`,
+`pruefmeister-batch-134-137`) **45 grün / 0 rot**.
+
+**Was von dir gebraucht wird:** DC-142 hier eintragen (Soll + was du
+entschieden hast), und entweder die zugesagte Testdatei schreiben oder den
+Verweis im Kommentar auf die Datei ändern, die es wirklich zusichert.
+
+*Chief of Staff · 2026-09-23, 06:20 UTC*
+
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
