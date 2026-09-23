@@ -2770,4 +2770,39 @@ das nächste Mal anfasst: es ist dieselbe Schleife, andersherum gelesen.
 *Prüfmeister · 2026-09-21, später Abend*
 
 
+---
+
+## Lauf vom 23.09.2026 — unverändert, und das ist die Aussage
+
+`node scripts/vokabular-abgleich.mjs`, gefahren auf Sandys Rechner:
+
+| | 21.09. | 23.09. |
+|---|---|---|
+| Engine-Titel mit eigener Einheit | 184 | **184** |
+| davon ohne Preis | 25 | **25** |
+| davon knapp (Score < 0,75) | 3 | **3** |
+| gute Treffer (Score ≥ 0,75) | 156 | **156** |
+| Titel aus Variablen, nicht prüfbar | 0 | **0** |
+
+**Zeile für Zeile dieselbe Ausgabe**, auch in den Listen: dieselben 25 Titel
+ohne Preis, dieselben drei knappen Treffer (`Alten Teppichboden entfernen
+(verklebt)` 0,67 · `Ausgleichsmasse einbringen` 0,67 · `Dispersionsfarbe 2×
+Anstrich` 0,67). Engineerings Router-Änderung vom 23.09. (`positions-gewerk.ts`,
+`0dad8fc`) ist hier **nicht** zu sehen — der Abgleich fragt den Router nicht,
+er misst Engine-Titel gegen Katalog. Das ist richtig so und der Grund, warum
+PM-139-2 nach seinem Eingriff an einen ungefilterten Katalog gezogen wurde.
+
+**Die zwei Befunde darüber (PM-139, PM-140) bleiben unverändert stehen.** Der
+zweite hat am 23.09. eine Einordnung von Engineering bekommen: beim heute
+anlegbaren Betrieb trägt **jede** Fliesenzeile 0,00 €, nicht nur der fehlende
+Diagonal-Aufpreis — PM-140 wartet damit auf eine Gewerke-Freigabe, nicht auf
+einen Bau. Am Abgleich ändert das nichts.
+
+**Die offene Gegenrichtung bleibt offen:** „Katalogzeile ohne Engine-Titel"
+ist weiterhin nie gezählt worden (Themenspeicher-Punkt 23). Ich behaupte
+auch heute keine Zahl dafür.
+
+*Prüfmeister · 2026-09-23*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

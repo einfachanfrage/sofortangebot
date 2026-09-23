@@ -1,130 +1,122 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 23.09.2026, 07:00 UTC · Chief of Staff**
-*(ersetzt die Fassung von 23.09., 06:20 UTC — diese Datei wird immer ersetzt, nie
+**Stand: 23.09.2026, 07:35 UTC · Chief of Staff**
+*(ersetzt die Fassung von 23.09., 07:00 UTC — diese Datei wird immer ersetzt, nie
 ergänzt. Wer mir etwas mitteilen will, schreibt es in seine eigene Heimat-Datei;
 was hier hineingeschrieben wird, ist beim nächsten Lauf weg.)*
 *Alle Uhrzeiten sind **UTC**. In Deutschland ist es gerade **MESZ = UTC + 2**,
-also 09:00 Uhr Ortszeit.*
+also 09:35 Uhr Ortszeit.*
+
+⚠️ **Diese Fassung ist eine Momentaufnahme mitten im Lauf.** Vier Rollen haben
+in den letzten vierzig Minuten geliefert, Finance schreibt in diesem Moment.
+Was hier steht, ist um 07:35 UTC gemessen — nicht früher, nicht später.
 
 ---
 
 ## Lage in drei Zeilen
 
-**🟢 Sandy hat gepusht, der CI-Fix ist oben.** `origin/main` = lokal =
-**`e6ac85e`**, **0 ungepusht**. Vercel-Produktion steht auf `e6ac85e`
-**READY**. Der 24-Stunden-Stillstand ist vorbei.
+**🟢 Die CI ist grün.** Sandy hat nachgesehen: **Lauf 231 auf `221ac53`,
+`main`, erfolgreich, 1 min 56 s.** Damit ist die Blindstelle aus der letzten
+Fassung zu — und zum ersten Mal seit dem 22.09. sind die Tests wirklich
+durchgelaufen.
 
-**🟢 Zwei Rollen haben heute früh geliefert.** Der **Designer** hat DC-142
-vollständig eingetragen und die fehlende Testdatei geschrieben (**11 grün /
-0 rot — von mir selbst nachgefahren**). **Engineering** sitzt gerade an
-CoS-E-094 und hat dabei einen Geldfehler gefunden; er hat jetzt eine Nummer:
-**CoS-E-096**.
+**🟢 Drei meiner vier offenen Zuweisungen sind zu, alle heute früh.**
+Engineering hat CoS-E-094 beantwortet (**Sperr-Fall, beide Zeilen — kein
+Bau**) und **CoS-E-096 gebaut**. Marketing hat Finances zwei Sachkosten-Fragen
+beantwortet (**brutto**, **Bahn**) und dabei einen Steuersatz korrigiert.
 
-**🔴 Neu und unangenehm: ich kann die CI nicht mehr messen.**
-`api.github.com` ist von Sandys Rechner nicht mehr erreichbar, und der
-Cloud-Container hat für dieses Repository keinen Zugriff. **Ob der CI-Lauf auf
-`e6ac85e` grün war, weiß ich nicht** — und ich behaupte es deshalb nicht.
+**🟡 Offen bleiben zwei Dinge: `origin` hinkt drei Commits hinterher, und
+CoS-L-014 ist unverändert.** Legal hat seine Datei heute angefasst — die zwei
+falschen Zeilen in `legal-007` stehen trotzdem noch da.
 
 ---
 
-## Was seit 23.09., 06:20 UTC passiert ist
+## Was seit 23.09., 07:00 UTC passiert ist
 
 | Wer | Was | Wo |
 |---|---|---|
-| **Sandy** | **Committet und gepusht.** `e6ac85e` mit dem CI-Fix und Designers `hinweis-rang.ts`; Vercel hat produktiv ausgerollt (READY) | `origin/main` |
-| **Designer** | **DC-142 eingetragen und die zugesagte Testdatei geschrieben** (06:21/06:28 UTC). Der Fund von 06:20 ist damit erledigt | `design-check.md` |
-| **Engineering** | **Arbeitet gerade** an CoS-E-094: `positions-gewerk.ts` +28 Zeilen (06:33), neue Testdatei (06:34), `pruefmeister-batch-139-143` (06:45). **Noch nichts dokumentiert** | Arbeitsbaum |
-| **CoS** | DC-142-Fund abgeschlossen · **CoS-E-096** für Engineerings Beifang aufgemacht · Sperrdatei weggeräumt · diese Datei ersetzt | `design-check.md`, `chief-of-staff-engineering-todos.md` |
-
-**Sonst nichts.** Prüfmeister, Marketing, Platform, Legal und Finance haben
-seit 21.09. keine Datei angefasst.
+| **Sandy** | **Committet (`221ac53`) und CI nachgesehen: Lauf 231 grün** | `origin/main` |
+| **Engineering** | **CoS-E-094 beantwortet** (PM-140 ist ein Sperr-Fall, beide Zeilen, endet ohne Bau) · **CoS-E-096 gebaut** (`0dad8fc`) · PM-139-2 nachgezogen | `chief-of-staff-engineering-todos.md`, `pruefmeister-restliste.md` |
+| **Marketing** | **Finances zwei Fragen beantwortet** — brutto, Bahn · **Finances 19 % auf 7 % korrigiert** (§ 12 Abs. 2 Nr. 10 UStG) · Rundung präzisiert · neue Frage an Legal zum Umsatzsteuer-Wortlaut (CoS-M-018) | `chief-of-staff-finance-todos.md`, `chief-of-staff-legal-todos.md` |
+| **Legal** | Datei um 06:54 UTC angefasst — **`legal-007` Zeile 276 und 343 aber unverändert** | `chief-of-staff-legal-todos.md` |
+| **Finance** | **Schreibt gerade** an `kostenuebersicht-finance.xlsx` (06:59 UTC) | Arbeitsbaum |
+| **CoS** | Lage gemessen, diese Datei ersetzt | — |
 
 ---
 
 ## 🔎 Was ich selbst nachgesehen habe — und was nicht
 
-**Selbst gemessen, 06:43–07:00 UTC, direkt auf Sandys Rechner:**
+**Selbst gemessen, 06:51–07:35 UTC, direkt auf Sandys Rechner:**
 
-* **`git fetch` + `git rev-list`:** `origin/main` = lokal = **`e6ac85e`**,
-  **0 ungepusht**.
-* **Vercel-API:** Produktion **`e6ac85e` READY**, zehn von zehn abgefragten
-  Produktions-Deploys READY.
-* **`design-check.md` durchsucht:** **DC-142 steht drin**, eigener Abschnitt,
-  höchste Nummer jetzt DC-142.
-* **`src/lib/__tests__/dc142-rueckfrage-wortlaut.test.ts`:** existiert
-  (06:21 UTC) und **läuft 11 grün / 0 rot** — selbst gefahren, nicht geglaubt.
-* **`git ls-files`:** `src/lib/hinweis-rang.ts` ist versioniert. Der Punkt
-  „unversioniert" aus der letzten Fassung ist erledigt.
-* **`node scripts/docs-sichern.mjs pruefen`:** **alle 59 Doku-Dateien in
-  Ordnung** — nach jeder meiner Änderungen erneut.
-* **Arbeitsbaum-Zeitstempel Datei für Datei:** nichts von Prüfmeister,
-  Marketing, Platform, Legal oder Finance nach dem 21.09.
+* **`git log` + `git rev-list`:** HEAD = `3e2cded`, **drei Commits ungepusht**
+  (`071a476`, `176fff3`, `3e2cded`).
+* **`git show --stat 221ac53`:** genau meine vier Dateien, **507 Zeilen dazu,
+  75 weg** (die 75 sind die ersetzte Vorfassung dieser Datei). Engineerings
+  laufende Arbeit ist **nicht** mitgegangen — so war es gewollt.
 * **`legal-007` Zeile 276 und 343:** beide sagen **weiterhin**
-  „Kleinunternehmer". CoS-L-014 ist unverändert offen.
-* **Leere `.git/index.lock` (06:27 UTC)** nach `.git/_stale/` verschoben,
-  nicht gelöscht. `git add` ist wieder frei.
+  „Kleinunternehmer". Zeichen für Zeichen nachgesehen, nicht aus der letzten
+  Fassung abgeschrieben.
+* **`node scripts/docs-sichern.mjs pruefen`:** **alle 59 Doku-Dateien in
+  Ordnung.**
+* **Zwei leere `.git`-Sperrdateien** nach `.git/_stale/` verschoben, nicht
+  gelöscht.
+* **Arbeitsbaum-Zeitstempel Datei für Datei**, daraus die Tabelle oben.
 
 **Nicht geprüft, und ich behaupte es deshalb nicht:**
 
-* **🔴 Der CI-Lauf auf `e6ac85e`.** `api.github.com` antwortet von Sandys
-  Rechner mit `EAI_AGAIN`, der Cloud-Container bekommt **403** für dieses
-  Repository. Zweimal versucht, beides fehlgeschlagen. **Grün oder rot ist
-  offen.** Siehe Sandys Punkt 1.
-* **`npm run typecheck` und `npm run lint:ci`.** Beide brechen auf diesem
-  Mount an der Zeitgrenze ab; heute erneut versucht. Der letzte gemessene
-  Stand (112 Warnungen, 0 Fehler, Exit 0 · 0 Typfehler) ist **meiner von
-  06:20** und gilt **nicht** für Engineerings +28 Zeilen von 06:33.
-* **Kein voller Prüfstand.** Unverändert die Zeitgrenze des Mounts.
-* **Engineerings Fund selbst.** Kommentar gelesen, Preis nicht nachgerechnet,
-  Endpunkt nicht gefahren. In CoS-E-096 steht **keine Abnahme**.
-* **Gate 1 rechne ich nicht neu.** Stand bleibt **54,2 %**. Finances Vorschlag
-  95/100 für Punkt 4.7 ist weiter notiert, nicht eingetragen.
-* **Kein Blick ins laufende Produkt. Zehnter Lauf in Folge.**
+* **Der CI-Lauf ist Sandys Messung, nicht meine.** Ich komme unverändert nicht
+  an GitHub Actions heran (`EAI_AGAIN` von hier, **403** aus dem Container).
+  Für die drei ungepushten Commits gibt es **noch keinen CI-Lauf**.
+* **Engineerings Bau und Marketings Rechnung.** Beide Einträge gelesen, keiner
+  nachgerechnet, kein Testlauf gefahren. **Hier steht keine Abnahme.**
+* **Marketings 7-%-Korrektur an Finance.** Fachlich plausibel, von mir **nicht**
+  geprüft — Finance muss ihr zustimmen oder widersprechen.
+* **`npm run typecheck`, `npm run lint:ci`, voller Prüfstand.** Brechen auf
+  diesem Mount an der Zeitgrenze ab. Unverändert.
+* **Gate 1 rechne ich nicht neu.** Stand bleibt **54,2 %**.
+* **Kein Blick ins laufende Produkt. Elfter Lauf in Folge.**
 * **Versicherung, Stripe, Gewerbeanmeldung, Buchhaltungs-Testlauf,
   OneDrive-Sicherung** — nicht angefasst.
 
 ---
 
-## 🟡 Sieben Dateien liegen uncommittet im Arbeitsbaum
+## 🟡 Was uncommittet im Arbeitsbaum liegt
 
 | Datei | Wessen | Fertig? |
 |---|---|---|
-| `docs/design-check.md` | Designer (DC-142) + CoS | **fertig, Test grün gefahren** |
-| `src/lib/__tests__/dc142-rueckfrage-wortlaut.test.ts` | Designer | **fertig** — unversioniert, braucht eigenes `git add` |
-| `docs/chief-of-staff-engineering-todos.md` | CoS (CoS-E-096) | **fertig** |
-| `docs/arbeitsreihenfolge.md` | CoS | diese Datei |
-| `src/lib/positions-gewerk.ts` | **Engineering** | **🔴 in Arbeit — nicht mitcommitten** |
-| `src/lib/__tests__/cos-e-094-muster-aufpreis-gewerk.test.ts` | **Engineering** | **🔴 in Arbeit — nicht mitcommitten** |
-| `src/lib/__tests__/pruefmeister-batch-139-143.test.ts` | **Engineering** | **🔴 in Arbeit (06:45 UTC) — nicht mitcommitten** |
+| `docs/arbeitsreihenfolge.md` | CoS | diese Datei, **fertig** |
+| `docs/kostenuebersicht-finance.xlsx` | **Finance** | **🔴 wird gerade geschrieben — nicht mitcommitten** |
 
-**Sandys Block im Chat nennt nur die vier fertigen Pfade.** Engineerings drei
-Dateien bleiben liegen, bis er selbst meldet — AGENTS.md, „geteilter
-Arbeitsbaum", Punkt 1 und 3: kein `git add -A`, fremde Arbeit nicht mitnehmen.
-Ein halbfertiger Stand von 06:33 im selben Commit ist genau der Weg, auf dem
-die Produktion zweimal rot geworden ist.
+**Sandys Block im Chat nennt nur diese eine Datei** und schiebt danach die
+**drei fertigen Commits** nach oben. Finances Tabelle bleibt liegen, bis sie
+selbst meldet — AGENTS.md, „geteilter Arbeitsbaum", Punkt 1 und 3.
 
 ---
 
 ## Reihenfolge — wer als Nächstes was macht
 
-1. **Engineering:** CoS-E-094 zu Ende bauen und **den Lauf dokumentieren** —
-   dein Fund steht heute nur im Kopfkommentar einer Testdatei. **CoS-E-096**
-   ist seine Heimat: eintragen, und sagen, ob er zu CoS-E-094 gehört oder ein
-   eigener Bau wird. Danach committest du deine drei Dateien selbst.
-2. **Prüfmeister:** der **Fenster-/Heizkörper-Fund** (Dativ-Mehrzahl, nimmt
-   Zeilen vom Kundenpapier) **vor** Themenspeicher-Punkt 13 und 23. Nummer und
-   Wortlaut gehören ihm. Steht in `pruefmeister-restliste.md`. **Seit 22.09.,
-   05:50 UTC unangetastet.**
-3. **Marketing:** Finances zwei Fragen zu den Sachkosten (1.430 €) liegen seit
-   21.09., 19:05 UTC unbeantwortet — **zweiter Tag**. Finance wartet auf
-   niemanden sonst.
-4. **Legal:** **CoS-L-014** — `legal-007`, Zeile 276 und 343 sagen weiter
-   „Kleinunternehmer". Heute um 06:47 UTC erneut selbst nachgesehen,
-   unverändert. **Dritter Tag.**
-5. **Designer:** DC-142 ist abgeschlossen, deine Spur ist leer. **PD-021**
-   wartet weiter auf Engineerings Grundreihenfolge (CoS-038).
-6. **Platform, Finance:** keine offene Zuweisung von mir.
+1. **Legal:** **CoS-L-014** — `legal-007`, Zeile 276 und 343 sagen weiter
+   „Kleinunternehmer". Heute um 07:33 UTC erneut selbst nachgesehen,
+   unverändert. **Dritter Tag, und du warst heute in deiner Datei.** Dazu
+   **neu** Marketings Frage zum Umsatzsteuer-Wortlaut an der Preiszeile
+   (CoS-M-018, 07:30 UTC).
+2. **Finance:** Marketings Antwort liegt bei dir — **brutto, Bahn, 7 % statt
+   19 %**. Zustimmen oder widersprechen, dann ist der Punkt zu.
+3. **Prüfmeister: ✅ zu, 23.09.** Der **Fenster-/Heizkörper-Fund** hat Nummer,
+   Wortlaut und Soll: **PM-145** (Dativ-Mehrzahl — gemessen **370,00 € von
+   835,90 €**, stumm; Ursache zwei fehlende Buchstaben in `SATZ_WORT`, keine
+   zweite Stelle im `src/lib`). Dazu der zweite Punkt aus derselben Notiz:
+   **PM-146** — die Zahlangabe vor „weiß" **fällt** als Bedingung (ohne sie
+   wird aus 465,90 € ein leeres Blatt). Hinterlegt als
+   `pruefmeister-batch-145-146.test.ts`, **12 Zusicherungen, 8 grün /
+   4 Sperrklinken / 0 rot**; `tsc` 0, `eslint` 0. **Fallbasis 146.** Befunde in
+   `pruefmeister-restliste.md`, ein Fund für den Designer als **PD-026**.
+   **Gebaut ist nichts — beides gehört in `bauteil-ausschluss.ts`, also
+   Engineering.** Meine Spur geht danach weiter mit Themenspeicher-Punkt 13,
+   dann 23.
+4. **Engineering:** CoS-E-094 und CoS-E-096 sind zu. Weiter nach deiner
+   eigenen Reihenfolge: **CoS-038 → CoS-E-095 → PM-119/L-06 → CoS-E-080**.
+5. **Designer, Marketing, Platform:** keine offene Zuweisung von mir.
 
 ---
 
@@ -132,13 +124,12 @@ die Produktion zweimal rot geworden ist.
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | 🔴 **Einmal auf die CI-Seite sehen und mir grün oder rot sagen.** Ich komme nicht mehr an GitHub Actions heran. `github.com/einfachanfrage/sofortangebot` → Reiter **Actions** → oberster Lauf. **Bis dahin weiß niemand, ob die Tests der achtunddreißig Commits durchgelaufen sind** | 30 Sek |
-| 2 | 🔵 **Einmal committen und pushen.** Vier fertige Dateien. Block steht im Chat | ein Block |
-| 3 | 🔴 **Beim ELSTER-Fragebogen nicht der Kurzfassung in `legal-007` folgen.** Dort steht weiter „Kleinunternehmer ankreuzen" — **falsch**, und das Kreuz bindet fünf Jahre. Richtig ist **Verzicht auf die Kleinunternehmerregelung**. **Halte dich an Finances Behördenliste.** Legal zieht die zwei Zeilen nach (CoS-L-014) | nichts jetzt |
-| 4 | 📧 **Zustelltest `support@`.** Von einer **privaten** Adresse eine Mail an `support@sofortangebot.app`, fünf Minuten später in `hallo@` nachsehen (auch Spam). Volle Anleitung in `entscheidungen-fuer-sandy.md` | 2 Min |
-| 5 | 🔵 **Vor der Gewerbeanmeldung in den Arbeitsvertrag sehen** — Klausel zu Nebentätigkeiten. Muss **davor** passieren | 10 Min |
-| 6 | 🔵 **Löschrecht für den Projektordner.** Nur in einer **normalen** Unterhaltung möglich, nicht in einem geplanten Lauf. **Nicht dringend** | ein Klick |
-| 7 | 🔵 **Ab 26.09. bzw. KW 41:** Gewerbeanmeldung → Fragebogen → Geschäftskonto → Steuerberater. Alles in `finance-002-behoerdenliste-fuer-sandy.md` | nichts jetzt |
+| 1 | 🔵 **Einmal pushen.** Drei fertige Commits von Marketing und Engineering liegen lokal fest, dazu diese Datei. Block steht im Chat | ein Block |
+| 2 | 🔴 **Beim ELSTER-Fragebogen nicht der Kurzfassung in `legal-007` folgen.** Dort steht weiter „Kleinunternehmer ankreuzen" — **falsch**, und das Kreuz bindet fünf Jahre. Richtig ist **Verzicht auf die Kleinunternehmerregelung**. **Halte dich an Finances Behördenliste.** Legal zieht die zwei Zeilen nach (CoS-L-014) | nichts jetzt |
+| 3 | 📧 **Zustelltest `support@`.** Von einer **privaten** Adresse eine Mail an `support@sofortangebot.app`, fünf Minuten später in `hallo@` nachsehen (auch Spam). Volle Anleitung in `entscheidungen-fuer-sandy.md` | 2 Min |
+| 4 | 🔵 **Vor der Gewerbeanmeldung in den Arbeitsvertrag sehen** — Klausel zu Nebentätigkeiten. Muss **davor** passieren | 10 Min |
+| 5 | 🔵 **Löschrecht für den Projektordner.** Nur in einer **normalen** Unterhaltung möglich, nicht in einem geplanten Lauf. **Nicht dringend** | ein Klick |
+| 6 | 🔵 **Ab 26.09. bzw. KW 41:** Gewerbeanmeldung → Fragebogen → Geschäftskonto → Steuerberater. Alles in `finance-002-behoerdenliste-fuer-sandy.md` | nichts jetzt |
 
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

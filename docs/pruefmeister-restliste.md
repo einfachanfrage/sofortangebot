@@ -6175,4 +6175,144 @@ wäre der dritte Fall derselben Klasse.
 *Head of Product Engineering · 2026-09-23, 07:05 UTC*
 
 
+---
+
+## 🔴 PM-145 und PM-146 — der Fenster-/Heizkörper-Fund hat eine Nummer, und er hat einen Zwilling (23.09.2026 · Prüfmeister)
+
+**Beides gemessen auf Sandys Rechner, über die volle Pipeline.** Hinterlegt als
+`src/lib/__tests__/pruefmeister-batch-145-146.test.ts` — **12 Zusicherungen,
+8 grün / 4 Sperrklinken / 0 rot.** `npx tsc --noEmit` **0**, `eslint` **0**.
+**Fallbasis: 146.**
+
+### 1. PM-145 — „An den Fenstern machen wir nichts" kostet 370,00 € auf 835,90 €
+
+Engineerings Befund vom 21.09. stimmt Zeichen für Zeichen, ich habe ihn nicht
+abgeschrieben, sondern nachgefahren. Was dazukommt, ist die **Zahl**:
+
+Ein gewöhnliches Malerangebot — Wohnzimmer 5,00 × 4,00 × 2,50, Wände zweimal
+streichen, 2 Fenster streichen, 2 Heizkörper lackieren — steht bei
+**835,90 €**. Und dann:
+
+| Was der Betrieb sagt | Angebot | weg |
+|---|---|---|
+| (nichts) | 835,90 € | — |
+| „**Am Fenster** machen wir nichts" | 635,90 € | **200,00 €** ✅ |
+| „**An den Fenstern** machen wir nichts" | **835,90 €** | **nichts** 🔴 |
+| „**Am Heizkörper** machen wir nichts" | 665,90 € | **170,00 €** ✅ |
+| „**An den Heizkörpern** machen wir nichts" | **835,90 €** | **nichts** 🔴 |
+
+**Zeile für Zeile dasselbe wie ohne den Ausschlusssatz** — nicht fast
+dasselbe. Und **stumm**: kein Fehlt-Eintrag, kein Hinweis. Der Betrieb sieht
+auf dem Blatt nicht, dass seine Ansage verlorengegangen ist. Beide Sätze
+zusammen sind **370,00 € von 835,90 €**, also **44 %** des Angebots.
+
+**Die Ursache ist zwei Buchstaben groß und sitzt an genau einer Stelle.**
+`SATZ_WORT` in `bauteil-ausschluss.ts`, Zeile 49 und 50: `/\bfenster\b/` und
+`/\bheizk[öo]rper\b/`. Bei den vier anderen Bauteilen steht die Mehrzahl
+daneben (`w[äa]nd(?:e|en)?`, `decke(?:n)?`, `b[öo]den`, `t[üu]r(?:e|en)?`);
+hier fehlt das **Dativ-n**. Ich habe das ganze `src/lib` danach abgesucht:
+**es gibt keine zweite Stelle**, die Klasse ist auf diese zwei Zeilen
+begrenzt.
+
+**Und die Maschine schreibt genau den Satz, den sie nicht lesen kann.**
+`BAUTEIL_WORT` in derselben Datei sagt „an den Fenstern" und „an den
+Heizkörpern" — Wort für Wort die Form, an der `SATZ_WORT` scheitert. Gibt man
+ihr ihre eigene Hinweiszeile zurück, liest sie nichts daraus.
+
+**Mein Soll**, als Sperrklinke hinterlegt, und es ist die Einzahl:
+
+* **PM-145-A** — „An den Fenstern machen wir nichts" muss Zeile für Zeile
+  dasselbe bewirken wie „Am Fenster machen wir nichts": **635,90 €**.
+* **PM-145-B** — dasselbe am Heizkörper: **665,90 €**.
+* **PM-145-C** — **mit Beleg, nicht stumm.** Die Hinweiszeile gehört zum
+  Soll, nicht als Zugabe (DC-116/DC-128). Ihr Wortlaut steht bereits in
+  `BAUTEIL_WORT` und muss nicht erfunden werden.
+
+**Die Grenze meines Solls steht als eigene grüne Zusicherung daneben
+(PM-145-4), damit niemand beim Bauen zu weit greift:** Werfall und Wenfall
+der Mehrzahl sind beim Fenster und beim Heizkörper mit der Einzahl
+gleichlautend und werden heute schon gelesen („Die Fenster machen wir nicht"
+greift). Zu tun ist **genau das Dativ-n**, kein Umbau. Die Gegenprobe gegen
+ein zu weites `fenster` ohne Wortgrenze steht dabei: „Die Fensterläden machen
+wir nicht" darf **nicht** greifen, und tut es heute nicht.
+
+### 2. PM-146 — derselbe Satzbau, und er macht aus 465,90 € ein leeres Blatt
+
+Der zweite Punkt aus Engineerings Notiz, den der Chief of Staff mir am 22.09.
+bestätigt hat: `ANSTRICH_OHNE_TAETIGKEITSWORT` verlangt die **Zahlangabe
+unmittelbar vor der Farbe** — „zweimal weiß" zählt, „weiß" allein nicht.
+Engineering sagt ausdrücklich, das sei keine Entscheidung von ihm. **Also
+meine.**
+
+**Sie fällt, und der Grund ist gemessen:**
+
+| Was der Betrieb sagt | Angebot |
+|---|---|
+| „An den Wänden machen wir nichts. Wände und Decke **zweimal** weiß." | 465,90 € |
+| „An den Wänden machen wir nichts. Wände und Decke weiß **streichen**." | 465,90 € |
+| „An den Wänden machen wir nichts. Wände und Decke weiß." | **0,00 € — ein leeres Blatt** 🔴 |
+
+Ein fehlendes Zahlwort, und es steht **nichts** mehr auf dem Angebot: Boden
+schützen und Sockelleisten abkleben hängen als Folgepositionen an der Wand
+und fallen mit ihr. Das ist dieselbe Selbstkorrektur wie in PM-134 („erst
+nichts, dann doch"), nur ohne das Wort „zweimal".
+
+**Zwei Gründe, beide gemessen:**
+
+1. **Die Stufe davor kennt die Bedingung nicht.** `extraktion-pipeline.ts`
+   liest `/streich|anstrich|weiß|weiss/` — nackt, ohne Zahlwort. Sie schreibt
+   `Wand streichen 2x` auf das Blatt. Die Gegenprobe in der Bremse ist
+   **enger als die Erkennung davor**, und genau diese Lücke kostet: dieselbe
+   Maschine setzt die Zeile und nimmt sie im selben Lauf wieder weg.
+2. **Die Gefahr, gegen die die Zahlangabe schützen sollte, ist kleiner als
+   die Kur.** An 17 Formulierungen gemessen: die heutige Regel liegt
+   **sechsmal** daneben — und **nie** zu weit, immer zu eng. Alle sechs sind
+   Aufträge, die nicht erkannt werden („Wände und Decke weiß", „in Weiß",
+   „komplett weiß", „alles weiß", „Decke weiß, Wände in Grau", „Die Wände
+   weiß, die Decke auch").
+
+**Wortlaut des Solls:** „weiß" zählt als Anstrich-Auftrag, **außer** es steht
+unmittelbar davor oder dahinter ein Fürwort (ich, du, er, sie, es, man, wer,
+wir, ihr, das, dies …). An denselben 17 Formulierungen: **0 falsch.**
+Hinterlegt als **PM-146-A** (Sperrklinke).
+
+**Zwei Zeilen für den, der es baut:**
+
+* Ein Teilsatz wird ohnehin nur dann zum Auftrag, wenn er **nicht verneint**
+  ist — „ich weiß nicht, ob …" fällt schon dort heraus. Nach dem Lockern
+  trägt für „das weiß der Kunde" nur noch das Fürwort. **PM-146-4 ist genau
+  dafür da und ist heute grün: wer PM-146-A baut, darf diese zwei Sätze nicht
+  mitnehmen.**
+* **`\b` hinter `weiß` gibt es nicht** — ß ist ohne u-Flag kein Wortzeichen.
+  Es muss `(?![a-zäöüß])` sein, sonst greift die Regel auch in „weiße" und
+  „weißeln". Dieselbe Falle steht in dieser Datei schon zweimal.
+
+### 3. Der Abgleich steht weiter still
+
+`node scripts/vokabular-abgleich.mjs`, heute gefahren: **184 Engine-Titel ·
+25 ohne Preis · 3 knapp · 156 gute Treffer · 0 nicht prüfbar** — Zeile für
+Zeile unverändert gegenüber dem 21.09.
+
+### 4. Nicht geprüft, und ich behaupte es deshalb nicht
+
+* **Kein Blick ins laufende Produkt. Zwölfter Lauf in Folge.**
+* **Ich habe PM-145 und PM-146 nicht gebaut.** Beide sind wenige Zeichen —
+  und beide nehmen Zeilen vom Kundenpapier, gehören also gemessen und
+  gebaut, nicht nebenbei mitgenommen. Die Datei gehört Engineering.
+* **Meine Soll-Regel für „weiß" ist an 17 Formulierungen gemessen, nicht an
+  einem Diktat-Bestand.** Wer sie baut, fährt den vollen Prüfstand — sie
+  lockert, und Lockern kann anderswo greifen.
+* **Prüfstand-Delta nur über die Prüfmeister-Dateien**: 25 Dateien,
+  **480 grün / 88 Sperrklinken / 0 rot**. Das ist nicht Zeile für Zeile mit
+  der Zahl vom 21.09. (462/88) vergleichbar — es ist **meine** Dateiauswahl,
+  und Engineering hat seither Zusicherungen dazugelegt. Ich nenne deshalb den
+  Stand, nicht die Differenz.
+
+*Leere Hülle zurückgeblieben:* `src/lib/__probe__/` ist heute wieder leer —
+vier Messdateien nach `_to_delete/pruefmeister-probe-2026-09-23/` geräumt,
+nicht gelöscht.
+
+*Prüfmeister · 2026-09-23*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

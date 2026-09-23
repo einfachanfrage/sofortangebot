@@ -10,7 +10,7 @@ Fenstern und Türen — die Welt, die das Datenmodell ohnehin kann. Alles, was *
 einem Raum steht, kam nicht vor. Diese Liste ist die Gegenprobe: sie wird nicht
 aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 
-**Zielgröße:** 100 Fälle — am 17.09. erreicht und überschritten. Stand 21.09.2026 abends: **144**
+**Zielgröße:** 100 Fälle — am 17.09. erreicht und überschritten. Stand 23.09.2026: **146**
 *(die Aufzählung darunter zählt den Stand vom 16.09., sie wird nicht fortgeschrieben)*
 **Alt: 97**
 (46 + PM-047 bis PM-056 + PM-057 bis PM-063 + PM-064 bis PM-068
@@ -1069,6 +1069,57 @@ neuen **Punkt 23**, der dieselbe Messung von der anderen Seite her macht.
 **Fallbasis nach diesem Lauf: 144.**
 
 *Prüfmeister · 2026-09-21, später Abend*
+
+
+---
+
+## Nachtrag 23.09.2026 — der Fenster-/Heizkörper-Fund ist gemessen und hat zwei Nummern
+
+**Fallbasis: 146 Fälle.** Hinterlegt als
+`src/lib/__tests__/pruefmeister-batch-145-146.test.ts` (12 Zusicherungen,
+8 grün / 4 Sperrklinken / 0 rot). Befunde ausführlich in
+`pruefmeister-restliste.md`.
+
+**Abgeräumt — die Zuweisung des Chief of Staff vom 22.09., 05:50 UTC:**
+
+* **PM-145 — die Dativ-Mehrzahl am Fenster und am Heizkörper.** „An den
+  **Fenstern** machen wir nichts" und „An den **Heizkörpern** machen wir
+  nichts" liest die Bauteil-Bremse nicht; die Einzahl liest sie. Gemessen
+  über die volle Pipeline: auf einem Angebot über **835,90 €** hängen an
+  diesen zwei Wörtern **370,00 €** (Fensterblock 200,00 €, Heizkörperblock
+  170,00 €) — und sie fallen **stumm**, ohne Fehlt-Eintrag. Ursache: zwei
+  fehlende Buchstaben in `SATZ_WORT`; das ganze `src/lib` abgesucht, **keine
+  zweite Stelle**. Sperrklinken **PM-145-A/-B/-C**, Soll ist jeweils die
+  Einzahl. Die Grenze des Solls steht als **PM-145-4** grün daneben, damit
+  der Bau nicht zu weit greift.
+* **PM-146 — der Anstrich-Auftrag ohne Zahlwort.** „Wände und Decke weiß."
+  zählt für die Gegenprobe nicht als Auftrag, „zweimal weiß" schon. Nach
+  einem Ausschlusssatz macht das aus **465,90 €** ein **leeres Blatt
+  (0,00 €)** — die Folgepositionen fallen mit der Wand. **Entschieden: die
+  Zahlangabe fällt als Bedingung.** Gründe gemessen: die Mengen-Erkennung
+  eine Stufe davor liest `weiß` nackt (die Bremse ist enger als die Stufe,
+  die die Zeile setzt), und die heutige Regel liegt an 17 Formulierungen
+  **sechsmal** daneben — immer zu eng, nie zu weit. Wortlaut: „weiß" ist ein
+  Anstrich-Auftrag, außer unmittelbar davor oder dahinter steht ein Fürwort.
+  An denselben 17 Formulierungen **0 falsch**. Sperrklinke **PM-146-A**,
+  Schutzzeile **PM-146-4** (grün, muss grün bleiben).
+
+**Nichts neu aufgemacht.** Beide Fälle sind mit dem Soll zu Ende beschrieben;
+was offen bleibt, ist der Bau, und der gehört Engineering.
+
+**Offen bleiben** aus den älteren Abschnitten unverändert: **M.1**
+(teilweise), **M.3**, **M.5**, Mittags-Punkt 7, Nachmittags-**Punkte 10, 13**,
+die **Punkte 15, 16, 17, 18** vom 17.09. abends sowie **19**, **22**, **23**,
+**24** und **25**. **Der größte Hebel unter den offenen ist weiterhin
+Punkt 13** (der Katalogtitel als gedruckter Titel, 184 Titel, ohne App) —
+gefolgt von **Punkt 23** (Katalogzeilen ohne Engine-Titel), der dieselbe
+Messung von der anderen Seite her macht. Das ist die Reihenfolge, die der
+Chief of Staff am 22.09. gesetzt hat, und sie gilt ab jetzt wieder: **der
+Fund, der vorging, ist zu.**
+
+**Fallbasis nach diesem Lauf: 146.**
+
+*Prüfmeister · 2026-09-23*
 
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

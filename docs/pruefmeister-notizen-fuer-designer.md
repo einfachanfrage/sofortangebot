@@ -2152,4 +2152,61 @@ deins, und hier berühren sie sich.
 
 *Prüfmeister · 2026-09-21, später Abend*
 
-<!-- ENDE DER DATEI — letzte Notiz ist PD-025. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->
+---
+
+## PD-026 — Wenn die Bremse alles wegnimmt, sagt das Blatt „Keine Positionen erkannt"
+
+**Beim Messen von PM-146 herausgefallen, nicht gesucht.** Es ist keine
+Wortlaut-Frage und keine Engine-Frage, deshalb liegt es bei dir.
+
+**Der Fall, gemessen über die volle Pipeline:**
+
+> „Wohnzimmer, 5 mal 4, Höhe 2,50. An den Wänden machen wir nichts. Wände und
+> Decke weiß."
+
+Der Betrieb korrigiert sich mitten im Diktat — erst nichts, dann doch. Die
+Bremse liest die Korrektur nicht (das ist PM-146 und mein Bauauftrag an
+Engineering), nimmt die Wand weg, und mit ihr fallen `Boden schützen` und
+`Sockelleisten abkleben`, weil sie Folgepositionen der Wand sind.
+
+**Übrig bleiben: null Positionen. 0,00 €.** Mit dem Wort „zweimal" davor
+wären es 465,90 € gewesen.
+
+**Was daran dich angeht:** Die Maschine hat sehr wohl etwas erkannt — sie hat
+es erkannt und danach selbst wieder weggenommen, und sie weiß auch, warum.
+Der Grund steht als Fehlt-Eintrag fertig da:
+
+```
+⚠ „Wohnzimmer": Arbeiten an den Wänden sind nicht im Angebot
+   — gesagt: „An den Wänden machen wir nichts"
+```
+
+**Gelesen, nicht gemessen** (ich komme unverändert nicht ins laufende
+Produkt): `api/entwurf/generiere-positionen` bricht bei
+`positionen.length === 0` mit **400 „Keine Positionen erkannt"** ab, bevor die
+Preisstufe überhaupt läuft. Dann gibt es kein Blatt — und damit auch keine
+Stelle, an der der Satz oben stehen könnte. Der Betrieb hört „nichts
+erkannt", obwohl alles erkannt und anschließend abgeräumt wurde. Er hat
+keinen Anhaltspunkt, dass ein einziges Wort im Diktat den Unterschied macht.
+
+**Ich stelle das Soll hier nicht** — der leere Entwurf ist deine Seite. Drei
+Fragen, die ich dir damit gebe, in der Reihenfolge, in der sie mir aufgefallen
+sind:
+
+1. Ist „null Positionen, weil eine Bremse gegriffen hat" derselbe Zustand wie
+   „null Positionen, weil das Diktat leer war"? Für den Betrieb sind es zwei
+   verschiedene Nachrichten.
+2. Wenn nein: gehört der Fehlt-Eintrag dann **vor** den Abbruch — also ein
+   leeres Blatt **mit** Begründung statt einer Fehlermeldung ohne?
+3. Und wenn ein leeres Blatt gezeigt wird: bleibt es versendbar? Ich würde
+   nein sagen, aber das ist eine Vermutung von mir und keine Messung.
+
+**Der Fall verschwindet nicht, wenn PM-146 gebaut ist.** Er wird nur
+seltener: jeder Ausschlusssatz, der alle Positionen eines Ein-Raum-Angebots
+trifft, landet an derselben Stelle — „An den Wänden machen wir nichts" allein
+reicht schon, ohne jede Selbstkorrektur.
+
+*Prüfmeister · 2026-09-23*
+
+
+<!-- ENDE DER DATEI — letzte Notiz ist PD-026. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->
