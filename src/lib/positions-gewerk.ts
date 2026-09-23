@@ -96,6 +96,78 @@ export function gewerkFuerPosition(beschreibung: string, hauptgewerk?: string): 
     /fliesen|verbundabdichtung|verfug(?:en|ung)\s+(?:boden|wand)/i.test(text)
     && !/abdeck|abkleb|sch[üu]tz/i.test(text)
   if (istFliesenarbeit) return 'fliesen'
+  // ── PM-148 / CoS-E-099: Trockenbau, Elektro und SHK gehen VOR der
+  //    /wand|decke/-Regel (23.09.2026) ───────────────────────────────────
+  //
+  // **Es gibt keinen Trockenbauer, und das ist wichtig für das, was hier
+  // steht.** `AKTIVE_GEWERKE` (gewerke-config.ts Z. 1–45) kennt genau zwei
+  // Einträge — `maler` und `boden_parkett` —, `onboarding/[step]/page.tsx`
+  // (Z. 14, 532) rendert nur diese, und `trockenbau`, `elektro`,
+  // `sanitaer_heizung` stehen in `INAKTIVE_GEWERKE_IDS`. Die sechs
+  // `aktiv: true` in derselben Datei gehören zu `KLEINMATERIAL_CONFIG` und
+  // schalten die Kleinmaterial-Pauschale, nicht das Onboarding. (Die
+  // ursprüngliche Fassung dieses Kommentars behauptete das Gegenteil; der
+  // Chief of Staff hat es am 23.09. um 11:45 nachgemessen und korrigiert.)
+  //
+  // **Der Fall, den die drei Zweige treffen, ist trotzdem echt:** ein Maler
+  // oder Bodenleger diktiert eine fremde Position („die abgehängte Decke
+  // einziehen", „den Heizkörper wieder dranmachen"). Sie trägt „Decke" bzw.
+  // gar kein Maler-Wort, läuft in `istMaler` oder fällt bis zum Hauptgewerk
+  // durch und wird in beiden Fällen dem Maler zugeordnet. Dieselbe Kette wie
+  // PM-117 (Bad, 543,84 € statt 2.980,44 €), nur ein Gewerk weiter.
+  //
+  // ── Zweimal gemessen, weil die erste Messung die falsche Frage beantwortet
+  //
+  // (a) **Gegen den Katalog des jeweiligen Gewerks** (alle 211 Engine-Titel ×
+  //     sechs Hauptgewerke): 76 Kombinationen gehen von 0,00 € auf einen
+  //     Preis, **0 verlieren einen Preis**, genau einer ändert sich
+  //     (`Wallbox montieren + anschließen`: traf im SHK-Katalog
+  //     `Bidet anschließen und montieren`, 180,00 €, Score 0,67 — trifft
+  //     jetzt `Wallbox 11kW montieren + anschließen`, 650,00 €, Score 0,86).
+  //
+  // (b) **Gegen die Preisliste, die ein echter Betrieb hat** — also
+  //     `standardpreiseFuerGewerke(['maler'])`, `(['boden_parkett'])` und
+  //     beide zusammen, weil genau das im Onboarding eingespielt wird
+  //     (`onboarding/[step]/page.tsx` Z. 324): **null Änderung am Geld.**
+  //     Die Liste eines Malers trägt nur `Maler …`-Kategorien; die fremde
+  //     Position findet vorher wie nachher nichts und steht mit 0,00 € da.
+  //
+  // **Heute ist der Eingriff also wirkungslos und risikolos, nicht
+  // gewinnbringend** — und das ist der ehrliche Satz dazu. Er wirkt erst,
+  // wenn eine Preisliste fremde Kategorien trägt: bei einer von Hand
+  // ergänzten Zeile, oder mit dem Vokabular-Vorhaben, das Sandy am 23.09.
+  // mit „C" auf die Zeit nach Gate 1 gelegt hat. Gebaut ist er jetzt, weil
+  // die Zuordnung dann stimmen muss, bevor jemand Preise daran hängt.
+  //
+  // **Keine sichtbare Nebenwirkung:** der Rückgabewert speist ausschließlich
+  // den Kategorie-Filter (`angebot-generieren/route.ts` Z. 88–91). Er wird
+  // nicht an der Position gespeichert und erzeugt keine Gewerk-Überschrift
+  // auf dem Kundenpapier.
+  //
+  // Die drei Zweige hängen an **Eigennamen des Gewerks**, nicht an Bauteilen:
+  // `wand`, `decke`, `leitung` gehören mehreren Gewerken, `ständerwand`,
+  // `wallbox`, `thermostatventil` nur einem.
+  //
+  // `istMalerHand` ist die Grenze in die Gegenrichtung, und der Grund dafür
+  // steht im Katalog: `Heizkörper abschleifen` und `Heizkörper grundieren`
+  // sind **Maler**-Einträge, `Heizkörper streichen / lackieren` ebenfalls.
+  // Ohne die Ausnahme hätte `heizkörper` sie in die SHK-Spalte gezogen —
+  // derselbe Fehler, nur eine Tür weiter. Dieselbe Lehre wie „Boden
+  // schützen" (PM-024/026) und „Fliesen abdecken" (PM-117): wer ein fremdes
+  // Bauteil VORBEREITET, bleibt Maler.
+  const istMalerHand = /abdeck|abkleb|sch[üu]tz|streich|anstrich|lackier|tapez|schleif|grundier|spachtel/i.test(text)
+  const istTrockenbau =
+    /st(?:ä|ae)nderw(?:and|erk)|abgeh(?:ä|ae)ngte\s+decke|unterdecke|deckensegel|akustikdecke|beplankung|gipskarton|rigips|trockenbau|(?:cw|uw|ua)-profil/i.test(text)
+    && !istMalerHand
+  if (istTrockenbau) return 'trockenbau'
+  const istElektro =
+    /steckdose|lichtschalter|einbaustrahler|au(?:ß|ss)enleuchte|wandleuchte|herdanschluss|wallbox|(?:unter|haupt)verteilung|leitungen\s+verlegen|nym-leitung|fi-schalter/i.test(text)
+    && !istMalerHand
+  if (istElektro) return 'elektro'
+  const istSanitaerHeizung =
+    /(?<![a-zäöüß])wc(?![a-zäöüß])|waschtisch|badewanne|duschtasse|urinal|bidet|armatur|heizk(?:ö|oe)rper|thermostatventil|rohrleitungen\s+(?:erneuern|verlegen)|trinkwasserleitung/i.test(text)
+    && !istMalerHand
+  if (istSanitaerHeizung) return 'sanitaer_heizung'
   const istMaler = /wand|decke|streich|anstrich|tapete|raufaser|spachtel|schleifen|grundier|abdeck|abkleb/i.test(text)
   if (istMaler) return 'maler'
   // Dieselbe Falle wie bei „Boden schützen": „Erschwerniszuschlag Raumhöhe

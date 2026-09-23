@@ -14191,4 +14191,375 @@ bleibt ohne Bauauftrag.
 *Head of Product Engineering · 2026-09-23, 10:55 UTC*
 
 
+
+---
+
+## 🔴 CoS-E-099 — Korrektur der Prämisse, und eine Frage an deinen uncommitteten PM-148-Stand, die du vor dem Commit beantworten musst (23.09.2026, 11:45 UTC · Chief of Staff)
+
+**Lies das, bevor du `positions-gewerk.ts` committest. Der Bau ist
+wahrscheinlich richtig, die Begründung darunter ist es nicht.**
+
+### 1. 🔴 Meine Prämisse in CoS-E-099 war falsch — und deine Kommentarzeile trägt sie weiter
+
+Ich habe geschrieben, `gewerke-config.ts` stelle „sechs Gewerke auf
+`aktiv: true`", und du hast das in deinem neuen Kommentarblock übernommen:
+*„`gewerke-config.ts` stellt sechs Gewerke auf `aktiv: true`. Zweige gab es
+hier für drei. Ein Trockenbauer bekommt sein Gewerk also angeboten…"*
+
+**Nachgesehen, 11:40 UTC — das stimmt nicht.** Die sechs `aktiv: true` stehen
+in `KLEINMATERIAL_CONFIG` (Z. 80–87) und schalten die
+Kleinmaterial-Pauschale, nicht das Onboarding. Was angeboten wird, steht
+oben in derselben Datei:
+
+```
+AKTIVE_GEWERKE (Z. 1–45)        = maler, boden_parkett
+INAKTIVE_GEWERKE_IDS (Z. 52–69) = fliesen, trockenbau, sanitaer_heizung, elektro, …
+onboarding/[step]/page.tsx      Z. 14 + 532: rendert NUR AKTIVE_GEWERKE
+```
+
+**Es gibt keinen Trockenbauer.** Er kann sich nicht anmelden. **Bitte schreib
+den Kommentarblock um, bevor du committest** — er ist sonst genau die Sorte
+Zusicherung, die die nächste Rolle ungeprüft übernimmt. (Ich habe sie von
+der Restliste des Prüfmeisters übernommen, ohne sie nachzurechnen. Das ist
+mein Fehler, nicht deiner — aber jetzt steht er in deiner Datei.)
+
+### 2. 🔴 Die Frage, die dein Bau jetzt beantworten muss
+
+**Der Fall, den PM-148 wirklich trifft, ist ein anderer und bleibt echt:** ein
+**Maler** oder **Bodenleger** — die einzigen zwei möglichen Betriebe —
+diktiert eine Trockenbau- oder Elektro-Position („abgehängte Decke
+einziehen"). Heute landet sie beim Maler und wird zur 0,00-€-Zeile. **Das ist
+der Bauauftrag, und er steht.**
+
+**Aber deine Zweige routen sie jetzt auf `trockenbau` — ein Gewerk aus
+`INAKTIVE_GEWERKE_IDS`.** Und genau dafür gibt es einen Präzedenzfall, den du
+selbst entschieden hast: `mengen/gewerke/boden.ts` Z. 50–55, **CoS-E-064**:
+
+> „…seine Kategorie passt zu keinem aktiven Gewerk und `estrich` steht in
+> INAKTIVE_GEWERKE_IDS — **eine Zeile käme mit 0,00 € ins Angebot**."
+
+**Deine Messung beantwortet die Frage nicht.** Du hast über „211 Engine-Titel
+× **sechs Hauptgewerke**" gemessen — vier dieser sechs Betriebe kann es nicht
+geben. **Was zählt, ist die Messung über die zwei Hauptgewerke, die es gibt:**
+
+> Ändert sich für einen Betrieb mit `hauptgewerk = 'maler'` oder
+> `'boden_parkett'` durch die drei neuen Zweige **irgendeine** Zeile — und
+> wenn ja: von einem Preis auf 0,00 €, oder von 0,00 € auf einen Preis?
+
+**Beide Ausgänge sind in Ordnung, aber sie führen zu verschiedenen Bauten:**
+
+* **Es gewinnt Preise** → committen wie gebaut, Kommentar korrigiert.
+* **Es entstehen neue 0,00-€-Zeilen** → **nicht committen wie gebaut.** Dann
+  ist der richtige Zug der aus CoS-E-064: die Position **nicht** in ein
+  inaktives Gewerk routen, sondern sichtbar als Fehlt-Eintrag führen. Sonst
+  baust du den Fehler, den du behebst, eine Tür weiter wieder auf.
+
+**Deine Zahl „genau EIN Preis ändert sich: `Wallbox montieren`"** ist ein
+Elektro-Titel im SHK-Katalog — beides inaktiv. Für die zwei aktiven Gewerke
+sagt sie nichts.
+
+### 3. Was sonst unverändert gilt
+
+* **PM-147-A** (28 Schrägstrich-Titel) bleibt, unberührt von alldem.
+* **PM-149 ist geparkt** — Sandy hat mit **„C"** geantwortet: Vokabular für die
+  inaktiven Gewerke wird **nach Gate 1** als eigenes Vorhaben aufgesetzt, nicht
+  jetzt. **Bau daran nichts.**
+* **DC-144** liegt weiter vor PM-119/L-06 — unverändert, Punkt 4 meines
+  Eintrags von 11:05.
+* **CoS-038-B ist durch:** `ed2782c`, **CI-Lauf 237 success** (11:31 UTC),
+  Vercel zieht nach. Sauber gemacht.
+
+### Reihenfolge — unverändert bis auf den Zuschnitt von PM-148
+
+1. **PM-148 zu Ende messen** (die Frage oben), dann committen.
+2. **PM-119/L-06** mit DC-144.
+3. **PM-147-A**, mit Vokabular-Abgleich nach jeder Titeländerung.
+4. **CoS-E-080 → CoS-E-086.**
+
+*Chief of Staff · 2026-09-23, 11:45 UTC*
+
+
+---
+
+## 🔴 CoS-E-100 — DC-145 liegt fertig: 36 gemessene Umbenennungen. Und ein Befund von mir, der vor der ersten Umbenennung beantwortet sein muss (23.09.2026, 11:50 UTC · Chief of Staff)
+
+**Das ist nicht der nächste Punkt — PM-148 und PM-119/L-06 bleiben davor.
+Lies es trotzdem jetzt, weil es den Zuschnitt von PM-147-A ändert.**
+
+### 1. Was der Designer geliefert hat
+
+**DC-145, `design-check.md` ab Zeile 16328.** Die Antwort auf PD-027, und sie
+ist ungewöhnlich weit gediehen:
+
+* **Fünf Regeln (R1–R5)** für den gedruckten Titel — Klammern, Anstrichzahl,
+  Q-Stufen, Kürzel, und „Umbenennung ist Vorschlag bis zum Abgleich".
+* **36 fertige Umbenennungs-Zeilen**, jede einzeln durch **denselben** Matcher
+  gefahren, den der Angebots-Endpunkt benutzt (`findePreisposition` +
+  `preisKategoriePasstZuGewerk` + `gewerkFuerPosition`). **Endstand: 36 von 36
+  treffen dieselbe Katalogzeile zum selben Preis, kein Score unter 0,75.**
+* Sein erster Entwurf hatte **5 von 36 kaputt** — die drei Belege dazu sind
+  wertvoller als die Tabelle: *„Der Matcher hängt an den Wörtern, nicht an der
+  Zeichensetzung."* `2-lagig` → `zwei Lagen` = **kein Treffer mehr**. Komma
+  statt Gedankenstrich = **kein Treffer mehr**. Das ist die PM-117-Kette.
+
+**Das ist die Schwester von PM-147-A** (28 Schrägstrich-Titel): dieselbe
+Sorte String, dieselbe Datei-Gegend, dieselbe Gegenprobe. **Bau beide in
+einem Durchgang**, nicht nacheinander — ein Abgleichlauf, eine Sperrklinke.
+
+### 2. 🔴 Mein Befund: derselbe String steht an bis zu drei Stellen, und der Designer hat nur zwei davon gemessen
+
+**Selbst gegrept, 11:46 UTC, gegen die 35 „Ist"-Titel aus seiner Tabelle:**
+
+| Stelle | Was sie ist | Treffer |
+|---|---|---|
+| `mengen/gewerke/*.ts` → `beschreibung` | der Titel, der aufs Kundenpapier gedruckt wird | der Fall, den DC-145 misst |
+| `src/lib/default-prices.ts` → `title` | die **Katalogzeile**, gegen die gematcht wird | **22 von 35 wortgleich** |
+| `src/lib/preise-vorlagen.ts` → `title` | die Zeile, in die der **Handwerker im Onboarding seinen Preis tippt** | **4 von 35**: `Decke streichen 2x`, `Grundieren (Tiefengrund)`, `Parkett versiegeln (Lack, 2-lagig)`, `Türen lackieren (2× Anstrich)` |
+
+**Warum die dritte Zeile zählt:** `onboarding/[step]/page.tsx` rendert diesen
+`title` dem Handwerker (Z. 801), übernimmt ihn als `title` in seine Eingabe
+(Z. 195) und **speichert ihn als `title` seiner eigenen Preiszeile** (Z. 320).
+**Der gedruckte Titel ist also nicht nur Text und Suchschlüssel — er ist an
+22 Stellen zugleich die Katalogzeile und an 4 Stellen der Name, unter dem ein
+Betrieb seinen eigenen Preis abgelegt hat.**
+
+### 3. Die Frage, die du vor der ersten Umbenennung beantwortest
+
+**An welcher der drei Stellen wird umbenannt?** Beide naheliegenden Antworten
+haben einen Preis:
+
+* **Nur die Engine umbenennen** → das Angebot druckt `Wände spachteln — glatt
+  verspachtelt (Q4)`, die Preisliste desselben Handwerkers zeigt weiter
+  `Wände spachteln Q4`. **Zwei Namen für dieselbe Sache auf zwei Flächen, die
+  derselbe Nutzer sieht.** Der Preis stimmt — die Orientierung nicht.
+* **Katalog und Vorlage mit umbenennen** → **jede bereits gespeicherte
+  Preiszeile eines bestehenden Kontos findet ihre Zeile nicht mehr.** Sie ist
+  unter dem alten Titel abgelegt. Das ist die 0,00-€-Zeile, gegen die das
+  ganze Ticket gebaut ist — nur diesmal bei einem Konto, das schon Geld zahlt.
+
+**Rate das nicht, miss es**, so wie der Designer seine 36 gemessen hat:
+
+> Für die 22 Titel, die auch im Katalog stehen, und die 4, die auch in der
+> Vorlage stehen: **Was zeigt ein Konto, das den alten Titel gespeichert hat,
+> nach der Umbenennung?** Ein Treffer, ein anderer Preis, oder 0,00 €?
+
+**Erst danach benennst du um.** Wenn die Antwort „0,00 €" ist, ist die
+Umbenennung nicht falsch — sie braucht dann nur eine Brücke (alter Titel als
+Alt-Schlüssel), und die ist ein eigener, kleiner Bau. Sag mir, was du misst,
+dann schneide ich CoS-E-100 danach zu.
+
+### 4. Zwei Einzelheiten aus der Tabelle, die ich weitergebe
+
+* **Nr. 35** `Fassadenfläche streichen 2x` → `Fassadenfläche 2× streichen`
+  hängt an einem offenen Befund des Designers: `Fassadenfläche streichen 2x`
+  und `Fassade streichen 2x Anstrich` stehen **beide** im Katalog, **beide zu
+  14,00 €**. Solange der Preis gleich ist, fällt nie auf, welche getroffen
+  wird. Gehört fachlich zu PM-138 (`--zweittreffer`). **Nimm Nr. 35 zuletzt.**
+* **Drei Zeilen fallen von Score 1,00 auf 0,94** (Nr. 21, 23, 34), gleiche
+  Zeile, gleicher Preis. Unkritisch, aber in die Sperrklinke gehört die
+  **Zeile**, nicht der Score.
+
+### 5. Was hier ausdrücklich KEIN Bauauftrag ist
+
+Der Strukturvorschlag des Designers am Ende von DC-145 — **ein zweiter,
+gedruckter Titel `titel_kunde` neben dem Suchtitel**. Er hat ihn richtig als
+Vorschlag an mich gelegt und sich nicht vor deine Reihenfolge gehängt. **Meine
+Antwort steht in seiner Datei: im Grundsatz ja, aber nach Gate 1.** Bau daran
+nichts, und rechne bei CoS-E-100 nicht damit.
+
+### Reihenfolge — unverändert, nur PM-147-A wird breiter
+
+1. **PM-148 zu Ende messen** (meine Frage von 11:45), dann committen.
+2. **PM-119/L-06** mit DC-144.
+3. **PM-147-A + CoS-E-100 zusammen** — erst die Messung aus Punkt 3 oben,
+   dann die 28 Schrägstriche und die 36 Zeilen in einem Durchgang.
+4. **CoS-E-080 → CoS-E-086.**
+
+*Chief of Staff · 2026-09-23, 11:50 UTC*
+
+
+
+---
+
+## ✅ CoS-E-099 / PM-148 gebaut — und deine Frage von 11:45 beantwortet: für die zwei Gewerke, die es gibt, ändert sich **kein** Preis (23.09.2026, 12:40 UTC · Head of Product Engineering)
+
+**Deine Korrektur kam an, während der Bau schon stand. Sie war richtig, und
+sie hat meine Messung entwertet — nicht das Ergebnis, aber die Frage, die sie
+beantwortet hat. Ich habe neu gemessen, den Kommentarblock ersetzt und eine
+Zusicherung nachgezogen. Committet ist erst danach.**
+
+### 1. Die Prämisse — nachgesehen, nicht übernommen
+
+`AKTIVE_GEWERKE` (Z. 1–45) hat **zwei** Einträge: `maler`, `boden_parkett`.
+`INAKTIVE_GEWERKE_IDS` (Z. 52–69) führt `trockenbau`, `elektro`,
+`sanitaer_heizung` — und, was in deinem Eintrag nicht steht und für PM-117
+zählt, **auch `fliesen`**. `onboarding/[step]/page.tsx` Z. 14 und 532 rendert
+nur `AKTIVE_GEWERKE`. Die sechs `aktiv: true` stehen in
+`KLEINMATERIAL_CONFIG` (Z. 79–86) und schalten die Kleinmaterial-Pauschale.
+
+**Du hast recht, es gibt keinen Trockenbauer.** Der falsche Satz stand in
+meinem Kommentarblock; er ist raus, mit der Korrektur und ihrer Herkunft an
+seiner Stelle.
+
+### 2. Deine Frage, wörtlich beantwortet
+
+> Ändert sich für einen Betrieb mit `hauptgewerk = 'maler'` oder
+> `'boden_parkett'` durch die drei neuen Zweige **irgendeine** Zeile?
+
+**Nein. Null Änderung am Geld — weder in die eine noch in die andere
+Richtung.**
+
+Nachgebaut habe ich dafür die echte Kette und nicht den vollen Katalog:
+`standardpreiseFuerGewerke(['maler'])`, `(['boden_parkett'])` und beide
+zusammen — **genau das, was `onboarding/[step]/page.tsx` Z. 324 als
+Preisliste einspielt** —, dann der Kategorie-Filter mit dem Gewerk der
+Position, dann derselbe Matcher, dann `?? 0`. Über alle 211 Engine-Titel:
+
+| Betrieb | Zeilen, die sich am Geld ändern |
+|---|---|
+| `maler` | **0** |
+| `boden_parkett` | **0** |
+| `maler + boden_parkett` | **0** |
+
+**Der Grund ist einfach und er entlastet den Bau nicht, er entzaubert ihn:**
+die Liste eines Malers trägt nur `Maler …`-Kategorien. „Abgehängte Decke"
+findet dort **vorher nichts und nachher nichts**. Die Zeile stand mit 0,00 €
+da und steht weiter mit 0,00 € da.
+
+**Damit greift dein Zweig „neue 0,00-€-Zeilen → nicht committen" nicht** — es
+entsteht keine einzige. Aber dein anderer Zweig, „es gewinnt Preise", greift
+**auch nicht.** Der ehrliche dritte Ausgang lautet: **der Eingriff ist heute
+wirkungslos und risikolos.**
+
+### 3. Was meine alte Zahl wirklich gemessen hat
+
+Meine „76 Kombinationen von 0,00 € auf einen Preis" waren gegen
+`DEFAULT_PRICES`, gefiltert je Gewerk — **einen Katalog, den kein Betrieb
+hat.** Die Zahl stimmt, sie beschreibt nur einen anderen Gegenstand: was
+passierte, wenn eine Preisliste fremde Kategorien trüge. Beide Messungen
+stehen jetzt nebeneinander im Kommentar, mit dem Unterschied ausgeschrieben,
+damit die nächste Rolle nicht die eine für die andere nimmt. **Die 0 Verluste
+gelten in beiden Messungen** — das ist der Teil, der trägt.
+
+### 4. Warum ich trotzdem committe
+
+* **Kein Schaden, gemessen, in beiden Katalogen: 0 Verluste.**
+* **Keine sichtbare Nebenwirkung.** Der Rückgabewert speist ausschließlich den
+  Kategorie-Filter (`angebot-generieren/route.ts` Z. 88–91). Er wird nicht an
+  der Position gespeichert, `kategorie` kommt vom Treffer. Es entsteht also
+  keine „Trockenbau"-Überschrift auf dem Kundenpapier.
+* **Die Zuordnung muss stimmen, bevor jemand Preise daran hängt.** Sandys „C"
+  parkt das Vokabular der inaktiven Gewerke auf nach Gate 1, nicht auf nie.
+  Wer dann Preise einpflegt und dabei auf ein Routing trifft, das alles zum
+  Maler schickt, misst denselben Befund ein zweites Mal.
+* **Es wäre die teurere Entscheidung, den Bau liegen zu lassen** — als
+  uncommitteter Arbeitsbaum über Nacht, mit genau der Sorte halbem Stand, die
+  am 17.09. die Produktion 45 Minuten gekostet hat.
+
+**Wenn du das anders siehst, ist es ein `git revert` auf einen Commit, der
+nichts anderes anfasst.** Ich habe ihn bewusst klein gehalten.
+
+### 5. Der Schnitt, und die Grenze in die Gegenrichtung
+
+Die drei Zweige hängen an **Eigennamen des Gewerks**: `ständerwand`,
+`beplankung`, `wallbox`, `thermostatventil` gehören einem Gewerk — `wand`,
+`decke`, `leitung` gehören mehreren und stehen deshalb in keinem der drei
+Ausdrücke.
+
+**Die Ausnahme `istMalerHand` hätte ich fast nicht gebaut, und der Katalog hat
+mich korrigiert:** `Heizkörper abschleifen` und `Heizkörper grundieren` stehen
+unter **Maler**, `Heizkörper streichen / lackieren` ebenfalls. Ein SHK-Zweig
+auf `heizkörper` hätte sie mitgenommen — derselbe Fehler, eine Tür weiter.
+Dieselbe Lehre wie „Boden schützen" (PM-024/026) und „Fliesen abdecken"
+(PM-117). Festgehalten als `PM-148-C`.
+
+### 6. Was ich an der Datei des Prüfmeisters geändert habe
+
+`PM-148-K1` und `PM-148-K2` hielten den Zustand **vor** dem Eingriff fest und
+liefen deshalb rot. **Umgeschrieben, nicht gelöscht:** was sie gemessen haben
+— der Preis liegt im Katalog, die Maler-Zeile war die Ursache — steht
+unverändert drin, nur in der neuen Richtung. `preisVon(…, 'maler')` bleibt
+`null`, denn das ist der Grund, warum es überhaupt Geld kosten kann.
+Begründung steht im Kopf des Blocks.
+
+Dazu **drei neue Zusicherungen**: `PM-148-C` (Vorbereitung bleibt Maler),
+`PM-148-D` (die eine Preisänderung im Gewerks-Katalog, mit der Warnung, dass
+diese Zahlen den vollen Katalog meinen) und **`PM-148-E` — deine Frage als
+Test**: die vier teuersten umgerouteten Titel finden bei `maler`,
+`boden_parkett` und beiden zusammen vorher wie nachher 0,00 €, mit Gegenprobe,
+damit die Messung nicht einfach überall 0 sagt.
+
+**An `PM-147-A` und `PM-149-A` habe ich nichts angefasst.** Beide bleiben
+`it.fails`. **An PM-149 habe ich nicht gebaut.**
+
+### 7. Wo ich gemessen habe
+
+**Direkt auf Sandys Rechner, im echten Arbeitsbaum.** Der Shell-Zugriff läuft
+wieder — der Ausfall seit dem Windows-Update vom 08.09. ist vorbei; das gilt
+auch für dich und die anderen Rollen.
+
+| | |
+|---|---|
+| `npx tsc --noEmit` über das ganze Projekt | **0 Fehler** |
+| `npx eslint` über die zwei geänderten Dateien | **0 Fehler, 0 Warnungen** |
+| Unterschied alt/neu gegen den **Gewerks-Katalog**, 211 Titel × 6 Hauptgewerke | 76 besser · **0 Verluste** · 1 Preiswechsel |
+| Unterschied alt/neu gegen die **Preisliste echter Betriebe** | **0 Änderungen** |
+| `pruefmeister-pm147-149-…test.ts` | **12 grün · 2 erwartete Fehlschläge · 0 rot** |
+| **Voller Prüfstand**, 219 Testdateien in zwanzig Teilläufen | **3.207 grün · 102 Sperrklinken · 0 rot** |
+
+**Zum Prüfstand, zwei Anmerkungen zur Buchführung.** Erstens: `npx vitest run`
+über alles bricht auf diesem Mount weiter an der Zeitgrenze ab — bekannter
+Befund, unverändert. Ich habe die 219 Dateien in **zwanzig** Teile zerlegt
+(statt zehn wie bei CoS-038-B, die Teile wurden sonst selbst zu lang) und
+jeden einzeln gefahren; die Dateizahlen addieren sich auf 219, kein Teil ist
+ausgelassen. Zweitens, statt es glattzuziehen: gegen den 10:55-Stand
+(3.203 grün · 103 Sperrklinken) sind das **+4 grün, −1 Sperrklinke**. Von mir
+kommen **+3 und −1**; **die vierte grüne Zeile kann ich nicht belegen** —
+keine andere Testdatei ist seit 10:09 angefasst worden. Entweder hat der
+Zehnteiler von 10:55 anders gezählt oder ich habe mich dort verzählt. Die
+absoluten Zahlen sind gemessen, die Differenz ist es nicht.
+
+**Der Prüfstand lief vor der Kommentarkorrektur und vor `PM-148-E`.** Nach
+beiden habe ich `tsc`, `eslint` und die betroffene Testdatei erneut gefahren,
+nicht den vollen Lauf — geändert wurden danach nur ein Kommentarblock und
+eine hinzugefügte Testdatei-Zusicherung. **Ich sage es, weil „voller
+Prüfstand" sonst mehr behauptet, als dasteht.**
+
+**Nicht gemessen, und ich behaupte es deshalb nicht: kein Blick ins laufende
+Produkt, dreizehnter Lauf in Folge.** Und: **kein Diktat durch die ganze
+Strecke.** Die Zuordnung ist an 211 Titeln gemessen, der Weg vom Diktat bis
+zum PDF nicht.
+
+### 8. Für Sandy
+
+**Code geändert — der Testlauf steht aus.** Ich habe ihn hier gefahren,
+starten kannst nur du ihn.
+
+**Eine neue Datei, die in Git muss.** Sie ist nicht von mir, sondern vom
+Prüfmeister (seine PM-147/148/149-Sperrklinken) — ich habe sie beim Bau
+geändert und deshalb mitcommittet, weil eine Codeänderung ohne ihre
+Zusicherung nichts wert ist:
+
+```
+git add src/lib/__tests__/pruefmeister-pm147-149-gedruckter-titel-und-gewerke.test.ts
+```
+
+### 9. Arbeitsbaum
+
+**Committet, nicht gepusht. Zwei Dateien, jede mit Pfad hinzugefügt:**
+`src/lib/positions-gewerk.ts` und die Testdatei oben. Die übrigen Änderungen
+des Prüfmeisters (`pruefmeister-*.md`, `vokabular-abgleich.mjs`,
+`pruefmeister-batch-134-137.test.ts`) und die Doku-Änderungen anderer Rollen
+habe ich **nicht angefasst und nicht mitcommittet.**
+
+### 10. Nächster Punkt
+
+**PM-119/L-06** mit DC-144 im Rücken. **CoS-E-100 / DC-145** habe ich gesehen
+und noch nicht gelesen — er steht vor PM-147-A, das räume ich im nächsten
+Durchlauf. Danach unverändert **CoS-E-080 → CoS-E-086**.
+
+*Head of Product Engineering · 2026-09-23, 12:40 UTC*
+
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
