@@ -23,7 +23,7 @@
 //
 // ── Was die Messung widerlegt hat ─────────────────────────────────────────
 //
-// Meine erste Vermutung war, dass `Wände spachteln Q4` (22,00 €) auf
+// Meine erste Vermutung war, dass `Wände spachteln — glatt verspachtelt (Q4)` (22,00 €) auf
 // `Fläche spachteln` (9,00 €) kippen kann — beide Score 1,00. Nachgemessen:
 // **kippt nicht.** Es gibt eine gleichlautende Katalogzeile, und die gewinnt
 // unabhängig von der Reihenfolge. Die Vermutung war falsch, und deshalb
@@ -68,7 +68,7 @@ describe('PM-138 · Gleichstand an der Spitze — die Reihenfolge entscheidet de
     const oben = spitze('Grundierung', 'm²')
     expect(oben.map(p => p.title).sort()).toEqual([
       'Grundieren (Haftgrund / Sperrgrund)',
-      'Grundieren (Tiefengrund)',
+      'Grundieren — Tiefengrund',
     ])
     expect(oben.map(p => p.unit_price).sort((a, b) => a - b)).toEqual([4.5, 6])
     // und keine der beiden heißt „Grundierung"
@@ -80,7 +80,7 @@ describe('PM-138 · Gleichstand an der Spitze — die Reihenfolge entscheidet de
     const hoch = (titel: string) =>
       [...katalog].sort((a, b) => (a.title === titel ? -1 : 0) - (b.title === titel ? -1 : 0))
 
-    const mitTiefengrund = findePreisposition('Grundierung', 'm²', hoch('Grundieren (Tiefengrund)'))
+    const mitTiefengrund = findePreisposition('Grundierung', 'm²', hoch('Grundieren — Tiefengrund'))
     const mitHaftgrund = findePreisposition('Grundierung', 'm²', hoch('Grundieren (Haftgrund / Sperrgrund)'))
 
     expect(mitTiefengrund?.position.unit_price).toBe(4.5)
@@ -90,14 +90,14 @@ describe('PM-138 · Gleichstand an der Spitze — die Reihenfolge entscheidet de
   })
 
   // ── Die Gegenprobe: eine gleichlautende Zeile schützt ───────────────────
-  it('PM-138-3 · Gegenprobe: „Wände spachteln Q4" kippt NICHT — die gleichlautende Zeile gewinnt', () => {
-    const katalog = katalogFuer('Wände spachteln Q4')
+  it('PM-138-3 · Gegenprobe: „Wände spachteln — glatt verspachtelt (Q4)" kippt NICHT — die gleichlautende Zeile gewinnt', () => {
+    const katalog = katalogFuer('Wände spachteln — glatt verspachtelt (Q4)')
     const flaecheHoch = [...katalog].sort(
       (a, b) => (a.title === 'Fläche spachteln (Flächenspachtel)' ? -1 : 0)
         - (b.title === 'Fläche spachteln (Flächenspachtel)' ? -1 : 0),
     )
-    expect(findePreisposition('Wände spachteln Q4', 'm²', katalog)?.position.unit_price).toBe(22)
-    expect(findePreisposition('Wände spachteln Q4', 'm²', flaecheHoch)?.position.unit_price).toBe(22)
+    expect(findePreisposition('Wände spachteln — glatt verspachtelt (Q4)', 'm²', katalog)?.position.unit_price).toBe(22)
+    expect(findePreisposition('Wände spachteln — glatt verspachtelt (Q4)', 'm²', flaecheHoch)?.position.unit_price).toBe(22)
   })
 
   // ── Die drei teuersten Spannen der Klasse ───────────────────────────────

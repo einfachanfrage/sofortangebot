@@ -136,7 +136,7 @@ const REGELN: { wort: MaterialWort; nomen?: RegExp; arbeit: RegExp }[] = [
   { wort: 'Fliesen', nomen: /\bfliesen\b|naturstein/i, arbeit: /verleg|verflies/i },
   // Lack VOR Farbe, und das ist keine Sortierfrage:
   //
-  // Seit PD-010 heißen die Türzeilen „Türen lackieren (2× Anstrich)". Sie
+  // Seit PD-010 heißen die Türzeilen „Türen lackieren — 2× Anstrich". Sie
   // tragen damit beide Wörter — und `Farbe` griff zuerst, weil es oben stand.
   // Die Folge stand nicht im Code, sondern auf dem Kundenangebot: „ohne
   // Farbe" unter einer Lackierposition, dazu 25 % Materialanteil statt der

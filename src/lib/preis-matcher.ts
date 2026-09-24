@@ -89,7 +89,7 @@ const SYNONYME: Array<[RegExp, string]> = [
   // Katalogeintrag „Dehnungsfuge mit Bewegungsprofil herstellen" nicht — im
   // Handwerkskatalog heißt dieselbe Leistung je nach Quelle einbauen,
   // herstellen oder anlegen. Für den Abgleich dasselbe Wort.
-  // PD-010, Nachlauf: „Türen lackieren (2× Anstrich)" (Katalog) und „Tür
+  // PD-010, Nachlauf: „Türen lackieren — 2× Anstrich" (Katalog) und „Tür
   // lackieren beidseitig" (wie der Betrieb es tippt) hatten nach der
   // Normalisierung nur noch `lackieren` gemeinsam — `tur` gegen `turen`
   // zählte als zwei verschiedene Wörter. Gewonnen hat dadurch die einzige
@@ -260,7 +260,7 @@ function normalisiereEinheit(einheit: string): string {
 // werden irgendwo ausgewürfelt."
 //
 // Nachgestellt mit seinem echten Katalog: „Wandflächen streichen 2x" traf
-// **„Kniestockwände streichen 2x" (11,50 €)** statt „Wand streichen 2x
+// **„Kniestockwände streichen — 2× Anstrich" (11,50 €)** statt „Wand streichen 2x
 // Anstrich" (9,50 €). Beide bekamen 0,94 — und bei Gleichstand gewann der
 // alphabetisch erste, also K vor W.
 //

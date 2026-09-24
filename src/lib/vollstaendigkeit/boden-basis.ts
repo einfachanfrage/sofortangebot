@@ -155,7 +155,7 @@ export function pruefeBodenBasis(
 
   if (hatUntergrundpruefung && !hat(ergaenzt, 'untergrundprüfung', 'untergrund prüfen')) {
     ergaenzt.push({
-      beschreibung: 'Untergrundprüfung (Ebenheit, Feuchte, Tragfähigkeit)',
+      beschreibung: 'Untergrundprüfung — Ebenheit, Feuchte, Tragfähigkeit',
       menge: 1,
       einheit: 'Pauschale',
       berechnungsweg: 'Untergrundprüfung ausdrücklich beauftragt',

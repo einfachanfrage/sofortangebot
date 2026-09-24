@@ -118,7 +118,7 @@ export function pruefeTuerenLackieren(
   if (tuerGrundieren) {
     ergaenzt.push({ beschreibung: `Türen grundieren${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
   }
-  ergaenzt.push({ beschreibung: `Türen lackieren (2× Anstrich)${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
+  ergaenzt.push({ beschreibung: `Türen lackieren — 2× Anstrich${sfx}`, menge: anzTueren, einheit: 'Stück', konfidenz: 'high', berechnungsweg: `${anzTueren} Tür(en)`, annahmen: tuerAnnahme })
   // Katalog-Deckungsaudit 2026-08-31: hieß hier „Türzargen lackieren" (Plural),
   // der Katalogeintrag heißt „Türzarge lackieren" — der Preis-Matcher kam über
   // die Schwelle nicht drüber und die Position stand mit 0,00 € da. Die Menge

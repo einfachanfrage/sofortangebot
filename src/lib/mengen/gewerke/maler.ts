@@ -76,6 +76,39 @@ function allgemeineAnsagen(transkript: string, alleNamen: Array<string | undefin
   return saetze(text).filter(satz => raumDerPosition(satz, namen) === null).join('. ')
 }
 
+/**
+ * CoS-E-100 Durchgang 1 (DC-145, 24.09.2026) — Titel der drei Anstrich-Familien.
+ *
+ * `Kniestockwände streichen`, `Dachschrägen streichen` und
+ * `Fassadenfläche streichen` haben im Katalog je eine 1x-, eine 2x- und eine
+ * 3x-Zeile (default-prices.ts, dort mit Begründung: genau diese Aufteilung hat
+ * PM-008 behoben). **DC-145 benennt von jeder Familie nur die 2x-Zeile um** —
+ * und nicht einmal nach demselben Muster: `Fassadenfläche 2× streichen` stellt
+ * zusätzlich die Wortstellung um.
+ *
+ * Der Titel ist der Schlüssel zum Katalogpreis. Er wird deshalb nicht mehr aus
+ * `${anstriche}x` zusammengesetzt, sondern hier entschieden.
+ *
+ * **Gemessen** (`scripts/umbenennung-bestandskonto.mjs`, 24.09., Spalte C):
+ * alle drei 2x-Zeilen treffen nach der Umbenennung dieselbe Katalogzeile zum
+ * selben Preis bei Score **1.00** — 11,50 € / 14,00 € / 11,50 €. Die 1x- und
+ * 3x-Geschwister stehlen den Treffer nicht.
+ *
+ * 🔴 **Offen beim Prüfmeister (PM-157):** dass 1x und 3x jetzt anders heißen
+ * als 2x, ist eine Katalogfrage und keine Bauentscheidung. Bis seine Antwort
+ * dasteht, bleiben 1x und 3x unverändert.
+ */
+function anstrichTitel(familie: 'kniestock' | 'dachschraege' | 'fassade', anstriche: number): string {
+  if (anstriche === 2) {
+    if (familie === 'kniestock') return 'Kniestockwände streichen — 2× Anstrich'
+    if (familie === 'dachschraege') return 'Dachschrägen streichen — 2× Anstrich'
+    return 'Fassadenfläche 2× streichen'
+  }
+  const basis =
+    familie === 'kniestock' ? 'Kniestockwände' : familie === 'dachschraege' ? 'Dachschrägen' : 'Fassadenfläche'
+  return `${basis} streichen ${anstriche}x`
+}
+
 export function malerEngine(daten: any): MengenErgebnis {
   const positionen: BerechnetePosition[] = []
   const warnungen: string[] = []
@@ -530,7 +563,7 @@ export function malerEngine(daten: any): MengenErgebnis {
       if (knH && laenge && breite && anWaenden) {
         const kniestockM2 = round2(2 * (laenge + breite) * knH)
         positionen.push({
-          beschreibung: `Kniestockwände streichen ${anstricheWand}x — ${name}`,
+          beschreibung: `${anstrichTitel('kniestock', anstricheWand)} — ${name}`,
           menge: kniestockM2, einheit: 'm²', konfidenz: 'high',
           berechnungsweg: `Umfang ${round2(2*(laenge+breite))} lfm × ${knH} m = ${kniestockM2} m²`,
           annahmen: [],
@@ -580,7 +613,7 @@ export function malerEngine(daten: any): MengenErgebnis {
         const dgFensterFl = round2(dgAbzug.abzugFlaeche)
         const netto = round2(brutto - dgFensterFl)
         positionen.push({
-          beschreibung: `Dachschrägen streichen ${anstriche}x — ${name}`,
+          beschreibung: `${anstrichTitel('dachschraege', anstriche)} — ${name}`,
           menge: Math.max(0, netto), einheit: 'm²', konfidenz: 'high',
           berechnungsweg: (() => {
             const basis = (dgLinksM2 !== null || dgRechtsM2 !== null)
@@ -732,9 +765,9 @@ export function malerEngine(daten: any): MengenErgebnis {
             // keinen Katalogpreis, der Eintrag heißt „Dachschrägen streichen"
             // (11 €/m²). Der Dachgeschoss-Zweig weiter unten benutzt längst
             // den Plural — jetzt beide gleich.
-            ? `Dachschrägen streichen ${anstricheWand}x — ${name}`
+            ? `${anstrichTitel('dachschraege', anstricheWand)} — ${name}`
             : istFassadeRaum
-              ? `Fassadenfläche streichen ${anstricheWand}x — ${name}`
+              ? `${anstrichTitel('fassade', anstricheWand)} — ${name}`
               : `Wand streichen ${anstricheWand}x — ${name}`
           const wandBrutto2 = round2((umfangM ?? 0) * (hoehe ?? 0))
           const fensterAnzahl2 = effFenster.reduce((s: number, f: any) => s + (f.anzahl ?? 1), 0)
@@ -808,7 +841,7 @@ export function malerEngine(daten: any): MengenErgebnis {
         }, 0))
         const dgNettoSep = Math.max(0, round2(dgUserFlaeche - dgFensterFlSep))
         positionen.push({
-          beschreibung: `Dachschrägen streichen ${anstriche}x — ${name}`,
+          beschreibung: `${anstrichTitel('dachschraege', anstriche)} — ${name}`,
           menge: dgNettoSep, einheit: 'm²', konfidenz: 'high',
           berechnungsweg: dgFensterFlSep > 0
             ? `Dachschrägenfläche ${dgUserFlaeche} m² − Dachfenster ${dgFensterFlSep} m²`
@@ -978,7 +1011,7 @@ export function malerEngine(daten: any): MengenErgebnis {
       : ['Zweifacher Anstrich als Standard angenommen — bitte prüfen']
 
     positionen.push({
-      beschreibung: `Fassadenfläche streichen ${wAnstriche}x — ${wName}`,
+      beschreibung: `${anstrichTitel('fassade', wAnstriche)} — ${wName}`,
       menge: nettoFlaeche,
       einheit: 'm²',
       konfidenz: 'high',
@@ -1016,13 +1049,13 @@ export function malerEngine(daten: any): MengenErgebnis {
         positionen.push({ beschreibung: 'Kalkputz aufbringen', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
         break
       case 'silikatfarbe':
-        positionen.push({ beschreibung: 'Silikatfarbe auftragen (2×)', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+        positionen.push({ beschreibung: 'Silikatfarbe auftragen — 2×', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
         break
       case 'nikotinsperre':
         positionen.push({ beschreibung: 'Nikotinsperre auftragen', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
         break
       case 'geruest':
-        positionen.push({ beschreibung: 'Gerüst stellen (Pauschale)', menge: 1, einheit: 'Pauschale', berechnungsweg: 'Pauschale', ...mk })
+        positionen.push({ beschreibung: 'Gerüst stellen', menge: 1, einheit: 'Pauschale', berechnungsweg: 'Pauschale', ...mk })
         break
       case 'rissversschluss':
         positionen.push({ beschreibung: 'Rissverschluss mit Gewebe', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
@@ -1064,7 +1097,7 @@ export function malerEngine(daten: any): MengenErgebnis {
         positionen.push({ beschreibung: 'Kalken / Weißkalkung', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
         break
       case 'spachteltechnik':
-        positionen.push({ beschreibung: 'Spachteltechnik (Betonoptik)', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+        positionen.push({ beschreibung: 'Spachteltechnik in Betonoptik', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
         break
       case 'versiegelung_spachtel':
         positionen.push({ beschreibung: 'Versiegelung / Schutzanstrich', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
@@ -1072,7 +1105,7 @@ export function malerEngine(daten: any): MengenErgebnis {
       case 'holzbalken': {
         const lfdm = round2((s.anzahl ?? 1) * (s.laenge_m ?? 1))
         positionen.push({ beschreibung: 'Holzbalken anschleifen', menge: lfdm, einheit: 'lfdm', berechnungsweg: `${s.anzahl} × ${s.laenge_m} m = ${lfdm} lfdm`, ...mk })
-        positionen.push({ beschreibung: 'Lasur auftragen (transparent)', menge: lfdm, einheit: 'lfdm', berechnungsweg: `${lfdm} lfdm`, ...mk })
+        positionen.push({ beschreibung: 'Lasur auftragen — transparent', menge: lfdm, einheit: 'lfdm', berechnungsweg: `${lfdm} lfdm`, ...mk })
         break
       }
     }

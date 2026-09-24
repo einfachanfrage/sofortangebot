@@ -198,7 +198,7 @@ describe('E-087 · PM-106 — Grundierung ungefragt, sobald Türen lackiert werd
   // E-087-12 · Der Nebenbefund des Prüfmeisters, nachgemessen statt
   // übernommen: er hat live 6,00 €/m² gesehen und vermutet, der Titel
   // `Voranstrich / Grundierung` treffe eine andere Katalogzeile als
-  // `Grundieren (Tiefengrund)` (4,50 €). **Auf dem Prüfstand ist das nicht
+  // `Grundieren — Tiefengrund` (4,50 €). **Auf dem Prüfstand ist das nicht
   // reproduzierbar** — hier trifft der Preis-Matcher 4,50 €, in Fall 7 wie im
   // Normalfall (gemessen 21.09. gegen `DEFAULT_PRICES`, einmal auch gegen den
   // Stand vor diesem Bau). Der Unterschied muss also aus dem echten Katalog

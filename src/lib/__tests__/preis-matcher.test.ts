@@ -37,17 +37,17 @@ describe('betriebliche Preiszuordnung', () => {
     ['Akzentwand Vliestapete — Wohnzimmer', 'm²'],
     ['Schimmelbehandlung / Grundierung', 'm²'],
     ['Kalkputz aufbringen', 'm²'],
-    ['Silikatfarbe auftragen (2×)', 'm²'],
+    ['Silikatfarbe auftragen — 2×', 'm²'],
     ['Nikotinsperre auftragen', 'm²'],
     ['Rissverschluss mit Gewebe', 'm²'],
     ['Heizkörper abschleifen', 'Stück'],
     ['Heizkörper streichen / lackieren', 'Stück'],
     ['Fußleisten schleifen und lackieren', 'lfdm'],
     ['Anti-Schimmel-Anstrich', 'm²'],
-    ['Spachteltechnik (Betonoptik)', 'm²'],
+    ['Spachteltechnik in Betonoptik', 'm²'],
     ['Versiegelung / Schutzanstrich', 'm²'],
     ['Holzbalken anschleifen', 'lfdm'],
-    ['Lasur auftragen (transparent)', 'lfdm'],
+    ['Lasur auftragen — transparent', 'lfdm'],
   ])('findet %s ausschließlich im Katalog', (beschreibung, einheit) => {
     const treffer = findePreisposition(beschreibung, einheit, preise)
     expect(treffer, `${beschreibung} ist nicht abgedeckt`).not.toBeNull()
@@ -83,13 +83,13 @@ describe('betriebliche Preiszuordnung', () => {
   })
 
   it.each([
-    ['Untergrund schleifen (Unebenheiten, Kleberreste)', 'm²', 7],
+    ['Untergrund schleifen — Unebenheiten und Kleberreste', 'm²', 7],
     ['Aufpreis Fischgrät-Verlegemuster', 'm²', 14],
-    ['Untergrundprüfung (Ebenheit, Feuchte, Tragfähigkeit)', 'Pauschale', 45],
+    ['Untergrundprüfung — Ebenheit, Feuchte, Tragfähigkeit', 'Pauschale', 45],
     ['Fertigparkett verlegen vollflächig verklebt', 'm²', 35],
     ['Laminat demontieren und entsorgen', 'm²', 5],
     ['Teppichboden entfernen und entsorgen', 'm²', 6],
-    ['Sockelleisten entfernen (alt)', 'lfdm', 2],
+    ['Alte Sockelleisten entfernen', 'lfdm', 2],
   ])('ordnet Boden-Standardposition %s eindeutig zu', (beschreibung, einheit, preis) => {
     const boden = preise.filter(position => position.category.startsWith('Boden'))
     expect(findePreisposition(beschreibung, einheit, boden)?.position.unit_price).toBe(preis)
@@ -115,7 +115,7 @@ describe('betriebliche Preiszuordnung', () => {
 
 // ── Anstrich-Varianten: die festgeklopften Regeln (2026-08-24, Sandys „klopf
 // fest") ────────────────────────────────────────────────────────────────────
-// Aufgedeckt durch PM-007: „Kniestockwände streichen 2x" fand seinen eigenen
+// Aufgedeckt durch PM-007: „Kniestockwände streichen — 2× Anstrich" fand seinen eigenen
 // Katalogpreis nicht und stand mit 0,00 € im Angebot, während dieselbe
 // Position mit „1x" sauber matchte. Diese Tests halten fest, was gewollt ist —
 // und was der Fehler war.
@@ -146,7 +146,7 @@ describe('Anstrich-Varianten (1x/2x/3x)', () => {
     // Ein Katalogeintrag ohne Zusatz ist der eigene Preis des Betriebs für
     // genau diese Arbeit — den zu ignorieren wäre kein Schutz, sondern Verlust.
     const katalog = [p('Kniestockwände streichen', 11)]
-    const treffer = findePreisposition('Kniestockwände streichen 2x — Dachzimmer', 'm²', katalog)
+    const treffer = findePreisposition('Kniestockwände streichen — 2× Anstrich — Dachzimmer', 'm²', katalog)
     expect(treffer?.position.title).toBe('Kniestockwände streichen')
     expect(treffer?.position.unit_price).toBe(11)
   })
@@ -160,14 +160,14 @@ describe('Anstrich-Varianten (1x/2x/3x)', () => {
       p('Dachschrägen streichen', 11),
       p('Wand streichen 2x Anstrich', 9.5),
     ]
-    expect(findePreisposition('Kniestockwände streichen 2x — Dachzimmer', 'm²', katalog)?.position.unit_price).toBe(11)
-    expect(findePreisposition('Dachschrägen streichen 2x — Dachzimmer', 'm²', katalog)?.position.unit_price).toBe(11)
+    expect(findePreisposition('Kniestockwände streichen — 2× Anstrich — Dachzimmer', 'm²', katalog)?.position.unit_price).toBe(11)
+    expect(findePreisposition('Dachschrägen streichen — 2× Anstrich — Dachzimmer', 'm²', katalog)?.position.unit_price).toBe(11)
   })
 
   it('behandelt 1x und 2x gleich — keine Asymmetrie mehr', () => {
     const katalog = [p('Dachschrägen streichen', 11), p('Wand streichen 2x Anstrich', 9.5)]
     const einfach = findePreisposition('Dachschrägen streichen 1x — Dachzimmer', 'm²', katalog)
-    const zweifach = findePreisposition('Dachschrägen streichen 2x — Dachzimmer', 'm²', katalog)
+    const zweifach = findePreisposition('Dachschrägen streichen — 2× Anstrich — Dachzimmer', 'm²', katalog)
     expect(einfach?.position.title).toBe('Dachschrägen streichen')
     expect(zweifach?.position.title).toBe('Dachschrägen streichen')
   })
@@ -200,7 +200,7 @@ describe('Ein Heizkörper ist keine Tür', () => {
     // passt. Sonst gewinnt sie über das Wort „beidseitig", das sie als
     // einzige Türzeile noch trägt.
     const treffer = findePreisposition('Tür lackieren beidseitig', 'Stück', maler)
-    expect(treffer?.position.title).toBe('Türen lackieren (2× Anstrich)')
+    expect(treffer?.position.title).toBe('Türen lackieren — 2× Anstrich')
     expect(treffer?.position.unit_price).toBe(90)
   })
 
@@ -228,7 +228,7 @@ describe('Ein Heizkörper ist keine Tür', () => {
     // 110 € der Außentürzeile wäre eine sichtbare Lücke gegen einen stillen
     // Fehler getauscht.
     const treffer = findePreisposition('Haustür lackieren', 'Stück', maler)
-    expect(treffer?.position.title ?? 'kein Treffer').not.toBe('Türen lackieren (2× Anstrich)')
+    expect(treffer?.position.title ?? 'kein Treffer').not.toBe('Türen lackieren — 2× Anstrich')
   })
 
   it('Zarge und Türblatt bleiben zwei Zeilen', () => {

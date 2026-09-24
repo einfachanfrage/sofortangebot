@@ -51,7 +51,7 @@ export const DEFAULT_PRICES: Array<{
   // ═══════════════════════════════════════════════════════════════════════════
   { category: 'Maler – Vorbereitung & Schutz', title: 'Möbel rücken / ausräumen', unit: 'Stunde', unit_price: 55.00 },
   { category: 'Maler – Vorbereitung & Schutz', title: 'Möbel abdecken mit Folie', unit: 'm²', unit_price: 1.50 },
-  { category: 'Maler – Vorbereitung & Schutz', title: 'Boden abdecken (Abdeckvlies)', unit: 'm²', unit_price: 1.20 },
+  { category: 'Maler – Vorbereitung & Schutz', title: 'Boden abdecken — mit Vlies', unit: 'm²', unit_price: 1.20 },
   { category: 'Maler – Vorbereitung & Schutz', title: 'Abkleben Kanten / Leisten', unit: 'lfdm', unit_price: 0.80 },
   { category: 'Maler – Vorbereitung & Schutz', title: 'Abkleben Fenster-/Türrahmen', unit: 'Stück', unit_price: 8.00 },
   { category: 'Maler – Vorbereitung & Schutz', title: 'Abkleben Schalter / Steckdosen', unit: 'Stück', unit_price: 3.00 },
@@ -73,7 +73,7 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Maler – Untergrundvorbereitung', title: 'Fläche spachteln (Flächenspachtel)', unit: 'm²', unit_price: 9.00 },
   { category: 'Maler – Untergrundvorbereitung', title: 'Schleifen von Hand', unit: 'm²', unit_price: 4.00 },
   { category: 'Maler – Untergrundvorbereitung', title: 'Schleifen maschinell (Langhalsschleifer)', unit: 'm²', unit_price: 5.50 },
-  { category: 'Maler – Untergrundvorbereitung', title: 'Grundieren (Tiefengrund)', unit: 'm²', unit_price: 4.50 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Grundieren — Tiefengrund', unit: 'm²', unit_price: 4.50 },
   { category: 'Maler – Untergrundvorbereitung', title: 'Grundieren (Haftgrund / Sperrgrund)', unit: 'm²', unit_price: 6.00 },
   { category: 'Maler – Untergrundvorbereitung', title: 'GK-Fugen verspachteln inkl. Gewebe', unit: 'lfdm', unit_price: 5.00 },
   { category: 'Maler – Untergrundvorbereitung', title: 'Putz ausbessern', unit: 'm²', unit_price: 18.00 },
@@ -235,7 +235,7 @@ export const DEFAULT_PRICES: Array<{
   // TROCKENBAU — Vorbereitung & Schutz
   // ═══════════════════════════════════════════════════════════════════════════
   { category: 'Trockenbau – Vorbereitung & Schutz', title: 'Möbel rücken / ausräumen', unit: 'Stunde', unit_price: 55.00 },
-  { category: 'Trockenbau – Vorbereitung & Schutz', title: 'Boden abdecken (Abdeckvlies)', unit: 'm²', unit_price: 1.20 },
+  { category: 'Trockenbau – Vorbereitung & Schutz', title: 'Boden abdecken — mit Vlies', unit: 'm²', unit_price: 1.20 },
   { category: 'Trockenbau – Vorbereitung & Schutz', title: 'Abkleben angrenzender Flächen / Bauteile', unit: 'lfdm', unit_price: 0.80 },
   { category: 'Trockenbau – Vorbereitung & Schutz', title: 'Schutzfolie Fenster / Türen', unit: 'Stück', unit_price: 8.00 },
   { category: 'Trockenbau – Vorbereitung & Schutz', title: 'Treppenschutz anbringen', unit: 'lfdm', unit_price: 3.50 },
@@ -377,7 +377,7 @@ export const DEFAULT_PRICES: Array<{
   // ═══════════════════════════════════════════════════════════════════════════
   // FLIESEN & NATURSTEIN — Vorbereitung & Schutz
   // ═══════════════════════════════════════════════════════════════════════════
-  { category: 'Fliesen – Vorbereitung & Schutz', title: 'Boden abdecken (Abdeckvlies)', unit: 'm²', unit_price: 1.20 },
+  { category: 'Fliesen – Vorbereitung & Schutz', title: 'Boden abdecken — mit Vlies', unit: 'm²', unit_price: 1.20 },
   { category: 'Fliesen – Vorbereitung & Schutz', title: 'Möbel rücken / ausräumen', unit: 'Stunde', unit_price: 55.00 },
   { category: 'Fliesen – Vorbereitung & Schutz', title: 'Abkleben angrenzender Flächen / Bauteile', unit: 'lfdm', unit_price: 0.80 },
   { category: 'Fliesen – Vorbereitung & Schutz', title: 'Sanitäreinrichtung ausbauen (WC, Waschbecken)', unit: 'Stück', unit_price: 65.00 },
@@ -525,7 +525,7 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Boden – Vorbereitung & Schutz', title: 'Möbel rücken / ausräumen', unit: 'Stunde', unit_price: 55.00 },
   { category: 'Boden – Vorbereitung & Schutz', title: 'Möbel zurückrücken', unit: 'Stunde', unit_price: 55.00 },
   { category: 'Boden – Vorbereitung & Schutz', title: 'Türen unterkürzen (Aufkantung Belag)', unit: 'Stück', unit_price: 25.00 },
-  { category: 'Boden – Vorbereitung & Schutz', title: 'Untergrundprüfung (Ebenheit, Feuchte, Tragfähigkeit)', unit: 'Pauschale', unit_price: 45.00 },
+  { category: 'Boden – Vorbereitung & Schutz', title: 'Untergrundprüfung — Ebenheit, Feuchte, Tragfähigkeit', unit: 'Pauschale', unit_price: 45.00 },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // BODENBELÄGE & PARKETT — Altbelag entfernen & Entsorgung
@@ -537,7 +537,7 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Boden – Altbelag entfernen', title: 'Parkett demontieren (schwimmend)', unit: 'm²', unit_price: 7.00 },
   { category: 'Boden – Altbelag entfernen', title: 'Parkett demontieren (verklebt, aufwändig)', unit: 'm²', unit_price: 18.00 },
   { category: 'Boden – Altbelag entfernen', title: 'Klebstoffreste / Altkleber abfräsen', unit: 'm²', unit_price: 14.00 },
-  { category: 'Boden – Altbelag entfernen', title: 'Sockelleisten entfernen (alt)', unit: 'lfdm', unit_price: 2.00 },
+  { category: 'Boden – Altbelag entfernen', title: 'Alte Sockelleisten entfernen', unit: 'lfdm', unit_price: 2.00 },
   { category: 'Boden – Altbelag entfernen', title: 'Schwelle / Übergangsprofil entfernen', unit: 'Stück', unit_price: 8.00 },
   { category: 'Boden – Altbelag entfernen', title: 'Bauschutt / Altbelag entsorgen (Sackweise)', unit: 'Sack', unit_price: 12.00 },
 
@@ -548,7 +548,7 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Boden – Untergrundvorbereitung', title: 'Untergrund grundieren (Haftgrund / Tiefengrund)', unit: 'm²', unit_price: 5.00 },
   { category: 'Boden – Untergrundvorbereitung', title: 'Untergrund spachteln / ausgleichen (bis 5mm)', unit: 'm²', unit_price: 12.00 },
   { category: 'Boden – Untergrundvorbereitung', title: 'Untergrund spachteln / ausgleichen (bis 20mm)', unit: 'm²', unit_price: 20.00 },
-  { category: 'Boden – Untergrundvorbereitung', title: 'Untergrund schleifen (Unebenheiten, Kleberreste)', unit: 'm²', unit_price: 7.00 },
+  { category: 'Boden – Untergrundvorbereitung', title: 'Untergrund schleifen — Unebenheiten und Kleberreste', unit: 'm²', unit_price: 7.00 },
   { category: 'Boden – Untergrundvorbereitung', title: 'Risse im Estrich vorbehandeln (Kleber / Gewebe)', unit: 'lfdm', unit_price: 8.00 },
   { category: 'Boden – Untergrundvorbereitung', title: 'Trittschalldämmung verlegen (PE-Schaum / Filz)', unit: 'm²', unit_price: 4.50 },
   { category: 'Boden – Untergrundvorbereitung', title: 'Dampfbremse / PE-Folie verlegen (Feuchtigkeitsschutz)', unit: 'm²', unit_price: 3.50 },
@@ -576,7 +576,7 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Boden – Parkett Aufarbeitung', title: 'Parkett abschleifen (maschinell, 1 Schleifgang)', unit: 'm²', unit_price: 12.00 },
   { category: 'Boden – Parkett Aufarbeitung', title: 'Parkett abschleifen (maschinell, 2 Schleifgänge inkl. Rand)', unit: 'm²', unit_price: 20.00 },
   { category: 'Boden – Parkett Aufarbeitung', title: 'Parkett abschleifen komplett (stark beschädigt, 3 Schleifgänge)', unit: 'm²', unit_price: 30.00 },
-  { category: 'Boden – Parkett Aufarbeitung', title: 'Parkett versiegeln (Lack, 2-lagig)', unit: 'm²', unit_price: 18.00 },
+  { category: 'Boden – Parkett Aufarbeitung', title: 'Parkett versiegeln — Lack, 2 Lagen', unit: 'm²', unit_price: 18.00 },
   { category: 'Boden – Parkett Aufarbeitung', title: 'Parkett ölen (maschinell, 1-lagig)', unit: 'm²', unit_price: 20.00 },
   { category: 'Boden – Parkett Aufarbeitung', title: 'Parkett ölen (maschinell, 2-lagig inkl. Einarbeiten)', unit: 'm²', unit_price: 28.00 },
   { category: 'Boden – Parkett Aufarbeitung', title: 'Parkett wachsen', unit: 'm²', unit_price: 14.00 },
@@ -3388,7 +3388,7 @@ export const DEFAULT_PRICES: Array<{
   //     Einheit im Katalog eine explizite "1x/2x/3x"-Variante hat (z. B. "Wand
   //     streichen 2x Anstrich"), sperrt preis-matcher.ts jeden Eintrag OHNE
   //     eigene Zahl für JEDE 1x/2x/3x-Suche — unabhängig vom Thema. Ergebnis:
-  //     "Kniestockwände streichen 2x — Dachzimmer" fand nie den (existierenden!)
+  //     "Kniestockwände streichen — 2× Anstrich — Dachzimmer" fand nie den (existierenden!)
   //     Preis, weil der Katalogeintrag keine "2x" im Titel hatte. Programmatisch
   //     gegen preis-matcher.ts geprüft (Simulation aller von maler.ts/boden.ts/
   //     vollständigkeit/*.ts erzeugten Positionstitel gegen den Katalog) — jetzt
@@ -3419,31 +3419,31 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Boden – Untergrundvorbereitung', title: 'Untergrundvorbereitung / Ausgleich', unit: 'm²', unit_price: 12.00 },
   { category: 'Boden – Untergrundvorbereitung', title: 'Epoxidharz-Feuchtigkeitssperre aufwalzen', unit: 'm²', unit_price: 18.00 },
   { category: 'Maler – Anstrich Innen', title: 'Kniestockwände streichen 1x', unit: 'm²', unit_price: 7.50 },
-  { category: 'Maler – Anstrich Innen', title: 'Kniestockwände streichen 2x', unit: 'm²', unit_price: 11.50 },
+  { category: 'Maler – Anstrich Innen', title: 'Kniestockwände streichen — 2× Anstrich', unit: 'm²', unit_price: 11.50 },
   { category: 'Maler – Anstrich Innen', title: 'Kniestockwände streichen 3x', unit: 'm²', unit_price: 15.50 },
   { category: 'Maler – Anstrich Innen', title: 'Dachschrägen streichen 1x', unit: 'm²', unit_price: 7.50 },
-  { category: 'Maler – Anstrich Innen', title: 'Dachschrägen streichen 2x', unit: 'm²', unit_price: 11.50 },
+  { category: 'Maler – Anstrich Innen', title: 'Dachschrägen streichen — 2× Anstrich', unit: 'm²', unit_price: 11.50 },
   { category: 'Maler – Anstrich Innen', title: 'Dachschrägen streichen 3x', unit: 'm²', unit_price: 15.50 },
   { category: 'Maler – Anstrich Innen', title: 'Deckenspiegel streichen', unit: 'm²', unit_price: 11.00 },
   { category: 'Maler – Anstrich Innen', title: 'Decke streichen 3x Anstrich', unit: 'm²', unit_price: 15.00 },
   { category: 'Maler – Tapezieren', title: 'Akzentwand Vliestapete', unit: 'm²', unit_price: 14.00 },
   { category: 'Maler – Untergrundvorbereitung', title: 'Schimmelbehandlung / Grundierung', unit: 'm²', unit_price: 12.00 },
   { category: 'Maler – Stuck & Dekorative Techniken', title: 'Kalkputz aufbringen', unit: 'm²', unit_price: 35.00 },
-  { category: 'Maler – Anstrich Innen', title: 'Silikatfarbe auftragen (2×)', unit: 'm²', unit_price: 13.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Silikatfarbe auftragen — 2×', unit: 'm²', unit_price: 13.00 },
   { category: 'Maler – Untergrundvorbereitung', title: 'Nikotinsperre auftragen', unit: 'm²', unit_price: 9.00 },
-  { category: 'Maler – Gerüst & Arbeitsmittel', title: 'Gerüst stellen (Pauschale)', unit: 'Pauschale', unit_price: 450.00 },
+  { category: 'Maler – Gerüst & Arbeitsmittel', title: 'Gerüst stellen', unit: 'Pauschale', unit_price: 450.00 },
   { category: 'Maler – Untergrundvorbereitung', title: 'Rissverschluss mit Gewebe', unit: 'm²', unit_price: 18.00 },
   { category: 'Maler – Gerüst & Arbeitsmittel', title: 'Bautrockner aufstellen und betreiben', unit: 'Tage', unit_price: 45.00 },
   { category: 'Maler – Anstrich Innen', title: 'Anti-Schimmel-Anstrich', unit: 'm²', unit_price: 15.00 },
   { category: 'Maler – Anstrich Innen', title: 'Kalken / Weißkalkung', unit: 'm²', unit_price: 10.00 },
-  { category: 'Maler – Stuck & Dekorative Techniken', title: 'Spachteltechnik (Betonoptik)', unit: 'm²', unit_price: 45.00 },
+  { category: 'Maler – Stuck & Dekorative Techniken', title: 'Spachteltechnik in Betonoptik', unit: 'm²', unit_price: 45.00 },
   { category: 'Maler – Lackierarbeiten', title: 'Versiegelung / Schutzanstrich', unit: 'm²', unit_price: 14.00 },
   { category: 'Maler – Lackierarbeiten', title: 'Holzbalken anschleifen', unit: 'lfdm', unit_price: 8.00 },
-  { category: 'Maler – Lackierarbeiten', title: 'Lasur auftragen (transparent)', unit: 'lfdm', unit_price: 9.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Lasur auftragen — transparent', unit: 'lfdm', unit_price: 9.00 },
 
   // MALERARBEITEN — fehlende Standardpreise + Handwerker-Vollständigkeitsprüfung (2026-08-20)
   { category: 'Maler – Anstrich Außen', title: 'Fassadenfläche streichen 1x', unit: 'm²', unit_price: 9.00 },
-  { category: 'Maler – Anstrich Außen', title: 'Fassadenfläche streichen 2x', unit: 'm²', unit_price: 14.00 },
+  { category: 'Maler – Anstrich Außen', title: 'Fassadenfläche 2× streichen', unit: 'm²', unit_price: 14.00 },
   { category: 'Maler – Anstrich Außen', title: 'Fassadenfläche streichen 3x', unit: 'm²', unit_price: 19.00 },
   { category: 'Maler – Bodenbeschichtung', title: 'Boden streichen', unit: 'm²', unit_price: 12.00 },
   { category: 'Maler – Anstrich Innen', title: 'Fensterbänke streichen', unit: 'm²', unit_price: 45.00 },
@@ -3524,11 +3524,11 @@ export const DEFAULT_PRICES: Array<{
     vob_norm: 'VOB/C ATV DIN 18363 Abschnitt 3.1.2',
     din_normen: ['DIN 18363'],
   },
-  { category: 'Maler – Untergrundvorbereitung', title: 'Wände schleifen nach Q2', unit: 'm²', unit_price: 5.50 },
-  { category: 'Maler – Untergrundvorbereitung', title: 'Wände schleifen nach Q3', unit: 'm²', unit_price: 7.50 },
-  { category: 'Maler – Untergrundvorbereitung', title: 'Wände schleifen nach Q4', unit: 'm²', unit_price: 9.50 },
-  { category: 'Maler – Untergrundvorbereitung', title: 'Wände spachteln Q3', unit: 'm²', unit_price: 14.00 },
-  { category: 'Maler – Untergrundvorbereitung', title: 'Wände spachteln Q4', unit: 'm²', unit_price: 22.00 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Wände schleifen — normal (Q2)', unit: 'm²', unit_price: 5.50 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Wände schleifen — fein (Q3)', unit: 'm²', unit_price: 7.50 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Wände schleifen — glatt (Q4)', unit: 'm²', unit_price: 9.50 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Wände spachteln — fein verspachtelt (Q3)', unit: 'm²', unit_price: 14.00 },
+  { category: 'Maler – Untergrundvorbereitung', title: 'Wände spachteln — glatt verspachtelt (Q4)', unit: 'm²', unit_price: 22.00 },
   { category: 'Maler – Untergrundvorbereitung', title: 'Untergrundvorbereitung Beton', unit: 'Pauschale', unit_price: 45.00 },
   { category: 'Maler – Bodenbeschichtung', title: 'Estrich schleifen / Untergrundvorbereitung', unit: 'm²', unit_price: 8.00 },
   { category: 'Maler – Bodenbeschichtung', title: 'Epoxid / Versiegelung — Schicht 1', unit: 'm²', unit_price: 9.00 },
@@ -3548,7 +3548,7 @@ export const DEFAULT_PRICES: Array<{
   { category: 'Maler – Anstrich Innen', title: 'Türrahmen streichen', unit: 'Stück', unit_price: 35.00 },
   { category: 'Maler – Anstrich Innen', title: 'Sockelleisten abschleifen', unit: 'lfdm', unit_price: 2.50 },
   { category: 'Maler – Anstrich Innen', title: 'Sockelleisten schleifen', unit: 'lfdm', unit_price: 2.50 },
-  { category: 'Maler – Anstrich Innen', title: 'Sockelleisten lackieren (2× Anstrich)', unit: 'lfdm', unit_price: 6.00 },
+  { category: 'Maler – Anstrich Innen', title: 'Sockelleisten lackieren — 2× Anstrich', unit: 'lfdm', unit_price: 6.00 },
   { category: 'Maler – Anstrich Außen', title: 'Graffiti entfernen', unit: 'm²', unit_price: 18.00 },
   { category: 'Maler – Anstrich Außen', title: 'Grundierung Fassade nach Graffiti', unit: 'm²', unit_price: 6.00 },
   { category: 'Maler – Anstrich Außen', title: 'Fassadenfarbe 2× Anstrich', unit: 'm²', unit_price: 14.00 },
@@ -3564,7 +3564,7 @@ export const DEFAULT_PRICES: Array<{
   // streichen" (35 €). Sandy kann sie wie jeden anderen Preis ändern.
   { category: 'Maler – Lackierarbeiten', title: 'Türen abschleifen', unit: 'Stück', unit_price: 20.00 },
   { category: 'Maler – Lackierarbeiten', title: 'Türen grundieren', unit: 'Stück', unit_price: 25.00 },
-  { category: 'Maler – Lackierarbeiten', title: 'Türen lackieren (2× Anstrich)', unit: 'Stück', unit_price: 90.00 },
+  { category: 'Maler – Lackierarbeiten', title: 'Türen lackieren — 2× Anstrich', unit: 'Stück', unit_price: 90.00 },
   { category: 'Maler – Lackierarbeiten', title: 'Heizkörper abschleifen', unit: 'Stück', unit_price: 20.00 },
   { category: 'Maler – Lackierarbeiten', title: 'Heizkörper grundieren', unit: 'Stück', unit_price: 25.00 },
   // Zweite Runde desselben Audits — dieselbe Kette für Fenster und

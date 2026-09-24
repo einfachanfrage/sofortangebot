@@ -48,7 +48,7 @@ const preisVon = (titel: string, einheit: string, gewerk: string | undefined) =>
 // **Gemessen: 69 der 184 Engine-Titel tragen Katalogsprache.** Davon 28 den
 // Schrägstrich, den PM-122-A ausgeschlossen hat — also 28 Angebotszeilen, die
 // dem Kunden zwei Wörter zur Auswahl stellen. Die übrigen (Klammerzusätze,
-// Q-Stufen, „2×", `GK`/`CW`) sind NICHT entschieden; ob `Wände spachteln Q4`
+// Q-Stufen, „2×", `GK`/`CW`) sind NICHT entschieden; ob `Wände spachteln — glatt verspachtelt (Q4)`
 // auf dem Kundenpapier stehen darf, gehört dem Designer so gut wie mir und
 // wird hier nicht entschieden. Sie stehen als Sperre gegen Wachstum drin,
 // nicht als Soll.
@@ -104,7 +104,7 @@ describe('PM-147 · der gedruckte Titel trägt Katalogsprache', () => {
     // Wer das baut, ändert nur `beschreibung:` — der Katalogtitel und damit
     // der Preisweg bleiben unangetastet. ACHTUNG, an PM-122 gemessen: zwei
     // dieser Titel sind zugleich der Matcher-Schlüssel („Boden schützen /
-    // Abdecken" trifft „Boden abdecken (Abdeckvlies)"). Wer umbenennt, fährt
+    // Abdecken" trifft „Boden abdecken — mit Vlies"). Wer umbenennt, fährt
     // danach den Abgleich — sonst tauscht er einen hässlichen Titel gegen
     // eine 0,00-€-Zeile.
     expect(MIT_SCHRAEGSTRICH).toEqual([])
@@ -124,44 +124,44 @@ describe('PM-147 · der gedruckte Titel trägt Katalogsprache', () => {
     'Abgehängte Decke (GK)',
     'Alten Teppichboden entfernen (verklebt)',
     'Ausgleichsmasse einbringen (45 mm)',
-    'Boden abdecken (Abdeckvlies)', // zwei Zeilen: Pauschale und m²
-    'Dachschrägen streichen 2x',
+    'Boden abdecken — mit Vlies', // zwei Zeilen: Pauschale und m²
+    'Dachschrägen streichen — 2× Anstrich',
     'Decke streichen 2x',
     'Doppelbeplankung (2× GK)',
     'Estrich grundieren (Haftgrund)',
     'Fassade reinigen (druckwaschen)',
-    'Fassadenfläche streichen 2x',
+    'Fassadenfläche 2× streichen',
     'Fenster lackieren (Lack, 2× Anstrich)',
     'Fenster lackieren (Ölfarbe, 2× Anstrich)',
     'Fugen thermisch verschweißen (inkl. Schweißdraht)',
-    'Gerüst stellen (Pauschale)',
-    'Grundieren (Tiefengrund)',
+    'Gerüst stellen',
+    'Grundieren — Tiefengrund',
     'Heizkörper lackieren (2× Anstrich)',
-    'Kniestockwände streichen 2x',
-    'Lasur auftragen (transparent)',
+    'Kniestockwände streichen — 2× Anstrich',
+    'Lasur auftragen — transparent',
     'Leitungen verlegen (Pauschale)',
     'Parkett abschleifen (2 Schleifgänge)',
     'Parkett ölen (maschinell, 1-lagig)',
-    'Parkett versiegeln (Lack, 2-lagig)',
+    'Parkett versiegeln — Lack, 2 Lagen',
     'Rohrleitungen erneuern (Pauschale)',
-    'Silikatfarbe auftragen (2×)',
-    'Sockelleisten entfernen (alt)',
-    'Sockelleisten lackieren (2× Anstrich)',
-    'Spachteltechnik (Betonoptik)',
+    'Silikatfarbe auftragen — 2×',
+    'Alte Sockelleisten entfernen',
+    'Sockelleisten lackieren — 2× Anstrich',
+    'Spachteltechnik in Betonoptik',
     'Ständerwand errichten (GK)',
     'Ständerwerk CW-Profil',
-    'Türen lackieren (2× Anstrich)',
-    'Untergrund schleifen (Unebenheiten, Kleberreste)',
-    'Untergrundprüfung (Ebenheit, Feuchte, Tragfähigkeit)',
+    'Türen lackieren — 2× Anstrich',
+    'Untergrund schleifen — Unebenheiten und Kleberreste',
+    'Untergrundprüfung — Ebenheit, Feuchte, Tragfähigkeit',
     'Wand streichen 2x (Blau, Zone oben)',
     'Wand streichen 2x (Zone oben)',
     'Wand streichen 2x (ohne Akzentwand)',
-    'Wände schleifen nach Q2',
-    'Wände schleifen nach Q3',
-    'Wände schleifen nach Q4',
+    'Wände schleifen — normal (Q2)',
+    'Wände schleifen — fein (Q3)',
+    'Wände schleifen — glatt (Q4)',
     'Wände spachteln Q2',
-    'Wände spachteln Q3',
-    'Wände spachteln Q4',
+    'Wände spachteln — fein verspachtelt (Q3)',
+    'Wände spachteln — glatt verspachtelt (Q4)',
   ]
 
   it('PM-147-B · Sperre gegen Wachstum: die Katalogsprache ohne Schrägstrich steht namentlich fest', () => {
@@ -204,10 +204,10 @@ describe('PM-147 · der gedruckte Titel trägt Katalogsprache', () => {
     expect(MIT_MAL_ZEICHEN.length).toBeGreaterThan(0)
     const WORTANHANG_HEUTE = MIT_MAL_ZEICHEN.filter(t => /\d\s*x\b/.test(t))
     expect(WORTANHANG_HEUTE).toEqual([
-      'Dachschrägen streichen 2x',
+      'Dachschrägen streichen — 2× Anstrich',
       'Decke streichen 2x',
-      'Fassadenfläche streichen 2x',
-      'Kniestockwände streichen 2x',
+      'Fassadenfläche 2× streichen',
+      'Kniestockwände streichen — 2× Anstrich',
       'Wand streichen 2x (Blau, Zone oben)',
       'Wand streichen 2x (Zone oben)',
       'Wand streichen 2x (ohne Akzentwand)',

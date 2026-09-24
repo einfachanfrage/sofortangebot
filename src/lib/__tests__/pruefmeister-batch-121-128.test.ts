@@ -596,7 +596,7 @@ describe('PM-125 · die Verneinung mit Menge, jenseits der Fenster', () => {
     const p = laufMaler(KOPF_FLUR + 'Nur die breite Tür lackieren.', FLUR())
     expect(finde(p, /^Türen lackieren/)!.menge).toBe(1)
     expect(katalog('Türen abschleifen') + katalog('Türen grundieren')
-      + katalog('Türen lackieren (2× Anstrich)') + katalog('Türzarge lackieren')).toBe(180)
+      + katalog('Türen lackieren — 2× Anstrich') + katalog('Türzarge lackieren')).toBe(180)
   })
 
   it('PM-125-K2 Kontrolle · ausgeschrieben entsteht der Heizkörperblock, 85,00 €', () => {
@@ -764,7 +764,7 @@ describe('PM-128 · die Raumzahl aus dem Raumnamen', () => {
     // Der Block bleibt als Maßstab stehen — er misst, was es gekostet hat.
 
     const block = katalog('Türen abschleifen') + katalog('Türen grundieren')
-      + katalog('Türen lackieren (2× Anstrich)') + katalog('Türzarge lackieren')
+      + katalog('Türen lackieren — 2× Anstrich') + katalog('Türzarge lackieren')
     expect(block).toBe(180)
     expect((4 - 1) * block).toBe(540)
   })

@@ -79,7 +79,7 @@ describe('Festgelegt → der Standard hält sich raus', () => {
     // Die alte beidseitig-Zeile ist mit PD-010 entfallen; die Ansage gilt
     // trotzdem weiter und landet jetzt auf der Zeile ohne Zusatz (90 €).
     ['Maler', 'Stück', 'Tür lackieren beidseitig', 90],
-    ['Maler', 'Stück', 'Türen lackieren (2× Anstrich)', 90],
+    ['Maler', 'Stück', 'Türen lackieren — 2× Anstrich', 90],
     ['Maler', 'Stück', 'Fenster lackieren (2× Anstrich)', 55],
     ['Maler', 'm²', 'Wand streichen 1x Anstrich', 6],
     ['Maler', 'm²', 'Wand streichen 3x Anstrich (Vollton / Dunkelfarbe)', 13],

@@ -14,7 +14,7 @@ describe('positionsUntertitel', () => {
     ['Altbelag entfernen — Flur', /aufnehmen|entsorg/i],
     ['Kleberreste abschleifen', /kleberrest/i],
     ['Sockelleisten montieren', /montier/i],
-    ['Türen lackieren (2× Anstrich)', /lackier/i],
+    ['Türen lackieren — 2× Anstrich', /lackier/i],
     ['Kleinmaterial und Verbrauchsmaterial', /verbrauchsmaterial/i],
   ] as const)('"%s" → passender Untertitel', (titel, muster) => {
     const u = positionsUntertitel(titel)

@@ -15644,7 +15644,7 @@ niemand gestellt hat, ist die nach der **nicht umbenannten Nachbarzeile**.
 Für mich notiert: *eine Umbenennung ist erst gemessen, wenn auch ihre
 Nachbarzeilen gemessen sind.*
 
-Der Titel liegt jetzt beim Prüfmeister (**PM-153**, seine Datei). Bis sein
+Der Titel liegt jetzt beim Prüfmeister (**PM-156**, seine Datei). Bis sein
 Wortlaut dasteht, bleibt `Parkett ölen (maschinell, 1-lagig)` **unverändert**.
 Es sind also **20 von 21**, und der Rest von A1 ist vollständig.
 
@@ -15669,7 +15669,7 @@ neuen Wortlaut, 1 und 3 den alten. Dasselbe in `maler-extras.ts` für die
 Q-Stufen: zwei Tabellen statt `${qLevel}`.
 
 **Dass 1x und 3x jetzt anders heißen als 2x, ist eine Katalogfrage und keine
-Bauentscheidung.** Sie liegt als **PM-152** beim Prüfmeister. Ich baue daran
+Bauentscheidung.** Sie liegt als **PM-157** beim Prüfmeister. Ich baue daran
 nichts, bis seine Antwort dasteht.
 
 ### 4. Ein Titel aus Durchgang 2 steckt in einer Tabelle aus Durchgang 1
@@ -15723,7 +15723,7 @@ Kommentare früherer Migrationen.
 ### 8. Nächster Punkt
 
 **CoS-E-080 → CoS-E-086.** Durchgang 2 (die 14 reinen Engine-Titel) baue ich
-erst, wenn PM-152 und PM-153 beantwortet sind — beide fassen Titel an, die in
+erst, wenn PM-157 und PM-156 beantwortet sind — beide fassen Titel an, die in
 Durchgang 2 liegen. An PM-149 baue ich weiterhin nichts.
 
 *Head of Product Engineering · 2026-09-24, 07:35 UTC*

@@ -7,7 +7,7 @@
 // erzeugt die Vollständigkeitsprüfung Positionen, zu denen es im Katalog gar
 // keinen Gegen-Eintrag gibt. Beides endet identisch: 0,00 € und „Preis fehlt"
 // im fertigen Angebot. So ist der Erschwerniszuschlag Raumhöhe aufgefallen,
-// und so fehlten „Dachschrägen streichen 2x" und „Kniestockwände streichen".
+// und so fehlten „Dachschrägen streichen — 2× Anstrich" und „Kniestockwände streichen".
 //
 // Dieser Test fährt die ECHTE Kette: Engine → Vollständigkeit →
 // gewerkFuerPosition → Gewerk-Filter → findePreisposition, gegen den echten

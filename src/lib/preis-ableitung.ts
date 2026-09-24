@@ -149,11 +149,11 @@ export const ANKER: readonly Anker[] = [
       { katalogTitel: 'Decke streichen 2x Anstrich', art: 'anker', material: 'wahl' },
       { katalogTitel: 'Decke streichen 1x Anstrich', art: 'anker', material: 'wahl',
         hinweis: 'ohne Vorbereitung, die zählt extra' },
-      { katalogTitel: 'Grundieren (Tiefengrund)', art: 'anker', material: 'wahl' },
+      { katalogTitel: 'Grundieren — Tiefengrund', art: 'anker', material: 'wahl' },
       { katalogTitel: 'Fläche spachteln (Flächenspachtel)', art: 'anker', material: 'zubehoer' },
       { katalogTitel: 'Schleifen von Hand', art: 'anker', material: null },
       { katalogTitel: 'Isoliergrund gegen Nikotin / Ruß / Wasserflecken', art: 'anker', material: 'wahl' },
-      { katalogTitel: 'Boden abdecken (Abdeckvlies)', art: 'anker', material: 'zubehoer' },
+      { katalogTitel: 'Boden abdecken — mit Vlies', art: 'anker', material: 'zubehoer' },
       // PD-009 §2, dritter Fund: „Steckdosen abklemmen" war richtig als `zeit`
       // eingeordnet, hieß aber falsch. *„Abklemmen ist Elektroarbeit. Der Maler
       // nimmt die Abdeckung ab und wieder dran. So wie es dasteht, steht auf
@@ -180,7 +180,7 @@ export const ANKER: readonly Anker[] = [
     zeilen: [
       { katalogTitel: 'Raufaser tapezieren ohne Anstrich', art: 'anker', material: 'wahl' },
       { katalogTitel: 'Tapete ablösen (einlagig)', art: 'anker', material: null },
-      { katalogTitel: 'Grundieren (Tiefengrund)', art: 'anker', material: 'zubehoer' },
+      { katalogTitel: 'Grundieren — Tiefengrund', art: 'anker', material: 'zubehoer' },
     ],
   },
   {
@@ -214,7 +214,7 @@ export const ANKER: readonly Anker[] = [
     // Sie sind der Beleg, dass die Katalogwerte zueinander passen, nicht die
     // Quelle der Preise.
     taetigkeit: 'lackieren',
-    katalogTitel: 'Türen lackieren (2× Anstrich)',
+    katalogTitel: 'Türen lackieren — 2× Anstrich',
     kurz: 'Tür beidseitig',
     zeilen: [
       { katalogTitel: 'Türen lackieren einseitig (2× Anstrich)', art: 'anker', material: 'wahl' },

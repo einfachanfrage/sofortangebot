@@ -354,7 +354,7 @@ const KORPUS: Fall[] = [
     // Fassaden-Engine (PM-008-Fix) stammt und die Standardpositionen selbst
     // geraten hat:
     // 1. "Fassadenfarbe 2× Anstrich" — Doppelberechnung derselben 66,96 m²,
-    //    die die Engine schon als "Fassadenfläche streichen 2x" berechnet.
+    //    die die Engine schon als "Fassadenfläche 2× streichen" berechnet.
     // 2. "Fassade reinigen / Untergrundvorbereitung" — 66,96 m² × 5,00 € =
     //    exakt die gemeldeten 334,80 €, obwohl nie von Reinigung die Rede war.
     transkript:

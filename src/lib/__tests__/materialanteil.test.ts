@@ -106,7 +106,7 @@ describe('Zubehör ist kein Material — dort gibt es keinen Schalter', () => {
     'Entkopplungsmatte verlegen',
     'Teppichunterlage / Dämmunterlage verlegen',
     'Dampfbremse / PE-Folie verlegen (Feuchtigkeitsschutz)',
-    'Grundieren (Tiefengrund)',
+    'Grundieren — Tiefengrund',
     // reine Vorbereitung
     'Fläche spachteln (Flächenspachtel)',
     'Schleifen von Hand',
@@ -169,7 +169,7 @@ describe('Nur die Gewerke, für die die Frage entschieden ist', () => {
 describe('Das Material heißt beim Namen', () => {
   it.each([
     ['Wand streichen 2x Anstrich', 'Farbe'],
-    ['Türen lackieren (2× Anstrich)', 'Lack'],
+    ['Türen lackieren — 2× Anstrich', 'Lack'],
     ['Vliestapete tapezieren', 'Tapete'],
     ['Laminat verlegen, schwimmend', 'Belag'],
   ])('%s → %s', (titel, wort) => {

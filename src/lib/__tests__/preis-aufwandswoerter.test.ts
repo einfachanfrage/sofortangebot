@@ -38,7 +38,7 @@ describe('Aufwandswörter — sperren, wo ein Arbeitsgang fehlt oder zu viel ist
     // Gedankenstrich-Falle: beide kosten 9,00 €, deshalb fiel es nie auf.
     ['Epoxid / Versiegelung — Schicht 2', 'Epoxid / Versiegelung — Schicht 1'],
     // „Auf einer Fassade sind das schnell 150 €."
-    ['Grundierung / Tiefengrund Fassade', 'Grundieren (Tiefengrund)'],
+    ['Grundierung / Tiefengrund Fassade', 'Grundieren — Tiefengrund'],
   ])('sperrt hart: %s  ←  %s', (gesucht, kandidat) => {
     expect(aufwandSperre(gesucht, kandidat)?.grad).toBe('hart')
   })
@@ -47,7 +47,7 @@ describe('Aufwandswörter — sperren, wo ein Arbeitsgang fehlt oder zu viel ist
     const paare: Array<[string, string]> = [
       // Der Fehler aus Anlauf 1: verglichen wurde die Wortform statt der
       // Bedeutung. „Grundierung" und „Grundieren" sind dieselbe Arbeit.
-      ['Dachschrägen grundieren', 'Grundieren (Tiefengrund)'],
+      ['Dachschrägen grundieren', 'Grundieren — Tiefengrund'],
       ['Estrich grundieren', 'Grundierung / Haftbrücke auftragen'],
       // Kompositum = dieselbe Arbeit. Eine linke Wortgrenze hier hat schon
       // einmal 13 Tests gerissen.
@@ -86,8 +86,8 @@ describe('Aufwandswörter — sperren, wo ein Arbeitsgang fehlt oder zu viel ist
     // Bindemittel. Haftgrund für Estrich ist gefüllt, mit Quarzsand, damit
     // die Ausgleichsmasse greift — der Eimer kostet das Drei- bis
     // Vierfache."*
-    expect(aufwandSperre('Estrich grundieren (Haftgrund)', 'Grundieren (Tiefengrund)')?.grad).toBe('hart')
-    expect(aufwandSperre('Grundieren (Tiefengrund)', 'Grundieren (Haftgrund / Sperrgrund)')?.grad).toBe('hart')
+    expect(aufwandSperre('Estrich grundieren (Haftgrund)', 'Grundieren — Tiefengrund')?.grad).toBe('hart')
+    expect(aufwandSperre('Grundieren — Tiefengrund', 'Grundieren (Haftgrund / Sperrgrund)')?.grad).toBe('hart')
     // Epoxi ist ausdrücklich NICHT dasselbe wie Haftgrund („eher 10 €, aber
     // das wäre eine eigene Position ‚Estrich sperren (Epoxi)'").
     expect(aufwandSperre('Estrich grundieren (Epoxi-Grund)', 'Grundieren (Haftgrund / Sperrgrund)')?.grad).toBe('hart')
@@ -99,15 +99,15 @@ describe('Aufwandswörter — sperren, wo ein Arbeitsgang fehlt oder zu viel ist
     // zusätzlich den Tiefengrund nennt. Das ist der Unterschied zwischen
     // „anderes Material" und „auch anderes Material".
     expect(aufwandSperre('Estrich grundieren (Haftgrund)', 'Untergrund grundieren (Haftgrund / Tiefengrund)')).toBeNull()
-    expect(aufwandSperre('Grundieren (Tiefengrund)', 'Untergrund grundieren (Haftgrund / Tiefengrund)')).toBeNull()
+    expect(aufwandSperre('Grundieren — Tiefengrund', 'Untergrund grundieren (Haftgrund / Tiefengrund)')).toBeNull()
   })
 
   it('schweigt, wo kein Material genannt ist', () => {
     // Der häufigste Fall: „Wände grundieren" sagt nichts über das Produkt.
     // Dort darf die Regel nicht sperren, sonst verliert der halbe Katalog
     // seine Grundierungszeilen.
-    expect(aufwandSperre('Wände grundieren', 'Grundieren (Tiefengrund)')).toBeNull()
-    expect(aufwandSperre('Dachschräge Grundierung', 'Grundieren (Tiefengrund)')).toBeNull()
+    expect(aufwandSperre('Wände grundieren', 'Grundieren — Tiefengrund')).toBeNull()
+    expect(aufwandSperre('Dachschräge Grundierung', 'Grundieren — Tiefengrund')).toBeNull()
     expect(aufwandSperre('Türen grundieren', 'Türen grundieren')).toBeNull()
   })
 

@@ -52,16 +52,16 @@ const ohneRaum = (t: string) => t.replace(/\s+[—–]\s+.+$/, '').trim()
 
 describe('PM-030 — die Position verschwindet nicht mehr zwischen Karte und Entwurf', () => {
   const karteChips = [
-    { titel: 'Kniestockwände streichen 2x', menge: 17, einheit: 'm²' },
-    { titel: 'Dachschrägen streichen 2x', menge: 18, einheit: 'm²' },
+    { titel: 'Kniestockwände streichen — 2× Anstrich', menge: 17, einheit: 'm²' },
+    { titel: 'Dachschrägen streichen — 2× Anstrich', menge: 18, einheit: 'm²' },
     { titel: 'Boden schützen', menge: 18, einheit: 'm²' },
     { titel: 'Sockelleisten abkleben', menge: 17, einheit: 'lfdm' },
   ]
 
   it('der Entwurf enthält alle vier Positionen mit den Soll-Mengen', () => {
     const p = entwurf(PM030, RAUM_PM030).map(x => `${ohneRaum(x.beschreibung)} ${x.menge}`)
-    expect(p).toContain('Kniestockwände streichen 2x 17')
-    expect(p).toContain('Dachschrägen streichen 2x 18')
+    expect(p).toContain('Kniestockwände streichen — 2× Anstrich 17')
+    expect(p).toContain('Dachschrägen streichen — 2× Anstrich 18')
     expect(p).toContain('Boden schützen 18')
     expect(p).toContain('Sockelleisten abkleben 17')
   })

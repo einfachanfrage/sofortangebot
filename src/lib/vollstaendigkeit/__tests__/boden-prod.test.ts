@@ -85,6 +85,6 @@ describe('Boden Phase 3 — Entfernen und Entsorgen bleibt sichtbar', () => {
       { arbeitenTexte: ['Parkett schleifen', 'versiegeln'], belagText: 'Parkett' },
     ).positionen
 
-    expect(result.some(position => position.beschreibung === 'Parkett versiegeln (Lack, 2-lagig)')).toBe(true)
+    expect(result.some(position => position.beschreibung === 'Parkett versiegeln — Lack, 2 Lagen')).toBe(true)
   })
 })

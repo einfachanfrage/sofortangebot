@@ -103,7 +103,7 @@ describe('PM-064 — der Sperrgrund feuert am Wortstamm', () => {
   // `it.fails` wird `it`. Fällt die Zeile künftig, ist sie ein Rückschritt.
   it('PM-064-A · „das ist Sperrmüll" erzeugt keinen Isoliergrund', () => {
     // Gemessen: `Isoliergrund … 12,00 m²` (9,00 €/m² = 108,00 €) plus
-    // `Grundieren (Tiefengrund)` 12,00 m² (4,50 €/m² = 54,00 €).
+    // `Grundieren — Tiefengrund` 12,00 m² (4,50 €/m² = 54,00 €).
     // **162,00 € für eine Arbeit, von der niemand gesprochen hat** — ausgelöst
     // von einem Satz über den alten Teppich.
     //

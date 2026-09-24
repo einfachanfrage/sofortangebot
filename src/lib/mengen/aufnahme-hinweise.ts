@@ -104,7 +104,7 @@ function ergaenzeAusAufnahmeHinweisenRoh(
     const menge = expliziteSockelMenge ?? montage?.menge
     if (menge && menge > 0) {
       ergebnis.push({
-        beschreibung: `Sockelleisten entfernen (alt)${raumSuffix(boden ?? montage)}`,
+        beschreibung: `Alte Sockelleisten entfernen${raumSuffix(boden ?? montage)}`,
         menge,
         einheit: 'lfdm',
         konfidenz: expliziteSockelMenge ? 'high' : 'medium',

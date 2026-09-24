@@ -19,9 +19,9 @@ const KATALOG: PreisPosition[] = [
   p('2', 'Decke streichen 2x Anstrich', 11.00),
   p('3', 'Decke streichen 3x Anstrich', 15.00),
   p('4', 'Dachschrägen streichen 1x', 7.50),
-  p('5', 'Dachschrägen streichen 2x', 11.50),
+  p('5', 'Dachschrägen streichen — 2× Anstrich', 11.50),
   p('6', 'Kniestockwände streichen 1x', 7.50),
-  p('7', 'Kniestockwände streichen 2x', 11.50),
+  p('7', 'Kniestockwände streichen — 2× Anstrich', 11.50),
   p('8', 'Wand mit Latexfarbe streichen 2x', 13.00),
   p('9', 'Wand mit Silikatfarbe streichen 2x', 14.00),
   p('10', 'Wand streichen 1x Anstrich', 6.00),
@@ -73,8 +73,8 @@ describe('TN-094 — „Kniestockwände" schlug „Wand"', () => {
   })
 
   it('der Kniestock findet weiterhin seinen eigenen Preis', () => {
-    expect(preisFuer('Kniestockwände streichen 2x — Dachgeschoss')).toBe(11.50)
-    expect(preisFuer('Dachschrägen streichen 2x — Dachgeschoss')).toBe(11.50)
+    expect(preisFuer('Kniestockwände streichen — 2× Anstrich — Dachgeschoss')).toBe(11.50)
+    expect(preisFuer('Dachschrägen streichen — 2× Anstrich — Dachgeschoss')).toBe(11.50)
   })
 })
 
@@ -101,7 +101,7 @@ describe('Zusammensetzungen bleiben gültige Treffer (PM-018-Regel)', () => {
 
   it('aber der Treffer an der Wortgrenze gewinnt gegen den im Wortinneren', () => {
     const katalog = [
-      p('1', 'Kniestockwände streichen 2x', 11.50),
+      p('1', 'Kniestockwände streichen — 2× Anstrich', 11.50),
       p('2', 'Wand streichen 2x Anstrich', 9.50),
     ]
     const t = findePreisposition('Wandflächen streichen 2x — Wohnzimmer', 'm²', katalog)

@@ -20031,7 +20031,7 @@
           "berechnungsweg": "6 × 4 = 24 m²"
         },
         {
-          "beschreibung": "Parkett versiegeln (Lack, 2-lagig)",
+          "beschreibung": "Parkett versiegeln — Lack, 2 Lagen",
           "menge": 24,
           "einheit": "m²"
         }
@@ -20064,7 +20064,7 @@
           "berechnungsweg": "4.5 × 3.5 = 15.75 m²"
         },
         {
-          "beschreibung": "Parkett versiegeln (Lack, 2-lagig)",
+          "beschreibung": "Parkett versiegeln — Lack, 2 Lagen",
           "menge": 15.75,
           "einheit": "m²"
         }
@@ -20130,7 +20130,7 @@
           "berechnungsweg": "3.5 × 3 = 10.5 m²"
         },
         {
-          "beschreibung": "Parkett versiegeln (Lack, 2-lagig)",
+          "beschreibung": "Parkett versiegeln — Lack, 2 Lagen",
           "menge": 10.5,
           "einheit": "m²"
         }
@@ -20196,7 +20196,7 @@
           "berechnungsweg": "4 × 3 = 12 m²"
         },
         {
-          "beschreibung": "Parkett versiegeln (Lack, 2-lagig)",
+          "beschreibung": "Parkett versiegeln — Lack, 2 Lagen",
           "menge": 12,
           "einheit": "m²"
         }
@@ -20229,7 +20229,7 @@
           "berechnungsweg": "5.5 × 4 = 22 m²"
         },
         {
-          "beschreibung": "Parkett versiegeln (Lack, 2-lagig)",
+          "beschreibung": "Parkett versiegeln — Lack, 2 Lagen",
           "menge": 22,
           "einheit": "m²"
         }
@@ -20295,7 +20295,7 @@
           "berechnungsweg": "6 × 5 = 30 m²"
         },
         {
-          "beschreibung": "Parkett versiegeln (Lack, 2-lagig)",
+          "beschreibung": "Parkett versiegeln — Lack, 2 Lagen",
           "menge": 30,
           "einheit": "m²"
         }
@@ -20361,7 +20361,7 @@
           "berechnungsweg": "8 × 5.5 = 44 m²"
         },
         {
-          "beschreibung": "Parkett versiegeln (Lack, 2-lagig)",
+          "beschreibung": "Parkett versiegeln — Lack, 2 Lagen",
           "menge": 44,
           "einheit": "m²"
         }
@@ -20394,7 +20394,7 @@
           "berechnungsweg": "4 × 3.5 = 14 m²"
         },
         {
-          "beschreibung": "Parkett versiegeln (Lack, 2-lagig)",
+          "beschreibung": "Parkett versiegeln — Lack, 2 Lagen",
           "menge": 14,
           "einheit": "m²"
         }
@@ -20460,7 +20460,7 @@
           "berechnungsweg": "6.5 × 5 = 32.5 m²"
         },
         {
-          "beschreibung": "Parkett versiegeln (Lack, 2-lagig)",
+          "beschreibung": "Parkett versiegeln — Lack, 2 Lagen",
           "menge": 32.5,
           "einheit": "m²"
         }
@@ -20526,7 +20526,7 @@
           "berechnungsweg": "7.5 × 5 = 37.5 m²"
         },
         {
-          "beschreibung": "Parkett versiegeln (Lack, 2-lagig)",
+          "beschreibung": "Parkett versiegeln — Lack, 2 Lagen",
           "menge": 37.5,
           "einheit": "m²"
         }
@@ -20559,7 +20559,7 @@
           "berechnungsweg": "4.5 × 3 = 13.5 m²"
         },
         {
-          "beschreibung": "Parkett versiegeln (Lack, 2-lagig)",
+          "beschreibung": "Parkett versiegeln — Lack, 2 Lagen",
           "menge": 13.5,
           "einheit": "m²"
         }
@@ -20625,7 +20625,7 @@
           "berechnungsweg": "3.8 × 3.2 = 12.16 m²"
         },
         {
-          "beschreibung": "Parkett versiegeln (Lack, 2-lagig)",
+          "beschreibung": "Parkett versiegeln — Lack, 2 Lagen",
           "menge": 12.16,
           "einheit": "m²"
         }
@@ -25995,7 +25995,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Wohnzimmer",
+          "beschreibung": "Grundieren — Tiefengrund — Wohnzimmer",
           "menge": 43.71,
           "einheit": "m²"
         },
@@ -26069,7 +26069,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Schlafzimmer",
+          "beschreibung": "Grundieren — Tiefengrund — Schlafzimmer",
           "menge": 38.51,
           "einheit": "m²"
         },
@@ -26143,7 +26143,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Wohnzimmer",
+          "beschreibung": "Grundieren — Tiefengrund — Wohnzimmer",
           "menge": 48.91,
           "einheit": "m²"
         },
@@ -26217,7 +26217,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Kinderzimmer",
+          "beschreibung": "Grundieren — Tiefengrund — Kinderzimmer",
           "menge": 30.71,
           "einheit": "m²"
         },
@@ -26291,7 +26291,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Wohnzimmer",
+          "beschreibung": "Grundieren — Tiefengrund — Wohnzimmer",
           "menge": 59.31,
           "einheit": "m²"
         },
@@ -26365,7 +26365,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Büro",
+          "beschreibung": "Grundieren — Tiefengrund — Büro",
           "menge": 33.31,
           "einheit": "m²"
         },
@@ -26439,7 +26439,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Wohnzimmer",
+          "beschreibung": "Grundieren — Tiefengrund — Wohnzimmer",
           "menge": 46.31,
           "einheit": "m²"
         },
@@ -26513,7 +26513,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Schlafzimmer",
+          "beschreibung": "Grundieren — Tiefengrund — Schlafzimmer",
           "menge": 44.51,
           "einheit": "m²"
         },
@@ -26587,7 +26587,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Wohnzimmer",
+          "beschreibung": "Grundieren — Tiefengrund — Wohnzimmer",
           "menge": 54.11,
           "einheit": "m²"
         },
@@ -26661,7 +26661,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Kinderzimmer",
+          "beschreibung": "Grundieren — Tiefengrund — Kinderzimmer",
           "menge": 28.11,
           "einheit": "m²"
         },
@@ -26735,7 +26735,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Wohnzimmer",
+          "beschreibung": "Grundieren — Tiefengrund — Wohnzimmer",
           "menge": 77.91,
           "einheit": "m²"
         },
@@ -26809,7 +26809,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Esszimmer",
+          "beschreibung": "Grundieren — Tiefengrund — Esszimmer",
           "menge": 35.91,
           "einheit": "m²"
         },
@@ -26883,7 +26883,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Schlafzimmer",
+          "beschreibung": "Grundieren — Tiefengrund — Schlafzimmer",
           "menge": 41.11,
           "einheit": "m²"
         },
@@ -26957,7 +26957,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Wohnzimmer",
+          "beschreibung": "Grundieren — Tiefengrund — Wohnzimmer",
           "menge": 56.71,
           "einheit": "m²"
         },
@@ -27031,7 +27031,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Gästezimmer",
+          "beschreibung": "Grundieren — Tiefengrund — Gästezimmer",
           "menge": 25.51,
           "einheit": "m²"
         },
@@ -27105,7 +27105,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Wohnzimmer",
+          "beschreibung": "Grundieren — Tiefengrund — Wohnzimmer",
           "menge": 59.31,
           "einheit": "m²"
         },
@@ -27179,7 +27179,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Büro",
+          "beschreibung": "Grundieren — Tiefengrund — Büro",
           "menge": 35.91,
           "einheit": "m²"
         },
@@ -27253,7 +27253,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Wohnzimmer",
+          "beschreibung": "Grundieren — Tiefengrund — Wohnzimmer",
           "menge": 52.91,
           "einheit": "m²"
         },
@@ -27327,7 +27327,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Kinderzimmer",
+          "beschreibung": "Grundieren — Tiefengrund — Kinderzimmer",
           "menge": 30.51,
           "einheit": "m²"
         },
@@ -27401,7 +27401,7 @@
       },
       "positionen_erwartet": [
         {
-          "beschreibung": "Grundieren (Tiefengrund) — Wohnzimmer",
+          "beschreibung": "Grundieren — Tiefengrund — Wohnzimmer",
           "menge": 51.51,
           "einheit": "m²"
         },

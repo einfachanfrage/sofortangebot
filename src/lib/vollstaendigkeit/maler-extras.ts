@@ -207,6 +207,28 @@ function qStufe(lower: string): 'Q2' | 'Q3' | 'Q4' {
   return 'Q2'
 }
 
+/**
+ * CoS-E-100 Durchgang 1 (DC-145, 24.09.2026): Die Q-Titel sind der Schlüssel
+ * zum Katalogpreis und heißen jetzt nicht mehr „<Tätigkeit> <Q-Stufe>". Der
+ * neue Wortlaut ist kein Anhängsel mehr, deshalb steht er als Tabelle und
+ * wird nicht mehr aus `${qLevel}` zusammengesetzt.
+ *
+ * `Wände spachteln Q2` bleibt bewusst stehen: die Zeile hat als einzige der
+ * sechs KEINE Katalogzeile (gemessen, 24.09.) und gehört damit zu den 14
+ * reinen Engine-Titeln aus Durchgang 2, nicht hierher.
+ */
+const SPACHTELN_TITEL: Record<'Q2' | 'Q3' | 'Q4', string> = {
+  Q2: 'Wände spachteln Q2',
+  Q3: 'Wände spachteln — fein verspachtelt (Q3)',
+  Q4: 'Wände spachteln — glatt verspachtelt (Q4)',
+}
+
+const SCHLEIFEN_TITEL: Record<'Q2' | 'Q3' | 'Q4', string> = {
+  Q2: 'Wände schleifen — normal (Q2)',
+  Q3: 'Wände schleifen — fein (Q3)',
+  Q4: 'Wände schleifen — glatt (Q4)',
+}
+
 export function pruefeSpachteln(ergaenzt: BerechnetePosition[], fehlende: string[], lower: string, v: AuftragsVerstaendnis): void {
   const hatStreichen = v.hatArbeit('streichen')
   const hatSpachteln = lower.includes('spachtel') || lower.includes('q2') || lower.includes('q3') || lower.includes('q4')
@@ -226,11 +248,11 @@ export function pruefeSpachteln(ergaenzt: BerechnetePosition[], fehlende: string
   const wandPos = ergaenzt.find(p => p.beschreibung.toLowerCase().includes('wand') && p.einheit === 'm²')
   const spachtelM2 = wandPos?.menge ?? null
   if (spachtelM2 !== null && spachtelM2 > 0) {
-    ergaenzt.push({ beschreibung: `Wände spachteln ${qLevel}`, menge: spachtelM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${spachtelM2} m² Wandfläche`, annahmen: [] })
-    ergaenzt.push({ beschreibung: `Wände schleifen nach ${qLevel}`, menge: spachtelM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${spachtelM2} m²`, annahmen: [] })
+    ergaenzt.push({ beschreibung: SPACHTELN_TITEL[qLevel], menge: spachtelM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${spachtelM2} m² Wandfläche`, annahmen: [] })
+    ergaenzt.push({ beschreibung: SCHLEIFEN_TITEL[qLevel], menge: spachtelM2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${spachtelM2} m²`, annahmen: [] })
   } else {
-    add(ergaenzt, fehlende, `Wände spachteln ${qLevel}`)
-    add(ergaenzt, fehlende, `Wände schleifen nach ${qLevel}`)
+    add(ergaenzt, fehlende, SPACHTELN_TITEL[qLevel])
+    add(ergaenzt, fehlende, SCHLEIFEN_TITEL[qLevel])
   }
 }
 

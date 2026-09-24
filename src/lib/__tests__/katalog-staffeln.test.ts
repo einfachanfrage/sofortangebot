@@ -111,7 +111,7 @@ describe('Ein- oder beidseitig — im eigenen Gewerk, jeden Tag', () => {
     // geblieben, sie heißt nur anders: einseitig 55 €, beidseitig (der Titel
     // ohne Zusatz) 90 €. Der Zweck des Tests ist unverändert — die teurere
     // Stufe darf nicht den billigen Preis bekommen.
-    ['Türen lackieren (2× Anstrich)', 90],
+    ['Türen lackieren — 2× Anstrich', 90],
     ['Türen lackieren einseitig (2× Anstrich)', 55],
   ])('%s → %i €', (titel, betrag) => {
     const { ok, bekommt } = findetSichSelbst(titel)

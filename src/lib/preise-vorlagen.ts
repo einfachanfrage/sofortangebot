@@ -47,7 +47,7 @@ export const GEWERK_PREISE: Record<string, PreisVorlage[]> = {
     // Katalogzeilen in der Rubrik „Anstrich Innen", die es nicht mehr gibt —
     // Türblatt und Zarge stehen jetzt einmal, unter „Lackierarbeiten".
     // Eine Vorlage, die auf nichts zeigt, ist dieselbe Falle wie CoS-E-052.
-    { category: 'Maler – Lackierarbeiten', title: 'Türen lackieren (2× Anstrich)', unit: 'Stück', hint: '70–120 €', defaultPrice: 90.00 },
+    { category: 'Maler – Lackierarbeiten', title: 'Türen lackieren — 2× Anstrich', unit: 'Stück', hint: '70–120 €', defaultPrice: 90.00 },
     { category: 'Maler – Lackierarbeiten', title: 'Türen lackieren einseitig (2× Anstrich)', unit: 'Stück', hint: '45–70 €', defaultPrice: 55.00 },
     { category: 'Maler – Lackierarbeiten', title: 'Türzarge lackieren', unit: 'Stück', hint: '35–60 €', defaultPrice: 45.00 },
     { category: 'Maler – Anstrich Innen', title: 'Fenster streichen innen', unit: 'Stück', hint: '40–70 €', defaultPrice: 55.00 },
@@ -73,7 +73,7 @@ export const GEWERK_PREISE: Record<string, PreisVorlage[]> = {
     { category: 'Maler – Untergrundvorbereitung', title: 'Tapete ablösen mit Dampfgerät', unit: 'm²', hint: '4–7 €', defaultPrice: 5.50 },
     { category: 'Maler – Untergrundvorbereitung', title: 'Fläche spachteln (Flächenspachtel)', unit: 'm²', hint: '7–12 €', defaultPrice: 9.00 },
     { category: 'Maler – Untergrundvorbereitung', title: 'Schleifen maschinell (Langhalsschleifer)', unit: 'm²', hint: '4–7 €', defaultPrice: 5.50 },
-    { category: 'Maler – Untergrundvorbereitung', title: 'Grundieren (Tiefengrund)', unit: 'm²', hint: '3–6 €', defaultPrice: 4.50 },
+    { category: 'Maler – Untergrundvorbereitung', title: 'Grundieren — Tiefengrund', unit: 'm²', hint: '3–6 €', defaultPrice: 4.50 },
     { category: 'Maler – Untergrundvorbereitung', title: 'Grundieren (Haftgrund / Sperrgrund)', unit: 'm²', hint: '4–8 €', defaultPrice: 6.00 },
     { category: 'Maler – Untergrundvorbereitung', title: 'Schimmel behandeln (Schimmelschutzgrund)', unit: 'm²', hint: '9–15 €', defaultPrice: 12.00 },
     { category: 'Maler – Untergrundvorbereitung', title: 'Putz ausbessern', unit: 'm²', hint: '14–24 €', defaultPrice: 18.00 },
@@ -105,7 +105,7 @@ export const GEWERK_PREISE: Record<string, PreisVorlage[]> = {
     { category: 'Boden – Parkett', title: 'Aufpreis Verlegung bei Fußbodenheizung', unit: 'm²', hint: '5–12 €', defaultPrice: 8.00 },
     // Parkett Aufarbeitung
     { category: 'Boden – Parkett Aufarbeitung', title: 'Parkett abschleifen (2 Schleifgänge inkl. Rand)', unit: 'm²', hint: '15–26 €', defaultPrice: 20.00 },
-    { category: 'Boden – Parkett Aufarbeitung', title: 'Parkett versiegeln (Lack, 2-lagig)', unit: 'm²', hint: '14–24 €', defaultPrice: 18.00 },
+    { category: 'Boden – Parkett Aufarbeitung', title: 'Parkett versiegeln — Lack, 2 Lagen', unit: 'm²', hint: '14–24 €', defaultPrice: 18.00 },
     { category: 'Boden – Parkett Aufarbeitung', title: 'Parkett ölen (maschinell, 2-lagig)', unit: 'm²', hint: '22–36 €', defaultPrice: 28.00 },
     { category: 'Boden – Parkett Aufarbeitung', title: 'Parkett schleifen + versiegeln komplett', unit: 'm²', hint: '30–48 €', defaultPrice: 38.00 },
     { category: 'Boden – Parkett Aufarbeitung', title: 'Parkett schleifen + ölen komplett', unit: 'm²', hint: '36–56 €', defaultPrice: 45.00 },

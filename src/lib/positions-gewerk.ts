@@ -56,7 +56,7 @@ export function gewerkFuerPosition(beschreibung: string, hauptgewerk?: string): 
   // Malerauftrag fiel das nie auf, weil dann ohnehin auf 'maler' gefiltert
   // wurde. In einem GEMISCHTEN Angebot (Laminat + Streichen) landet die
   // Position dagegen beim Hauptgewerk 'boden_parkett' — und der Katalogeintrag
-  // „Boden abdecken (Abdeckvlies)" steht unter „Maler – Vorbereitung & Schutz".
+  // „Boden abdecken — mit Vlies" steht unter „Maler – Vorbereitung & Schutz".
   // Ergebnis: kein Kandidat, 0,00 €, „Preis fehlt" bei einer der häufigsten
   // Positionen überhaupt. Bodenschutz ist Vorbereitung des Malers, auch wenn
   // das Wort „Boden" darin vorkommt.

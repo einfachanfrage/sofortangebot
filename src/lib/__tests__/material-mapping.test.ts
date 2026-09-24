@@ -10,7 +10,7 @@ describe('materialFuerPosition', () => {
     ['Vinyl-Boden verlegen inkl. 10% Verschnitt — Flur', 'Vinyl / Designboden (Material)', 'm²'],
     ['Laminat verlegen', 'Laminat (Material)', 'm²'],
     ['Fertigparkett verlegen — Zimmer', 'Parkett (Material)', 'm²'],
-    ['Türen lackieren (2× Anstrich)', 'Lack (Türen)', 'Stück'],
+    ['Türen lackieren — 2× Anstrich', 'Lack (Türen)', 'Stück'],
     ['Sockelleisten montieren', 'Sockelleisten (Material)', 'lfdm'],
   ] as const)('"%s" → %s (%s)', (titel, name, unit) => {
     const m = materialFuerPosition(titel)

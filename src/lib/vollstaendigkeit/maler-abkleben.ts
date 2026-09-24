@@ -23,12 +23,12 @@ export function pruefeBodenAbdecken(ergaenzt: BerechnetePosition[], fehlende: st
     // F.6: drei Schreibweisen für eine Arbeit („Boden schützen",
     // „… / Abdecken", „… / Abdeckfolie"). Jetzt der Katalogtitel wörtlich,
     // 1,20 €/m² — Treffer 1,00 statt 0,94.
-    ergaenzt.push({ beschreibung: 'Boden abdecken (Abdeckvlies)', menge: Math.round(flaechemittelwert), einheit: 'm²', konfidenz: 'medium', berechnungsweg: spanneMatch ? `(${spanneMatch[1]}+${spanneMatch[2]})/2 × ${anzZimmerBoden} Zimmer` : `${flaechemittelwert} m²`, annahmen: [] })
+    ergaenzt.push({ beschreibung: 'Boden abdecken — mit Vlies', menge: Math.round(flaechemittelwert), einheit: 'm²', konfidenz: 'medium', berechnungsweg: spanneMatch ? `(${spanneMatch[1]}+${spanneMatch[2]})/2 × ${anzZimmerBoden} Zimmer` : `${flaechemittelwert} m²`, annahmen: [] })
   } else {
     // Der Pauschale-Zweig bleibt vorerst ohne Preis: Der Katalog führt nur
     // die m²-Zeile. Die Pauschale (25,00 € je Zimmer, F.3) kommt mit dem
     // Katalog-Zug — das ist TN-090.
-    ergaenzt.push({ beschreibung: 'Boden abdecken (Abdeckvlies)', menge: anzZimmerBoden, einheit: 'Pauschale', konfidenz: 'medium', berechnungsweg: `${anzZimmerBoden} Zimmer`, annahmen: ['Bodenfläche nicht berechnet — Pauschale pro Zimmer'] })
+    ergaenzt.push({ beschreibung: 'Boden abdecken — mit Vlies', menge: anzZimmerBoden, einheit: 'Pauschale', konfidenz: 'medium', berechnungsweg: `${anzZimmerBoden} Zimmer`, annahmen: ['Bodenfläche nicht berechnet — Pauschale pro Zimmer'] })
   }
 }
 

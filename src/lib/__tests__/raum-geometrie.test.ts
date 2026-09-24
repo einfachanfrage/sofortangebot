@@ -224,7 +224,7 @@ describe('berechneQuantityFuerItem — Positions-Mapping', () => {
 
   it('wand-Modus: "Fassadenfläche streichen" nimmt die Wandfläche', () => {
     const dim = { modus: 'wand' as const, laenge: 12, hoehe: 6, fenster: 3 }
-    expect(berechneQuantityFuerItem('Fassadenfläche streichen 2x — Südseite', 'm²', dim)).toBe(72)
+    expect(berechneQuantityFuerItem('Fassadenfläche 2× streichen — Südseite', 'm²', dim)).toBe(72)
   })
 
   it('wand-Modus: Grundierung folgt derselben Fläche wie die Fassade', () => {
@@ -234,9 +234,9 @@ describe('berechneQuantityFuerItem — Positions-Mapping', () => {
 
   it('wand-Modus: die echte Fensterfläche entscheidet über die Schwelle (PM-008-Nachtest 6)', () => {
     const klein = { modus: 'wand' as const, laenge: 12, hoehe: 6, fenster: 3, fensterFlaeche: 3 * 1.2 * 1.4 }
-    expect(berechneQuantityFuerItem('Fassadenfläche streichen 2x — Südseite', 'm²', klein)).toBe(72)
+    expect(berechneQuantityFuerItem('Fassadenfläche 2× streichen — Südseite', 'm²', klein)).toBe(72)
     const gross = { modus: 'wand' as const, laenge: 12, hoehe: 6, fenster: 3, fensterFlaeche: 12 }
-    expect(berechneQuantityFuerItem('Fassadenfläche streichen 2x — Südseite', 'm²', gross)).toBe(60)
+    expect(berechneQuantityFuerItem('Fassadenfläche 2× streichen — Südseite', 'm²', gross)).toBe(60)
   })
 
   it('wand-Modus: Sockelleisten nicht berechenbar (kein Umfang an einer Fassade)', () => {

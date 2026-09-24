@@ -87,7 +87,7 @@ describe('PM-057 — Übergangsprofil: die Stunden stimmen, das Material fehlt',
 
 // ── PM-058 ────────────────────────────────────────────────────────────────
 
-describe('PM-058 — „Grundieren (Tiefengrund)" steht zweimal in einer Preisliste', () => {
+describe('PM-058 — „Grundieren — Tiefengrund" steht zweimal in einer Preisliste', () => {
   // Ein Betrieb, der Maler innen UND Tapezieren ankreuzt, bekommt dieselbe
   // Katalogzeile zweimal — einmal aus dem Wand-Anker, einmal aus dem
   // Tapeten-Anker. Dieselbe Familie wie Q.2 („Kleinstauftrag pauschal" steht
@@ -96,16 +96,16 @@ describe('PM-058 — „Grundieren (Tiefengrund)" steht zweimal in einer Preisli
   const liste = () => leiteAb(['maler_innen', 'tapezieren'], { maler_innen: 11.5, tapezieren: 12 }, STUNDENSATZ_KATALOG)
 
   it('die Zeile kommt doppelt, mit zwei verschiedenen Preisen', () => {
-    const doppelt = liste().filter(p => p.katalogTitel === 'Grundieren (Tiefengrund)')
+    const doppelt = liste().filter(p => p.katalogTitel === 'Grundieren — Tiefengrund')
     expect(doppelt).toHaveLength(2)
     expect(doppelt.map(p => p.preis).sort((a, b) => a - b)).toEqual([3, 5.5])
     // 2,50 €/m² Spanne auf einen Katalogwert von 4,50 €.
-    expect(katalogPreis('Grundieren (Tiefengrund)')!.preis).toBe(4.5)
+    expect(katalogPreis('Grundieren — Tiefengrund')!.preis).toBe(4.5)
   })
 
   it('und mit zwei verschiedenen Material-Marken', () => {
     const marken = liste()
-      .filter(p => p.katalogTitel === 'Grundieren (Tiefengrund)')
+      .filter(p => p.katalogTitel === 'Grundieren — Tiefengrund')
       .map(p => p.material)
       .sort()
     expect(marken).toEqual(['wahl', 'zubehoer'])
@@ -143,7 +143,7 @@ describe('PM-059 — zwei Dateien, zwei Antworten auf dieselbe Materialfrage', (
   it('fünf Zeilen, alle in derselben Richtung: `wahl` ohne Schalter', () => {
     expect(streitfaelle().sort()).toEqual([
       'Fassadengrundierung auftragen',
-      'Grundieren (Tiefengrund)',
+      'Grundieren — Tiefengrund',
       'Isoliergrund gegen Nikotin / Ruß / Wasserflecken',
       'Sockelleisten montieren (Holz / MDF / Kunststoff)',
       'Trittschalldämmung verlegen (PE-Schaum / Filz)',

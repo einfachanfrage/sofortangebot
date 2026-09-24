@@ -258,7 +258,7 @@ describe('PM-106 · Rückbezugswörter', () => {
 
   it('PM-106-D · Kontrolle: der Geldweg ist derselbe wie bei PM-103 — 720,00 €', () => {
     const je = katalog('Türen abschleifen') + katalog('Türen grundieren')
-      + katalog('Türen lackieren (2× Anstrich)') + katalog('Türzarge lackieren')
+      + katalog('Türen lackieren — 2× Anstrich') + katalog('Türzarge lackieren')
     expect(je * 4).toBe(720)
   })
 

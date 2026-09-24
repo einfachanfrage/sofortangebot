@@ -251,7 +251,7 @@ describe('PM-103 · das unaufgelöste „auch"', () => {
 
   it('PM-103-D · Kontrolle: der Geldweg, um den es geht, steht im Katalog', () => {
     const je = katalog('Türen abschleifen') + katalog('Türen grundieren')
-      + katalog('Türen lackieren (2× Anstrich)') + katalog('Türzarge lackieren')
+      + katalog('Türen lackieren — 2× Anstrich') + katalog('Türzarge lackieren')
     expect(je * 4).toBe(720)
   })
 

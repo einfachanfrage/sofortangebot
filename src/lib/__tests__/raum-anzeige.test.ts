@@ -34,7 +34,7 @@ describe('Wandarbeiten brauchen die Maße weiterhin', () => {
     'Wandflächen streichen',
     'Decke zweimal streichen',
     'Raufasertapete entfernen',
-    'Wände spachteln Q3',
+    'Wände spachteln — fein verspachtelt (Q3)',
     'Akzentwand tapezieren',
     'Dachschrägen grundieren',
     'Kniestock streichen',
@@ -64,8 +64,8 @@ describe('Randfälle', () => {
 
 describe('PM-030, Befund 3 — im Dachgeschoss gibt es keine eine Raumhöhe', () => {
   const DACHZIMMER = [
-    'Kniestockwände streichen 2x',
-    'Dachschrägen streichen 2x',
+    'Kniestockwände streichen — 2× Anstrich',
+    'Dachschrägen streichen — 2× Anstrich',
     'Boden schützen',
     'Sockelleisten abkleben',
   ]

@@ -308,7 +308,7 @@ describe('PM-046 — Nikotin und Sperrgrund', () => {
     // Die Wände (35,00 m²) sind genannt und werden gesperrt — der
     // Isoliergrund liegt trotzdem auf der Decke (12,00 m²). Dazu bekommt
     // dieselbe Decke DREI Grundierungen übereinander:
-    // `Voranstrich / Grundierung Decke` (Engine), `Grundieren (Tiefengrund)`
+    // `Voranstrich / Grundierung Decke` (Engine), `Grundieren — Tiefengrund`
     // und `Isoliergrund` — alle drei auf 12,00 m².
     //
     //   Soll: Isoliergrund  35,00 m²  (Wand — steht im Satz)

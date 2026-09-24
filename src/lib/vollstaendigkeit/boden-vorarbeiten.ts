@@ -72,8 +72,8 @@ export function pruefeAltbelag(
   // schon "Altbelag entfernen" angelegt hat (sonst lief dieser Zweig in Prod nie).
   const willKleber = hatVerklebt && (lower.includes('kleber') || lower.includes('kleberreste') || v.hatArbeit('schleifen'))
   if (willKleber && !hat(ergaenzt, 'kleberreste', 'kleber abschleif')) {
-    if (m2) ergaenzt.push({ beschreibung: 'Untergrund schleifen (Unebenheiten, Kleberreste)', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
-    else fehlende.push('Untergrund schleifen (Unebenheiten, Kleberreste)')
+    if (m2) ergaenzt.push({ beschreibung: 'Untergrund schleifen — Unebenheiten und Kleberreste', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+    else fehlende.push('Untergrund schleifen — Unebenheiten und Kleberreste')
   }
 
   // Basis-Altbelag nur, wenn noch keine Entfernen-Position existiert
@@ -185,7 +185,7 @@ export function pruefeSockelleisten(
       })()
     if (menge && menge > 0) {
       ergaenzt.push({
-        beschreibung: 'Sockelleisten entfernen (alt)',
+        beschreibung: 'Alte Sockelleisten entfernen',
         menge,
         einheit: 'lfdm',
         konfidenz: lfm ? 'high' : 'medium',
@@ -193,7 +193,7 @@ export function pruefeSockelleisten(
         annahmen: lfm ? [] : ['Länge wie neue Sockelleisten angenommen — bitte prüfen'],
       })
     } else {
-      fehlende.push('Sockelleisten entfernen (alt)')
+      fehlende.push('Alte Sockelleisten entfernen')
     }
   }
   if (lfm && lfm > 0 && lfm < 500) {

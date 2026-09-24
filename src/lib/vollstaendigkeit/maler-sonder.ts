@@ -296,7 +296,7 @@ export function pruefeBetonwand(ergaenzt: BerechnetePosition[], fehlende: string
     (lower.includes('beton') && lower.includes('wand'))) &&
     !lower.includes('balkon') && !lower.includes('beton boden')
   // F.6: Der Wächter las den ALTEN Titel („tiefengrund beton"). Seit die
-  // Position `Grundieren (Tiefengrund)` heißt, prüft er auf das Wort, das in
+  // Position `Grundieren — Tiefengrund` heißt, prüft er auf das Wort, das in
   // beiden Fassungen steht — sonst legt er sie ein zweites Mal an. Derselbe
   // tote Pfad wie bei `Parkett schleifen` (F.5/4).
   if (!hatBetonwand || hat(ergaenzt, 'betonwand schleifen', 'betonwände schleifen', 'tiefengrund')) return
@@ -309,12 +309,12 @@ export function pruefeBetonwand(ergaenzt: BerechnetePosition[], fehlende: string
     // F.6 (Prüfmeister): fünf Schreibweisen, ein Preis. Tiefengrund ist
     // Tiefengrund — auf Beton, auf der Dachschräge, an der Decke. Der alte
     // Titel `Tiefengrund Beton` fand im Katalog GAR NICHTS (0,00 €), obwohl
-    // `Grundieren (Tiefengrund)` mit 4,50 €/m² dort steht.
-    ergaenzt.push({ beschreibung: 'Grundieren (Tiefengrund)', menge: bm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${zahlDe(bm2)} m² Beton`, annahmen: ['Untergrund Beton'] })
+    // `Grundieren — Tiefengrund` mit 4,50 €/m² dort steht.
+    ergaenzt.push({ beschreibung: 'Grundieren — Tiefengrund', menge: bm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${zahlDe(bm2)} m² Beton`, annahmen: ['Untergrund Beton'] })
     ergaenzt.push({ beschreibung: 'Betonfarbe streichen', menge: bm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Wandfläche ${zahlDe(bm2)} m²`, annahmen: [] })
   } else {
     add(ergaenzt, fehlende, 'Betonwände schleifen / Untergrundvorbereitung')
-    add(ergaenzt, fehlende, 'Grundieren (Tiefengrund)')
+    add(ergaenzt, fehlende, 'Grundieren — Tiefengrund')
     add(ergaenzt, fehlende, 'Betonfarbe streichen')
   }
 }
@@ -366,7 +366,7 @@ export function pruefeDachschraege(ergaenzt: BerechnetePosition[], fehlende: str
 
   // Katalog-Deckungsaudit 2026-08-31: Hier stand die DRITTE Schreibweise
   // derselben Leistung — „Dachschräge streichen — 2× Anstrich" neben dem
-  // „Dachschrägen streichen 2x" der Engine und des Katalogs. Zwei Folgen:
+  // „Dachschrägen streichen — 2× Anstrich" der Engine und des Katalogs. Zwei Folgen:
   // kein Katalogpreis (0,00 €), und der Teil nach dem „ — " wurde von der
   // Raum-Gruppierung als Raumname gelesen, sodass die Position unter
   // „Allgemein" statt beim Raum landete. Jetzt überall dieselbe Bezeichnung.
@@ -376,13 +376,13 @@ export function pruefeDachschraege(ergaenzt: BerechnetePosition[], fehlende: str
     // im Rechenweg. (Genau diese Zusammenführung hat der Prüfmeister
     // verlangt, als ich beim ersten Anlauf „Dachschräge" als Erschwernis-Wort
     // eingebaut und damit die beiden auseinandergerissen hatte.)
-    if (explizitGrundierung && !hat(ergaenzt, 'grundier')) ergaenzt.push({ beschreibung: 'Grundieren (Tiefengrund)', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Dachschräge ${zahlDe(dsm2)} m²`, annahmen: [] })
-    if (!hat(ergaenzt, 'dachschrägen streich', 'dachschräge streich', 'schräge streich')) ergaenzt.push({ beschreibung: 'Dachschrägen streichen 2x', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${zahlDe(dsm2)} m²`, annahmen: [] })
+    if (explizitGrundierung && !hat(ergaenzt, 'grundier')) ergaenzt.push({ beschreibung: 'Grundieren — Tiefengrund', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `Dachschräge ${zahlDe(dsm2)} m²`, annahmen: [] })
+    if (!hat(ergaenzt, 'dachschrägen streich', 'dachschräge streich', 'schräge streich')) ergaenzt.push({ beschreibung: 'Dachschrägen streichen — 2× Anstrich', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${zahlDe(dsm2)} m²`, annahmen: [] })
     if (!hat(ergaenzt, 'boden schütz', 'abdecken')) ergaenzt.push({ beschreibung: 'Boden schützen / Abdeckfolie', menge: dsm2, einheit: 'm²', konfidenz: 'high', berechnungsweg: `${zahlDe(dsm2)} m²`, annahmen: ['Bodenfläche geschätzt'] })
   } else {
     if (explizitSpachteln && !hat(ergaenzt, 'spachtel')) add(ergaenzt, fehlende, 'Dachschrägen spachteln')
-    if (explizitGrundierung && !hat(ergaenzt, 'grundier')) add(ergaenzt, fehlende, 'Grundieren (Tiefengrund) — Dachschräge')
-    if (!hat(ergaenzt, 'dachschräg streich', 'schräge streich')) add(ergaenzt, fehlende, 'Dachschrägen streichen 2x')
+    if (explizitGrundierung && !hat(ergaenzt, 'grundier')) add(ergaenzt, fehlende, 'Grundieren — Tiefengrund — Dachschräge')
+    if (!hat(ergaenzt, 'dachschräg streich', 'schräge streich')) add(ergaenzt, fehlende, 'Dachschrägen streichen — 2× Anstrich')
     if (!hat(ergaenzt, 'boden schütz')) add(ergaenzt, fehlende, 'Boden schützen / Abdeckfolie')
   }
 }

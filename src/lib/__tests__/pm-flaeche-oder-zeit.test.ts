@@ -69,7 +69,7 @@ import { ANKER, katalogPreis, leiteAb, runde } from '../preis-ableitung'
 const AUF_ZEIT: Record<string, number> = {
   'Teppichboden verklebt entfernen': 0.17,      // Altbelag aufnehmen, verklebt
   'Laminat demontieren und entsorgen': 0.094,   // Altbelag aufnehmen, lose verlegt
-  'Boden abdecken (Abdeckvlies)': 0.0225,
+  'Boden abdecken — mit Vlies': 0.0225,
   'Tapete ablösen (einlagig)': 0.075,
   'Fassade reinigen / druckwaschen': 0.094,
 }
@@ -163,7 +163,7 @@ describe('🔒 PD-013 · Sperrklinke: die fünf Zeilen gehören auf `zeit`', () 
     const guenstig = leiteAb(['maler_innen'], { maler_innen: 9.5 }, 52)
     const teuer = leiteAb(['maler_innen'], { maler_innen: 16 }, 52)
     const hol = (l: typeof guenstig, t: string) => l.find(x => x.titel === t)!.preis
-    expect(hol(teuer, 'Boden abdecken (Abdeckvlies)'))
-      .toBe(hol(guenstig, 'Boden abdecken (Abdeckvlies)'))
+    expect(hol(teuer, 'Boden abdecken — mit Vlies'))
+      .toBe(hol(guenstig, 'Boden abdecken — mit Vlies'))
   })
 })

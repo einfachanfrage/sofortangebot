@@ -19,7 +19,7 @@ describe('istAllgemeinPosition', () => {
   ])('"%s" → allgemein', (t) => { expect(istAllgemeinPosition(t)).toBe(true) })
 
   it.each([
-    'Türen lackieren (2× Anstrich)',
+    'Türen lackieren — 2× Anstrich',
     'Heizkörper abschleifen',
     'Wandflächen streichen',
     'Fenster grundieren',
@@ -31,14 +31,14 @@ describe('gruppiereNachRaum — Allgemein bleibt sauber', () => {
   it('ein Raum: Türen/Heizkörper in den Raum, Kleinmaterial+Anfahrt bleiben Allgemein', () => {
     const g = gruppiereNachRaum([
       item('1', 'Wandflächen streichen — Wohnzimmer'),
-      item('2', 'Türen lackieren (2× Anstrich)'),
+      item('2', 'Türen lackieren — 2× Anstrich'),
       item('3', 'Heizkörper abschleifen'),
       item('4', 'Kleinmaterial und Verbrauchsmaterial'),
       item('5', 'An- und Abfahrt'),
     ])!
     expect(g).not.toBe(null)
     const raumTitel = g.raeume[0].items.map(i => i.title)
-    expect(raumTitel).toContain('Türen lackieren (2× Anstrich)')
+    expect(raumTitel).toContain('Türen lackieren — 2× Anstrich')
     expect(raumTitel).toContain('Heizkörper abschleifen')
     // Echte Allgemein-Positionen NICHT in den Raum ziehen
     expect(g.allgemein.map(i => i.title)).toEqual(

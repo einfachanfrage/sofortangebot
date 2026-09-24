@@ -11,7 +11,7 @@ describe('malerFallbackPreis — Kernpositionen bekommen nie 0 €', () => {
     ['Wände spachteln / glätten', 'm²', 8.0],
     ['Raufaser aufziehen', 'm²', 12.0],
     ['Raufaser streichen', 'm²', 9.5],
-    ['Türen lackieren (2× Anstrich)', 'Stück', 45.0],
+    ['Türen lackieren — 2× Anstrich', 'Stück', 45.0],
     ['Türen abschleifen', 'Stück', 35.0],
     ['Fenster Lack (2× Anstrich)', 'Stück', 45.0],
     ['Heizkörper lackieren (2× Anstrich)', 'Stück', 45.0],
@@ -26,7 +26,7 @@ describe('malerFallbackPreis — Kernpositionen bekommen nie 0 €', () => {
 
   it('unterscheidet Sockelleisten abkleben vs. lackieren', () => {
     expect(malerFallbackPreis('Sockelleisten abkleben', 'lfdm')).toBe(1.5)
-    expect(malerFallbackPreis('Sockelleisten lackieren (2× Anstrich)', 'lfdm')).toBe(3.5)
+    expect(malerFallbackPreis('Sockelleisten lackieren — 2× Anstrich', 'lfdm')).toBe(3.5)
   })
 
   it('gibt null für unbekannte Positionen (kein falscher Preis)', () => {

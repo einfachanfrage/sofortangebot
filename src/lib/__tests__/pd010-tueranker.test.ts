@@ -96,7 +96,7 @@ describe('🔴 Die Probe des Prüfmeisters: eine Tür, keine zweite Rubrik', () 
     const tuer = DEFAULT_PRICES.filter(p =>
       /^Maler/.test(p.category) && /^t(ü|ue)ren?\b/i.test(p.title) && /lackier|streich/i.test(p.title))
     expect(tuer.map(p => `${p.title} ${p.unit_price}`).sort()).toEqual([
-      'Türen lackieren (2× Anstrich) 90',
+      'Türen lackieren — 2× Anstrich 90',
       'Türen lackieren einseitig (2× Anstrich) 55',
     ])
     const zarge = DEFAULT_PRICES.filter(p => /^Maler/.test(p.category) && /^türzarge/i.test(p.title))
@@ -117,9 +117,9 @@ describe('🔴 Die Probe des Prüfmeisters: eine Tür, keine zweite Rubrik', () 
 })
 
 describe('Der Anker ist die Zeile, die die Engine selbst erzeugt', () => {
-  it('Anker = „Türen lackieren (2× Anstrich)" zu 90,00 €', () => {
+  it('Anker = „Türen lackieren — 2× Anstrich" zu 90,00 €', () => {
     const lack = ANKER.find(a => a.taetigkeit === 'lackieren')!
-    expect(lack.katalogTitel).toBe('Türen lackieren (2× Anstrich)')
+    expect(lack.katalogTitel).toBe('Türen lackieren — 2× Anstrich')
     expect(katalogPreis(lack.katalogTitel)!.preis).toBe(90)
   })
 
@@ -128,7 +128,7 @@ describe('Der Anker ist die Zeile, die die Engine selbst erzeugt', () => {
     // Preis, den nachher niemand benutzt.
     const T = 'Zwei Türen lackieren, beidseitig.'
     const beschreibungen = lauf(T, [raum('Flur', { arbeiten: ['türen lackieren'] })]).map(p => p.beschreibung)
-    expect(beschreibungen.some(b => b.startsWith('Türen lackieren (2× Anstrich)'))).toBe(true)
+    expect(beschreibungen.some(b => b.startsWith('Türen lackieren — 2× Anstrich'))).toBe(true)
   })
 
   it('die Quoten des Prüfmeisters stimmen mit dem Katalog überein', () => {

@@ -137,7 +137,7 @@ describe('Fall 7 · das Soll nach PM-106', () => {
       'Türen grundieren',
       'Wand streichen 2x — Flur',
       'Decke streichen 2x — Flur',
-      'Türen lackieren (2× Anstrich)',
+      'Türen lackieren — 2× Anstrich',
       'Türzarge lackieren',
     ])
     // `Türen grundieren` ist bestellt („abschleifen, grundieren und lackieren")
@@ -184,7 +184,7 @@ describe('Fall 7 · das Soll nach PM-106', () => {
     expect(titel(mit).filter(t => !titel(ohne).includes(t))).toEqual([
       'Türen abschleifen',
       'Türen grundieren',
-      'Türen lackieren (2× Anstrich)',
+      'Türen lackieren — 2× Anstrich',
       'Türzarge lackieren',
     ])
     expect(Number((summeNetto(mit) - summeNetto(ohne)).toFixed(2))).toBe(720)
@@ -201,7 +201,7 @@ describe('Fall 7 · der Preis der Grundierung', () => {
   it('PM-106-P1 · gegen den Standardkatalog sind es 4,50 €, nicht 6,00 €', () => {
     for (const t of [TITEL_WAND, TITEL_DECKE, 'Voranstrich / Grundierung']) {
       const treffer = preisFuer(t, 'm²')
-      expect(treffer?.title).toBe('Grundieren (Tiefengrund)')
+      expect(treffer?.title).toBe('Grundieren — Tiefengrund')
       expect(treffer?.unit_price).toBe(4.5)
     }
   })
@@ -212,12 +212,12 @@ describe('Fall 7 · der Preis der Grundierung', () => {
     expect(haft?.category).toBe('Maler – Untergrundvorbereitung')
     // Dieselbe Kategorie wie die Tiefengrund-Zeile: der Gewerke-Filter trennt
     // die beiden nicht, nur der Titel-Score.
-    expect(DEFAULT_PRICES.find(p => p.title === 'Grundieren (Tiefengrund)')?.category)
+    expect(DEFAULT_PRICES.find(p => p.title === 'Grundieren — Tiefengrund')?.category)
       .toBe(haft?.category)
   })
 
   it('PM-106-P3 · fehlt die Tiefengrund-Zeile, rechnet der Matcher mit 6,00 € — das ist der Live-Stand vom 17.09.', () => {
-    const ohneTiefengrund = KATALOG.filter(k => k.title !== 'Grundieren (Tiefengrund)')
+    const ohneTiefengrund = KATALOG.filter(k => k.title !== 'Grundieren — Tiefengrund')
     const treffer = preisFuer(TITEL_WAND, 'm²', ohneTiefengrund)
     expect(treffer?.title).toBe('Grundieren (Haftgrund / Sperrgrund)')
     expect(treffer?.unit_price).toBe(6)

@@ -360,14 +360,14 @@ describe('maler – dachschräge', () => {
   // Dachschräge dazu — dieselbe Fehlerfamilie wie die schon gefixte
   // Grundierung, nur eine dritte Fundstelle. Jetzt nur bei echtem Signal.
   it('ergänzt KEIN Spachteln ohne Ausbesserungs-Signal', () => {
-    const eingabe = [pos('Dachschrägen streichen 2x — Dachzimmer', 23.08)]
+    const eingabe = [pos('Dachschrägen streichen — 2× Anstrich — Dachzimmer', 23.08)]
     const { positionen, fehlende } = pruefeUndErgaenzeVollstaendigkeit('maler', eingabe, 'Dachschrägen streichen, 23 qm, zweimal.')
     const alle = [...fehlende, ...positionen.map(p => p.beschreibung)]
     expect(alle.some(b => b.toLowerCase().includes('spachtel'))).toBe(false)
   })
 
   it('ergänzt Spachteln, wenn Risse/Löcher/uneben explizit genannt sind', () => {
-    const eingabe = [pos('Dachschrägen streichen 2x — Dachzimmer', 23.08)]
+    const eingabe = [pos('Dachschrägen streichen — 2× Anstrich — Dachzimmer', 23.08)]
     const { positionen, fehlende } = pruefeUndErgaenzeVollstaendigkeit('maler', eingabe, 'Dachschrägen streichen, 23 qm, ein paar Risse drin, bitte ausbessern.')
     const alle = [...fehlende, ...positionen.map(p => p.beschreibung)]
     expect(alle.some(b => b.toLowerCase().includes('spachtel'))).toBe(true)

@@ -107,7 +107,7 @@ export type AufwandRegel =
    *
    * `Untergrund grundieren (Haftgrund / Tiefengrund)` deckt beide Materialien
    * ab — gegen einen Haftgrund-Auftrag darf sie nicht fallen, nur weil sie
-   * zusätzlich den Tiefengrund nennt. `Grundieren (Tiefengrund)` allein
+   * zusätzlich den Tiefengrund nennt. `Grundieren — Tiefengrund` allein
    * dagegen schon.
    */
   | 'kein-schnitt'
@@ -119,7 +119,7 @@ export interface AufwandWort {
    * bedeuten dasselbe und müssen denselben Marker ergeben — sonst sperrt die
    * Regel Treffer, die sie zusammenbringen soll. (Genau das ist beim ersten
    * Anlauf passiert: 16 Titel verloren ihren Preis, weil „Grundierung" und
-   * „Grundieren (Tiefengrund)" als verschiedene Wörter galten.)
+   * „Grundieren — Tiefengrund" als verschiedene Wörter galten.)
    */
   id: string
   muster: RegExp
@@ -243,7 +243,7 @@ export const AUFWAND_GRUPPEN: AufwandGruppe[] = [
       //
       // 1. `anstrich` braucht eine Grenze nach LINKS. Ohne sie steckt es in
       //    **„Voranstrich"** — und `Voranstrich / Grundierung` galt damit als
-      //    Streicharbeit. Gegen `Grundieren (Tiefengrund)` (das keine ist)
+      //    Streicharbeit. Gegen `Grundieren — Tiefengrund` (das keine ist)
       //    war das eine harte Sperre: die Grundierung verlor ihren Preis.
       //    Voranstrich IST Grundieren und steht als solches oben in der
       //    `grundieren`-Kennung.
@@ -291,7 +291,7 @@ export const AUFWAND_GRUPPEN: AufwandGruppe[] = [
     // Estrich saugt."*
     //
     // Der Katalog führt beide Preise sauber getrennt:
-    //   `Grundieren (Tiefengrund)`            4,50 €/m²
+    //   `Grundieren — Tiefengrund`            4,50 €/m²
     //   `Grundieren (Haftgrund / Sperrgrund)` 6,00 €/m²
     //
     // Trotzdem bekam jeder Estrich den Tiefengrund-Preis — und zwar egal,
@@ -549,7 +549,7 @@ export const AUFWAND_GRUPPEN: AufwandGruppe[] = [
     // Giebel, Keller, Garage, bewohnt, Altbau. Die habe ich bewusst NICHT
     // aufgenommen: Für die gibt es eigene Zuschlagspositionen (das schreibt
     // er selbst dazu), und beim ersten Anlauf haben sie prompt
-    // „Dachschrägen grundieren" von „Grundieren (Tiefengrund)" abgeschnitten
+    // „Dachschrägen grundieren" von „Grundieren — Tiefengrund" abgeschnitten
     // — obwohl seine eigene Umbenennungstabelle (F.6) genau diese beiden
     // zusammenführen will. Grundierung ist auf der Schräge dieselbe
     // Grundierung.

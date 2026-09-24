@@ -16,8 +16,8 @@ interface Regel { test: RegExp; material: MaterialVorschlag }
 
 // ── PM-030-B / PM-025 (Prüfmeister, 07.09.2026) ──────────────────────────
 //
-// „Dachschrägen streichen 2x" hatte weder Untertitel noch Materialzeile,
-// „Kniestockwände streichen 2x" beides. Für 18 m² fehlte damit das Material.
+// „Dachschrägen streichen — 2× Anstrich" hatte weder Untertitel noch Materialzeile,
+// „Kniestockwände streichen — 2× Anstrich" beides. Für 18 m² fehlte damit das Material.
 //
 // Sein Befund dahinter trifft den Kern: An einem Tag sind sechs neue
 // Positionsarten entstanden — Fischgrät, Diagonal-Aufpreis, Leibungen,

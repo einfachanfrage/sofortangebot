@@ -51,7 +51,7 @@ describe('istNullzeile — was stehen bleiben MUSS', () => {
 
 describe('ohneNullzeilen — der Fassaden-Entwurf aus dem Live-Lauf', () => {
   const entwurf = [
-    zeile({ id: '1', title: 'Fassadenfläche streichen 2x — Fassade', quantity: 72, unit: 'm²', unit_price: 14, total_price: 1008, position: 1 }),
+    zeile({ id: '1', title: 'Fassadenfläche 2× streichen — Fassade', quantity: 72, unit: 'm²', unit_price: 14, total_price: 1008, position: 1 }),
     zeile({ id: '2', title: 'Grundierung — Fassade', quantity: 72, unit: 'm²', unit_price: 6, total_price: 432, position: 2 }),
     zeile({ id: '3', title: 'Erschwerniszuschlag Raumhöhe > 3m — Raum', quantity: 15, unit: '%', unit_price: 0, total_price: 0, position: 3 }),
     zeile({ id: '4', title: 'Voranstrich / Grundierung', quantity: 0, unit: 'Stück', unit_price: 25, total_price: 0, position: 4 }),

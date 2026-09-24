@@ -476,7 +476,7 @@ describe('PM-099 — „An den Wänden machen wir nichts"', () => {
     expect(mit).toEqual([
       'Türen abschleifen',
       'Türen grundieren',
-      'Türen lackieren (2× Anstrich)',
+      'Türen lackieren — 2× Anstrich',
       'Türzarge lackieren',
     ])
   })

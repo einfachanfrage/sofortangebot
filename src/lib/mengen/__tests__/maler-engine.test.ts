@@ -449,7 +449,7 @@ describe('Maler-Engine – PM-008 Fassade (waende[] statt raeume[])', () => {
   it('erkennt "zweimal" korrekt als 2 Anstriche', () => {
     const positionen = pipeline()
     const fassade = find(positionen, 'fassadenfläche')
-    expect(fassade!.beschreibung).toContain('2x')
+    expect(fassade!.beschreibung).toContain('2×')
   })
 
   it('erfindet KEINE Grundierung, wenn arbeiten[] sie nicht enthält (PM-003-Lehre: kein Raten aus Rohtext)', () => {
@@ -493,7 +493,7 @@ describe('Maler-Engine – PM-007 Dachgeschoss (Kniestock + Dachschrägen)', () 
     const kniestock = find(positionen, 'kniestockwände')
     expect(kniestock).toBeDefined()
     expect(kniestock!.menge).toBeCloseTo(20.4, 1)
-    expect(kniestock!.beschreibung).toContain('2x')
+    expect(kniestock!.beschreibung).toContain('2× Anstrich')
   })
 
   // PM-030, Befund 1 (04.09.2026): Das Dachfenster misst 0,92 m² und wird
@@ -503,7 +503,7 @@ describe('Maler-Engine – PM-007 Dachgeschoss (Kniestock + Dachschrägen)', () 
     const schraegen = find(positionen, 'dachschrägen')
     expect(schraegen).toBeDefined()
     expect(schraegen!.menge).toBeCloseTo(24, 1)
-    expect(schraegen!.beschreibung).toContain('2x')
+    expect(schraegen!.beschreibung).toContain('2× Anstrich')
   })
 
   it('ohne Deckenspiegel-Angabe keine Deckenspiegel-Position', () => {

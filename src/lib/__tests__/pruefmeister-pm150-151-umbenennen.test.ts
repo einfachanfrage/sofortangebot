@@ -228,8 +228,8 @@ describe('PM-151 · die 36 Umbenennungen aus DC-145 gegen den Katalog eines echt
   // vorgeschlagen, solange die drei Gewerke geparkt sind.
   const VORSCHLAEGE: Array<[nr: number, alt: string, neu: string, einheit: string]> = [
     [1, 'Ausgleichsmasse einbringen (45 mm)', 'Ausgleichsmasse einbringen — 45 mm', 'm²'],
-    [2, 'Boden abdecken (Abdeckvlies)', 'Boden abdecken — mit Vlies', 'Pauschale'],
-    [3, 'Boden abdecken (Abdeckvlies)', 'Boden abdecken — mit Vlies', 'm²'],
+    [2, 'Boden abdecken — mit Vlies', 'Boden abdecken — mit Vlies', 'Pauschale'],
+    [3, 'Boden abdecken — mit Vlies', 'Boden abdecken — mit Vlies', 'm²'],
     [4, 'Fugen thermisch verschweißen (inkl. Schweißdraht)', 'Fugen thermisch verschweißen — Schweißdraht enthalten', 'lfdm'],
     [5, 'Alten Teppichboden entfernen (verklebt)', 'Alten Teppichboden entfernen — verklebt', 'm²'],
     [6, 'Heizkörper lackieren (2× Anstrich)', 'Heizkörper lackieren — 2× Anstrich', 'Stück'],
@@ -240,29 +240,29 @@ describe('PM-151 · die 36 Umbenennungen aus DC-145 gegen den Katalog eines echt
     [11, 'Wand streichen 2x (Zone oben)', 'Wand streichen — oberer Bereich, 2× Anstrich', 'm²'],
     [12, 'Fenster lackieren (Lack, 2× Anstrich)', 'Fenster lackieren — Lack, 2× Anstrich', 'Stück'],
     [13, 'Fenster lackieren (Ölfarbe, 2× Anstrich)', 'Fenster lackieren — Ölfarbe, 2× Anstrich', 'Stück'],
-    [14, 'Gerüst stellen (Pauschale)', 'Gerüst stellen', 'Pauschale'],
-    [15, 'Grundieren (Tiefengrund)', 'Grundieren — Tiefengrund', 'm²'],
-    [16, 'Lasur auftragen (transparent)', 'Lasur auftragen — transparent', 'lfdm'],
+    [14, 'Gerüst stellen', 'Gerüst stellen', 'Pauschale'],
+    [15, 'Grundieren — Tiefengrund', 'Grundieren — Tiefengrund', 'm²'],
+    [16, 'Lasur auftragen — transparent', 'Lasur auftragen — transparent', 'lfdm'],
     [17, 'Parkett abschleifen (2 Schleifgänge)', 'Parkett abschleifen — 2 Schleifgänge', 'm²'],
-    [18, 'Parkett ölen (maschinell, 1-lagig)', 'Parkett ölen — maschinell, 1 Lage', 'm²'],
-    [19, 'Parkett versiegeln (Lack, 2-lagig)', 'Parkett versiegeln — Lack, 2 Lagen', 'm²'],
-    [20, 'Silikatfarbe auftragen (2×)', 'Silikatfarbe auftragen — 2×', 'm²'],
-    [21, 'Sockelleisten entfernen (alt)', 'Alte Sockelleisten entfernen', 'lfdm'],
-    [22, 'Sockelleisten lackieren (2× Anstrich)', 'Sockelleisten lackieren — 2× Anstrich', 'lfdm'],
-    [23, 'Spachteltechnik (Betonoptik)', 'Spachteltechnik in Betonoptik', 'm²'],
-    [24, 'Türen lackieren (2× Anstrich)', 'Türen lackieren — 2× Anstrich', 'Stück'],
-    [25, 'Untergrund schleifen (Unebenheiten, Kleberreste)', 'Untergrund schleifen — Unebenheiten und Kleberreste', 'm²'],
-    [26, 'Untergrundprüfung (Ebenheit, Feuchte, Tragfähigkeit)', 'Untergrundprüfung — Ebenheit, Feuchte, Tragfähigkeit', 'Pauschale'],
-    [27, 'Wände schleifen nach Q2', 'Wände schleifen — normal (Q2)', 'm²'],
-    [28, 'Wände schleifen nach Q3', 'Wände schleifen — fein (Q3)', 'm²'],
-    [29, 'Wände schleifen nach Q4', 'Wände schleifen — glatt (Q4)', 'm²'],
+    [18, 'Parkett ölen (maschinell, 1-lagig)', 'Parkett ölen (maschinell, 1-lagig)', 'm²'],
+    [19, 'Parkett versiegeln — Lack, 2 Lagen', 'Parkett versiegeln — Lack, 2 Lagen', 'm²'],
+    [20, 'Silikatfarbe auftragen — 2×', 'Silikatfarbe auftragen — 2×', 'm²'],
+    [21, 'Alte Sockelleisten entfernen', 'Alte Sockelleisten entfernen', 'lfdm'],
+    [22, 'Sockelleisten lackieren — 2× Anstrich', 'Sockelleisten lackieren — 2× Anstrich', 'lfdm'],
+    [23, 'Spachteltechnik in Betonoptik', 'Spachteltechnik in Betonoptik', 'm²'],
+    [24, 'Türen lackieren — 2× Anstrich', 'Türen lackieren — 2× Anstrich', 'Stück'],
+    [25, 'Untergrund schleifen — Unebenheiten und Kleberreste', 'Untergrund schleifen — Unebenheiten und Kleberreste', 'm²'],
+    [26, 'Untergrundprüfung — Ebenheit, Feuchte, Tragfähigkeit', 'Untergrundprüfung — Ebenheit, Feuchte, Tragfähigkeit', 'Pauschale'],
+    [27, 'Wände schleifen — normal (Q2)', 'Wände schleifen — normal (Q2)', 'm²'],
+    [28, 'Wände schleifen — fein (Q3)', 'Wände schleifen — fein (Q3)', 'm²'],
+    [29, 'Wände schleifen — glatt (Q4)', 'Wände schleifen — glatt (Q4)', 'm²'],
     [30, 'Wände spachteln Q2', 'Wände spachteln — normal verspachtelt (Q2)', 'm²'],
-    [31, 'Wände spachteln Q3', 'Wände spachteln — fein verspachtelt (Q3)', 'm²'],
-    [32, 'Wände spachteln Q4', 'Wände spachteln — glatt verspachtelt (Q4)', 'm²'],
+    [31, 'Wände spachteln — fein verspachtelt (Q3)', 'Wände spachteln — fein verspachtelt (Q3)', 'm²'],
+    [32, 'Wände spachteln — glatt verspachtelt (Q4)', 'Wände spachteln — glatt verspachtelt (Q4)', 'm²'],
     [33, 'Decke streichen 2x', 'Decke streichen — 2× Anstrich', 'm²'],
-    [34, 'Dachschrägen streichen 2x', 'Dachschrägen streichen — 2× Anstrich', 'm²'],
-    [35, 'Fassadenfläche streichen 2x', 'Fassadenfläche 2× streichen', 'm²'],
-    [36, 'Kniestockwände streichen 2x', 'Kniestockwände streichen — 2× Anstrich', 'm²'],
+    [34, 'Dachschrägen streichen — 2× Anstrich', 'Dachschrägen streichen — 2× Anstrich', 'm²'],
+    [35, 'Fassadenfläche 2× streichen', 'Fassadenfläche 2× streichen', 'm²'],
+    [36, 'Kniestockwände streichen — 2× Anstrich', 'Kniestockwände streichen — 2× Anstrich', 'm²'],
   ]
 
   it('PM-151-K1 Kontrolle · der Betriebskatalog ist wirklich ein anderer — sonst sagt die Messung nichts', () => {
@@ -330,9 +330,9 @@ describe('PM-151 · die 36 Umbenennungen aus DC-145 gegen den Katalog eines echt
   it('PM-151-B Gegenprobe · die Messung hat Zähne: ein einziges getauschtes Wort fällt hier durch', () => {
     // Der verworfene erste Entwurf des Designers, durch dieselbe Schleife.
     // Liefe PM-151-A auch damit grün, würde es nichts prüfen.
-    const gewerk = gewerkFuerPosition('Parkett versiegeln (Lack, 2-lagig)', undefined)
+    const gewerk = gewerkFuerPosition('Parkett versiegeln — Lack, 2 Lagen', undefined)
     const katalog = betriebsKatalog(BETRIEB[gewerk ?? ''] ?? ['maler'], gewerk)
-    expect(treffer('Parkett versiegeln (Lack, 2-lagig)', 'm²', katalog)?.position.unit_price).toBe(18)
+    expect(treffer('Parkett versiegeln — Lack, 2 Lagen', 'm²', katalog)?.position.unit_price).toBe(18)
     expect(treffer('Parkett mit Lack versiegeln, zwei Lagen', 'm²', katalog)).toBeNull()
   })
 })

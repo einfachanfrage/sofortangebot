@@ -116,7 +116,7 @@ const FLUR = () => [raum('Flur', { laenge: 4, breite: 1.5, hoehe: 2.5, arbeiten:
 const KOPF = 'Flur 4 mal 1,50, Höhe 2,50. Wände streichen. '
 
 const TUERBLOCK = () => katalog('Türen abschleifen') + katalog('Türen grundieren')
-  + katalog('Türen lackieren (2× Anstrich)') + katalog('Türzarge lackieren')
+  + katalog('Türen lackieren — 2× Anstrich') + katalog('Türzarge lackieren')
 const FENSTERBLOCK = () => katalog('Fenster abschleifen') + katalog('Fenster grundieren')
   + katalog('Fenster lackieren (2× Anstrich)')
 const HEIZBLOCK = () => katalog('Heizkörper abschleifen') + katalog('Heizkörper grundieren')

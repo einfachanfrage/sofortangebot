@@ -50,9 +50,9 @@ describe('Restliste 10 — die sechs vormals ungelesenen Titel haben alle einen 
   it.each([
     ['Voranstrich / Grundierung'],
     ['Voranstrich / Grundierung Decke'],
-  ])('%s trifft Grundieren (Tiefengrund) zu 4,50 €', titel => {
+  ])('%s trifft Grundieren — Tiefengrund zu 4,50 €', titel => {
     const t = treffer(titel, 'm²')
-    expect(t?.position.title).toBe('Grundieren (Tiefengrund)')
+    expect(t?.position.title).toBe('Grundieren — Tiefengrund')
     expect(t?.position.unit_price).toBe(4.5)
   })
 

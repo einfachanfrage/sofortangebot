@@ -30,8 +30,8 @@ import { STANDARD_FAMILIEN } from '../katalog-standard'
 // Standardkatalog steht. Die übrigen 18 stehen unten namentlich. Die Liste
 // ist eine Wachstumssperre, keine Aufgabe: sie darf schrumpfen, nicht
 // wachsen. Drei der 36 DC-145-Titel stehen in den Vorlagen
-// (`Türen lackieren (2× Anstrich)`, `Grundieren (Tiefengrund)`,
-// `Parkett versiegeln (Lack, 2-lagig)`) — wer den Katalog umbenennt und die
+// (`Türen lackieren — 2× Anstrich`, `Grundieren — Tiefengrund`,
+// `Parkett versiegeln — Lack, 2 Lagen`) — wer den Katalog umbenennt und die
 // Vorlage vergisst, macht dieses Blatt rot.
 
 const AKTIV = getPreisvorlagenForGewerke(['maler', 'boden_parkett'])

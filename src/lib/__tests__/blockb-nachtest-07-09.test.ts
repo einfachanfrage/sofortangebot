@@ -179,8 +179,8 @@ describe('PM-030-A — beauftragte Giebelwände werden erfragt statt verschwiege
 // ── PM-030-B / PM-025 / PM-037-A ─────────────────────────────────────────
 describe('Jede neue Positionsart hat Menge, Preis und Material', () => {
   const neueArten = [
-    'Dachschrägen streichen 2x — Dachzimmer',
-    'Kniestockwände streichen 2x — Dachzimmer',
+    'Dachschrägen streichen — 2× Anstrich — Dachzimmer',
+    'Kniestockwände streichen — 2× Anstrich — Dachzimmer',
     'Fassadenfläche streichen 1x — Nordseite',
     'Fenster Innenleibungen streichen — Büro',
     'Designbelag im Fischgrätmuster kleben inkl. 15% Verschnitt — Gästezimmer',

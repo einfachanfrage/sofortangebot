@@ -146,8 +146,8 @@ export function pruefeParkettSchleifen(
   const antwortVersiegeln = v.arbeitenTexte.some(arbeit => /^versiegeln$/i.test(arbeit.trim()))
   const antwortOelen = v.arbeitenTexte.some(arbeit => /^(?:ölen|oelen)$/i.test(arbeit.trim()))
   if (antwortVersiegeln && !hat(ergaenzt, 'parkett versiegeln')) {
-    if (m2) ergaenzt.push({ beschreibung: 'Parkett versiegeln (Lack, 2-lagig)', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
-    else fehlende.push('Parkett versiegeln (Lack, 2-lagig)')
+    if (m2) ergaenzt.push({ beschreibung: 'Parkett versiegeln — Lack, 2 Lagen', menge: m2, einheit: 'm²', berechnungsweg: `${m2} m²`, ...mk })
+    else fehlende.push('Parkett versiegeln — Lack, 2 Lagen')
     return
   }
   if (antwortOelen && !hat(ergaenzt, 'parkett ölen')) {

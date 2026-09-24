@@ -2,7 +2,7 @@
 // mit 0,00 € im Angebot — „Preis fehlt in deiner Preisdatenbank", bei einer
 // Position, die in jedem Malerfall vorkommt.
 //
-// Ursache war nicht der Katalog (der Eintrag „Boden abdecken (Abdeckvlies)",
+// Ursache war nicht der Katalog (der Eintrag „Boden abdecken — mit Vlies",
 // 1,20 €/m², steht unverändert unter „Maler – Vorbereitung & Schutz"), sondern
 // die Gewerke-Zuordnung der POSITION: „Boden schützen" enthält kein einziges
 // Maler-Wort. In einem reinen Malerauftrag fiel das nie auf. In einem
@@ -14,8 +14,8 @@ import { findePreisposition } from '../preis-matcher'
 import { gewerkFuerPosition } from '@/app/api/angebot-generieren/route'
 
 const KATALOG = [
-  { id: '1', title: 'Boden abdecken (Abdeckvlies)', category: 'Maler – Vorbereitung & Schutz', unit: 'm²', unit_price: 1.2 },
-  { id: '2', title: 'Boden abdecken (Abdeckvlies)', category: 'Fliesen – Vorbereitung & Schutz', unit: 'm²', unit_price: 1.2 },
+  { id: '1', title: 'Boden abdecken — mit Vlies', category: 'Maler – Vorbereitung & Schutz', unit: 'm²', unit_price: 1.2 },
+  { id: '2', title: 'Boden abdecken — mit Vlies', category: 'Fliesen – Vorbereitung & Schutz', unit: 'm²', unit_price: 1.2 },
   { id: '3', title: 'Laminat verlegen', category: 'Boden – Laminat', unit: 'm²', unit_price: 18 },
   { id: '4', title: 'Wand streichen 2x Anstrich', category: 'Maler – Anstrich Innen', unit: 'm²', unit_price: 9.5 },
 ]
@@ -65,8 +65,8 @@ describe('Jede erzeugte Position findet ihren Katalogpreis', () => {
   ]
 
   const faelle: Array<[string, string, string]> = [
-    ['Dachschrägen streichen 2x — Dachzimmer', 'm²', 'maler'],
-    ['Kniestockwände streichen 2x — Dachzimmer', 'm²', 'maler'],
+    ['Dachschrägen streichen — 2× Anstrich — Dachzimmer', 'm²', 'maler'],
+    ['Kniestockwände streichen — 2× Anstrich — Dachzimmer', 'm²', 'maler'],
     ['Fassadenfläche streichen 1x — Fassade', 'm²', 'maler'],
     ['Boden schützen — Dachzimmer', 'm²', 'maler'],
     ['Boden schützen — Küche', 'm²', 'boden_parkett'],

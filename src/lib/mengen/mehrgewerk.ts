@@ -18,7 +18,7 @@ type RaumLike = { arbeiten?: string[]; belag?: string | null; altbelag_entfernen
 // ── PM-034, Befund 4 (Prüfmeister, 02.09.2026) ───────────────────────────
 //
 // In einem reinen Bodenauftrag standen drei Maler-Positionen („Wände
-// spachteln Q2", „Wände schleifen nach Q2", „Spachtelarbeiten Q2"), alle mit
+// spachteln Q2", „Wände schleifen — normal (Q2)", „Spachtelarbeiten Q2"), alle mit
 // 0 Stück und „Preis fehlt in deiner Preisdatenbank" — was den Handwerker
 // dazu verleitet, Preise für eine Leistung anzulegen, die er nie anbieten
 // wollte. Auslöser: Die Küche trägt in ihrer arbeiten[]-Liste „boden

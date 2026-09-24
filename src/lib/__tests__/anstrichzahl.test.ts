@@ -30,12 +30,12 @@ describe('Der Umschalter sieht genau das, was auch der Matcher sieht', () => {
   // an, den die Preissuche ignoriert — oder umgekehrt.
   it.each([
     'Wand streichen 2x — Wohnzimmer',
-    'Türen lackieren (2× Anstrich)',
+    'Türen lackieren — 2× Anstrich',
     'Fenster lackieren (2× Anstrich)',
     'Tapete / Raufaser überstreichen 2x',
     'Wand streichen 3x Anstrich (Vollton / Dunkelfarbe)',
     'Zweifach Anstrich',
-    'Boden abdecken (Abdeckvlies)',
+    'Boden abdecken — mit Vlies',
     'Tapete ablösen (einlagig)',
   ])('„%s"', titel => {
     expect(anstrichzahl(titel) ?? undefined).toBe(anstrichzahlAusTitel(titel))
@@ -47,8 +47,8 @@ describe('Der Umschalter sieht genau das, was auch der Matcher sieht', () => {
     // Wortgrenze. Ausgerechnet die Schreibweise des Katalogs blieb damit
     // unerkannt, und bei der häufigsten Position wäre kein Schalter
     // erschienen.
-    expect(hatAnstrichzahl('Türen lackieren (2× Anstrich)')).toBe(true)
-    expect(anstrichzahl('Türen lackieren (2× Anstrich)')).toBe('2')
+    expect(hatAnstrichzahl('Türen lackieren — 2× Anstrich')).toBe(true)
+    expect(anstrichzahl('Türen lackieren — 2× Anstrich')).toBe('2')
   })
 })
 
@@ -56,7 +56,7 @@ describe('Der Umbau lässt alles andere in Ruhe', () => {
   it.each([
     ['Wand streichen 1x — Wohnzimmer', '2', 'Wand streichen 2x — Wohnzimmer'],
     ['Wand streichen 1x (ohne Akzentwand) — Salon', '3', 'Wand streichen 3x (ohne Akzentwand) — Salon'],
-    ['Türen lackieren (2× Anstrich)', '3', 'Türen lackieren (3× Anstrich)'],
+    ['Türen lackieren — 2× Anstrich', '3', 'Türen lackieren (3× Anstrich)'],
     ['Tapete / Raufaser überstreichen 1x', '2', 'Tapete / Raufaser überstreichen 2x'],
     ['Zweifach Anstrich', '3', 'Dreifach Anstrich'],
   ])('„%s" → %s× ergibt „%s"', (titel, stufe, erwartet) => {
@@ -69,8 +69,8 @@ describe('Der Umbau lässt alles andere in Ruhe', () => {
   })
 
   it('fasst Titel ohne Anstrichzahl nicht an', () => {
-    expect(hatAnstrichzahl('Boden abdecken (Abdeckvlies)')).toBe(false)
-    expect(mitAnstrichzahl('Boden abdecken (Abdeckvlies)', '2')).toBe('Boden abdecken (Abdeckvlies)')
+    expect(hatAnstrichzahl('Boden abdecken — mit Vlies')).toBe(false)
+    expect(mitAnstrichzahl('Boden abdecken — mit Vlies', '2')).toBe('Boden abdecken — mit Vlies')
   })
 })
 
@@ -96,7 +96,7 @@ describe('Der Preis kommt aus dem Katalog, nicht aus einer Formel', () => {
     // Titel wird trotzdem umgestellt — der Handwerker darf sagen, was er tut —
     // aber der Preis geht sichtbar auf 0,00 €, statt still der alte zu
     // bleiben. PM-018.
-    expect(preis(mitAnstrichzahl('Türen lackieren (2× Anstrich)', '3'), 'Stück')).toBeNull()
+    expect(preis(mitAnstrichzahl('Türen lackieren — 2× Anstrich', '3'), 'Stück')).toBeNull()
   })
 })
 

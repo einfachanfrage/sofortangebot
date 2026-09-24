@@ -34,7 +34,7 @@
 /** Die Schreibweisen, in denen eine Anstrichzahl im Titel stehen kann. */
 //
 // Die Grenze nach rechts ist ein Lookahead und KEIN `\b`: Nach dem „×“ in
-// `Türen lackieren (2× Anstrich)` steht ein Leerzeichen — zwei Zeichen ohne
+// `Türen lackieren — 2× Anstrich` steht ein Leerzeichen — zwei Zeichen ohne
 // Wortcharakter, also gar keine Wortgrenze. Mit `\b` blieb ausgerechnet die
 // Schreibweise des Katalogs unerkannt, und der Umschalter wäre bei der
 // häufigsten Position nicht erschienen.
