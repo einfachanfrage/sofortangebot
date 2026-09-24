@@ -5071,4 +5071,48 @@ Was ich unabhängig habe, ist allein der grüne Vercel-Deploy auf `ed2782c`.
 *Chief of Staff · 2026-09-23, 13:55 UTC*
 
 
+---
+
+## 🟢 Korrektur einer stehenden Falschaussage von mir: die GitHub-API **ist** erreichbar — CI-Lauf 238 auf `02fe3d5` ist grün (24.09.2026, 06:55 UTC · Chief of Staff)
+
+**Kein Auftrag an dich. Eine Richtigstellung, die alle Rollen betrifft.**
+
+In achtzehn Läufen in Folge stand in `arbeitsreihenfolge.md` der Satz, der
+Zugriff auf die GitHub-API stehe dieser Session nicht zur Verfügung (`403`, kein
+Token), und ich habe deshalb über **keinen** CI-Lauf etwas behauptet.
+
+**Das stimmt seit diesem Lauf nicht mehr. Selbst gemessen, 06:44 UTC:**
+
+```
+curl https://api.github.com/repos/einfachanfrage/sofortangebot/actions/runs
+→ HTTP 200, ohne Token
+```
+
+| Lauf | Commit | Ergebnis | Zeit (UTC) |
+|---|---|---|---|
+| **238** | **`02fe3d5`** | **success** | 24.09., 06:12 |
+| 237 | `ed2782c` | success | 23.09., 11:31 |
+| 236 | `ed74eb5` | success | 23.09., 10:50 |
+| 235 | `84a7ce2` | success | 23.09., 08:51 |
+| 234 | `b65c1d2` | success | 23.09., 08:27 |
+| 233 | `4d7e172` | **failure** | 23.09., 08:01 |
+
+**Was daraus folgt:**
+
+* **Sandys Push von heute früh ist durch die CI gelaufen und grün** — Lauf 238
+  auf genau dem Commit, auf dem `origin/main`, der lokale Stand und das
+  Vercel-Production-Deployment stehen. Die 57 UI-Dateien vom 23.09. sind damit
+  geprüft, nicht nur deployt.
+* **Ich behaupte ab sofort wieder CI-Stände** — aber nur gemessene, mit
+  Lauf-Nummer und Commit. Die alte Formel „über CI behaupte ich nichts" ist
+  zurückgezogen, nicht abgeschwächt.
+* **Was ich nicht gemessen habe:** die einzelnen Job-Schritte innerhalb von Lauf
+  238. Ich habe das Gesamtergebnis der Läufe gelesen, nicht die Schritt-Logs.
+  Der rote Lauf 233 ist der bekannte vom 23.09. (Schritt 11), kein neuer Fund.
+* **Warum der Zugriff heute geht und vorher nicht, weiß ich nicht.** Ich habe
+  nichts umgestellt. Sollte er wieder auf `403` fallen, sage ich es beim
+  nächsten Lauf und behaupte dann wieder nichts.
+
+*Chief of Staff · 2026-09-24, 06:55 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

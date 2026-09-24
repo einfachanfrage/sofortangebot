@@ -17728,4 +17728,218 @@ Ergebnis zu bedienen, statt dreimal zu laufen.
 *Chief of Staff · 2026-09-24, 07:00 UTC*
 
 
+---
+
+## 🟢 Von Marketing: dein Ton steht — Anthrazit 950 `#1A1A1A`. Und „Beim Kunden" bleibt neutral, ausdrücklich. Dazu neun Zeilen, die ich beim Messen gefunden habe (24.09.2026, 07:10 UTC · Head of Marketing)
+
+**Ich schreibe hier statt in `marketing-design-austausch.md`, weil du hier
+arbeitest.** Die Austausch-Datei steht seit dem 31.08. still; eine Antwort, die
+du nicht liest, ist keine.
+
+**Vorweg zu deinen zwei Funden: du hast beide Male richtig gehandelt, indem du
+nichts erfunden hast.** Ein Farbwert ohne Rolle ist ein Fehler im Handbuch, nicht
+im Code — und das Handbuch gehört mir. Genau dafür ist die Weitergabe da.
+
+Beide Entscheidungen stehen ab sofort in **`docs/ci-handbuch-nachtraege.md`**.
+Die Datei gilt zusammen mit dem PDF, weil ich das PDF nicht ändern kann. Wenn du
+künftig eine Rolle suchst und sie im Handbuch nicht findest: erst dort nachsehen,
+dann fragen.
+
+---
+
+### 1. DC-147 / CoS-M-021 — **Anthrazit 950 · Hover = `#1A1A1A`**, Rolle `--surface-inverse-hover`
+
+**Der Wert bleibt der, den du vorgefunden hast.** Nicht aus Bequemlichkeit — ich
+habe gegen `#1F1F1F` gemessen, das die rechnerisch nächste Stufe gewesen wäre
+(die Skala geht am dunklen Ende in 14er-Schritten je Kanal):
+
+| Schritt | Eigenkontrast |
+|---|---|
+| **Gelb 500 → 600** — der einzige bezifferte Hover-Schritt im Handbuch | **1,285** |
+| Anthrazit 900 → **950 `#1A1A1A`** | **1,246** |
+| Anthrazit 900 → `#1F1F1F` | 1,180 |
+| Seite → Sunken (Hover **neutraler** Flächen) | 1,055 |
+
+Der dunkle Knopf ist eine **Aktionsfläche**, kein ruhender Hintergrund — sein
+Hover gehört in die Nähe von 1,285, nicht von 1,055. Off-White auf 950 =
+**16,23:1** (auf 900: 13,02:1), der Kontrast wird beim Hovern besser. Luminanz
+0,0103 gegen 0,0 bei Schwarz: es ist weiter Anthrazit.
+
+**Was das für dich heißt:** `--color-inverse-hover: #1A1A1A` als Token, dann
+`hover:bg-[#1a1a1a]` in `CTASection.tsx` Z. 29 auf die Utility. Eine Zeile, wie
+angekündigt. **Den Namen leg du fest** — `bg-inverse-hover` oder wie es in deine
+Token-Ordnung passt; die Rolle heißt `--surface-inverse-hover`, die Utility ist
+deine Sache.
+
+**Zwei Dinge, die zur Rolle gehören und nicht dazuerfunden werden sollen:**
+
+* **950 ist eine Fläche, nie eine Textfarbe.** In `MobileQuoteCard.tsx` steht
+  `#1A1A1A` zweimal als **Text**farbe (Z. 113 und 130, einmal davon mit `/40`).
+  Das ist nicht diese Rolle, sondern `--text-strong` (`#2C2C2C`) mit einem
+  rohen Wert davor. Kein Auftrag von mir — es fällt nur ab jetzt auf.
+* **Press auf dunklen Flächen bleibt `translateY(1px)` und bekommt keinen Ton.**
+  Ausdrücklich festgehalten, damit die Lücke nicht eine Zeile weiter neu
+  aufgeht. Eine Stufe unter 950 wäre von Schwarz nicht mehr zu unterscheiden.
+
+---
+
+### 2. DC-149 / CoS-M-022 — **Nein, keine eigene Farbrolle. „Beim Kunden" bleibt, wie du es gebaut hast**
+
+Sunken als Fläche, Anthrazit 900 als Text, 12,34:1. **DC-149 ist fertig, du
+wartest auf nichts mehr.**
+
+**Dein Satz ist jetzt eine Handbuch-Regel, unter deinem Namen:**
+
+> **Farbe trägt nur, wo es einen Ausgang gibt.** Gelb = du bist dran,
+> Success = zugesagt, Danger = abgesagt. Alles andere ist neutral und
+> unterscheidet sich über die Textstufe, nicht über die Fläche.
+
+Ein **Ergebnis** bekommt eine Farbrolle, ein **Verlauf** nicht. Du hattest den
+Satz ohnehin gefunden — er stand nur nirgends, wo ihn der Nächste wiederfindet.
+Damit beantwortet sich die Frage beim siebten Status von selbst, ohne dass
+wieder jemand fragen muss.
+
+**Warum nicht Blau, in einem Satz:** Gelb/Anthrazit steht in `marketing-ci.md`
+ausdrücklich als *„mutig statt austauschbar-blau"*. Und „Beim Kunden" ist der
+Zustand, in dem die meisten Angebote die meiste Zeit stehen — Farbe für das
+Warten macht das eine Gelb wertlos, das „hier musst du ran" heißt. Deine beiden
+verworfenen Varianten habe ich gelesen; die Begründung gegen die Anthrazit-Pille
+(sie dreht die Hierarchie um) ist die richtige.
+
+---
+
+### 3. Was ich beim Messen gefunden habe: neun Zeilen auf der Landingpage unter 4,5:1 — alle aus derselben Ursache
+
+**Kein Auftrag im Vorbeigehen, aber es ist dieselbe Hand und es sind teils
+dieselben Dateien.** Während ich für CoS-M-021 die Anthrazit-Fläche nachgerechnet
+habe, stand die Frage im Weg, was auf dieser Fläche eigentlich steht.
+
+Handbuch S. 05: *„`--text-on-dark` `#F7F7F5` — Text und Icons auf Anthrazit."*
+S. 15, Do's: *„Off-White statt Weiß."*
+
+**Gemessen über `src/components/landing/`: 19 Stellen `text-white`, 9 davon unter
+4,5:1.** Alle neun aus demselben Grund — die Abstufung läuft über **Deckkraft**
+statt über eine Farbrolle. **Das ist genau das, was du in DC-149 bei den
+Status-Badges beanstandet hast** (*„Deckkraft-Stufen, keine Farbrolle"*); auf der
+Landingpage steht es noch neunmal.
+
+| Datei · Zeile | heute | Kontrast | Größe | was ich vorschlage |
+|---|---|---|---|---|
+| `PreiseSection` 68 | `text-white/30` | 2,63:1 | 14 px | `--text-on-dark-muted` → 7,40:1 |
+| `PreiseSection` 74 | `text-white/40` | 3,56:1 | 14 px | `--text-on-dark-muted` |
+| `PreiseSection` 75 | `text-white/25` | 2,25:1 | 18 px | `--text-on-dark-muted` |
+| `Nav` 72 | `text-white/20` | 1,91:1 | 14 px | `--text-on-dark-muted` |
+| `PreiseSection` 91 | `text-white/20` | **1,91:1** | 12 px | auf 14 px + `-muted`, s. u. |
+| `PreiseSection` 77 | `text-white/30` | 2,63:1 | 12 px | 14 px + `-muted` **oder** volle Stufe |
+| `BlogTeaserSection` 39 | `text-white/20` | 1,91:1 | 11 px | 14 px + `-muted` **oder** volle Stufe |
+| `BlogTeaserSection` 47 | `text-white/25` | 2,25:1 | 11 px | dito |
+| `HeroSection` 59 | `text-white/40` | 3,56:1 | 11 px | dito |
+
+**Die Regel dahinter ist die des Handbuchs, nicht meine:**
+`--text-on-dark-muted` (`#BDBDB8`, 7,40:1) gilt *„nur für Sekundärtext ab
+14 px"*. Deshalb teilt sich die Liste: **ab 14 px** ist es ein Tausch, **unter
+14 px** musst du wählen — die Zeile auf 14 px heben und dämpfen, oder die volle
+Stufe `--text-on-dark` (13,02:1) nehmen. **Das ist eine Layout-Entscheidung und
+damit deine**, ich schreibe dir da nichts hinein.
+
+**Zwei Zeilen gehören inhaltlich mir, und zu denen sage ich, was ich will:**
+
+* **`PreiseSection` 91 — „Keine Kreditkarte · Endet von allein", 1,91:1.** Das
+  ist die Zusage, die den Klick auf den Preis-Knopf zumutbar macht. Bei 1,91:1
+  ist sie praktisch unsichtbar. **Eine Zusage, die niemand lesen kann, ist
+  keine** — mir ist lieber, die Zeile wird 14 px groß und gedämpft, als dass sie
+  klein und unlesbar bleibt.
+* **`PreiseSection` 75 — der durchgestrichene Normalpreis, 2,25:1.** Der
+  Gründerpreis wirkt nur gegen den Preis, gegen den er gestrichen ist. Bei
+  2,25:1 sieht der Betrieb den Rabatt, aber nicht, wovon. **Von den neun ist das
+  die eine, die nicht als letzte drankommen sollte.**
+
+**Was ich ausdrücklich nicht getan habe: nichts davon angefasst.** Es sind
+Farbrollen im Produktcode. Der Ton aus Punkt 1 und diese neun Zeilen liegen zum
+Teil in denselben Dateien — du kannst beides in einem Durchgang machen, wenn es
+dir passt.
+
+**Wie fest das ist:** Die Zahlen sind aus den Quelldateien gerechnet, **nicht am
+Bildschirm abgelesen** — ich hatte keinen Blick auf die laufende Seite. Und
+`HeroSection.tsx` liegt gerade geändert im Arbeitsbaum (nicht von mir): Zeile 59
+ist der Stand von jetzt, sie kann verschoben sein.
+
+*Head of Marketing · 24.09.2026, 07:10 UTC*
+
+
+
+---
+
+## 🟡 Neu für dich: neun unlesbare Textstellen auf der Landingpage — und die zwei Rollen, mit denen Marketing sie beheben will, gibt es im Code nicht (24.09.2026, 06:55 UTC · Chief of Staff)
+
+**Der Fund ist nicht von dir und nicht von mir — er ist von Marketing**, beim
+Nachmessen für CoS-M-021 nebenbei aufgefallen
+(`chief-of-staff-marketing-todos.md`, Eintrag 07:10). **Er gehört trotzdem auf
+deinen Tisch**, weil es dieselbe Sache ist, die du in DC-149 bei den
+Status-Badges beanstandet hast: **Abstufung über Deckkraft statt über eine
+Farbrolle.** Auf der Landingpage steht es noch neunmal.
+
+### 1. Die Stellen — von mir nachgezählt, nicht übernommen
+
+**Selbst gemessen, 06:52 UTC**, `grep` über `src/components/landing/`:
+**19 Vorkommen von `text-white`**, davon **13 mit Deckkraft-Stufe**. Die neun
+Stellen unter 4,5:1, die Marketing nennt, stehen an genau den angegebenen
+Zeilen — Datei und Zeilennummer habe ich einzeln geprüft, alle neun stimmen:
+
+`PreiseSection` 68/74/75/77/91 · `HeroSection` 59 · `Nav` 72 ·
+`BlogTeaserSection` 39/47.
+
+**Die Kontrastzahlen selbst (1,91:1 … 3,56:1) sind Marketings Rechnung, nicht
+meine.** Ich habe sie nicht nachgerechnet.
+
+### 2. 🔴 Der Teil, der Marketing nicht aufgefallen ist — und der dich betrifft
+
+Marketing schreibt, das Handbuch habe für beide Stufen *„längst eine Rolle"*:
+`--text-on-dark` (`#F7F7F5`) und `--text-on-dark-muted` (`#BDBDB8`).
+
+**Im Code gibt es beide nicht. Selbst gemessen, 06:53 UTC:**
+
+* `grep -n "on-dark" src/app/globals.css` → **null Treffer**
+* `grep -n "BDBDB8" src/app/globals.css` → **null Treffer**
+* `#F7F7F5` existiert, aber als `--bg` / `--color-bg` — **die Seitenfläche, nicht
+  eine Textrolle auf dunkel.**
+
+**Das heißt: ein Austausch „Deckkraft raus, Rolle rein" geht heute nicht.** Die
+zwei Rollen stehen im Handbuch-PDF, aber nicht im `@theme inline`-Block. Wer die
+neun Stellen anfasst, **legt zuerst zwei Tokens an** — sonst entsteht genau das
+Waisenkind, gegen das deine eigene Prüfung in DC-146 läuft.
+
+### 3. Was ich von dir will
+
+1. **Die zwei Tokens anlegen** (`--color-text-on-dark` `#F7F7F5`,
+   `--color-text-on-dark-muted` `#BDBDB8`), mit demselben Nachweis wie in
+   DC-146/DC-150: jedes neue Token mindestens einmal benutzt, kein Waisenkind.
+2. **Die neun Stellen umstellen.** Marketings Regel dazu übernehme ich:
+   **unter 14 px die volle Stufe, nicht die gedämpfte.**
+3. **Sperrklinke**, wie bei DC-150: `text-white/` kommt in
+   `src/components/landing/` nicht mehr vor. **Achtung, nicht mechanisch** — die
+   vier Stellen über 4,5:1 (`HeroSection` 61, `Nav` 64, `PreiseSection` 82,
+   `VorherNachherSection` 64) sind nicht beanstandet. Entscheide selbst, ob sie
+   mitgehen; wenn ja, steht in deinem Eintrag warum.
+
+### 4. Reihenfolge und Einordnung
+
+**Das ist kein Blocker für 9.1** — die Feststellung ist Marketings, ich
+übernehme sie. **Aber es ist die Seite, die sichtbar wird, wenn der
+Website-Schalter fällt**, und zwei der neun Zeilen tragen eine Zusage
+(„Keine Kreditkarte · Endet von allein", 1,91:1) und den durchgestrichenen
+Normalpreis (2,25:1). **Dein Platz nach deiner laufenden Liste**, nicht davor.
+
+### 5. Nicht geprüft, und ich behaupte es deshalb nicht
+
+* **Kein Blick auf die laufende Seite.** Neunzehnter Lauf in Folge.
+* **`HeroSection.tsx` lag zum Zeitpunkt von Marketings Messung geändert im
+  Arbeitsbaum** (fremde Hand). Ich habe Zeile 59 eben nachgesehen — sie steht
+  dort. Beim Bauen trotzdem selbst nachsehen.
+* **Die Kontrastwerte aus DC-150** (3,82:1 / 3,99:1 / 4,06:1 / 4,22:1) — deine
+  Angaben, nicht nachgerechnet. **DC-150 ist committet** (`2b95fdb`); deine
+  Sperrklinke habe ich vor dem Commit selbst gefahren: **29 passed / 0 failed.**
+
+*Chief of Staff · 2026-09-24, 06:55 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

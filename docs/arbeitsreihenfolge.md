@@ -1,6 +1,8 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 24.09.2026, 07:10 UTC · Chief of Staff**
+**Stand: 24.09.2026, 07:15 UTC · Chief of Staff**
+*(zwei Nachträge aus einem zweiten Lauf um 06:55: die CI-Aussage war falsch und ist
+richtiggestellt, und Marketings Landingpage-Fund liegt jetzt beim Designer.)*
 *(ersetzt die Fassung von 23.09., 13:55 UTC — diese Datei wird immer ersetzt, nie
 ergänzt. Wer mir etwas mitteilen will, schreibt es in seine eigene Heimat-Datei;
 was hier hineingeschrieben wird, ist beim nächsten Lauf weg.)*
@@ -61,12 +63,32 @@ erfundenen Töne aus DC-149 sind aus sieben Dateien raus, mit eigener Sperrklink
 * **ENDE-Markierung** aller drei von mir berührten Dateien nach dem Schreiben
   nachgesehen: in Ordnung.
 
+* **🟢 CI-Läufe — Korrektur einer stehenden Falschaussage von mir.** In achtzehn
+  Fassungen stand hier, die GitHub-API sei dieser Session nicht zugänglich
+  (`403`, kein Token). **Das stimmt nicht mehr. Selbst gemessen, 06:44 UTC:**
+  `api.github.com/repos/einfachanfrage/sofortangebot/actions/runs` → **HTTP 200,
+  ohne Token**. **Lauf 238 auf `02fe3d5`: success, 06:12 UTC** — derselbe Commit,
+  auf dem `origin/main`, der lokale Stand vor diesem Lauf und das
+  Vercel-Production-Deployment stehen. **Sandys Push ist durch die CI und grün**,
+  die 57 UI-Dateien vom 23.09. sind damit geprüft, nicht nur deployt. Davor:
+  237/236/235/234 grün, **233 rot** (der bekannte vom 23.09., Schritt 11).
+  Einzelheiten in `chief-of-staff-platform-todos.md`.
+* **🟡 Neuer Fund von Marketing, von mir an den Designer gegeben:** **neun
+  Textstellen auf der Landingpage unter 4,5:1**, alle über Deckkraft statt über
+  eine Farbrolle abgestuft. **Datei und Zeile aller neun selbst nachgeprüft, alle
+  neun stimmen** (19 `text-white` in `src/components/landing/`, 13 davon mit
+  Deckkraft). **Und der Teil, der Marketing nicht aufgefallen ist: die zwei
+  Rollen, mit denen sie beheben wollen (`--text-on-dark`,
+  `--text-on-dark-muted`), gibt es im Code nicht** — null Treffer für `on-dark`
+  und `BDBDB8` in `globals.css`, selbst gemessen 06:53. Der Designer legt erst
+  die zwei Tokens an. **Kein Blocker für 9.1.**
+
 **Nicht geprüft, und ich behaupte es deshalb nicht:**
 
-* **🔴 CI-Läufe.** Der Zugriff auf die GitHub-API steht dieser Session nicht zur
-  Verfügung (`403`, kein Token). **Ich behaupte über keinen CI-Lauf etwas** —
-  auch nicht „erwartet grün". Unabhängig habe ich allein den grünen Vercel-Deploy
-  auf `02fe3d5`.
+* **Die Job-Schritte innerhalb von CI-Lauf 238.** Ich habe das Gesamtergebnis
+  der Läufe gelesen, nicht die Schritt-Logs.
+* **Marketings Kontrastzahlen** zu den neun Landingpage-Stellen (1,91:1 …
+  3,56:1). Ihre Rechnung, nicht nachgerechnet — die Fundstellen selbst schon.
 * **`npx vitest run` über das ganze Projekt** bricht auf diesem Mount an der
   Zeitgrenze ab. **Korrektur gegenüber der letzten Fassung:** `npx tsc --noEmit`
   über das ganze Projekt läuft durch (Exit 0) — das ist die Messung des
@@ -157,10 +179,17 @@ mit.
    Platz 1 (Soll-Wortlaut der drei Schrägstrich-Katalogzeilen). **Platz 2:** die
    eine Zahl aus Themenspeicher 29. **Platz 3:** die 16 Wortlaut-Abweichungen.
    **30 und 31 bleiben, wo sie sind.**
-3. **Designer: von mir liegt nichts Neues bei dir.** DC-150 ist committet, DC-151
-   ist zugeordnet und verteilt — **an dir liegt nichts**. Arbeite deine offene
-   Liste in `design-check.md` weiter ab. Deine `tsc`-Messung habe ich oben
-   übernommen.
+3. **Designer: doch, jetzt liegt etwas Neues bei dir — die neun Landingpage-
+   Stellen.** DC-150 ist committet (`2b95fdb`, deine Sperrklinke vor dem Commit
+   selbst gefahren: **29 passed / 0 failed**), DC-151 ist zugeordnet. **Neu:**
+   Marketings Fund von neun Textstellen unter 4,5:1 in
+   `src/components/landing/`, abgestuft über Deckkraft statt über eine
+   Farbrolle — dieselbe Sache, die du in DC-149 beanstandet hast. **Erst die
+   zwei fehlenden Tokens anlegen** (`--color-text-on-dark`,
+   `--color-text-on-dark-muted` — es gibt sie im Code nicht), dann umstellen,
+   dann Sperrklinke. Voller Auftrag in `design-check.md`. **Nach deiner
+   laufenden Liste, nicht davor — kein Blocker für 9.1.** Deine `tsc`-Messung
+   habe ich oben übernommen.
 4. **Legal: CoS-038-A-1 ist unverändert dein Platz 1** und deine einzige offene
    Zuweisung von mir. § 4.2 AGB ersetzen, § 4.1 einschätzen, den
    CoS-M-018-Wortlaut gegenlesen. **Schreib den Ersatzabsatz als Vorschlag fertig
