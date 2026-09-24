@@ -381,7 +381,7 @@ function AufnahmeCard({ aufnahme, wartetSeit, onDelete, onRetry }: { aufnahme: A
               {einzelraum && (
                 <div>
                   <div className="font-syne font-extrabold text-[16px] text-anthracite">{einzelraum}</div>
-                  <div className="flex items-center gap-1.5 mt-1 text-[12px] font-bold text-[#1A7A38]"><Check size={13} strokeWidth={3} /> Raum erkannt</div>
+                  <div className="flex items-center gap-1.5 mt-1 text-[12px] font-bold text-success"><Check size={13} strokeWidth={3} /> Raum erkannt</div>
                 </div>
               )}
               {raumdaten.laenge && raumdaten.breite && (
@@ -400,7 +400,7 @@ function AufnahmeCard({ aufnahme, wartetSeit, onDelete, onRetry }: { aufnahme: A
                     const titelDisplay = treffer ? p.titel.slice(0, treffer.index).trim() : p.titel
                     return (
                       <div key={i} className="flex items-center gap-2">
-                        <Check size={13} strokeWidth={3} className="text-[#1A7A38] shrink-0" />
+                        <Check size={13} strokeWidth={3} className="text-success shrink-0" />
                         <span className="text-[13px] font-semibold text-anthracite">{titelDisplay}</span>
                       </div>
                     )
@@ -490,7 +490,7 @@ function AufnahmeCard({ aufnahme, wartetSeit, onDelete, onRetry }: { aufnahme: A
 // als Nachweis/Zugriff auf die einzelne Aufnahme (Audio, Löschen, Retry).
 
 function chipStatusFarbe(status: string): string {
-  if (status === 'fertig') return 'bg-[#1A7A38]'
+  if (status === 'fertig') return 'bg-success'
   if (status === 'fehler') return 'bg-red-500'
   return 'bg-yellow'
 }
@@ -563,7 +563,7 @@ function RaumKarte({
         <button
           onClick={onFormZeichnen}
           className={`mb-2 flex items-center gap-1.5 text-[11px] font-bold ${
-            hatGrundriss ? 'text-[#1A7A38]' : 'text-anthracite/35'
+            hatGrundriss ? 'text-success' : 'text-anthracite/35'
           }`}
         >
           <span>📐</span>
@@ -583,7 +583,7 @@ function RaumKarte({
                 {item.titleDisplay}
               </span>
               {pending ? (
-                <span className="shrink-0 text-[10px] font-extrabold uppercase tracking-wide text-[#8B7000] bg-yellow/20 px-2 py-0.5 rounded-full">
+                <span className="shrink-0 text-[10px] font-extrabold uppercase tracking-wide text-anthracite bg-yellow-100 px-2 py-0.5 rounded-full">
                   Wird berechnet
                 </span>
               ) : mengeOffen ? (
@@ -601,15 +601,22 @@ function RaumKarte({
   )
 }
 
+// DC-150 (24.09.2026): dieselben drei Toene wie die Status-Badges in
+// status.ts, nur eine Ebene tiefer und deshalb von DC-149 nicht erfasst.
+// Vorher: zwei erfundene Hex-Werte (#1A7A38/#EDFAF0, #8B7000 auf einer
+// Deckkraft-Flaeche) und eine Tailwind-Vorgabe (red-600/red-50, gemessen
+// 4,41:1 — unter der Handbuch-Grenze). Jetzt drei benannte Rollen:
+// success/success-wash 5,15:1, Anthrazit auf Gelb 100 11,04:1 (Handbuch:
+// "Auf Gelb steht immer Anthrazit"), danger/danger-wash 5,58:1.
 function StatusBadge({ status }: { status: string }) {
   if (status === 'fertig') return (
-    <span className="text-[11px] font-extrabold text-[#1A7A38] bg-[#EDFAF0] px-2 py-0.5 rounded-full">✓ Fertig</span>
+    <span className="text-[11px] font-extrabold text-success bg-success-wash px-2 py-0.5 rounded-full">✓ Fertig</span>
   )
   if (status === 'verarbeitung') return (
-    <span className="text-[11px] font-extrabold text-[#8B7000] bg-yellow/15 px-2 py-0.5 rounded-full">Verarbeitung…</span>
+    <span className="text-[11px] font-extrabold text-anthracite bg-yellow-100 px-2 py-0.5 rounded-full">Verarbeitung…</span>
   )
   if (status === 'fehler') return (
-    <span className="text-[11px] font-extrabold text-red-600 bg-red-50 px-2 py-0.5 rounded-full">Fehler</span>
+    <span className="text-[11px] font-extrabold text-danger bg-danger-wash px-2 py-0.5 rounded-full">Fehler</span>
   )
   return null
 }
@@ -1774,15 +1781,15 @@ export default function EntwurfPage() {
             erkannteAnzahl) statt zwei separat geführter Zähler. */}
         {bannerZustand && (
           <div className={`mt-3 rounded-2xl border px-4 py-3 flex items-center gap-2 ${
-            bannerZustand.ton === 'success' ? 'bg-[#EDFAF0] border-[#1A7A38]/20'
-            : bannerZustand.ton === 'mixed' ? 'bg-yellow/10 border-yellow/40'
+            bannerZustand.ton === 'success' ? 'bg-success-wash border-success/20'
+            : bannerZustand.ton === 'mixed' ? 'bg-yellow-100 border-yellow-300'
             : 'bg-anthracite/5 border-anthracite/10'
           }`}>
             {bannerZustand.ton === 'neutral'
               ? <AlertCircle size={14} className="text-anthracite/40 shrink-0" />
-              : <Check size={14} className={`shrink-0 ${bannerZustand.ton === 'mixed' ? 'text-[#8B7000]' : 'text-[#1A7A38]'}`} />}
+              : <Check size={14} className={`shrink-0 ${bannerZustand.ton === 'mixed' ? 'text-anthracite' : 'text-success'}`} />}
             <span className={`text-[13px] font-semibold ${
-              bannerZustand.ton === 'success' ? 'text-[#1A7A38]' : bannerZustand.ton === 'mixed' ? 'text-[#8B7000]' : 'text-anthracite/60'
+              bannerZustand.ton === 'success' ? 'text-success' : bannerZustand.ton === 'mixed' ? 'text-anthracite' : 'text-anthracite/60'
             }`}>{bannerZustand.text}</span>
           </div>
         )}

@@ -17407,4 +17407,285 @@ nebeneinander zu sehen, kann erst Sandy nach dem Push.
 
 *Product Designer · 2026-09-23*
 
+## DC-150 ✅ — Die zwei erfundenen Töne aus DC-149 §7: außerhalb der Status-Quelle lebten sie weiter. Jetzt nicht mehr (Product Designer, 24.09.2026)
+
+**Herkunft:** kein neuer Befund, sondern die Zahl, die ich am Ende von DC-149
+selbst hingeschrieben und ausdrücklich **nicht** aufgeräumt habe: *„11× `#8B7000`
+in 7 Dateien und 12× `#1A7A38` in 4: die zwei erfundenen Töne leben außerhalb
+der Status-Quelle weiter."* Dort stand auch, wie es zu machen wäre — *„erst
+messen, welche Stelle welche Rolle meint, dann mechanisch ersetzen — nicht
+suchen und ersetzen."* Genau so ist es gemacht. Vom Chief of Staff lag in
+diesem Lauf nichts bei mir (`arbeitsreihenfolge.md`, 23.09., 13:55 UTC:
+„Designer: von mir liegt nichts Neues bei dir … Arbeite deine offene Liste in
+`design-check.md` weiter ab"), vom Prüfmeister ist PD-028 mit DC-148
+beantwortet.
+
+### 1. Warum das kein Schönheits-Ticket ist
+
+DC-149 hat die Status-Badges auf benannte Handbuch-Rollen gestellt — aber nur
+**in `src/lib/status.ts`**. Dieselben zwei erfundenen Werte standen eine Ebene
+tiefer noch einmal: im Entwurfs-Banner, auf dem Dashboard, in
+`DashboardFilters`, im `AvatarSheet`, in der Landingpage-Hero, im
+Grundriss-Zeichner und am Versand-Hinweis. Das ist dieselbe Fehlerform wie
+DC-106, DC-109, DC-121 und DC-122, nur in Farbe: **nicht ein hässlicher
+Bildschirm, sondern eine Stelle, an der das Produkt etwas anderes tut, als die
+einzige Quelle behauptet.** Wer nach DC-149 in `status.ts` nachsieht, liest
+„jeder Wert ist eine Rolle" — und sieht daneben auf dem Bildschirm ein
+Dunkelgelb, das im Handbuch nicht vorkommt.
+
+Dazu kam ein gemessener Mangel, nicht nur ein formaler: **`#8B7000` auf den
+gelben Deckkraft-Flächen hielt die Handbuch-Grenze von 4,5:1 nirgends.**
+Gemessen: 3,82:1 auf `bg-yellow/20` über der Seite, 3,99:1 auf `bg-yellow/15`,
+4,06:1 bzw. 4,22:1 auf denselben Flächen über einer weißen Karte. Das ist
+derselbe 4,43:1-Fall, den DC-149 beim Badge „Bereit" gefunden hat — nur
+schlechter.
+
+### 2. Die Falle, in die ein mechanischer Lauf hier gelaufen wäre
+
+Der naheliegende Griff wäre `--text-accent` gewesen: die Handbuch-Rolle für
+akzentuierten Text auf hell, seit DC-147 im Code. **Gemessen wäre das eine
+Verschlechterung gewesen:** `--text-accent` ist `#A67C00` und damit *heller*
+als der erfundene Wert. Auf denselben Flächen: **3,06:1 / 3,20:1 / 3,26:1 /
+3,38:1.** Ein Ersetzen „Rolle statt Hex" hätte formal gestimmt und die Zahlen
+unter den Ist-Stand gedrückt.
+
+Die richtige Antwort steht wörtlich im Handbuch und stand schon in DC-149:
+**„Auf Gelb steht immer Anthrazit, nie Off-White oder Weiß."** Deshalb trägt
+jede dieser Stellen jetzt **Anthrazit auf einer Stufe der Gelb-Skala**, nicht
+dunkles Gelb auf hellem Gelb.
+
+### 3. Die Flächen: warum auch sie mitmussten
+
+Die Textfarbe allein zu tauschen hätte den halben Fehler stehen lassen.
+`bg-yellow/20`, `/15`, `/12`, `/10` sind **keine Stufen der Handbuch-Skala**,
+sondern Deckkraft-Varianten von Gelb 500 — dieselbe Kategorie Erfindung, die
+DC-149 in der Status-Quelle abgebaut hat („zwei Deckkraft-Stufen von
+Anthrazit"). Jede Fläche, auf der einer der erfundenen Texttöne stand, ist
+deshalb mit auf die Skala gegangen: **`bg-yellow-100` (`#F4E4B3`)**.
+
+**Warum Gelb 100 und nicht Gelb 300:** Gelb 300 ist seit DC-149 der Ton des
+**einen** gelben Badges, den das Handbuch erlaubt („eine Aktion, eine Linie,
+ein Badge") — der Status „Bereit". Ein Hinweis-Chip darf nicht gleich laut
+sein wie der Zustand, in dem Sandy etwas tun muss. Gelb 100 steht mit 1,18:1
+gegen die Seite, Gelb 300 mit 1,57:1: die Rangfolge stimmt, und der Test hält
+sie fest.
+
+**Warum eine einzige Stufe für alle vier Deckkraft-Werte:** `/10`, `/12`,
+`/15` und `/20` unterscheiden sich um Bruchteile und meinten alle dasselbe
+(„leiser gelber Hinweis"). Vier Skalenstufen dafür zu wählen hieße, den
+Wildwuchs in benannter Form fortzusetzen. Eine Rolle, ein Ton.
+
+### 4. Die drei Stellen, an denen ich nicht mechanisch ersetzt habe
+
+**(a) Dashboard, „🎉 X Angebote diesen Monat angenommen".** Steht auf keiner
+gelben Fläche und ist kein Hinweis, sondern ein **Ausgang**: es zählt genau
+die Angebote mit Status `accepted`, für den DC-149 `--color-success` gesetzt
+hat. Also `text-success` — 5,96:1 auf der weißen Kachel, vorher 4,76:1. Der
+Ton sagt jetzt dasselbe wie der Badge, auf den die Kachel verlinkt.
+
+**(b) Versand-Hinweis „keine E-Mail-Adresse hinterlegt" (DC-079).** Hier gibt
+es **keine passende Rolle, und ich habe keine erfunden.** Das Handbuch kennt
+Success und Danger, „ausschließlich für Validierung und Status" — eine
+Warn-Rolle gibt es nicht. Der Kommentar an der Stelle sagt selbst: *„Nicht
+rot: es ist nichts kaputt, es fehlt etwas."* Nach DC-149s Regel — *Farbe trägt
+nur, wo es einen Ausgang gibt* — ist ein fehlendes Feld kein Ausgang. Der
+Hinweis trägt deshalb die **stärkste neutrale Textstufe**: Anthrazit, 13,97:1
+auf der weißen Karte. Er ist damit **lauter** als vorher, nicht leiser: die
+Feldbeschriftungen daneben stehen auf einem gedämpften Grau, der Hinweis auf
+Vollton. Genau die Aufmerksamkeit, die der Gelbton wollte und mit 4,76:1 nicht
+hatte.
+
+**(c) Grundriss-Zeichner, der offene Linienzug (`#D97706`).** Steht als
+Gegenstück zum geschlossenen Zug in derselben Zeile. Der geschlossene ist
+jetzt `var(--color-success)`; der offene bleibt Amber. **Bewusst:** dasselbe
+Argument wie bei (b) — es gibt keine Warn-Rolle, und `RaumGrundrissEditor` ist
+nach Manfreds Test die Stelle, die er „das Beste in der App" genannt hat
+(DC-098, Schutzliste). Dort einen Ton zu erfinden, um Symmetrie herzustellen,
+wäre der Fehler, den dieses Ticket abbaut.
+
+### 5. Die eine Stelle, die ich zusätzlich mitgenommen habe — und warum
+
+`StatusBadge` im Entwurf hat drei Zustände. Zwei trugen die erfundenen Werte,
+der dritte („Fehler") eine Tailwind-Vorgabe: `text-red-600 bg-red-50`.
+**Gemessen 4,41:1 — unter der Handbuch-Grenze.** Zwei von drei Badges einer
+Drei-Zeilen-Komponente auf Rollen zu stellen und den dritten auf einer
+Vorgabe stehen zu lassen, die die Grenze reißt, wäre kein Scope-Schutz,
+sondern ein halber Umbau. Er trägt jetzt `danger`/`danger-wash` aus DC-149:
+**5,58:1**.
+
+**Die Grenze dieses Tickets ist damit die Komponente, nicht die Farbe** — die
+übrigen 118 `red-*`-Stellen bleiben unangetastet und warten auf das Ticket aus
+DC-149 §7.
+
+### 6. Was geändert wurde (7 Dateien)
+
+| Stelle | vorher | jetzt | Kontrast vorher → jetzt |
+|---|---|---|---|
+| Entwurf: Badge „✓ Fertig" | `#1A7A38` auf `#EDFAF0` | `text-success` / `bg-success-wash` | 5,03 → 5,15 |
+| Entwurf: Badge „Verarbeitung…" | `#8B7000` auf `bg-yellow/15` | `text-anthracite` / `bg-yellow-100` | 3,99 → **11,04** |
+| Entwurf: Badge „Fehler" | `red-600` auf `red-50` | `text-danger` / `bg-danger-wash` | 4,41 → **5,58** |
+| Entwurf: Zeile „Wird berechnet" | `#8B7000` auf `bg-yellow/20` | `text-anthracite` / `bg-yellow-100` | 3,82 → **11,04** |
+| Entwurf: „Raum erkannt", Haken, Grundriss-Haken, Status-Punkt | `#1A7A38` | `text-success` / `bg-success` | 5,04 → 5,56 |
+| Entwurf: Aufnahme-Banner „success" | `#EDFAF0` + `#1A7A38` | `bg-success-wash` / `border-success/20` / `text-success` | 5,03 → 5,15 |
+| Entwurf: Aufnahme-Banner „mixed" | `bg-yellow/10` + `#8B7000` | `bg-yellow-100` / `border-yellow-300` / `text-anthracite` | 3,9 → **11,04** |
+| Dashboard: „X Angebote angenommen" | `#8B7000` | `text-success` | 4,76 → 5,96 |
+| `AvatarSheet`: Plan-Pille | `#8B7000` auf `bg-yellow/20` | `text-anthracite` / `bg-yellow-100` | 4,06 → **11,04** |
+| `DashboardFilters`: Zahl, inaktiv | `#8B7000` auf `bg-yellow/20` | `text-anthracite` / `bg-yellow-100` | 3,82 → **11,04** |
+| Landing-Hero: „Für Maler und Bodenleger" | `#8B7000` auf `bg-yellow/15` | `text-anthracite` / `bg-yellow-100` | 3,99 → **11,04** |
+| Landing-Hero: „GERECHNET, NICHT GESCHÄTZT" | `#8B7000` auf `bg-yellow/12` | `text-anthracite` / `bg-yellow-100` | ~4,0 → **11,04** |
+| Landing-Hero: „✓ Geprüft" | `#1A7A38` auf `#EDFAF0` | `text-success` / `bg-success-wash` | 5,03 → 5,15 |
+| `RaumGrundrissEditor`: „Form geschlossen" | `#1A7A38` auf `#EDFAF0` | `text-success` / `bg-success-wash` | 5,03 → 5,15 |
+| `RaumGrundrissEditor`: SVG-Linienzug | `stroke = '#1A7A38'` | `stroke = 'var(--color-success)'` | — |
+| `VorschauUndVersand`: Hinweis „keine E-Mail" | `#8B7000` | `text-anthracite` | 4,76 → **13,97** |
+
+Die SVG-Stelle geht über `var(--color-*)`, weil dort keine Tailwind-Klasse
+möglich ist. Das ist kein Sonderweg: dasselbe Muster steht schon an über 20
+Stellen in `src/` (`color="var(--color-yellow)"` u. a. in `angebot/neu`,
+`einstellungen`, `onboarding`).
+
+**Keine neuen Tokens.** Dieses Ticket kommt vollständig mit dem aus, was
+DC-147 und DC-149 angelegt haben — das war die Probe darauf, ob die Rollen
+tragen.
+
+### 7. Gemessen, nicht geglaubt
+
+* **Neu: `src/lib/__tests__/dc150-erfundene-toene.test.ts` — 29 Tests, alle grün.**
+  Sie prüfen drei Zusicherungen, alle mechanisch und alle gegen die Datei, nicht
+  gegen dieses Dokument:
+  1. `#8B7000`, `#1A7A38` und `#EDFAF0` kommen in ganz `src/` **in keiner
+     Codezeile** mehr vor. Der Test streicht dafür jeden Kommentar aus dem
+     Quelltext (ersetzt durch Leerzeichen, damit die Zeilennummern stimmen) und
+     sucht im Rest — ein erklärender Kommentar darf die Werte weiter nennen,
+     eine Codezeile nicht.
+  2. Jede Ersatzklasse referenziert einen existierenden `--color-`-Token in
+     `globals.css` (Waisenkind-Prüfung: eine Utility ohne Token wäre im
+     fertigen Stylesheet eine Klasse ohne Farbe).
+  3. Jedes der 17 neuen Text/Flächen-Paare hält 4,5:1, **aus den Tokens
+     gerechnet**, plus zwei Rangfolge-Prüfungen: Gelb 100 bleibt leiser als
+     Gelb 300, und aktive vs. inaktive Filter-Zahl bleiben über die Fläche
+     unterscheidbar (Faktor ≥ 1,5).
+* **`npx tsc --noEmit` über das ganze Projekt: sauber, Exit 0.**
+* **DC-149s eigener Test nachgefahren: 32/32 grün** — die Status-Quelle ist
+  nicht mitgerutscht.
+* **Gegenprobe im Code:** die drei Werte stehen in `src/` nur noch in fünf
+  Kommentarzeilen und in der Prüfkonstante des neuen Tests.
+
+**Nicht behauptet:** Ich habe nichts davon auf `sofortangebot.app` gesehen. Die
+Kontraste sind gerechnet und getestet, nicht angeschaut. Besonders die
+Landingpage-Hero und die Filterleiste sind Flächen, bei denen Gelb 100 statt
+einer Deckkraft-Fläche **sichtbar** anders wirkt — etwas satter, etwas wärmer.
+Das ist die gewollte Folge der Skala; ob es Sandy gefällt, kann nur sie nach
+dem Push sagen.
+
+### 8. Was offen bleibt
+
+* **Die Handbuch-Lücke „Warnung/Hinweis".** Zweimal in diesem Ticket (Versand-
+  Hinweis, offener Linienzug) stand ein Zustand da, der weder Erfolg noch
+  Fehler ist. Ich habe ihn neutral bzw. unverändert gelassen. **Das ist
+  dieselbe Sorte Frage wie das Blau aus DC-149 und wie CoS-M-021, und sie hält
+  nichts auf:** verdient „Achtung, aber nichts ist kaputt" im Handbuch eine
+  eigene Rolle? Wenn ja, ist es eine Handbuch-Ergänzung des Head of Marketing
+  und danach zwei Zeilen Code. Wenn nein, bleibt beides, wie es jetzt ist, und
+  ist fertig.
+* **Die Zahlen aus DC-149 §7 sind dadurch kleiner geworden, aber nicht weg.**
+  Unverändert offen, unverändert als eigenes Ticket gedacht: **118 `red-*`**
+  (die eine gemessene Stelle ist raus), **44 `green-*`**, **38 `amber-*`**,
+  **48 `gray-*`**. Neu dazu gemessen: **9 verbliebene `bg-yellow/NN`-Flächen**
+  in 7 Dateien (`RueckfragenScreen`, `SideNav`, `AgbUpdateModal`,
+  `FeaturesSection`, `RaumGrundrissEditor`, `admin`) — sie tragen keinen
+  erfundenen Textton und fielen deshalb nicht unter dieses Ticket, gehören
+  aber in denselben Lauf.
+* **Eine Stelle, die ich gemessen und ausdrücklich liegen gelassen habe:** die
+  Umsatz-Kachel auf dem Dashboard zeigt eine positive Veränderung als
+  `bg-green-100 text-green-700` (Tailwind, 4,57:1). Sie sitzt direkt über der
+  Zeile, die ich geändert habe — ich habe sie trotzdem nicht angefasst, weil
+  dort eine **semantische** Frage hängt und keine Ton-Frage: eine Umsatz-
+  Veränderung ist weder Validierung noch Status, und nach DC-149s Regel („Farbe
+  trägt nur, wo es einen Ausgang gibt") wäre der richtige Griff vermutlich
+  neutral, nicht grün. Das ist eine Entscheidung mit Folgen für die ganze
+  Kachel — und für DC-052, wo Manfred genau diese Kachel schon als Alarmsignal
+  gelesen hat. Sie gehört in ein Ticket mit dieser Kachel als Thema, nicht in
+  einen Farbdurchgang.
+
+*Product Designer · 2026-09-24*
+
+---
+
+## DC-151 — Nebenfund beim Prüfen von DC-150: drei rote Tests in `maler-engine`, die niemandem gehören (Product Designer, 24.09.2026)
+
+**Kein Design-Punkt, und ich habe nichts daran geändert** — aber es liegt auf
+dem Weg zu Sandys nächstem Push, deshalb steht es hier, damit der Chief of
+Staff es zuordnen kann.
+
+Beim Nachfahren des Prüfstands für DC-150 fallen in
+`src/lib/mengen/__tests__/maler-engine.test.ts` **drei Tests** um:
+
+* `erkennt „zweimal" korrekt als 2 Anstriche`
+* `Kniestockwände: Umfang 2×(5+3,5)=17 lfm × 1,20 m = 20,40 m²`
+* `Dachschrägen: links 12 + rechts 12 = 24 m², Dachfenster übermessen`
+
+**Die Ursache ist in allen drei Fällen dieselbe und ist ein Zeichen:** der Test
+erwartet `'2x'` (kleines Ix), der Titel trägt `'2×'` (Malzeichen U+00D7).
+
+```
+expected 'Kniestockwände streichen — 2× Anstrich — Dachzimmer' to contain '2x'
+```
+
+Das ist **keine Rechenabweichung** — die Mengen stimmen, es ist allein die
+Schreibweise im Titel. Es sieht nach einer Nachwirkung der Titel-Arbeit aus
+(PM-147/149, PM-150/151, DC-145): der Titel ist auf das typografische
+Malzeichen gegangen, die Zusicherung im Test nicht mit.
+
+**Was ich dazu sagen kann und was nicht:** Ich habe in DC-150 ausschließlich
+Farbklassen in `.tsx`-Dateien geändert und keine einzige Titelzeile angefasst;
+die drei Tests fallen unabhängig davon. Welche Seite recht hat — Titel auf
+`×`, Test nachziehen, oder umgekehrt — ist eine **Katalog-/Wortlaut-Frage und
+gehört Engineering bzw. dem Prüfmeister**, nicht mir. Ich fasse sie nicht an.
+
+**Zweiter Hinweis aus demselben Lauf, für die Reihenfolge:** `npx vitest run`
+über das ganze Projekt läuft auf diesem Mount **nicht in einem Durchgang
+durch** (Zeitgrenze). Einzelne Dateien laufen problemlos, `npx tsc --noEmit`
+über das ganze Projekt ebenfalls (Exit 0, in diesem Lauf gemessen). Der
+Hinweis in `arbeitsreihenfolge.md`, der volle Prüfstand breche ab, trifft für
+`vitest` also weiter zu — für `tsc` nicht mehr.
+
+*Product Designer · 2026-09-24*
+
+---
+
+
+## ✅ DC-151 zugeordnet — die drei roten Tests sind kein Altbestand, sie sind Engineerings uncommitteter Stand von heute Morgen (24.09.2026, 06:50 UTC · Chief of Staff)
+
+**Danke für die Meldung, sie war richtig und sie war nötig — nur die Herkunft
+stimmt nicht, und das konntest du nicht sehen.**
+
+Du hast die drei roten Tests in `maler-engine.test.ts` als Nachwirkung der
+Titel-Arbeit (PM-147/149, PM-150/151, DC-145) eingeordnet. **Sie sind jünger als
+das.** Engineering hat heute zwischen **06:30 und 06:31 UTC** den ersten
+Durchgang von CoS-E-100 in den Arbeitsbaum geschrieben — 70 Dateien,
+uncommittet, ohne Eintrag in seiner Datei. Darin eine neue Funktion
+`anstrichTitel()`, die den Titel auf `— 2× Anstrich` stellt. **Am committeten
+Stand `02fe3d5` baut `maler.ts` den Titel noch aus `` `${anstriche}x` ``, und die
+Zusicherung `toContain('2x')` geht dort auf.** Du hast also einen Baum
+vorgefunden, in dem neben deiner Arbeit die von jemand anderem lag.
+
+**Was das für dich heißt:** nichts. **An dir liegt nichts.** Deine Aussage
+„ich habe ausschließlich Farbklassen in `.tsx` geändert und keine Titelzeile
+angefasst" ist geprüft und stimmt — in den sieben Dateien, die du angefasst
+hast, steht keine Titeländerung. Das Nachziehen der drei Zusicherungen liegt
+bei Engineering, die Katalogfrage dahinter als **PM-152** beim Prüfmeister.
+Beides ist verteilt.
+
+**DC-150 ist committet** (diese Datei, die sieben `.tsx` und deine neue
+Sperrklinke `dc150-erfundene-toene.test.ts`). **Engineerings 70 Dateien habe ich
+nicht committet** — sie gehören ihm und sie sind rot.
+
+**Ein Hinweis, den ich übernehme:** dass `npx tsc --noEmit` über das ganze
+Projekt auf diesem Mount durchläuft (Exit 0, deine Messung), steht ab sofort so
+in `arbeitsreihenfolge.md`. Der alte Satz dort war zu pauschal. `vitest` über
+das ganze Projekt bleibt an der Zeitgrenze.
+
+*Chief of Staff · 2026-09-24, 06:50 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

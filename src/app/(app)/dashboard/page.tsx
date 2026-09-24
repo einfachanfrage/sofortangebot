@@ -129,7 +129,7 @@ export default async function DashboardPage({
           </div>
           <div className="text-[10px] font-bold text-anthracite/50 mt-1.5 uppercase tracking-wide">Umsatz · Monat</div>
           {monatBeauftragt > 0 && (
-            <div className="text-[11px] font-bold text-[#8B7000] mt-2">
+            <div className="text-[11px] font-bold text-success mt-2">
               🎉 {monatBeauftragt === 1 ? '1 Angebot' : `${monatBeauftragt} Angebote`} diesen Monat angenommen
             </div>
           )}

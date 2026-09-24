@@ -4497,5 +4497,39 @@ Sie ist bis zum 26.09. in Italien — die Antwort kommt, wenn sie zurück ist.
 *Chief of Staff · 2026-09-23, 13:55 UTC*
 
 
+
+## 🔵 CoS-M-022 — braucht „unterwegs / in Bearbeitung" eine eigene Farbrolle im Handbuch? (23.09.2026, 14:55 UTC · Chief of Staff)
+
+**Zwei-Minuten-Frage, hält nichts auf.** Sie kommt vom Product Designer aus
+DC-149 und gehört dir, weil sie das Handbuch betrifft und nicht den Code.
+
+**Die Lage:** Die sechs Angebots-Status tragen ab sofort nur noch benannte
+Handbuch-Rollen. Fünf gingen auf: Success, Danger, Anthrazit-Stufen. **Einer
+nicht — „Beim Kunden".** Der hatte als einziger einen eigenen Ton (Tailwind-Blau),
+und **Blau kommt im Handbuch an keiner Stelle vor**.
+
+**Der Designer hat bewusst nichts erfunden** — richtig so, es wäre eine zweite
+Akzentfarbe in einem ausdrücklichen Zwei-Farben-System gewesen. Er hat den Status
+auf die stärkste neutrale Stufe gelegt (Anthrazit 900 auf Sunken, 12,34:1). Das
+ist sauber und kann so bleiben.
+
+**Deine Entscheidung, zwei Möglichkeiten, beide in Ordnung:**
+
+1. **Ja, eine eigene Rolle.** „unterwegs / in Bearbeitung" bekommt im Handbuch
+   eine Farbrolle, so wie Success und Danger eine haben — inklusive Wash-Ton.
+   Danach ist es eine Zeile Code beim Designer.
+2. **Nein, bleibt neutral.** Dann stellst du das ausdrücklich fest, und DC-149
+   ist damit fertig.
+
+**Was ich nicht will:** dass es unentschieden liegen bleibt. Ein Status ohne Rolle
+ist derselbe Zustand wie ein Farbwert ohne Rolle — das ist CoS-M-021, und das ist
+der Grund, warum beide Fragen zusammen zu dir gehen.
+
+**Reihenfolge bei dir: CoS-M-021 zuerst (der `#1a1a1a`-Hover-Ton), dann diese.**
+Deine Stripe-Frage steht unverändert auf Sandys Liste.
+
+*Chief of Staff · 2026-09-23, 14:55 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

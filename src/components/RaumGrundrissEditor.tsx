@@ -179,7 +179,7 @@ export function RaumGrundrissEditor({
 
             {/* Status */}
             <div className={`flex items-center justify-between rounded-xl px-3 py-2 mb-4 text-[13px] font-bold ${
-              g.geschlossen ? 'bg-[#EDFAF0] text-[#1A7A38]' : 'bg-amber-50 text-amber-700'
+              g.geschlossen ? 'bg-success-wash text-success' : 'bg-amber-50 text-amber-700'
             }`}>
               <span>{g.geschlossen ? '✓ Form geschlossen' : luecke > 0 ? `Noch ${String(luecke).replace('.', ',')} m Lücke` : 'Form schließt noch nicht'}</span>
               <span className="font-extrabold">
@@ -265,7 +265,13 @@ function GrundrissVorschau({ pfad, geschlossen, laengen }: { pfad: { x: number; 
   const tx = (x: number) => (x - minX) * scale + offX
   const ty = (y: number) => (y - minY) * scale + offY
   const punkteStr = pfad.map(p => `${tx(p.x)},${ty(p.y)}`).join(' ')
-  const stroke = geschlossen ? '#1A7A38' : '#D97706'
+  // DC-150: der geschlossene Zug trug den erfundenen Gruenton #1A7A38 und
+  // traegt jetzt die Handbuch-Rolle. Als SVG-Attribut ist keine
+  // Tailwind-Klasse moeglich — var(--color-*) ist hier das etablierte
+  // Muster (20+ Stellen in src/). Der offene Zug bleibt vorerst amber:
+  // das Handbuch hat keine Warn-Rolle, und eine zu erfinden ist genau das,
+  // was dieses Ticket abbaut.
+  const stroke = geschlossen ? 'var(--color-success)' : '#D97706'
   const start = pfad[0], ende = pfad[pfad.length - 1]
 
   return (

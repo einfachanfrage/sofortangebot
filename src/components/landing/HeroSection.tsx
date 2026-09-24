@@ -11,7 +11,7 @@ export function HeroSection() {
 
           {/* LEFT */}
           <div>
-            <span className="inline-flex items-center gap-2 bg-yellow/15 text-[#8B7000] text-[13px] font-extrabold px-4 py-2 rounded-full mb-6">
+            <span className="inline-flex items-center gap-2 bg-yellow-100 text-anthracite text-[13px] font-extrabold px-4 py-2 rounded-full mb-6">
               🖌 Für Maler und Bodenleger
             </span>
 
@@ -74,7 +74,7 @@ export function HeroSection() {
                 <div className="flex items-center gap-2 mb-4">
                   <span className="text-[17px]">🛋</span>
                   <span className="font-syne font-extrabold text-anthracite text-[14px]">Wohnzimmer</span>
-                  <span className="ml-auto bg-[#EDFAF0] text-[#1A7A38] text-[10px] font-extrabold px-2 py-0.5 rounded-full">✓ Geprüft</span>
+                  <span className="ml-auto bg-success-wash text-success text-[10px] font-extrabold px-2 py-0.5 rounded-full">✓ Geprüft</span>
                 </div>
 
                 <div className="border-b border-anthracite/6 pb-3 mb-3">
@@ -96,8 +96,8 @@ export function HeroSection() {
                   <span className="text-anthracite/70 text-[13px] font-extrabold shrink-0">17,10 lfdm</span>
                 </div>
 
-                <div className="bg-yellow/12 rounded-2xl px-4 py-2.5 text-center">
-                  <span className="text-[#8B7000] text-[11px] font-extrabold tracking-wide">GERECHNET, NICHT GESCHÄTZT</span>
+                <div className="bg-yellow-100 rounded-2xl px-4 py-2.5 text-center">
+                  <span className="text-anthracite text-[11px] font-extrabold tracking-wide">GERECHNET, NICHT GESCHÄTZT</span>
                 </div>
               </div>
 

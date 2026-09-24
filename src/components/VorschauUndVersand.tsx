@@ -530,8 +530,17 @@ export default function VorschauUndVersand({ quote, company, quoteNumber, onClos
                             oben das bereits, und zwei Meldungen gleichzeitig
                             beantworten keine Frage doppelt, sie stellen eine
                             neue. */}
+                        {/* DC-150: der Hinweis trug einen erfundenen Gelbton
+                            (#8B7000). Das Handbuch kennt Success und Danger —
+                            eine Warn-Rolle gibt es nicht, und eine zu erfinden
+                            waere derselbe Fehler nochmal. Ein fehlendes Feld ist
+                            kein Ausgang, also traegt es keine Farbe, sondern die
+                            staerkste neutrale Textstufe: Anthrazit, 13,97:1 auf
+                            Weiss — deutlich lauter als die grauen Feldlabels
+                            daneben, und damit genau die Aufmerksamkeit, die der
+                            Gelbton eigentlich wollte. */}
                         {!to.trim() && darfSenden && (
-                          <p className="text-xs font-semibold text-[#8B7000] mt-1.5 leading-relaxed">
+                          <p className="text-xs font-semibold text-anthracite mt-1.5 leading-relaxed">
                             {quote.customer?.name
                               ? `Für ${quote.customer.name} ist keine E-Mail-Adresse hinterlegt — hier eintragen, dann geht's raus.`
                               : 'Diesem Angebot ist noch kein Kunde zugewiesen — Adresse hier eintragen oder den Kunden am Angebot hinterlegen.'}

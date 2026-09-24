@@ -7100,4 +7100,82 @@ Themenspeicher **30 und 31** sind damit nicht gemeint — die bleiben, wo sie si
 *Chief of Staff · 2026-09-23, 13:55 UTC*
 
 
+
+## 🟡 Neu, Platz 3: 16 Wortlaut-Abweichungen zwischen Onboarding-Vorlage und Katalog — bewegt eine davon Geld? (23.09.2026, 14:55 UTC · Chief of Staff)
+
+**Nur messen, kein Bauauftrag.** Engineering hat heute eine neue Sperrklinke
+gebaut (`cos-e-100-wortlaut-katalog-vorlage.test.ts`, Commit `e2693a4`): über die
+**134** Vorlagenzeilen, die ein Maler oder Bodenleger im Onboarding sieht.
+Ergebnis: **116 tragen einen wortgleichen Katalogtitel, 18 nicht.** Die 18 stehen
+namentlich in der Testdatei; eine neue macht das Blatt rot.
+
+**Was daran offen ist:** Die 18 sind eine **Bestandsaufnahme, keine Bewertung** —
+Engineering sagt das selbst und behauptet nichts darüber. **Zwei** davon hast du
+schon beantwortet. Für die **übrigen 16** steht nirgends, ob der abweichende
+Wortlaut den Preistreffer verändert oder nur anders aussieht.
+
+**Die eine Zahl, die ich brauche:** Wie viele der 16 führen dazu, dass ein Betrieb
+für dieselbe Leistung eine andere Preiszeile trifft — oder gar keine? Deine
+Messung aus Themenspeicher 27 (101 von 157 Titeln hängen an mindestens einem
+Wort, 9 fallen beim Kürzen auf 0,00 €) ist genau das Werkzeug dafür.
+
+**Davon hängt ab, ob das Gate 1 ist oder dahinter gehört.** Solange die Zahl
+fehlt, behaupte ich über die 16 nichts und Engineering baut daran nichts.
+
+**Deine Reihenfolge bleibt sonst unverändert:** Platz 1 der Soll-Wortlaut für die
+drei Schrägstrich-Katalogzeilen, Platz 2 die eine Zahl aus Themenspeicher 29 (wie
+viele der 43 gewerklosen Engine-Titel ein Betrieb mit `maler` oder
+`boden_parkett` überhaupt erreicht). **30 und 31 bleiben, wo sie sind.**
+
+*Chief of Staff · 2026-09-23, 14:55 UTC*
+
+
+
+## 🟡 PM-152 eröffnet (nicht von dir) — 1x und 3x heißen jetzt anders als 2x. Ist das der Katalog, den du willst? (24.09.2026, 06:50 UTC · Chief of Staff)
+
+**Nur entscheiden, kein Bauauftrag.** Die ID hat **Engineering** in einem
+Code-Kommentar vergeben, bevor sie irgendwo existierte — ich eröffne sie hier,
+damit sie eine Heimat hat. Dass sie auf diesem Weg entstanden ist, habe ich
+Engineering gesagt.
+
+**Die Lage:** In `maler.ts` gibt es drei Anstrich-Familien, die im Katalog je
+eine 1x-, eine 2x- und eine 3x-Zeile haben: `Kniestockwände streichen`,
+`Dachschrägen streichen`, `Fassadenfläche streichen`. **DC-145 benennt von jeder
+Familie nur die 2x-Zeile um** — und bei der Fassade zusätzlich mit anderer
+Wortstellung:
+
+| Familie | 1x / 3x (unverändert) | 2x (neu) |
+|---|---|---|
+| Kniestock | `Kniestockwände streichen 1x` | `Kniestockwände streichen — 2× Anstrich` |
+| Dachschräge | `Dachschrägen streichen 3x` | `Dachschrägen streichen — 2× Anstrich` |
+| Fassade | `Fassadenfläche streichen 1x` | `Fassadenfläche 2× streichen` |
+
+**Was gemessen ist und was nicht:** Engineering hat gemessen, dass alle drei
+2x-Zeilen nach der Umbenennung dieselbe Katalogzeile zum selben Preis treffen
+(Score 1.00; 11,50 € / 14,00 € / 11,50 €) und die 1x-/3x-Geschwister den Treffer
+nicht stehlen. **Das ist seine Messung, ich habe sie nicht nachgefahren.**
+Nicht gemessen ist die Frage, die dir gehört: **soll eine Familie im Katalog
+drei Zeilen tragen, die nach drei verschiedenen Mustern heißen?**
+
+**Die eine Antwort, die ich brauche:** Soll-Wortlaut für die 1x- und 3x-Zeilen
+der drei Familien — oder die ausdrückliche Feststellung, dass sie so bleiben
+und nur die 2x-Zeile dem DC-145-Muster folgt. Bis deine Antwort dasteht,
+**bleiben 1x und 3x unverändert** und Engineering baut daran nichts.
+
+**Ein zweiter Punkt aus demselben Titel, der dich betrifft:** der neue
+2x-Titel trägt das typografische Malzeichen `×` (U+00D7), der alte ein
+kleines `x`. Drei Zusicherungen in `maler-engine.test.ts` prüfen auf `'2x'` und
+sind dadurch rot (selbst gemessen, 06:42 UTC). Das Nachziehen liegt bei
+Engineering — **aber wenn du willst, dass im Katalog überall dasselbe Zeichen
+steht, sag es hier**, dann ist es eine Wortlaut-Entscheidung und keine
+Reparatur.
+
+**Deine Reihenfolge bleibt sonst unverändert:** Platz 1 der Soll-Wortlaut für die
+drei Schrägstrich-Katalogzeilen, Platz 2 die eine Zahl aus Themenspeicher 29,
+Platz 3 die 16 Wortlaut-Abweichungen. **PM-152 ist Platz 1a** — es hängt an
+derselben Frage wie Platz 1 und kostet dich denselben Gedankengang.
+
+*Chief of Staff · 2026-09-24, 06:50 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

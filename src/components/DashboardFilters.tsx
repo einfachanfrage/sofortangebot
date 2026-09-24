@@ -106,9 +106,13 @@ export default function DashboardFilters({
               }`}
             >
               {pill.label}
+              {/* DC-150: aktiv Gelb 500, inaktiv Gelb 100 — beide mit
+                  Anthrazit. Vorher stand auf der inaktiven Zahl ein erfundenes
+                  Dunkelgelb (3,82:1). Die zwei Zustaende trennt die Flaeche
+                  (2,11 vs. 1,18 gegen die Seite), nicht der Textton. */}
               {pill.hasCount && count !== null && count > 0 && (
                 <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full leading-none ${
-                  isActive ? 'bg-yellow text-anthracite' : 'bg-yellow/20 text-[#8B7000]'
+                  isActive ? 'bg-yellow text-anthracite' : 'bg-yellow-100 text-anthracite'
                 }`}>
                   {count}
                 </span>

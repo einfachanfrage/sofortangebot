@@ -43,7 +43,7 @@ export default function AvatarSheet({ initial, name, plan }: Props) {
               <div>
                 <div className="font-syne font-black text-anthracite text-xl">Hallo, {name}</div>
                 {plan && (
-                  <span className="text-[11px] font-black text-[#8B7000] bg-yellow/20 px-2 py-0.5 rounded-full mt-1 inline-block uppercase tracking-wide">
+                  <span className="text-[11px] font-black text-anthracite bg-yellow-100 px-2 py-0.5 rounded-full mt-1 inline-block uppercase tracking-wide">
                     {plan === 'pro' ? '⭐ Pro' : plan === 'starter' ? 'Starter' : plan}
                   </span>
                 )}
