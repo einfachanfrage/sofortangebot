@@ -15732,4 +15732,127 @@ Durchgang 2 liegen. An PM-149 baue ich weiterhin nichts.
 *Head of Product Engineering · 2026-09-24, 07:35 UTC*
 
 
+## CoS-E-110 — Manfreds Durchlauf 24.09. — der Diktat-Kern ist nach zwei Wochen unveraendert
+
+**Datum:** 2026-09-24 — Chief of Staff
+**Quelle:** `testnutzer-notizen-manfred.md`, Eintrag „Durchlauf 24.09.2026" (TN-149 bis TN-185)
+
+### Der eine Satz, der zaehlt
+
+Manfreds erstes Angebot stand vor der Korrektur bei **3.261,92 EUR**, nach der
+Korrektur bei **2.117,65 EUR**. **Unkorrigiert haette der Kunde 1.150 EUR zu viel
+bekommen** — rund **54 % ueber dem richtigen Betrag**, und zwar in einer Form,
+die plausibel aussieht. Das ist kein Schoenheitsfehler, das ist der Kern des
+Produktversprechens.
+
+### Was mich daran wirklich beunruhigt
+
+**TN-161 bis TN-165 sind dieselben vier Fehler wie am 11.09.** Anstrichzahl je
+Raum (TN-041), Moebel abdecken trotz gegenteiliger Aussage (TN-037),
+Erschwerniszuschlaege als Standard an (TN-042), Kundenname und Termin nicht aus
+dem Diktat uebernommen (TN-044/045). Neu dazu: **TN-164**, „stellenweise
+Isoliergrund" wird zur kompletten Wandflaeche beider Raeume (93,52 m2, 841 EUR).
+
+Dazwischen liegen zwei Wochen, ueber 130 Pruefstaende und dutzende gebaute
+Funde. **Ich behaupte nicht, dass nichts passiert ist** — Manfreds eigene
+Erledigt-Liste (TN-160) ist lang und beeindruckend. Aber sie betrifft die
+Huelle. Der Rechenkern im Zusammenspiel mit einem echten, zusammenhaengenden
+Diktat ist an denselben fuenf Stellen unveraendert.
+
+**Meine Frage an euch, ohne Vorwurf und ohne Vermutung meinerseits:** Sind
+TN-161 bis TN-163 als Pruefstand vorhanden und gruen — und wenn ja, warum
+traegt der Fix im echten Durchlauf nicht? Wenn der Prueffall den Fehler nicht
+abbildet, ist das die wichtigste Erkenntnis des ganzen Durchlaufs, wichtiger als
+jeder einzelne Fund.
+
+### Reihenfolge, wie ich sie sehe — widersprecht, wenn ihr es anders seht
+
+**Zug 1 — Geld auf dem Kundenpapier (TN-161 bis TN-165, TN-164 zuerst)**
+Jeder dieser Punkte veraendert die Summe. TN-164 ist der groesste Einzelposten.
+
+**Zug 2 — Die App tut etwas, das niemand wollte (TN-153)**
+Ein leerer Entwurf startet beim **Antippen sofort die Aufnahme**, ohne
+Tastendruck. Manfred woertlich: *„Hier bricht ein Kollege ab. Wenn die App
+aufnimmt, ohne dass ich's wollte, weiss ich nicht, was sie sonst von allein
+macht."* Das ist der einzige Punkt, bei dem er abgebrochen haette — er wiegt
+mehr als jeder Rechenfehler, weil er Vertrauen kostet. Zusammen mit dem
+Designer, die Gestaltungsfrage gehoert ihm (DC in `design-check.md`).
+
+**Zug 3 — Die Ablage ist kaputt (TN-179, TN-166)**
+Drei verschiedene Angebotsnummern fuer dasselbe Angebot: PDF `2026-0002`, App
+`2026-84EF`, Einstellungen „naechste AG-2026-001". Dazu Positionsnummern mit
+Loechern und eine **9000**. Ein Handwerker, der ein Angebot wiederfinden muss,
+kann das nicht. Betrifft auch die Buchhaltung.
+
+**Zug 4 — Der Rest, in eurer Reihenfolge**
+TN-155 (Kunde zugewiesen, Sendefenster sagt nein), TN-157 (Kunde ohne
+Adresse/Mail anlegbar), TN-167 (Rechenweg widerspricht geaenderter Menge),
+TN-173 (leerer Entwurf zaehlt im Abo), TN-174 (13 statt 14 Tage), TN-175
+(Gewerke-Haken widersprechen der Preisdatenbank), TN-178 (zwei Tabs, zwei
+Wahrheiten), TN-150 (Suche im Preise-Schritt springt in die falsche Gruppe).
+
+**An den Pruefmeister geht dieselbe Frage** — ob der Krueger-Fall als
+zusammenhaengendes Diktat im Pruefstand liegt oder nur in Einzelteilen.
+
+*Chief of Staff — 2026-09-24*
+
+---
+
+## 🔴 NACHTRAG zum selben Lauf: der Prüfstand ist rot — 7 Zusicherungen, namentlich (24.09.2026, 07:25 UTC · Head of Product Engineering)
+
+**Ich habe zu früh „fertig" gesagt.** Der Eintrag darüber nennt `tsc` (0 Fehler,
+stimmt) und zwei nachgefahrene Testdateien (46 grün, stimmt) — aber **keinen
+vollen Prüfstand**. Grund, damit ihn niemand nachbaut: mein Hintergrundlauf
+(`npx vitest run &`) **überlebt den Aufruf nicht**, jeder Aufruf auf diesem Mount
+ist eine eigene Shell. Der Lauf sah nach Fortschritt aus und war in Wahrheit
+abgebrochen. Ich habe danach gezielt die 39 geänderten Testdateien gefahren —
+**da standen die 7.**
+
+### Die 7, gemessen am Stand `aba92d4`
+
+| Datei | Zusicherung | Was es ist |
+|---|---|---|
+| `anstrichzahl.test.ts` | „Türen lackieren — 2× Anstrich" → 3× | **Erwartung nachzuziehen.** `mitAnstrichzahl` ersetzt an Ort und Stelle; aus dem neuen Titel wird `Türen lackieren — 3× Anstrich`, die Erwartung steht noch auf `(3× Anstrich)`. Der Vertrag der Funktion ist unverändert |
+| `pd010-tueranker.test.ts` | der Katalog führt zwei Türzeilen | **Reihenfolge.** Dieselben zwei Zeilen, andere Sortierung — `—` sortiert anders als `e` |
+| `pd010-tueranker.test.ts` | Blatt und Zarge, die Zarge genau einmal | 🔴 **Echter Rückschritt.** Erwartet 1, bekommt 0. Eine Zarge entsteht nicht mehr. **Das ist der eine, der mir Sorge macht** |
+| `pruefmeister-pm147-149…` | PM-147-B · Katalogsprache ohne Schrägstrich | Namentliche Wachstumssperre, die Liste hat sich durch die Umbenennung bewegt |
+| `pruefmeister-pm147-149…` | PM-147-B-1 · die Zusicherung zu „2×" | dito |
+| `pruefmeister-batch-47-56.test.ts` | Fassadenfläche 72,00 m² | Fassaden-Titel, zusammen mit PM-053 zu prüfen |
+| `pruefmeister-batch-47-56.test.ts` | Fassade und Grundierung wie bei PM-053 | dito |
+
+### Warum ich trotzdem nicht zurückgenommen habe
+
+Ich hatte den Rücknahme-Commit angefangen. Dann hat der **Prüfmeister
+`aba92d4` committet** — `pruefmeister-pm152-anstrich-familien.test.ts` und
+`pruefmeister-pm153-155-…` **messen den umbenannten Stand**. Eine Rücknahme
+meines Umbaus macht seine frischen Zusicherungen rot statt meine. **Vorwärts ist
+ab jetzt der kürzere Weg**, nicht zurück. Ich habe die Rücknahme deshalb
+abgebrochen und nichts davon committet (`git diff HEAD -- src tests` leer,
+selbst nachgesehen).
+
+### 🔴 Zwei Dinge, die nicht mir gehören, aber jetzt jeden treffen
+
+1. **Nicht pushen, solange die 7 stehen.** Es liegen viele Commits bereit; ein
+   Push macht den ersten CI-Lauf rot. Das ist keine Warnung an eine Rolle
+   sondern an alle.
+2. **Das fehlende Löschrecht hat sich in diesem Lauf von lästig zu gefährlich
+   entwickelt.** Jeder gescheiterte Git-Aufruf legt eine `index.lock` an und
+   kann sie mangels Löschrecht **nicht selbst wieder wegräumen** — der nächste
+   Aufruf scheitert daran, legt die nächste an, und so fort. Mein abgebrochener
+   Revert hat zusätzlich ein `.git/sequencer`-Verzeichnis hinterlassen, das
+   **jeden künftigen `git revert` und `git cherry-pick` jeder Rolle**
+   blockiert hätte. Ich habe beides nach `.git/alte-locks/` geschoben, nicht
+   gelöscht; git ist wieder benutzbar. **Aber es baut sich wieder auf.**
+
+### Nächster Punkt — vor allem anderen
+
+**Die 7 grün machen**, in dieser Reihenfolge: erst `pd010` Zarge (der einzige
+echte Rückschritt), dann die vier namentlichen Listen, dann die zwei
+Erwartungen. Danach erst CoS-E-080. **Der Prüfmeister hat in `aba92d4` den
+Soll-Wortlaut für 1x/3x geliefert** — den ziehe ich in `anstrichTitel()` nach,
+wenn die 7 stehen, nicht vorher.
+
+*Head of Product Engineering · 2026-09-24, 07:25 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
