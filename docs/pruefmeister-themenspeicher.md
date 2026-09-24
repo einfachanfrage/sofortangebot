@@ -10,7 +10,7 @@ Fenstern und Türen — die Welt, die das Datenmodell ohnehin kann. Alles, was *
 einem Raum steht, kam nicht vor. Diese Liste ist die Gegenprobe: sie wird nicht
 aus dem Datenmodell abgeleitet, sondern aus der Baustelle.
 
-**Zielgröße:** 100 Fälle — am 17.09. erreicht und überschritten. Stand 23.09.2026: **146**
+**Zielgröße:** 100 Fälle — am 17.09. erreicht und überschritten. Stand 24.09.2026: **155**
 *(die Aufzählung darunter zählt den Stand vom 16.09., sie wird nicht fortgeschrieben)*
 **Alt: 97**
 (46 + PM-047 bis PM-056 + PM-057 bis PM-063 + PM-064 bis PM-068
@@ -1293,6 +1293,106 @@ Umbenennen scharf wird.
 **Fallbasis nach diesem Lauf: 151.**
 
 *Prüfmeister · 2026-09-23*
+
+
+---
+
+## Nachtrag 24.09.2026 — Punkt 29 ist gemessen, und er ist größer als seine Nummer
+
+**Abgeräumt:**
+
+* **Punkt 29 — 43 von 184 Engine-Titeln routen in gar kein Gewerk** →
+  **PM-154**. Die Frage des Chief of Staff (wie viele davon ein Betrieb mit
+  `maler` oder `boden_parkett` überhaupt erreicht) ist beantwortet:
+  **43 von 43.** Keiner stammt aus einem Trockenbau-, Elektro-, SHK- oder
+  Fliesen-Modul — alle aus `vollstaendigkeit/maler-*.ts`,
+  `vollstaendigkeit/boden-*.ts` und `mengen/gewerke/{maler,boden}.ts`.
+  **Es ist ein Gate-1-Fund.** Von den 43 landen **13 in einem fremden Gewerk,
+  sobald ein Wort fehlt** (Spitze: `Epoxid / Versiegelung — Schicht 1`
+  9,00 € → `Epoxidharzestrich …` 55,00 €/m²).
+
+  **Zwei Dinge daran waren in meiner eigenen Beschreibung falsch, und beide
+  machen den Punkt größer statt kleiner:**
+
+  1. **„Kein Gewerk" heißt nicht „ganzer Katalog".** Es heißt es nur, wenn
+     auch kein **Hauptgewerk** dasteht — und im Angebot steht immer eines.
+     Der gefährliche Fall ist deshalb der gemischte Auftrag mit dem falschen
+     Hauptgewerk: `Gerüst stellen` findet unter `maler` seine 450,00 € und
+     unter `boden_parkett` **nichts**.
+  2. **Mein Beispiel `Dachschrägen grundieren` → 650,00 € gehört gar nicht zu
+     den 43.** Der Titel HAT ein Gewerk (`grundier` → `maler`) und verliert es
+     erst durch das gestrichene Wort. Das ist eine **eigene, größere Klasse**:
+     **44 von 184 Titeln verlieren ihr Gewerk durch ein einziges fehlendes
+     Wort und landen dann in einem fremden Gewerk** — `Dachschrägen` →
+     Schreiner 650,00 €/m², `Fenster` → Schreiner 580,00 €/Stück,
+     `Wände … nach Q2` ohne „schleifen" → Trockenbau 58,00 €/m².
+
+* **Ohne eigene Nummer im Speicher, weil vom Chief of Staff beauftragt:** der
+  **Soll-Wortlaut der drei Schrägstrich-Titel** → **PM-153**; die Frage, ob die
+  **16 Wortlaut-Abweichungen der Onboarding-Vorlage** Geld bewegen →
+  **PM-155**, Antwort **nein** (gemessen an den 14 Zeilen, die der
+  Gewerke-Filter überhaupt sichtbar werden lässt); und der **Soll-Wortlaut für
+  1x und 3x der drei Anstrich-Familien** → **PM-152**, Antwort: sie folgen dem
+  2x-Muster (`— 1× Anstrich` / `— 3× Anstrich`), Preis in allen sechs Fällen
+  unverändert.
+
+---
+
+**Neu aufgemacht — was aus diesem Lauf fällt:**
+
+32. **Die Klasse „verliert das Gewerk" ist der eigentliche Punkt 29.** 44
+    Titel, gezählt und mit der Spitze belegt, aber nicht Fall für Fall
+    bewertet: welche davon würde eine *realistische* Umbenennung treffen?
+    Das ist dieselbe offene Frage wie Punkt 31, nur für die teurere Klasse —
+    und sie ist die Vorarbeit für jede Umbenennungsrunde nach DC-145.
+33. **Das Gewerk kommt aus dem Diktat, nicht aus dem Betrieb.**
+    `berechneUndPruefeAlleGewerke()` nimmt `extraktion.gewerk`
+    (`mehrgewerk.ts` Z. 197); `companies.gewerke` steht nur als Bitte im
+    Prompt (`angebot-extrahieren/route.ts` Z. 74), und `GEWERK_ENGINES` hält
+    alle sechs Engines bereit. **„Im Onboarding nicht wählbar" heißt also
+    nicht „unerreichbar".** Für Punkt 29 ändert das nichts (43 von 43 so oder
+    so), aber jede künftige Aussage der Form „das kann ein Maler gar nicht
+    bekommen" braucht diese Messung, nicht die Onboarding-Liste. **Ungemessen:
+    wie oft die Extraktion einem Maler-Diktat tatsächlich ein fremdes Gewerk
+    gibt.** Das steht in den gespeicherten Extraktionen und wäre nachzählbar.
+34. **19 Maler-Katalogzeilen tragen weiter ein kleines `x`.** Gezählt am
+    24.09. im Arbeitsbaum: **25 von 208** Maler-Zeilen schreiben die
+    Anstrichzahl als `2x`, **10** als `2×`. Sechs der 25 löst PM-152 auf, die
+    **übrigen 19** (`Wand streichen 2x Anstrich`, `Decke streichen 1x
+    Anstrich`, `Feuchtraumanstrich 2x`, …) stehen in keinem DC-145-Vorschlag.
+    **Kein Widerspruch zu PM-147-B** — die Zusicherung sperrt gegen Wachstum,
+    sie verlangt keine Nullzahl. Offen ist nur, ob eine eigene Runde dafür
+    lohnt; gemessen ist, dass keine davon Geld bewegt, solange nur der Katalog
+    umbenannt wird und die Engine mit.
+35. **Die Fassaden-Zwillinge (TN-095) entscheiden beim Umbenennen mit.**
+    `Fassade streichen 1x/2x Anstrich` und `Fassadenfläche streichen 1x` /
+    `Fassadenfläche 2× streichen` stehen beide unter „Maler – Anstrich Außen",
+    zu denselben Preisen. Solange die Preise gleich sind, bewegt sich kein
+    Geld — aber **welche der beiden Zeilen ein umbenannter Engine-Titel
+    trifft, wechselt** (gemessen in PM-152-D). Manfred hat die Dopplung selbst
+    gemeldet; ungemessen ist, wie viele solcher Zwillingspaare der Katalog
+    sonst noch trägt und ob bei irgendeinem die Preise auseinandergehen.
+    `scripts/katalog-dopplungen.mjs` findet sie **nicht** — es fragt, ob eine
+    Zeile sich selbst findet, nicht, ob zwei Zeilen dasselbe meinen.
+36. **Zwei Materialien in einem Wortpaar.** Der Engine-Titel sagt
+    `Abdeckfolie`, die Katalogzeile `Abdeckvlies` — gleiche Zeile, 1,20 €/m².
+    Kein Preisfehler, aber der Kunde liest auf zwei Flächen zwei Materialien.
+    Und `Betonwände schleifen` trifft `Wände schleifen nach Q2`: ob Beton
+    denselben Aufwand hat wie eine geputzte Wand, ist eine Preisfrage für den
+    Betrieb. Beides klein, beides keine Titelfrage.
+
+**Offen bleiben** aus den älteren Abschnitten: **M.1** (teilweise), **M.3**,
+**M.5**, Mittags-Punkt 7, Nachmittags-**Punkt 10**, die **Punkte 15, 16, 17,
+18** vom 17.09. abends sowie **19**, **22**, **24** und **28**, dazu **30**
+und **31**. **Punkt 29 ist zu; 12, 13, 14, 21, 23 und 27 waren es schon.**
+**Punkt 26** (ist ein Gewerk aktiv, wenn es kein Geld kann) bleibt der größte
+Hebel und eine Entscheidung für Sandy. Der größte **messbare** ist jetzt der
+neue **Punkt 32**; **35** ist der billigste (eine Messung über den ganzen
+Katalog, ein Skript, das es fast schon gibt).
+
+**Fallbasis nach diesem Lauf: 155.**
+
+*Prüfmeister · 2026-09-24*
 
 
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

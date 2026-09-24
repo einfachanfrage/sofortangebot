@@ -631,3 +631,184 @@ if (process.argv.includes('--wortabhaengigkeit')) {
   }
   console.log('')
 }
+
+// ── --gewerklos: die Titel, die in gar kein Gewerk routen (Themenspeicher 29)
+//
+// (24.09.2026, Prüfmeister) Der Chief of Staff hat nach genau EINER Zahl
+// gefragt: wie viele der gewerklosen Engine-Titel ein Betrieb mit `maler` oder
+// `boden_parkett` überhaupt erreicht. Seine Annahme dahinter: Trockenbau,
+// Elektro und SHK sind im Onboarding nicht wählbar, also kann ein Maler ihre
+// Titel nie sehen. Die Annahme trägt nicht, und das ist hier mitgemessen:
+// `berechneUndPruefeAlleGewerke()` nimmt das Gewerk aus der EXTRAKTION
+// (`extraktion.gewerk`, mehrgewerk.ts Z. 198), nicht aus `companies.gewerke`.
+// Die Gewerke des Betriebs stehen nur als Bitte im Prompt
+// (angebot-extrahieren/route.ts Z. 74: „Bevorzuge diese Gewerke"). Deshalb
+// zählt die Spalte „Weg" beides: über welches Modul der Titel entsteht, und
+// ob dieses Modul für einen Maler/Bodenleger laufen kann.
+if (process.argv.includes('--gewerklos')) {
+  const MALER_BODEN = /^(?:mengen\/gewerke\/(?:maler|boden|sockelleisten|vob-uebermessung)|vollstaendigkeit\/(?:maler|boden))/
+  const FREMD = /^(?:mengen\/gewerke\/(?:trockenbau|elektro|sanitaer|fliesen)|vollstaendigkeit\/(?:trockenbau|elektro|sanitaer|fliesen))/
+
+  const ohneGewerk = zeilen.filter(z => gewerkFuerPosition(z.titel, undefined) === undefined)
+  const direkt = ohneGewerk.filter(z => MALER_BODEN.test(z.quellen))
+  const ueberDiktat = ohneGewerk.filter(z => !MALER_BODEN.test(z.quellen) && FREMD.test(z.quellen))
+  const unklar = ohneGewerk.filter(z => !MALER_BODEN.test(z.quellen) && !FREMD.test(z.quellen))
+
+  console.log(`\nTITEL OHNE GEWERK (Themenspeicher 29)`)
+  console.log(`  Engine-Titel insgesamt                        : ${zeilen.length}`)
+  console.log(`  davon ohne Gewerk (Filter greift nicht)       : ${ohneGewerk.length}`)
+  console.log(`  aus einem Maler-/Boden-Modul (direkt erreichbar): ${direkt.length}`)
+  console.log(`  aus Trockenbau/Elektro/SHK/Fliesen-Modul       : ${ueberDiktat.length}`)
+  console.log(`  Quelle nicht zugeordnet                       : ${unklar.length}`)
+  console.log('-'.repeat(72))
+  const zeig = (name, liste) => {
+    if (!liste.length) return
+    console.log(`\n  ${name} (${liste.length})`)
+    for (const z of liste) {
+      const p = z.score === null ? 'KEIN TREFFER (0,00 €)' : `${z.score.toFixed(2)} → ${z.katalogTitel} — ${euro(z.katalogPreis)}`
+      console.log(`    ${z.titel} [${z.einheit}]\n        ${p}\n        ${z.quellen}`)
+    }
+  }
+  // ── Der zweite Teil von Themenspeicher 29: was ein gestrichenes Wort kostet
+  //
+  // Ohne Gewerk sucht der Matcher im GANZEN Katalog (2.374 Zeilen über Dach,
+  // Garten, Schreiner, Abbruch). Gefährlich wird das erst, wenn ein Wort
+  // wegfällt: `Dachschrägen grundieren` → `Dachschrägen` trifft
+  // `Dachschrägenschrank …` zu 650,00 €/m². Hier wird für jeden der
+  // gewerklosen Titel jede Wortauslassung gefahren und die Treffer-Kategorie
+  // gelesen: Landet sie außerhalb von Maler/Boden, ist es ein Fremdgewerk-
+  // Treffer. Gezählt wird der teuerste je Titel.
+  const alleZeilen = DEFAULT_PRICES.map((preis, i) => ({ id: `standard-${i}`, ...preis }))
+  const EIGEN = /^(?:Maler|Boden|Parkett)/i
+  const fremd = []
+  for (const z of ohneGewerk) {
+    const woerter = z.titel.split(/\s+/)
+    if (woerter.length < 2) continue
+    const funde = []
+    for (let i = 0; i < woerter.length; i++) {
+      const kurz = woerter.filter((_, j) => j !== i).join(' ').trim()
+      if (!kurz) continue
+      if (gewerkFuerPosition(kurz, undefined) !== undefined) continue
+      const neu = findePreisposition(kurz, z.einheit, alleZeilen)
+      if (!neu) continue
+      if (EIGEN.test(neu.position.category)) continue
+      funde.push({ wort: woerter[i], kurz, ziel: neu.position, score: neu.score })
+    }
+    if (funde.length) {
+      funde.sort((a, b) => b.ziel.unit_price - a.ziel.unit_price)
+      fremd.push({ ...z, funde })
+    }
+  }
+  fremd.sort((a, b) => b.funde[0].ziel.unit_price - a.funde[0].ziel.unit_price)
+  console.log(`\n  BEIM KÜRZEN IN EIN FREMDES GEWERK (${fremd.length} der ${ohneGewerk.length})`)
+  for (const f of fremd) {
+    console.log(`\n    ${f.titel} [${f.einheit}]`)
+    console.log(`        heute → ${f.katalogTitel ?? 'KEIN TREFFER'}${f.katalogPreis === null ? '' : ' — ' + euro(f.katalogPreis)}`)
+    for (const g of f.funde) {
+      console.log(`        ohne „${g.wort}" → ${g.ziel.title} — ${euro(g.ziel.unit_price)}/${g.ziel.unit} [${g.ziel.category}] Score ${g.score.toFixed(2)}`)
+    }
+  }
+
+  // ── Die zweite Klasse, und die teurere: Titel, die ihr Gewerk VERLIEREN
+  //
+  // (24.09.2026) Mein eigenes Beispiel in Themenspeicher 29
+  // (`Dachschrägen grundieren` → 650,00 €) gehört gar nicht zu den 43: der
+  // Titel HAT ein Gewerk (`grundier` → maler) und verliert es erst durch das
+  // gestrichene Wort. Das ist die gefährlichere Klasse, weil sie jeden Titel
+  // betrifft, nicht nur die 43. Hier gezählt: Wortauslassung → kein Gewerk
+  // mehr → Treffer außerhalb von Maler/Boden.
+  const verlierer = []
+  for (const z of zeilen) {
+    const gewerk = gewerkFuerPosition(z.titel, undefined)
+    if (gewerk === undefined) continue
+    const woerter = z.titel.split(/\s+/)
+    if (woerter.length < 2) continue
+    const funde = []
+    for (let i = 0; i < woerter.length; i++) {
+      const kurz = woerter.filter((_, j) => j !== i).join(' ').trim()
+      if (!kurz) continue
+      if (gewerkFuerPosition(kurz, undefined) !== undefined) continue
+      const treffer = findePreisposition(kurz, z.einheit, alleZeilen)
+      if (!treffer || EIGEN.test(treffer.position.category)) continue
+      funde.push({ wort: woerter[i], ziel: treffer.position, score: treffer.score })
+    }
+    if (funde.length) {
+      funde.sort((a, b) => b.ziel.unit_price - a.ziel.unit_price)
+      verlierer.push({ ...z, gewerk, funde })
+    }
+  }
+  verlierer.sort((a, b) => b.funde[0].ziel.unit_price - a.funde[0].ziel.unit_price)
+  console.log(`\n  VERLIEREN IHR GEWERK DURCH EIN WORT UND LANDEN FREMD (${verlierer.length} von ${zeilen.length})`)
+  for (const v of verlierer) {
+    console.log(`\n    ${v.titel} [${v.einheit}] · heute ${v.gewerk} · ${v.katalogTitel ?? 'KEIN TREFFER'}${v.katalogPreis === null ? '' : ' — ' + euro(v.katalogPreis)}`)
+    for (const g of v.funde) {
+      console.log(`        ohne „${g.wort}" → ${g.ziel.title} — ${euro(g.ziel.unit_price)}/${g.ziel.unit} [${g.ziel.category}] Score ${g.score.toFixed(2)}`)
+    }
+  }
+
+  zeig('AUS EINEM MALER-/BODEN-MODUL — ein Maler oder Bodenleger erreicht sie im Normalbetrieb', direkt)
+  zeig('AUS EINEM FREMDEN MODUL — nur über ein Diktat, das die KI auf dieses Gewerk zieht', ueberDiktat)
+  zeig('QUELLE NICHT ZUGEORDNET', unklar)
+  console.log('')
+}
+
+// ── --vorlage: bewegen die abweichenden Onboarding-Vorlagen Geld?
+//
+// (24.09.2026, Prüfmeister) Platz 3 des Chief of Staff. Engineerings neue
+// Sperrklinke zählt 18 Vorlagenzeilen ohne wortgleichen Katalogtitel; sie ist
+// eine Bestandsaufnahme und behauptet nichts über Geld. Gemessen wird deshalb
+// der Zustand, den der Betrieb wirklich bekommt: `mischeEigenePreise()`
+// (onboarding/[step]/page.tsx Z. 323) legt die ausgefüllten Vorlagen auf den
+// Basiskatalog; was es dort unter `category::title::unit` nicht gibt, kommt
+// als EIGENE Zeile dazu. Genau diese Zeilen stehen danach als Zwilling neben
+// der Katalogzeile — und der Matcher sieht beide. Gefragt ist: wie viele
+// Engine-Titel treffen dadurch eine andere Zeile oder einen anderen Preis?
+if (process.argv.includes('--vorlage')) {
+  const { getPreisvorlagenForGewerke } = await jiti.import(path.join(ROOT, 'src/lib/preise-vorlagen.ts'))
+  const { standardpreiseFuerGewerke, preisSchluessel } = await jiti.import(path.join(ROOT, 'src/lib/default-price-selection.ts'))
+
+  const GEWERKE = ['maler', 'boden_parkett']
+  const basis = standardpreiseFuerGewerke(GEWERKE)
+  const imBasis = new Set(basis.map(preisSchluessel))
+  const vorlagen = getPreisvorlagenForGewerke(GEWERKE)
+    .map(v => ({ category: v.category, title: v.title, unit: v.unit, unit_price: v.defaultPrice }))
+  const zusaetzlich = vorlagen.filter(v => !imBasis.has(preisSchluessel(v)))
+
+  const liste = (extra) => [...basis, ...extra].map((preis, i) => ({ id: `b-${i}`, ...preis }))
+  const ohne = liste([])
+  const mit = liste(zusaetzlich)
+  const nimm = (l, titel) => {
+    const gewerk = gewerkFuerPosition(titel, undefined)
+    return l.filter(preis => preisKategoriePasstZuGewerk(preis.category, gewerk))
+  }
+
+  const bewegt = []
+  for (const z of zeilen) {
+    const a = findePreisposition(z.titel, z.einheit, nimm(ohne, z.titel))
+    const b = findePreisposition(z.titel, z.einheit, nimm(mit, z.titel))
+    const preisA = a?.position.unit_price ?? null
+    const preisB = b?.position.unit_price ?? null
+    const zeileA = a?.position.title ?? null
+    const zeileB = b?.position.title ?? null
+    if (preisA === preisB && zeileA === zeileB) continue
+    bewegt.push({ ...z, a, b, preisA, preisB, zeileA, zeileB, geld: preisA !== preisB })
+  }
+  const mitGeld = bewegt.filter(b => b.geld)
+  const schuldige = new Set(bewegt.map(b => b.zeileB).filter(t => zusaetzlich.some(v => v.title === t)))
+  const schuldigeGeld = new Set(mitGeld.map(b => b.zeileB).filter(t => zusaetzlich.some(v => v.title === t)))
+
+  console.log(`\nONBOARDING-VORLAGE NEBEN DEM KATALOG (CoS-Platz 3)`)
+  console.log(`  Vorlagenzeilen für ${GEWERKE.join(' + ')}          : ${vorlagen.length}`)
+  console.log(`  davon nicht im Basiskatalog → eigene Zeile : ${zusaetzlich.length}`)
+  console.log(`  Engine-Titel, die dadurch anders treffen   : ${bewegt.length}`)
+  console.log(`      davon mit ANDEREM Preis               : ${mitGeld.length}`)
+  console.log(`  abweichende Vorlagenzeilen, die etwas verändern: ${schuldige.size} (davon Geld: ${schuldigeGeld.size})`)
+  console.log('-'.repeat(72))
+  for (const b of bewegt) {
+    console.log(`\n    ${b.titel} [${b.einheit}]`)
+    console.log(`        nur Katalog      : ${b.zeileA ?? 'KEIN TREFFER'}${b.preisA === null ? ' (0,00 €)' : ' — ' + euro(b.preisA)}${b.a ? ' · Score ' + b.a.score.toFixed(2) : ''}`)
+    console.log(`        mit Vorlagenzeile: ${b.zeileB ?? 'KEIN TREFFER'}${b.preisB === null ? ' (0,00 €)' : ' — ' + euro(b.preisB)}${b.b ? ' · Score ' + b.b.score.toFixed(2) : ''}${b.geld ? '   🔴 anderer Preis' : ''}`)
+  }
+  if (!bewegt.length) console.log('\n    Keine. Die abweichenden Vorlagenzeilen bewegen keinen Engine-Titel.')
+  console.log('')
+}

@@ -2368,4 +2368,44 @@ je jemand sagt, die sei sicher: sie ist es nicht, sie ist nur heute wortgleich.
 *Prüfmeister · 2026-09-23*
 
 
-<!-- ENDE DER DATEI — letzte Notiz ist PD-028. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->
+---
+
+## PD-029 — Die drei Titel, für die du bewusst nichts vorgeschlagen hast, haben jetzt einen Wortlaut (24.09.2026)
+
+Du hattest in DC-148 recht und hast für die drei **bewusst nichts
+vorgeschlagen** — es war eine Katalogfrage, nicht deine. Sie ist gemessen, und
+das Ergebnis geht dich nur an einer Stelle etwas an, deshalb nur kurz:
+
+| alt | **neu** | Preis |
+|---|---|---|
+| `Isoliergrund gegen Nikotin / Ruß / Wasserflecken` | `Isoliergrund gegen Nikotin, Ruß und Wasserflecken` | 9,00 €/m² unverändert |
+| `Boden schützen / Abdeckfolie` | `Boden schützen` | 1,20 €/m² unverändert |
+| `Betonwände schleifen / Untergrundvorbereitung` | `Betonwände schleifen` | 5,50 €/m² unverändert |
+
+**Zwei der drei waren gar keine Katalogzeilen** — nur Engine-Titel, die eine
+anders lautende Zeile fuzzy treffen. Für sie hättest du also doch etwas
+vorschlagen dürfen; dass du es nicht getan hast, hat nichts gekostet, weil die
+Messung ohnehin gebraucht wurde.
+
+**Die eine Stelle, an der es dich betrifft:** Beim Bodenschutz gewinnt nicht
+die schönere Fassung, sondern die, die im Produkt schon steht. `Boden abdecken
+— mit Folie` trifft denselben Preis genauso gut — aber die Maler-Engine
+schreibt an drei Stellen längst `Boden schützen — <Raum>`. Zwei Namen für
+dieselbe Arbeit auf demselben Kundenpapier wären schlimmer als ein
+Schrägstrich. **Für deine nächste Umbenennungsrunde heißt das: der Katalog ist
+nicht die einzige Fläche, auf der ein Titel steht.** Wenn du einen Titel
+vorschlägst, sag mir welchen Namen die Engine dafür sonst noch benutzt — oder
+frag, dann messe ich es.
+
+Und ein Nachtrag zu PD-028 Punkt 3 (ein hoher Score schützt nicht): er gilt
+auch in die andere Richtung. `Dachschrägen grundieren` steht sauber auf
+seiner Grundierungs-Zeile, 4,50 €/m². Ohne das Wort „grundieren" trifft
+`Dachschrägen` einen **Schreiner**-Einbauschrank zu **650,00 €/m²** — weil der
+Titel dann in gar kein Gewerk mehr routet und im ganzen Katalog gesucht wird.
+44 der 184 Titel verhalten sich so. Das ist kein Argument gegen Umbenennen, es
+ist das Argument für R5.
+
+*Prüfmeister · 2026-09-24*
+
+
+<!-- ENDE DER DATEI — letzte Notiz ist PD-029. Fehlt hier etwas, ist die Datei abgeschnitten worden: nicht weiterschreiben, sondern dem Chief of Staff melden. -->

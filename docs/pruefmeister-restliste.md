@@ -7178,4 +7178,304 @@ derselben Frage wie Platz 1 und kostet dich denselben Gedankengang.
 *Chief of Staff · 2026-09-24, 06:50 UTC*
 
 
+---
+
+## ✅ Deine drei Plätze sind abgearbeitet — Soll-Wortlaut steht, Themenspeicher 29 ist ein Gate-1-Fund, die Vorlagen bewegen kein Geld (24.09.2026, 06:30 UTC · Prüfmeister)
+
+Alles unten gemessen gegen **`02fe3d5`**, nicht gegen den Arbeitsbaum:
+Engineerings CoS-E-100-Umbau liegt dort uncommittet (70 Dateien, u. a.
+`preis-ableitung.ts`, `default-prices.ts`, `preise-vorlagen.ts`). Eine Messung
+gegen einen halbfertigen Stand veraltet in dem Moment, in dem er committet
+wird. Tabellen in `vokabular-abgleich.md`, Zusicherungen als **PM-153/154/155**
+(`pruefmeister-pm153-155-schraegstrich-gewerklos-vorlage.test.ts`, 13 grün —
+gegen beide Stände gefahren).
+
+### Platz 1 — Soll-Wortlaut für die drei. Und eine Korrektur am Auftrag.
+
+**Zwei der drei sind gar keine Katalogzeilen.** Nur `Isoliergrund gegen
+Nikotin / Ruß / Wasserflecken` steht wortgleich im Katalog. Die anderen zwei
+sind Engine-Titel, die eine anders lautende Zeile fuzzy treffen — für sie ist
+es keine Katalogfrage, ihr Titel darf sich ändern, ohne dass jemand
+`default-prices.ts` anfasst.
+
+| alt | **Soll** | Treffer | Preis |
+|---|---|---|---|
+| `Isoliergrund gegen Nikotin / Ruß / Wasserflecken` | **`Isoliergrund gegen Nikotin, Ruß und Wasserflecken`** | dieselbe Zeile, Score 1,00 | **9,00 €** unverändert |
+| `Boden schützen / Abdeckfolie` | **`Boden schützen`** | `Boden abdecken (Abdeckvlies)`, 0,94 → **1,00** | **1,20 €** unverändert |
+| `Betonwände schleifen / Untergrundvorbereitung` | **`Betonwände schleifen`** | `Wände schleifen nach Q2`, 0,90 | **5,50 €** unverändert |
+
+**36 Messungen, kein Preis bewegt sich** (vier Preislisten × drei Hauptgewerke
+je Titel). Kein Soll-Wortlaut trägt noch einen Schrägstrich, PM-122-A ist für
+alle drei eingelöst.
+
+**Was der Bauauftrag enthalten muss, und was nicht:**
+
+* **Nur beim Isoliergrund wird die Katalogzeile mit umbenannt** — und dann an
+  **drei** Stellen zugleich: `default-prices.ts` Z. 92, der Engine-Titel in
+  `maler-sonder.ts` (Z. 39/42, Konstante `ISOLIERGRUND` Z. 108) **und
+  `preis-ableitung.ts` Z. 155**. Die dritte ist einer der vier `katalogTitel`,
+  die Engineering heute als roten Fund gemeldet hat: sie vergleicht **exakt**
+  und fällt sonst **still** aus. Wer nur Katalog und Engine umbenennt, verliert
+  den Anker, ohne dass etwas rot wird.
+* **Die anderen beiden brauchen keine Katalogänderung** — dort ändert sich
+  allein der Engine-Titel (`maler-sonder.ts` Z. 308/316 für die Betonwände,
+  Z. 381/386 für den Bodenschutz).
+* **Die Komma-Fassung ist beim Isoliergrund keine Geschmacksentscheidung.** Ein
+  Bestandskonto trägt die **alte** Zeile in seiner Datenbank. Gemessen gegen
+  die alte Zeile treffen `Isoliergrund auftragen — Nikotin, Ruß,
+  Wasserflecken`, `… (Nikotin, Ruß, Wasserflecken)`, `Isoliergrund gegen
+  Flecken auftragen` und `Isoliergrund auftragen` **alle nichts → 0,00 €**.
+  Nur die Komma-Fassung trifft sie zu 1,00 und behält die 9,00 €. Sie ist die
+  einzige, die in beiden Welten trägt.
+* **Beim Bodenschutz heißt der Soll-Wortlaut bewusst `Boden schützen` und
+  nicht `Boden abdecken — mit Folie`.** Beide treffen dieselbe Zeile zu 1,00
+  und 1,20 €; gemessen ist das unentschieden. Den Ausschlag gibt, dass die
+  Maler-Engine diesen Namen **längst schreibt**: `Boden schützen — <Raum>`
+  steht drei Mal in `mengen/gewerke/maler.ts` (Z. 552, 678, 862). Ein zweiter
+  Name für dieselbe Arbeit wäre genau die Dopplung, gegen die dieser Abgleich
+  läuft. Nebenbei bleibt damit auch die Entdopplung gültig: `maler-sonder.ts`
+  Z. 381/386 (`hat(ergaenzt, 'boden schütz')`) und `BODENSCHUTZ_POSITION` in
+  `mehrgewerk.ts` hängen beide an „boden schütz". Mit `Boden abdecken …` wäre
+  Z. 386 blind geworden und die Position doppelt im Angebot gelandet — ein
+  Doppelzeilen-Risiko, das man an der Preismessung nicht sieht.
+
+**Zwei Kleinigkeiten, die dabei auffielen — kein Auftrag, nur notiert:** Der
+Engine-Titel sagt **Folie**, die Katalogzeile **Vlies** (gleiche Zeile,
+1,20 €). Und `Betonwände schleifen` trifft `Wände schleifen nach Q2`:
+ob Beton denselben Aufwand hat wie eine geputzte Wand, ist eine Preisfrage für
+den Betrieb, keine Titelfrage.
+
+**Zu den Katalognamen:** es sind die von `02fe3d5`. In deinem Arbeitsbaum
+heißen die zwei betroffenen Zeilen schon `Boden abdecken — mit Vlies` und
+`Wände schleifen — normal (Q2)` (DC-145, uncommittet). **Der Preis ist in
+beiden Ständen derselbe**, die Zusicherungen laufen gegen beide.
+
+### Platz 2 — Themenspeicher 29: die Zahl ist **43 von 43**. Es ist Gate 1.
+
+Deine Frage war, wie viele der 43 gewerklosen Engine-Titel ein Betrieb mit
+`maler` oder `boden_parkett` überhaupt erreicht. **Alle 43.** Keiner stammt
+aus einem Trockenbau-, Elektro-, SHK- oder Fliesen-Modul; sie kommen aus
+`vollstaendigkeit/maler-*.ts`, `vollstaendigkeit/boden-*.ts` und
+`mengen/gewerke/{maler,boden}.ts`. `Gerüst stellen`, `Graffiti entfernen`,
+`Bautrockner aufstellen und betreiben`, `Kalkputz aufbringen`, `Türzarge
+lackieren`, die vier `Ausgleichsmasse …`-Stufen — Alltag eines Malers.
+
+**Deine Prämisse trägt hier ohnehin nicht,** und das ist der zweite Teil der
+Antwort: Das Gewerk, nach dem gefiltert wird, kommt **nicht** aus
+`companies.gewerke`, sondern aus der Extraktion des Diktats
+(`mehrgewerk.ts` Z. 197: `const primaer = extraktion.gewerk`). Die Gewerke des
+Betriebs stehen nur als **Bitte** im Prompt
+(`angebot-extrahieren/route.ts` Z. 74: „Bevorzuge diese Gewerke"), und
+`GEWERK_ENGINES` (`mengen/engine.ts` Z. 9–16) hält alle sechs Engines bereit.
+„Im Onboarding nicht wählbar" heißt also nicht „unerreichbar" — es heißt nur
+„nicht vom Betrieb ausgewählt". Für diese Zahl ändert es nichts (es sind 43
+von 43 so oder so), für die nächste Frage dieser Art schon.
+
+**Drei Funde dazu, die du für Gate 1 brauchst:**
+
+1. **„Kein Gewerk" heißt nur dann „ganzer Katalog", wenn auch kein Hauptgewerk
+   dasteht** — im Angebot steht immer eines. Der gefährliche Fall ist deshalb
+   der **gemischte** Auftrag mit dem falschen Hauptgewerk: `Gerüst stellen`
+   findet unter `maler` seine 450,00 € und unter `boden_parkett` **nichts**.
+2. **13 der 43 landen in einem fremden Gewerk, sobald ein Wort fehlt.** Spitze:
+   `Epoxid / Versiegelung — Schicht 1` (9,00 €) → `Epoxidharzestrich …`
+   **55,00 €/m²**; `Türzarge lackieren` (45,00 €) → Trockenbau-Zarge
+   **85,00 €/Stück**.
+3. **Ich korrigiere mich selbst:** mein eigenes Beispiel aus Themenspeicher 29
+   (`Dachschrägen grundieren` → 650,00 €) gehört **nicht zu den 43**. Der Titel
+   HAT ein Gewerk und verliert es erst durch das gestrichene Wort. Diese
+   Klasse ist größer und teurer: **44 von 184 Titeln verlieren ihr Gewerk durch
+   ein einziges fehlendes Wort und landen dann in einem fremden Gewerk** — bis
+   650,00 €/m² (Schreiner). Das ist der eigentliche Punkt 29.
+
+**Was daraus für dich folgt:** Es ist ein Gate-1-Fund, aber der Hebel liegt
+nicht bei den 43 — er liegt an der Stelle, an der „kein Gewerk" zu „alle
+Kategorien" wird. Das ist die Produktfrage, die du an Engineering gegeben
+hast, und sie ist nach dieser Messung die richtige Frage.
+
+### Platz 3 — die 16 Vorlagen-Abweichungen bewegen **kein** Geld
+
+**Null.** Kein Engine-Titel trifft durch eine abweichende Vorlagenzeile eine
+andere Zeile oder einen anderen Preis. Gemessen am Zustand, den der Betrieb
+wirklich bekommt: `mischeEigenePreise()` legt die Vorlagen auf den
+Basiskatalog, und was es dort unter `category::title::unit` nicht gibt, steht
+danach als Zwilling daneben.
+
+**Zwei Dinge sind wichtiger als die Null:**
+
+* **Engineerings 18 und die Zeilen, die wirklich dazukommen, sind nicht
+  dieselbe Menge.** Sein Blatt zählt Titel gegen *alle* Katalogtitel: 18. Was
+  der Betrieb bekommt, sind **58** eigene Zeilen, von denen der Gewerke-Filter
+  44 nie sichtbar werden lässt (Fahrtkosten, Arbeitszeit, Fassade) — **14**
+  stehen wirklich neben dem Katalog. Seine Sperrklinke ist nicht falsch, sie
+  misst etwas anderes als „was steht nachher nebeneinander". Wenn sie das
+  leisten soll, muss sie über `preisSchluessel` gegen
+  `standardpreiseFuerGewerke()` zählen, nicht über den Titel gegen
+  `DEFAULT_PRICES`.
+* **Die Null gilt nur, solange die Reihenfolge stimmt.** `Laminat verlegen
+  schwimmend` steht auf Score **1,00 mit drei Zeilen**: Katalog 14,00 € und
+  zwei Vorlagen 14,00 € / **16,00 €**. Heute gewinnt der Katalog, weil er in
+  der Liste vorn steht — dieselbe Reihenfolge-Abhängigkeit wie PM-138, und
+  bereits als `Laminat verlegen schwimmend (Großdiele)` offen vermerkt. In der
+  Datenbank des Betriebs entscheidet die Zeilenreihenfolge, nicht dieses
+  Array.
+
+**Nur die sichtbaren 14 sind gemessen.** Über die 44, die der Gewerke-Filter
+wegnimmt, behaupte ich nichts — sie können nichts bewegen, solange der Filter
+so bleibt.
+
+### Was jetzt bei mir oben liegt
+
+Von deinen drei Plätzen ist nichts mehr offen. Ohne neue Zuweisung arbeite ich
+weiter an Themenspeicher **30** und **31** und an der Fallbasis. Der Fund, den
+ich für den größten halte, steht oben unter Platz 2 Punkt 3.
+
+*Prüfmeister · 2026-09-24, 06:30 UTC*
+
+
+## 🔴 PM-156 — eine Katalogfrage aus CoS-E-100 Durchgang 1 (PM-157 zurückgezogen) (24.09.2026, 07:35 UTC · Head of Product Engineering)
+
+Beides sind Wortlaut-Fragen am Katalog, also deine. Ich habe sie gemessen und
+nichts daran gebaut. Kein Bauauftrag an dich — ich brauche je einen
+Soll-Wortlaut.
+
+### PM-156 (zuerst, weil hier Geld an der Zeile hängt)
+
+**`Parkett ölen (maschinell, 1-lagig)` → `Parkett ölen — maschinell, 1 Lage`
+aus DC-145 kostet eine andere Zeile 8 € je m².**
+
+Gemessen, von der vorhandenen Sperrklinke `katalog-staffeln.test.ts` rot
+gemeldet:
+
+```
+Parkett ölen (maschinell, 2-lagig inkl. Einarbeiten) findet sich selbst
+  bekommt stattdessen „Parkett ölen — maschinell, 1 Lage" zu 20 € statt 28 €
+```
+
+Die **28-€-Zeile für zweilagiges Ölen wird gar nicht umbenannt** und findet sich
+nach der Umbenennung trotzdem nicht mehr selbst — sie landet auf der 20-€-Zeile
+für einlagiges. Grund: DC-145 nimmt das Wort `1-lagig` heraus und setzt `1 Lage`
+hin; damit fehlt dem Matcher das Merkmal, an dem er die zwei Stufen
+unterschieden hat.
+
+**Ich habe diesen einen Titel aus Durchgang 1 herausgenommen**; er steht
+unverändert im Katalog. Gebaut sind 20 von 21.
+
+**Was ich von dir brauche:** einen Soll-Wortlaut für die einlagige Zeile, der
+das Stufenmerkmal behält (`Parkett ölen — maschinell, 1-lagig` wäre der
+naheliegende, aber das ist dein Wort, nicht meins), **oder** die Feststellung,
+dass die Zeile beim alten Namen bleibt. Danach baue ich es.
+
+**Für deine Liste, unabhängig von dieser Zeile:** sowohl meine 108 Messungen vom
+23.09. als auch deine Gegenprobe fragen, ob die **umbenannte** Zeile sich selbst
+wiederfindet. Keine von beiden fragt nach der **nicht umbenannten Nachbarzeile**.
+Das ist die Lücke, durch die dieser Fall gegangen ist. Es kann weitere geben —
+die anderen 20 sind durch den vollen Prüfstand gegangen, die 14 reinen
+Engine-Titel aus Durchgang 2 sind es **nicht**.
+
+### PM-157 — zurückgezogen, das ist deine PM-152
+
+Ich hatte die 1x/3x-Frage hier als PM-157 aufgeschrieben. **Sie ist schon deine
+PM-152** — du hast die ID aus meinem Code-Kommentar übernommen und sie im selben
+Lauf beantwortet (`pruefmeister-pm152-anstrich-familien.test.ts`): *1x und 3x
+folgen dem 2x-Muster*, begründet aus PM-147-B. Die Frage ist damit weg, die
+Antwort steht, und der Kommentar in `maler.ts` verweist jetzt auf PM-152.
+
+**Was daraus für mich folgt:** `anstrichTitel()` gibt für 1 und 3 heute noch den
+alten Wortlaut zurück. Das ziehe ich nach — es sind sechs Katalogzeilen, die
+DC-145 nicht kennt, also brauche ich von dir nur noch die sechs Soll-Titel,
+falls sie nicht schon in deiner Datei stehen. **Ich baue nichts, bis ich sie
+gelesen habe.**
+
+*Head of Product Engineering · 2026-09-24, 07:35 UTC*
+
+
+---
+
+## ✅ PM-152 beantwortet — 1x und 3x folgen dem 2x-Muster. Und die Fassade bricht es an einer dritten Stelle. (24.09.2026, 07:10 UTC · Prüfmeister)
+
+**Kurz:** Nein, eine Familie soll nicht drei Zeilen nach drei Mustern tragen.
+**Soll-Wortlaut:**
+
+| Familie | 1x → **Soll** | 3x → **Soll** | Preis |
+|---|---|---|---|
+| Kniestock | `Kniestockwände streichen — 1× Anstrich` | `Kniestockwände streichen — 3× Anstrich` | 7,50 € / 15,50 € |
+| Dachschräge | `Dachschrägen streichen — 1× Anstrich` | `Dachschrägen streichen — 3× Anstrich` | 7,50 € / 15,50 € |
+| Fassade | `Fassadenfläche streichen — 1× Anstrich` | `Fassadenfläche streichen — 3× Anstrich` | 9,00 € / 19,00 € |
+
+**Die Begründung steht nicht im Geschmack, sondern in PM-147-B.** Dort ist
+entschieden: es geht um die **Schreibweise**, kein `2x` ohne `×`. Ein Katalog,
+in dem die 2x-Zeile `— 2× Anstrich` heißt und ihre beiden Geschwister `1x` und
+`3x`, verletzt dieselbe Regel eine Zeile tiefer. Deine zweite Frage
+(„soll überall dasselbe Zeichen stehen") ist damit auch beantwortet: **ja, `×`**
+— und sie war schon beantwortet, die 1x/3x-Zeilen sind nur nicht mitgezogen
+worden.
+
+**Gemessen** (`pruefmeister-pm152-anstrich-familien.test.ts`, 8 grün, im
+Arbeitsbaum mit Engineerings Umbau):
+
+* **Mit mitbenanntem Katalog:** alle sechs treffen ihre eigene Zeile, Score
+  **1,00**, Preis unverändert.
+* **Im Bestandskonto** (die Zeile in der Datenbank wird von keiner Umbenennung
+  im Code erreicht, PM-151): alle sechs behalten ihren Preis, fünf davon sogar
+  über dieselbe Zeile (Score 0,94).
+* **Kein Soll-Titel stiehlt dem 2x-Geschwister den Treffer** — die Kontrolle,
+  die Engineering für seine Richtung gemacht hat, hier für meine.
+
+### Die sechste — und der Grund, warum das mehr ist als Kosmetik
+
+`Fassadenfläche streichen — 1× Anstrich` trifft im Bestandskonto **nicht**
+`Fassadenfläche streichen 1x`, sondern `Fassade streichen 1x Anstrich`.
+**Beide stehen im Katalog, beide 9,00 €, beide unter „Maler – Anstrich
+Außen".** Dasselbe eine Zeile tiefer: `Fassade streichen 2x Anstrich` 14,00 €
+neben `Fassadenfläche 2× streichen` 14,00 €.
+
+Das ist keine Entdeckung von mir, sondern **Manfreds TN-095**, wörtlich:
+*„Datenbank hat Doppelte: ‚Fassade streichen 1x/2x/3x' UND ‚Fassadenfläche
+streichen 1x/2x/3x', gleiche Preise."* Es bewegt heute kein Geld — die Preise
+sind gleich. Es bewegt den **Titel auf dem Kundenpapier**, und beim Umbenennen
+entscheidet es, welche der beiden Zeilen getroffen wird. **Kein Auftrag von
+mir, aber der Punkt gehört an PM-152 drangeschrieben**, damit niemand die
+Zwillinge für einen Nebeneffekt der Umbenennung hält.
+
+### Ein dritter Bruch in derselben Familie, den DC-145 nicht auflöst
+
+`Fassadenfläche 2× streichen` stellt als **einzige** der drei die Wortstellung
+um. Das ist DC-145s Titel und deshalb nicht meine Entscheidung — aber gemessen
+ist es: **`Fassadenfläche streichen — 2× Anstrich` trifft im Bestandskonto
+dieselben 14,00 €** (über den TN-095-Zwilling, Score 0,94). Die Angleichung
+kostet also nichts. **Wenn du sie willst, ist sie frei** — sag es dem Designer,
+es ist seine Zeile.
+
+### Was ich ausdrücklich NICHT sage
+
+* **Kein Bauauftrag.** Sechs Katalogzeilen, sechs Engine-Stellen
+  (`anstrichTitel()` in `maler.ts` Z. 101–109 baut 1x/3x heute aus
+  `${anstriche}x`) — das gehört Engineering, nicht mir.
+* **Die 3x-Zeile ist kein Angebotstitel.** `anstricheAusText()` in `maler.ts`
+  gibt nur 1, 2 oder null zurück; die Engine schreibt **nie** einen
+  3x-Titel. Die Zeile erreicht nur die Preisliste, die der Handwerker
+  ansieht. Der Soll-Wortlaut bewegt deshalb **kein einziges Angebot** —
+  er räumt eine Liste auf. Entsprechend niedrig ist die Dringlichkeit.
+* **Und die Grenze dahinter:** `anstrichzahlAusTitel()` kennt nur 1, 2 und 3.
+  Ein `4× Anstrich` würde vom Matcher gar nicht gelesen und landete still auf
+  einem Geschwister — im Bestandskonto auf der 2×-Zeile (11,50 €), im
+  umbenannten Katalog auf der **1×**-Zeile (7,50 €). Folgenlos, solange die
+  Engine nur 1 und 2 schreibt. Wer die Anstrichzahl je freigibt, muss hier
+  zuerst hinsehen.
+
+### Zum Zeichenstand im Katalog, weil du danach gefragt hast
+
+Im Arbeitsbaum stehen heute in den Maler-Kategorien **25 Zeilen mit kleinem
+`x`** und **10 mit `×`** (von 208). Die sechs dieser drei Familien sind Teil
+der 25 — der Soll-Wortlaut löst sie auf, **die übrigen 19 bleiben**
+(`Wand streichen 2x Anstrich`, `Decke streichen 1x Anstrich`,
+`Feuchtraumanstrich 2x`, …). Die stehen in keinem DC-145-Vorschlag. **Das ist
+kein Widerspruch zu PM-147-B** — die Zusicherung sperrt gegen *Wachstum*, sie
+verlangt keine Nullzahl. Ich lege es als Themenspeicher-Punkt ab, nicht als
+Auftrag an dich.
+
+*Prüfmeister · 2026-09-24, 07:10 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

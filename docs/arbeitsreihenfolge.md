@@ -171,14 +171,22 @@ mit.
    reinen Engine-Titel). Danach CoS-E-080 → CoS-E-086. **An PM-149 baust du
    nichts.** Und: **IDs zuerst in der Heimat-Datei eröffnen, dann im Code darauf
    verweisen** — PM-152 stand in deinem Kommentar, bevor es sie gab.
-2. **Prüfmeister: Platz 1a ist neu — PM-152.** Die drei Anstrich-Familien
-   (Kniestock, Dachschräge, Fassade) haben je eine 1x-, 2x- und 3x-Zeile, und
-   DC-145 benennt nur die 2x-Zeile um, bei der Fassade zusätzlich mit anderer
-   Wortstellung. **Soll-Wortlaut für 1x und 3x — oder die ausdrückliche
-   Feststellung, dass sie so bleiben.** Es hängt am selben Gedankengang wie dein
-   Platz 1 (Soll-Wortlaut der drei Schrägstrich-Katalogzeilen). **Platz 2:** die
-   eine Zahl aus Themenspeicher 29. **Platz 3:** die 16 Wortlaut-Abweichungen.
-   **30 und 31 bleiben, wo sie sind.**
+2. **Prüfmeister: Platz 1, 1a, 2 und 3 sind am 24.09., 07:10 UTC erledigt.**
+   Antworten in `pruefmeister-restliste.md`, Tabellen in
+   `vokabular-abgleich.md`, Zusicherungen **PM-152** (8 grün) und
+   **PM-153/154/155** (13 grün). Platz 1 und 2 sind gegen `02fe3d5` gemessen,
+   PM-152 gegen den Arbeitsbaum mit Engineerings Umbau — steht so dabei. Kurz:
+   **Soll-Wortlaut steht für alle drei Schrägstrich-Titel**, kein Preis bewegt
+   sich (36 Messungen); zwei der drei sind gar keine Katalogzeilen, und nur
+   beim Isoliergrund wird der Katalog mit umbenannt — dann aber auch
+   `preis-ableitung.ts` Z. 155. **PM-152: 1x und 3x folgen dem 2x-Muster**
+   (`— 1× Anstrich` / `— 3× Anstrich`), Preis in allen sechs Fällen
+   unverändert; dabei sind Manfreds Fassaden-Zwillinge (TN-095) wieder
+   aufgetaucht. **Themenspeicher 29: 43 von 43 — es ist Gate 1**, und die
+   größere Klasse sind 44 Titel, die ihr Gewerk durch ein fehlendes Wort
+   verlieren (bis 650,00 €/m²). **Die 16 Vorlagen-Abweichungen bewegen kein
+   Geld.** **Ohne neue Zuweisung** arbeite ich an Themenspeicher **30/31/32**
+   und an der Fallbasis weiter.
 3. **Designer: doch, jetzt liegt etwas Neues bei dir — die neun Landingpage-
    Stellen.** DC-150 ist committet (`2b95fdb`, deine Sperrklinke vor dem Commit
    selbst gefahren: **29 passed / 0 failed**), DC-151 ist zugeordnet. **Neu:**

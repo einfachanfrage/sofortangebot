@@ -3007,4 +3007,215 @@ Kontrollzeilen, die die Messung live fahren, nicht ihr Ergebnis abschreiben.
 *Prüfmeister · 2026-09-23*
 
 
+---
+
+## Nachtrag 24.09.2026 — Soll-Wortlaut für die drei Schrägstrich-Titel, die Titel ohne Gewerk, und die Onboarding-Vorlage
+
+**Gemessen gegen `02fe3d5`**, nicht gegen den Arbeitsbaum: dort liegt
+Engineerings CoS-E-100-Umbau uncommittet (70 Dateien), und eine Messung gegen
+einen halbfertigen Stand veraltet in dem Moment, in dem er committet wird.
+Nachfahrbar mit `node scripts/vokabular-abgleich.mjs --gewerklos` und
+`--vorlage`. Hinterlegt als **PM-153/154/155** in
+`src/lib/__tests__/pruefmeister-pm153-155-schraegstrich-gewerklos-vorlage.test.ts`
+(13 Zusicherungen, grün — auch gegen den Arbeitsbaum gefahren).
+
+### 1. Die drei Schrägstrich-Titel: zwei davon sind gar keine Katalogzeilen
+
+Der Auftrag hieß „Soll-Wortlaut für die drei Schrägstrich-**Katalogzeilen**".
+Das Erste, was die Messung sagt: **nur einer der drei steht überhaupt im
+Katalog.** Die anderen zwei sind Engine-Titel, die eine anders lautende
+Katalogzeile fuzzy treffen — für sie ist es keine Katalogfrage, ihr Titel darf
+sich ändern, ohne dass jemand `default-prices.ts` anfasst.
+
+| Engine-Titel heute | eigene Katalogzeile? | trifft heute | Preis |
+|---|---|---|---|
+| `Isoliergrund gegen Nikotin / Ruß / Wasserflecken` | **ja**, wortgleich | sich selbst (Score 1,00) | 9,00 €/m² |
+| `Boden schützen / Abdeckfolie` | nein | `Boden abdecken (Abdeckvlies)` (0,94) | 1,20 €/m² |
+| `Betonwände schleifen / Untergrundvorbereitung` | nein | `Wände schleifen nach Q2` (0,90) | 5,50 €/m² |
+
+**Der Soll-Wortlaut, gemessen:**
+
+| alt | **neu** | Treffer nachher | Preis | Score |
+|---|---|---|---|---|
+| `Isoliergrund gegen Nikotin / Ruß / Wasserflecken` | **`Isoliergrund gegen Nikotin, Ruß und Wasserflecken`** | dieselbe Zeile | **9,00 €** unverändert | 1,00 → 1,00 |
+| `Boden schützen / Abdeckfolie` | **`Boden schützen`** | dieselbe Zeile | **1,20 €** unverändert | 0,94 → **1,00** |
+| `Betonwände schleifen / Untergrundvorbereitung` | **`Betonwände schleifen`** | dieselbe Zeile | **5,50 €** unverändert | 0,90 → 0,90 |
+
+**36 Messungen, kein Preis bewegt sich:** je Titel vier Preislisten (Maler,
+Boden, Maler+Boden, Allrounder) × drei Hauptgewerke (keines, `maler`,
+`boden_parkett`). Die Hauptgewerke stehen dabei, weil `gewerkFuerPosition`
+erst auf das Hauptgewerk zurückfällt, wenn keine eigene Regel greift — ein
+Wortlautwechsel kann genau diesen Rückfall auslösen (die Kette aus
+PM-117/PM-148). Er tut es bei keinem der drei.
+
+**Warum beim Isoliergrund ausgerechnet die Komma-Fassung und keine schönere.**
+Für ihn — und nur für ihn — muss die **Katalogzeile mit umbenannt werden.** Ein
+Bestandskonto trägt aber die **alte** Zeile in seiner Datenbank, und die wird
+nicht mit umbenannt. Gemessen gegen die alte Zeile:
+
+| Fassung | trifft im Bestandskonto |
+|---|---|
+| `Isoliergrund auftragen — Nikotin, Ruß, Wasserflecken` | **nichts → 0,00 €** |
+| `Isoliergrund auftragen (Nikotin, Ruß, Wasserflecken)` | **nichts → 0,00 €** |
+| `Isoliergrund gegen Flecken auftragen` | **nichts → 0,00 €** |
+| `Isoliergrund auftragen` | **nichts → 0,00 €** |
+| **`Isoliergrund gegen Nikotin, Ruß und Wasserflecken`** | **9,00 €, Score 1,00** |
+
+Die vier oberen Fassungen sehen besser aus. Sie kosten einen
+Bestandskunden still 9,00 €/m². **Die Komma-Fassung ist die einzige, die
+PM-122-A einlöst und den Preis in beiden Welten behält** — im umbenannten
+Katalog wie im alten Konto. Das ist derselbe Befund wie PM-151, nur an dem
+Titel, für den er zum ersten Mal etwas ändert.
+
+**Warum beim Bodenschutz `Boden schützen` und nicht `Boden abdecken — mit
+Folie`.** Beide treffen dieselbe Zeile zu 1,00 und 1,20 €; gemessen ist das
+unentschieden. Den Ausschlag gibt, dass **die Maler-Engine diesen Namen längst
+schreibt**: `Boden schützen — <Raum>` steht drei Mal in `mengen/gewerke/maler.ts`
+(Z. 552, 678, 862), dazu in `chips-vervollstaendigung.ts`. Ein zweiter Name für
+dieselbe Arbeit wäre genau die Dopplung, gegen die dieser Abgleich überhaupt
+läuft — Manfreds Satz über „Nikotinsperre UND Sperranstrich unter deinen
+Preisen", nur an der Engine statt an der Preisliste. Zusätzlich bleibt die
+Entdopplung in `mehrgewerk.ts` (`BODENSCHUTZ_POSITION`, an `boden schütz`
+festgemacht) ohne Änderung gültig.
+
+**Was dabei nebenbei auffiel und keine Umbenennungsfrage ist:** Der Engine-Titel
+sagt **Folie**, die Katalogzeile **Vlies** — gleiche Zeile, 1,20 €/m². Das ist
+kein Preisfehler, aber zwei Materialien in einem Wortpaar. Und
+`Betonwände schleifen` trifft `Wände schleifen nach Q2`: ob Beton denselben
+Aufwand hat wie eine geputzte Wand, ist eine Preisfrage für den Betrieb, keine
+Titelfrage. Beides steht in der Restliste, nicht hier als Auftrag.
+
+**Zu den Katalognamen oben:** sie sind die von `02fe3d5`. In Engineerings
+uncommittetem Arbeitsbaum heißen dieselben zwei Zeilen bereits
+`Boden abdecken — mit Vlies` und `Wände schleifen — normal (Q2)` (DC-145).
+**Der Preis ist in beiden Ständen derselbe**, und die Zusicherungen sind gegen
+beide gefahren.
+
+**Ein reiner Bodenleger** bekommt alle drei zu 0,00 € — vorher wie nachher.
+Unverändert, aber festgehalten, damit die Umbenennung später nicht für diese
+Lücke verantwortlich gemacht wird.
+
+### 2. Die Titel ohne Gewerk (Themenspeicher 29) — die Antwort ist 43 von 43
+
+Die Frage des Chief of Staff war: *wie viele der 43 gewerklosen Engine-Titel
+erreicht ein Betrieb mit `maler` oder `boden_parkett` überhaupt?* Seine
+Vermutung dahinter: die meisten kämen aus Trockenbau, Elektro oder SHK und
+seien deshalb für einen Maler unerreichbar — also kein Gate-1-Punkt.
+
+**Gemessen: alle 43 stammen aus einem Maler- oder Boden-Modul. Keiner aus
+Trockenbau, Elektro, SHK oder Fliesen.** Es ist ein Gate-1-Fund.
+
+```
+Engine-Titel insgesamt                          : 184
+davon ohne Gewerk                               :  43
+aus einem Maler-/Boden-Modul (direkt erreichbar):  43
+aus Trockenbau/Elektro/SHK/Fliesen-Modul        :   0
+```
+
+Sie kommen aus `vollstaendigkeit/maler-*.ts`, `vollstaendigkeit/boden-*.ts`
+und `mengen/gewerke/{maler,boden}.ts` — `Gerüst stellen`, `Graffiti
+entfernen`, `Bautrockner aufstellen und betreiben`, `Kalkputz aufbringen`,
+`Türzarge lackieren`, die vier `Ausgleichsmasse …`-Stufen, `Fugen fräsen`.
+Alltag eines Malers, kein Sonderfall.
+
+**Eine Verschärfung der Frage, die im Speicher noch nicht steht:** „kein
+Gewerk" heißt nur dann „ganzer Katalog", wenn auch **kein Hauptgewerk**
+dasteht. Im Angebot steht immer eines. Der gefährliche Fall ist deshalb nicht
+der reine Malerauftrag, sondern der **gemischte**, in dem das Hauptgewerk das
+falsche ist: `Gerüst stellen` findet mit Hauptgewerk `maler` seine 450,00 € —
+und mit Hauptgewerk `boden_parkett` **nichts**. Gemessen, PM-154-B.
+
+**13 der 43 landen in einem fremden Gewerk, sobald ein Wort fehlt:**
+
+| Titel | ohne dieses Wort | landet auf | statt |
+|---|---|---|---|
+| `Epoxid / Versiegelung — Schicht 1` und `— Schicht 2` | „Versiegelung" | `Epoxidharzestrich …` **55,00 €/m²** [Estrich] | 9,00 € |
+| `Türzarge lackieren` | „lackieren" | `Türzarge / Türblatt integrieren` **85,00 €/Stück** [Trockenbau] | 45,00 € |
+| `Ausgleichsmasse einbringen` | „Ausgleichsmasse" | `Schüttung einbringen und abziehen` **22,00 €/m²** [Trockenbau] | 10,00 € |
+| `Sockelleisten entfernen (alt)` | „Sockelleisten" | `Alte Silikonfuge entfernen und neu setzen` **14,00 €/lfdm** [Fliesen] | 2,00 € |
+| `Kalkputz aufbringen` | „aufbringen" | `Kalkputz einlagig (Unterputz)` **22,00 €/m²** [Putz] | 35,00 € |
+| `Rohrleitungen lackieren` | „lackieren" | `Altrohrleitungen entfernen` **12,00 €/lfdm** [SHK] | 9,00 € |
+| `Fassade reinigen (druckwaschen)` | „Fassade" | `Fliesenfläche reinigen` 5,00 €/m² [Fliesen] | 5,00 € |
+
+(vollständig in der Skript-Ausgabe; die übrigen sechs bewegen weniger Geld)
+
+**Und die Klasse, die größer ist als die 43 — hier korrigiere ich mich selbst.**
+Mein eigenes Beispiel in Themenspeicher 29, `Dachschrägen grundieren` →
+650,00 €, gehört **gar nicht zu den 43**: der Titel HAT ein Gewerk
+(`grundier` → `maler`) und verliert es erst durch das gestrichene Wort. Das
+ist die eigentliche Gefahr, weil sie jeden Titel betrifft und nicht nur die
+gewerklosen:
+
+```
+Titel, die ihr Gewerk durch EIN fehlendes Wort verlieren
+und dann in einem fremden Gewerk landen          : 44 von 184
+```
+
+Die Spitze: `Dachschrägen grundieren` (4,50 €) → `Dachschrägenschrank …`
+**650,00 €/m²** [Schreiner]. `Fenster abschleifen` (20,00 €) →
+`Holz-Alu-Fenster einbauen` **580,00 €/Stück** [Schreiner]. `Wände schleifen
+nach Q2` (5,50 €) → `Trennwand 75mm …` **58,00 €/m²** [Trockenbau].
+
+### 3. Die abweichenden Onboarding-Vorlagen bewegen kein Geld
+
+Gefragt war: *wie viele der 16 offenen Wortlaut-Abweichungen führen dazu, dass
+ein Betrieb für dieselbe Leistung eine andere Preiszeile trifft — oder gar
+keine?* **Antwort: keine.**
+
+Gemessen am Zustand, den der Betrieb wirklich bekommt. `mischeEigenePreise()`
+legt die ausgefüllten Vorlagen auf den Basiskatalog; was es dort unter
+`category::title::unit` nicht gibt, kommt als **eigene Zeile** dazu und steht
+danach als Zwilling neben der Katalogzeile. Beide Listen durch denselben
+Matcher, alle Engine-Titel:
+
+```
+Vorlagenzeilen für maler + boden_parkett   : 134
+davon nicht im Basiskatalog → eigene Zeile :  58
+davon im Gewerke-Filter überhaupt sichtbar :  14
+Engine-Titel, die dadurch anders treffen   :   0
+davon mit anderem Preis                    :   0
+```
+
+**Zwei Dinge daran sind wichtiger als die Null.**
+
+**Erstens: die 18 aus Engineerings Sperrklinke und die Zeilen, die wirklich
+dazukommen, sind nicht dieselbe Menge.** Das Blatt zählt Titel gegen *alle*
+Katalogtitel und kommt auf 18. Was der Betrieb bekommt, entscheidet
+`preisSchluessel` (Kategorie + Titel + Einheit) gegen *seinen* Katalog — das
+sind **58**, von denen der Gewerke-Filter 44 gar nicht erst sichtbar werden
+lässt (Fahrtkosten, Arbeitszeit, Fassade). Die Sperrklinke ist damit nicht
+falsch, sie misst nur etwas anderes als „was steht nachher nebeneinander".
+
+**Zweitens: die Null gilt nur, solange die Reihenfolge stimmt.**
+`Laminat verlegen schwimmend` steht auf Score **1,00 mit drei Zeilen**: der
+Katalogzeile (14,00 €) und zwei Vorlagenzeilen (14,00 € / **16,00 €**). Heute
+gewinnt die Katalogzeile, weil sie in der Liste vorn steht. Das ist dieselbe
+Reihenfolge-Abhängigkeit wie PM-138 — und sie ist mit
+`Laminat verlegen schwimmend (Großdiele)` bereits als offen vermerkt. Bei den
+drei Vinyl-Titeln (`Designboden`, `Vinyl-Boden`, `Klick-Vinyl verlegen`)
+besteht der Gleichstand **schon ohne jede Vorlagenzeile**, zwischen 16,00 €
+und 28,00 € Katalogzeilen; die Vorlage legt dort keine neue Gefahr an.
+
+### Neu im Skript
+
+* `--gewerklos` — die Titel ohne Gewerk, ihre Herkunftsdatei, und was ein
+  gestrichenes Wort aus ihnen macht; dazu die zweite Klasse (Titel, die ihr
+  Gewerk erst verlieren).
+* `--vorlage` — Katalog gegen Katalog + Onboarding-Vorlage, Engine-Titel für
+  Engine-Titel.
+
+### Nicht geprüft, und deshalb nicht behauptet
+
+* **Ob der Soll-Wortlaut gefällt.** Er ist gemessen, nicht schön geredet.
+  Sprache zum Kunden hin gehört dem Designer; ich sage nur, welche Fassungen
+  Geld kosten und welche nicht.
+* **Die 44 „verlieren ihr Gewerk" Fall für Fall.** Gezählt und mit der Spitze
+  belegt, nicht einzeln bewertet.
+* **Was ein Betrieb tut, der eine Zeile selbst umbenannt hat.** Das weiß nur
+  seine Datenbank, nicht dieser Katalog.
+* **Kein Blick ins laufende Produkt. Achtzehnter Lauf in Folge.**
+
+*Prüfmeister · 2026-09-24*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
