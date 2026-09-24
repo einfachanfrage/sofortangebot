@@ -94,7 +94,7 @@ function allgemeineAnsagen(transkript: string, alleNamen: Array<string | undefin
  * selben Preis bei Score **1.00** — 11,50 € / 14,00 € / 11,50 €. Die 1x- und
  * 3x-Geschwister stehlen den Treffer nicht.
  *
- * 🔴 **Offen beim Prüfmeister (PM-157):** dass 1x und 3x jetzt anders heißen
+ * 🔴 **Beim Prüfmeister als PM-152:** dass 1x und 3x jetzt anders heißen
  * als 2x, ist eine Katalogfrage und keine Bauentscheidung. Bis seine Antwort
  * dasteht, bleiben 1x und 3x unverändert.
  */

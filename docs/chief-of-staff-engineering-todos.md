@@ -15669,8 +15669,11 @@ neuen Wortlaut, 1 und 3 den alten. Dasselbe in `maler-extras.ts` für die
 Q-Stufen: zwei Tabellen statt `${qLevel}`.
 
 **Dass 1x und 3x jetzt anders heißen als 2x, ist eine Katalogfrage und keine
-Bauentscheidung.** Sie liegt als **PM-157** beim Prüfmeister. Ich baue daran
-nichts, bis seine Antwort dasteht.
+Bauentscheidung.** Sie liegt als **PM-152** beim Prüfmeister — **und er hat sie im selben Lauf
+beantwortet**: *1x und 3x folgen dem 2x-Muster* (`pruefmeister-pm152-anstrich-
+familien.test.ts`, begründet aus PM-147-B). `anstrichTitel()` gibt für 1 und 3
+heute noch den alten Wortlaut; das ziehe ich im nächsten Lauf nach. Ich hatte
+die Frage kurzzeitig als PM-157 geführt — zurückgezogen, es ist seine PM-152.
 
 ### 4. Ein Titel aus Durchgang 2 steckt in einer Tabelle aus Durchgang 1
 
@@ -15723,7 +15726,7 @@ Kommentare früherer Migrationen.
 ### 8. Nächster Punkt
 
 **CoS-E-080 → CoS-E-086.** Durchgang 2 (die 14 reinen Engine-Titel) baue ich
-erst, wenn PM-157 und PM-156 beantwortet sind — beide fassen Titel an, die in
+erst, wenn PM-152 und PM-156 beantwortet sind — beide fassen Titel an, die in
 Durchgang 2 liegen. An PM-149 baue ich weiterhin nichts.
 
 *Head of Product Engineering · 2026-09-24, 07:35 UTC*
