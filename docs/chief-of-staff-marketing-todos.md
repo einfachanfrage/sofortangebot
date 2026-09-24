@@ -4761,5 +4761,273 @@ auf Sandys Liste.
 
 *Chief of Staff · 2026-09-24, 06:55 UTC*
 
+---
+
+## 🔴 Zum ersten Mal die **live** Seite angesehen — und sie ist nicht die Seite, über die wir seit acht Tagen reden (24.09.2026 · Head of Marketing)
+
+**Ich habe `sofortangebot.app` im Browser aufgerufen.** Das ist der einzige
+Punkt aus meiner eigenen „nicht geprüft"-Liste von heute früh, den ich selbst
+schließen konnte — und er hat mehr zutage gefördert als erwartet.
+
+**Der Befund in einem Satz:** Hinter `sofortangebot.app` steht nicht die
+Landingpage, an der wir arbeiten, sondern `ComingSoon.tsx` — eine
+Ein-Bildschirm-Seite mit **null Links**, während drei fertige Blogartikel,
+Impressum, Datenschutz und AGB live sind und niemand von der Startseite aus
+hinkommt.
+
+**Warum das mein Punkt ist und nicht der von jemand anderem:** Gate-1-Punkt 9.1
+heißt *„Landingpage erklärt klar, was das Tool tut und für wen."* Wir haben
+diesen Punkt acht Tage lang an einer Seite gemessen, **die kein Besucher sieht**.
+Die Seite, die jeder sieht, hat bis heute niemand aufgemacht.
+
+---
+
+### Was ich gemessen habe, und wie
+
+Alles unten ist **am laufenden Stand im Browser** erhoben (Deployment
+`dpl_2ARdDCRi…`), nicht aus den Quelldateien gerechnet. Die Kontrastwerte sind
+aus den tatsächlich zusammengesetzten Farben des gerenderten DOM, nicht aus
+Tailwind-Klassen abgeleitet.
+
+---
+
+### 1. 🔴 Die Startseite hat **keinen einzigen Link**
+
+Gemessen: `document.querySelectorAll('a')` → **0 Treffer.** Kein Impressum, kein
+Datenschutz, keine AGB, kein Blog, kein Login.
+
+**Dabei ist alles davon live.** Selbst abgerufen, alle mit Status **200**:
+
+| Adresse | Status |
+|---|---|
+| `/impressum` | 200 |
+| `/datenschutz` | 200 |
+| `/agb` | 200 |
+| `/avv` | 200 |
+| `/blog` | 200 |
+
+**Die Seiten sind da. Es führt nur nichts hin.**
+
+Ob das Fehlen von Impressum und Datenschutz auf einer öffentlich erreichbaren,
+werbenden Seite **mit E-Mail-Erfassung** eine Pflichtverletzung ist, entscheide
+ich nicht — **das liegt seit eben bei Legal**, mit genau diesen Zahlen. Der
+Blog-Link dagegen ist meiner, und der ist Nummer 2.
+
+---
+
+### 2. 🔴 Drei fertige Blogartikel sind live — und für Google unerreichbar
+
+Der Blog steht, und er steht gut. Selbst abgerufen:
+
+* `/blog` → Titel *„Blog | Praxiswissen für Handwerker | Sofortangebot"*,
+  eigene Beschreibung, ~12.000 Zeichen Text.
+* Drei Artikel verlinkt: `handwerkerangebot-schreiben`, `maler-preise-2026`,
+  `kleinunternehmer-angebot-pflichtangaben`.
+
+**Und jetzt die drei Wege, auf denen Google davon erfahren könnte — alle drei
+sind zu:**
+
+| Weg | Befund |
+|---|---|
+| Link von der Startseite | **existiert nicht** (siehe Nr. 1) |
+| `/sitemap.xml` | **Status 200, aber `text/html`** — ausgeliefert wird die Login-Seite, kein XML |
+| `/robots.txt` | **Status 200, aber `text/html`** — ebenfalls die Login-Seite |
+
+**Das ist der teuerste Befund dieses Laufs**, und er ist es aus einem Grund:
+**CoS-M-008, Sandys eigener Beschleuniger Nummer 1, heißt Blog/SEO.** Die
+Artikel sind geschrieben, geprüft, veröffentlicht — und liegen in einem Raum
+ohne Tür. Das ist keine Schreibarbeit mehr, das sind drei Zeilen Konfiguration.
+**Liegt seit eben bei Engineering.**
+
+---
+
+### 3. 🟡 Kein Vorschaubild, kein Vorschautext — jede geteilte Nachricht ist nackt
+
+Gemessen, alle `<meta>` der Startseite. **Es gibt kein einziges `og:`- und kein
+einziges `twitter:`-Tag. Und kein `canonical`.**
+
+Wer `sofortangebot.app` heute in **WhatsApp** einfügt — und genau so wird diese
+Adresse zwischen Handwerksbetrieben weitergegeben, nicht per Newsletter —
+bekommt einen grauen Textlink ohne Bild, ohne Titelzeile, ohne einen Satz
+darüber, was das ist.
+
+**Der Vergleich, der das einordnet:** Für den Blog hat sich jemand Mühe gegeben
+(eigener Titel, eigene Beschreibung). Für die Adresse, die tatsächlich
+herumgereicht wird, steht als Titel **nur „Sofortangebot"**. Ein Wort. Das ist
+auch die Zeile, die in einem Google-Treffer fett oben steht.
+
+**Auch das liegt bei Engineering** — es sind Tags im Kopf der Seite, kein Text,
+den ich schreiben müsste. **Den Text liefere ich**, sobald sie dran sind; ich
+schreibe ihn nicht auf Vorrat, solange Nr. 5 offen ist.
+
+---
+
+### 4. 🟡 Eine Behauptung in der Seitenbeschreibung, die ich nicht selbst abnehmen kann
+
+Die `meta description` der Startseite lautet heute:
+
+> **„Das schnellste Handwerkerangebot. Unter 10 Minuten."**
+
+**„Das schnellste"** ist eine Spitzenstellungsbehauptung. Die ist nicht
+verboten — sie muss nur stimmen und belegbar sein, und den Beleg habe ich
+nicht. Sie steht außerdem an der einzigen Stelle, die Google wörtlich
+übernimmt.
+
+**Ich bewerte das nicht selbst und ich ändere es nicht selbst.** Es steht bei
+Legal, zusammen mit Nr. 1. Wenn der Satz getragen ist, bleibt er; wenn nicht,
+schreibe ich ihn um — das ist dann meine Arbeit und eine Zeile.
+
+---
+
+### 5. 🟡 Fünf Farben auf der live Seite, und **eine einzige** davon ist eine Handbuch-Rolle
+
+Gemessen am gerenderten DOM:
+
+| Wo | Wert live | Was das Handbuch dafür kennt |
+|---|---|---|
+| Seitenhintergrund | `#1E1E1E` | **nichts.** Anthrazit 900 = `#2C2C2C`, 950 = `#1A1A1A` |
+| Überschrift, Logo „sofort", Eingabefeld-Text | `#FFFFFF` | `--text-on-dark` = `#F7F7F5` (S. 15: *„Off-White statt Weiß"*) |
+| Unterzeile | `#AAAAAA` | `--text-on-dark-muted` = `#BDBDB8` |
+| „Früher Zugang — trag dich ein:" | `#888888` | nichts |
+| „Kein Spam. …" | `#444444` | nichts |
+| Logo „angebot", Linie, Knopf | `#D9A400` | ✅ **Gelb 500 — die einzige richtige Farbe auf der Seite** |
+
+Dazu: `theme-color` im Kopf der Seite steht auf `#2C2C2C`, die Seite selbst ist
+`#1E1E1E`. **Die Handy-Statusleiste hat also eine andere Farbe als die Seite
+darunter.**
+
+**Das ist CoS-M-021 noch einmal, nur fünfmal und live.** Genau der Zustand, den
+ich heute früh für einen einzigen Hover-Ton als nicht hinnehmbar bezeichnet
+habe — ein Farbwert im Code, für den das Handbuch keine Rolle kennt.
+
+**Eine Zahl davon ist keine Stilfrage:**
+
+> **„Kein Spam. Einmalige Nachricht wenn es losgeht." — `#444444` auf `#1E1E1E`
+> = 1,71:1 bei 11 px.** Gemessen am Bildschirm, nicht gerechnet.
+
+Das ist **der niedrigste Wert, den ich in diesem Projekt je gemessen habe** —
+niedriger als die schlechteste der neun Zeilen von heute früh (1,91:1). Und es
+ist wieder dieselbe Sorte Satz: **ein Versprechen unter einem Eingabefeld.** Wer
+seine E-Mail-Adresse hergibt, liest genau dort nach, was damit passiert. Bei
+1,71:1 liest er dort nichts.
+
+Zum Vergleich, auf derselben Seite gemessen: Überschrift 16,67:1, Unterzeile
+7,18:1, „Früher Zugang" 4,70:1, Knopfbeschriftung 7,35:1. **Die Seite kann
+Kontrast. Nur die eine Zeile, die etwas zusagt, kann ihn nicht.**
+
+---
+
+### 6. 🟡 Zoom ist auf dieser Seite abgeschaltet
+
+Gemessen: `viewport` = `width=device-width, initial-scale=1, **maximum-scale=1,
+user-scalable=no**`.
+
+Auf einer Seite, deren kleinster Text 11 px bei 1,71:1 hat, kann der Besucher
+**nicht aufziehen**. Der Meister, der die Lesebrille im Auto liegen lässt, hat
+keine Möglichkeit mehr. Ich melde es, ich entscheide es nicht — es steht im
+Layout des ganzen Projekts, nicht in dieser Seite, und betrifft damit auch die
+App.
+
+---
+
+### 7. 🟢 Die Warteliste funktioniert — sie hat nur **einen** Eintrag
+
+**Erst die gute Nachricht, weil ich mit dem schlimmsten Verdacht hineingegangen
+bin:** Die Anmeldung ist nicht kaputt. Selbst nachgesehen:
+
+* `/api/waitlist` existiert, prüft die Adresse und schreibt nach
+  `public.waitlist`.
+* Auf der Tabelle ist RLS an, und es gibt genau eine Regel: `waitlist_insert`,
+  `INSERT`, Rolle `public`, `with_check = true`. **Anmeldungen von außen sind
+  erlaubt.**
+
+**Und jetzt die Zahl:**
+
+| | |
+|---|---|
+| Einträge gesamt | **1** |
+| Erster Eintrag | 02.08.2026 |
+| Letzter Eintrag | **02.08.2026** |
+
+**Seit dem 2. August hat sich niemand eingetragen.** Sieben Wochen.
+
+**Ich sage ausdrücklich, was das nicht ist:** Es ist **kein** Beleg dafür, dass
+die Seite schlecht ist. Es ist der Beleg dafür, dass **niemand da war** — und
+das ist die erwartbare Folge von Nr. 2 und Nr. 3 zusammen: keine Tür für Google,
+kein Vorschaubild beim Teilen. Eine Seite, die niemand findet, wandelt nicht
+schlecht, sie wandelt gar nicht.
+
+**Ich habe keine Testadresse eingetragen.** Das hätte die einzige echte Zahl
+verfälscht, die wir haben — und es ist das Eintragen personenbezogener Daten in
+ein fremdes Formular, das tue ich nicht.
+
+---
+
+### 8. 🔴 Für Engineering: die Erfolgsmeldung kommt auch dann, wenn nichts gespeichert wurde
+
+Beim Lesen von `ComingSoon.tsx` aufgefallen, nicht gesucht:
+
+```
+await fetch('/api/waitlist', { … })
+setDone(true)          // ← ohne jede Prüfung von res.ok
+```
+
+**Die Antwort des Servers wird nicht angesehen.** Antwortet die Route mit 500
+(*„Fehler beim Speichern"* — den Fall baut sie selbst), sieht der Besucher
+trotzdem **„✓ Du bist dabei."**
+
+**Das ist die dritte Zusage auf dieser Seite, die nicht hält, was sie sagt** —
+nach der unlesbaren Spam-Zusage und dem unbelegten „schnellste". Steht bei
+Engineering.
+
+---
+
+### Was das für 9.1 heißt — und das ist der Teil, den ich mir selbst ankreide
+
+**9.1 ist nicht blockiert. 9.1 wurde an der falschen Seite gemessen.**
+
+Der Website-Schalter (CoS-038) und § 4.2 AGB (CoS-038-A-1) halten auf, dass die
+**gebaute** Landingpage sichtbar wird — daran hat sich nichts geändert, und
+darauf warte ich weiter. **Aber sechs der acht Befunde oben überleben den
+Schalter**, weil sie nicht an dieser Seite hängen, sondern an der Website:
+Sitemap, robots.txt, Vorschau-Tags, Titel, Beschreibung, Zoom. Die sind heute
+fällig und nicht am Tag des Umschaltens.
+
+**Nur zwei sterben mit dem Schalter:** die fünf Farben und die 1,71:1-Zeile —
+`ComingSoon.tsx` verschwindet, sobald `NEXT_PUBLIC_COMING_SOON` fällt.
+
+**Daraus folgt eine Reihenfolge, und ich halte mich daran:**
+
+1. **Was die Website betrifft, geht heute raus** — Nr. 2, 3, 8 an Engineering,
+   Nr. 1 und 4 an Legal. Alles davon gilt auch noch, wenn die neue Seite live
+   ist.
+2. **Was nur `ComingSoon.tsx` betrifft, gebe ich dem Designer klein und mit
+   Ansage** — **eine** Zeile, die Spam-Zusage, weil ein unlesbares Versprechen
+   auch für eine Woche eines zu viel ist. **Die anderen vier Farben schicke ich
+   ihm ausdrücklich nicht.** Ich lasse einen Kollegen keine Datei aufräumen, die
+   beim nächsten Schalterwurf gelöscht wird. Sollte CoS-038 länger als zwei
+   Wochen hängen, hole ich sie nach — dann melde ich mich von selbst.
+
+---
+
+### Nicht geprüft, und ich behaupte es deshalb nicht
+
+* **Ob das Fehlen von Impressum und Datenschutz auf der Startseite
+  rechtswidrig ist.** Ich habe die Messung, nicht die Bewertung. Legal hat sie
+  seit eben.
+* **Ob „Das schnellste Handwerkerangebot" haltbar ist.** Dito.
+* **Ob die eine Warteliste-Adresse echt ist** oder ein Test von Sandy. Ich habe
+  die Adresse nicht gelesen — die Zahl reicht für die Aussage, der Inhalt geht
+  mich nichts an.
+* **Kein Test der Anmeldestrecke von Ende zu Ende.** Route, Regel und Tabelle
+  habe ich einzeln nachgesehen; abgeschickt habe ich nichts.
+* **Keine Aussage über Suchmaschinen-Positionen.** Ich habe geprüft, ob es einen
+  Weg zu den Artikeln gibt — nicht, ob jemand sie sucht.
+* **Kein Prüfstand, kein `tsc`.** Ich habe nur Dokumente geschrieben und keine
+  Zeile Code angefasst.
+
+*Head of Marketing · 24.09.2026*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

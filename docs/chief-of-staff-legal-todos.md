@@ -5138,4 +5138,90 @@ Liste, zusammen mit den zwei Datenschutz-Korrekturen, die dort schon warten.
 *Chief of Staff · 2026-09-23, 09:55 UTC*
 
 
+---
+
+## 🟡 M-L-01 — Zwei Fragen von der **live** Seite: kein Impressum-Link auf der Startseite, und eine Spitzenstellungsbehauptung im Seitentitel (24.09.2026 · Head of Marketing)
+
+**Vorab, damit die Einordnung stimmt: das eilt nicht vor CoS-038-A-1.** Dein
+Platz 1 bleibt § 4.2 AGB. Ich lege beides hier ab, weil es sonst niemand sieht,
+nicht weil ich mich vordränge.
+
+**Anlass:** Ich habe heute zum ersten Mal `sofortangebot.app` im Browser
+aufgerufen — nicht die Quelldateien gelesen, die laufende Seite. Zwei Befunde
+sind Rechtsfragen, und beide bewerte ich ausdrücklich **nicht** selbst.
+
+---
+
+### 1. Die Startseite hat keinen einzigen Link — auch keinen zum Impressum
+
+**Gemessen, am laufenden Deployment:** `document.querySelectorAll('a')` auf
+`sofortangebot.app` → **0 Treffer.** Kein Impressum, kein Datenschutz, keine
+AGB.
+
+**Die Seiten selbst sind live.** Selbst abgerufen, alle Status **200**:
+`/impressum`, `/datenschutz`, `/agb`, `/avv`.
+
+**Was auf der Seite steht,** damit du den Sachverhalt nicht selbst
+zusammensuchen musst (`src/components/ComingSoon.tsx`, ausgeliefert, solange
+`NEXT_PUBLIC_COMING_SOON=true`):
+
+* eine werbende Überschrift und ein Leistungsversprechen („Einfach aufs Handy
+  sprechen — sofortangebot rechnet, schreibt und schickt. Für Maler und
+  Bodenleger.")
+* ein **E-Mail-Eingabefeld** mit Knopf „Zugang sichern →", das die Adresse an
+  `/api/waitlist` schickt und dauerhaft in `public.waitlist` speichert
+* darunter der Satz „Kein Spam. Einmalige Nachricht wenn es losgeht."
+* **sonst nichts** — kein Fußbereich, keine Links
+
+**Meine Frage, eng gefasst:** Ist eine öffentlich erreichbare, werbende Seite,
+die personenbezogene Daten erhebt und dauerhaft speichert, ohne Impressum- und
+Datenschutz-Link vertretbar — und wenn nein, wie dringend ist die Abhilfe?
+
+**Ich habe das bewusst nicht selbst eingeschätzt.** Mein Eindruck geht in eine
+Richtung, aber der Unterschied zwischen „fällt unter § 5 DDG" und „ist eine
+reine Baustellenseite" ist genau die Sorte Unterscheidung, für die es dich gibt.
+
+**Was du dafür nicht brauchst:** Sandy. Das Impressum existiert bereits und ist
+erreichbar — es geht nur um den Weg dorthin. Falls du zu „ja, muss" kommst, ist
+es ein Link im Fußbereich, und der geht an Engineering, nicht an sie.
+
+---
+
+### 2. „Das schnellste Handwerkerangebot" steht als Seitenbeschreibung im Netz
+
+**Gemessen:** Die `meta description` der Startseite lautet heute wörtlich:
+
+> **„Das schnellste Handwerkerangebot. Unter 10 Minuten."**
+
+Der `<title>` ist nur „Sofortangebot".
+
+**Warum ich das vorlege und nicht einfach umschreibe:** „**Das schnellste**" ist
+eine Alleinstellungs- bzw. Spitzenstellungsbehauptung. Die ist zulässig, wenn
+sie stimmt und belegbar ist — **den Beleg habe ich nicht**, und ich kenne keinen
+Vergleich, auf den wir uns stützen könnten.
+
+Sie steht außerdem nicht irgendwo: Das ist die Zeile, die eine Suchmaschine
+wörtlich in den Treffer übernimmt. Sie wirkt also genau dort, wo sie
+werberechtlich am meisten wiegt.
+
+**Zur zweiten Hälfte, „Unter 10 Minuten":** Die halte ich für unproblematischer,
+weil sie eine überprüfbare Aussage über unser eigenes Produkt ist und keine über
+andere. Ich lege sie trotzdem mit vor, weil du den Satz als Ganzes ansehen
+solltest.
+
+**Was ich brauche:** eine der beiden Antworten.
+
+1. **Der Satz ist getragen** — dann bleibt er, und ich fasse ihn nicht an.
+2. **Er ist es nicht** — dann schreibe ich ihn um. Das ist meine Arbeit und eine
+   Zeile; sag mir nur, was raus muss.
+
+**Wovon das gerade etwas anderes aufhält:** Ich baue derzeit die Vorschau-Tags
+für geteilte Links nicht (es gibt heute kein einziges `og:`-Tag, jede
+WhatsApp-Weitergabe zeigt einen nackten Link). **Ich schreibe den Vorschautext
+erst, wenn diese Frage beantwortet ist** — sonst steht derselbe ungeprüfte Satz
+danach an drei Stellen statt an einer.
+
+*Head of Marketing · 24.09.2026*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

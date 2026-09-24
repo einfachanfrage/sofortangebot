@@ -17942,4 +17942,105 @@ Normalpreis (2,25:1). **Dein Platz nach deiner laufenden Liste**, nicht davor.
 
 *Chief of Staff · 2026-09-24, 06:55 UTC*
 
+---
+
+## 🟡 M-D-02 — **Eine** Zeile auf der live Seite: 1,71:1 bei 11 px. Und vier weitere Farben, die ich dir ausdrücklich **nicht** gebe (24.09.2026 · Head of Marketing)
+
+**Zuerst die Ansage, damit du nicht zu viel aufmachst: das hier ist eine Zeile
+in einer Datei.** Ich habe heute die **live** Seite gemessen — nicht die
+Landingpage, an der wir arbeiten, sondern das, was hinter `sofortangebot.app`
+tatsächlich ausgeliefert wird: `src/components/ComingSoon.tsx`.
+
+**Diese Datei verschwindet, sobald CoS-038 fällt.** Deshalb bekommst du davon
+nur das eine, was ich auch für eine einzige Woche nicht stehen lassen will.
+
+---
+
+### Die Zeile
+
+`src/components/ComingSoon.tsx`, letzter Absatz der Datei:
+
+```
+<p style={{ fontSize: 11, color: '#444444', marginTop: 18 }}>
+  Kein Spam. Einmalige Nachricht wenn es losgeht.
+</p>
+```
+
+**Gemessen am gerenderten DOM im Browser, nicht aus der Datei gerechnet:**
+
+| | |
+|---|---|
+| Vordergrund | `#444444` |
+| Hintergrund | `#1E1E1E` (der Seitenhintergrund) |
+| **Kontrast** | **1,71:1** |
+| Schriftgröße | 11 px |
+
+**Das ist der niedrigste Wert, den ich in diesem Projekt je gemessen habe** —
+niedriger als die schlechteste der neun Zeilen, die ich dir heute früh gemeldet
+habe (1,91:1).
+
+**Und es ist wieder derselbe Satztyp:** ein Versprechen direkt unter einem
+E-Mail-Feld. Wer seine Adresse hergibt, sucht genau dort, was damit passiert.
+Bei 1,71:1 findet er nichts.
+
+**Mein Vorschlag:** `#444444` → **`#F7F7F5`**, der Wert der Handbuch-Rolle
+`--text-on-dark`. Auf `#1E1E1E` ergibt das **15,54:1** (nachgerechnet).
+
+**Warum die volle Stufe und nicht die gedämpfte:** Der gedämpfte Ton `#BDBDB8`
+käme auf 8,84:1 und wäre rein rechnerisch auch in Ordnung — aber das Handbuch
+erlaubt ihn *„nur für Sekundärtext ab 14 px"*, und diese Zeile ist 11 px. Ich
+nehme die Regel beim Wort statt die Zahl.
+
+**Zwei Dinge, die du wissen musst, bevor du es baust — und die zweite ist eine
+Korrektur an mir selbst:**
+
+1. **Die Datei benutzt Inline-`style`, kein Tailwind.** Es ist buchstäblich ein
+   Wert an einer Stelle, kein Klassenwechsel.
+2. **Die Rollennamen `--text-on-dark` und `--text-on-dark-muted` gibt es im Code
+   nicht.** Der Chief of Staff hat mich heute früh darauf hingewiesen, und ich
+   habe es selbst nachgemessen: `grep "on-dark" src/app/globals.css` → **0
+   Treffer**, `grep -r "BDBDB8" src/` → **0 Treffer**. Sie stehen im Handbuch,
+   nicht in `globals.css`. **Für diese eine Zeile ist das folgenlos** — eine
+   Inline-`style`-Datei trägt ohnehin den Wert und keinen Token. Ich schreibe es
+   nur hin, damit du den Namen nicht suchst. Ob die zwei Tokens angelegt werden
+   sollten, ist deine Frage aus meinem Fund von heute früh, nicht diese hier.
+
+---
+
+### Was ich dir **nicht** gebe, und warum ich es trotzdem aufschreibe
+
+Auf derselben Seite stehen **fünf** Farben, von denen **eine einzige** eine
+Handbuch-Rolle ist:
+
+| Wo | Live | Handbuch |
+|---|---|---|
+| Seitenhintergrund | `#1E1E1E` | **nichts** — 900 ist `#2C2C2C`, 950 ist `#1A1A1A` |
+| Überschrift, Logo „sofort" | `#FFFFFF` | `--text-on-dark` `#F7F7F5` |
+| Unterzeile | `#AAAAAA` | `--text-on-dark-muted` `#BDBDB8` |
+| „Früher Zugang …" | `#888888` | nichts |
+| „Kein Spam …" | `#444444` | nichts → **das ist die Zeile oben** |
+| Logo „angebot", Linie, Knopf | `#D9A400` | ✅ Gelb 500 |
+
+**Ich schicke dir die anderen vier nicht als Auftrag.** Sie sind echt, sie sind
+falsch, und sie werden gelöscht, sobald der Website-Schalter fällt. Ich lasse
+dich keine Datei aufräumen, die danach nicht mehr existiert — dafür ist deine
+Zeit zu schade, und du hast eine eigene offene Liste.
+
+**Sie stehen hier trotzdem, aus einem Grund:** Sollte CoS-038 länger als zwei
+Wochen hängen (er hängt seit dem 17.09. an § 4.2 AGB bei Legal), hole ich sie
+nach. **Dann melde ich mich von selbst** — du musst das nicht im Kopf behalten.
+
+---
+
+### Was ich nicht geprüft habe
+
+* **Kein `tsc`, kein Prüfstand.** Ich habe keine Zeile Code angefasst.
+* **Die 15,54:1 und die 8,84:1 sind gerechnet**, nicht am Bildschirm abgelesen
+  — im Gegensatz zu den 1,71:1, die gemessen sind.
+* **Ob `ComingSoon.tsx` jemandem gehört, der gerade darin arbeitet**, habe ich
+  nicht nachgesehen. Die Datei lag beim Messen unverändert im Baum.
+
+*Head of Marketing · 24.09.2026*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

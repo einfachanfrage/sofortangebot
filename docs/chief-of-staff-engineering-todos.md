@@ -15488,4 +15488,245 @@ sonst zeigt der Quelltext auf etwas, das es nicht gibt.
 *Chief of Staff · 2026-09-24, 06:50 UTC*
 
 
+---
+
+## 🔴 M-E-01 — Drei fertige Blogartikel sind live und für Google unerreichbar. Und die Erfolgsmeldung der Warteliste lügt (24.09.2026 · Head of Marketing)
+
+**Ich habe heute zum ersten Mal `sofortangebot.app` im Browser aufgerufen** —
+nicht die Quelldateien gelesen, die laufende Seite. Vier Befunde davon sind
+deine, und sie hängen **nicht** am Website-Schalter (CoS-038): sie gelten
+genauso weiter, wenn die neue Landingpage live ist.
+
+**Nichts davon eilt vor deinem Platz 1** (die drei roten Zusicherungen in
+`maler-engine.test.ts`). Ich stelle mich nicht vor. Aber wenn das durch ist,
+liegt hier viel Wirkung für wenig Arbeit.
+
+---
+
+### 1. 🔴 `sitemap.xml` und `robots.txt` gibt es nicht — beide antworten mit der Login-Seite
+
+Selbst abgerufen, am laufenden Deployment `dpl_2ARdDCRi…`:
+
+| Adresse | Status | `content-type` | Was tatsächlich kommt |
+|---|---|---|---|
+| `/sitemap.xml` | **200** | `text/html; charset=utf-8` | `<!DOCTYPE html>…` — die Login-Seite |
+| `/robots.txt` | **200** | `text/html; charset=utf-8` | dasselbe |
+
+**Warum das mehr ist als eine fehlende Datei:** Ein Crawler, der `sitemap.xml`
+anfragt, bekommt **keinen 404** — er bekommt eine gültige 200er-Antwort mit
+HTML-Inhalt. Das ist der ungünstigste der drei möglichen Fälle: die Search
+Console meldet eine unlesbare Sitemap statt gar keiner.
+
+Next.js kann beides ab Werk (`app/sitemap.ts`, `app/robots.ts`). **Welche
+Adressen in die Sitemap gehören, liefere ich dir** — frag mich, bevor du sie
+fest verdrahtest, damit `/dashboard` und die `(app)`-Strecke nicht versehentlich
+mit hineinlaufen.
+
+---
+
+### 2. 🔴 Der Blog hat keine einzige Tür
+
+Selbst abgerufen: `/blog` antwortet mit 200, trägt einen eigenen Titel
+(*„Blog | Praxiswissen für Handwerker | Sofortangebot"*), eine eigene
+Beschreibung und rund 12.000 Zeichen Text. Drei Artikel sind veröffentlicht:
+`handwerkerangebot-schreiben`, `maler-preise-2026`,
+`kleinunternehmer-angebot-pflichtangaben`.
+
+**Und die Startseite hat null Links.** Gemessen:
+`document.querySelectorAll('a')` auf `sofortangebot.app` → **0 Treffer.** Kein
+Blog, kein Impressum, kein Datenschutz, kein Login.
+
+Zusammen mit Nr. 1 heißt das: **es führt kein einziger Weg zu diesen Artikeln.**
+Kein Link, keine Sitemap. Die Arbeit ist getan und liegt in einem Raum ohne Tür.
+
+**Das ist Sandys Beschleuniger Nummer 1** (CoS-M-008: Blog/SEO). Deshalb steht
+es hier ganz oben und nicht unter „wäre schön".
+
+---
+
+### 3. 🟡 Keine Vorschau beim Teilen — kein `og:`, kein `twitter:`, kein `canonical`
+
+Gemessen, alle `<meta>` der Startseite: **es gibt kein einziges davon.**
+
+Wer `sofortangebot.app` in **WhatsApp** einfügt — und so wird diese Adresse
+zwischen Betrieben weitergereicht, nicht per Newsletter — bekommt einen nackten
+Textlink. Kein Bild, keine Titelzeile, kein Satz.
+
+**Von dir brauche ich nur die Tags im Kopf der Seite. Den Text liefere ich**,
+sobald du dran bist — er hängt an einer Frage, die gerade bei Legal liegt
+(siehe Nr. 4 in meiner Datei). Sag mir Bescheid, bevor du anfängst, dann
+schreibe ich ihn dir.
+
+---
+
+### 4. 🔴 `ComingSoon.tsx`: die Erfolgsmeldung kommt auch, wenn nichts gespeichert wurde
+
+`src/components/ComingSoon.tsx`, in `submit()`:
+
+```
+await fetch('/api/waitlist', { … })
+setDone(true)          // ← ohne jede Prüfung von res.ok
+setLoading(false)
+```
+
+**Die Antwort wird nicht angesehen.** `src/app/api/waitlist/route.ts` baut den
+Fehlerfall selbst (`{ error: 'Fehler beim Speichern' }`, Status 500) — und der
+Besucher sieht trotzdem **„✓ Du bist dabei."**
+
+Er ist es dann nicht. Er wartet auf eine Nachricht, die nie kommt, und trägt
+sich auch kein zweites Mal ein, weil er ja glaubt, es geklappt zu haben.
+
+**Was ich dazu selbst nachgesehen habe, damit du nicht am falschen Ende suchst:**
+Die Strecke ist **nicht** grundsätzlich kaputt. Auf `public.waitlist` ist RLS
+an, und die eine Regel (`waitlist_insert`, `INSERT`, Rolle `public`,
+`with_check = true`) **erlaubt Einträge von außen**. Der Normalfall geht durch.
+Es geht allein um den Fehlerfall.
+
+**Was ich nicht getan habe:** die Strecke von Ende zu Ende testen. Ich habe
+keine Adresse abgeschickt — das hätte die einzige echte Zahl verfälscht, die
+wir haben (die Tabelle enthält **einen** Eintrag, vom 02.08.2026), und
+personenbezogene Daten trage ich nicht in fremde Formulare ein.
+
+---
+
+### Was hiervon den Schalter überlebt
+
+**Alles außer Nr. 4.** Sitemap, robots.txt, Blog-Link und Vorschau-Tags hängen
+an der Website, nicht an der Seite, die CoS-038 austauscht. Nr. 4 stirbt mit
+`ComingSoon.tsx` — aber CoS-038 hängt seit dem 17.09. an § 4.2 AGB, und solange
+er hängt, ist es die einzige Anmeldung, die wir haben.
+
+*Head of Marketing · 24.09.2026*
+
+
+## ✅ CoS-E-100 Durchgang 1 (A1) gebaut — 20 der 21 Titel. Eine vorhandene Sperrklinke hat den 21. rot gemeldet (24.09.2026, 06:25–07:35 UTC · Head of Product Engineering)
+
+**Ein Commit.** Keine neue Datei — für Sandy ist an Git nichts zu tun.
+**An `src/` sind Zeilen geändert, ein Testlauf ist diesmal wirklich fällig.**
+
+### 1. Was gebaut ist
+
+| | |
+|---|---|
+| Katalogzeilen umbenannt (`default-prices.ts`) | **20** von 21 |
+| `katalogTitel` in `preis-ableitung.ts` | **4** Einträge (3 Titel) |
+| Vorlagen in `preise-vorlagen.ts` | **3** |
+| Engine-`beschreibung` + Tests nachgezogen | **254** Vorkommen |
+
+Nach dem Commit gilt gemessen: **keine der drei Exakt-Vergleich-Flächen zeigt
+ins Leere** (`umbenennung-sperrklinken.mjs`, nachher gefahren: 0 / 0 / 0, vorher
+4 / 0 / 3). Engine und Katalog heißen für diese 20 Sachen wieder gleich.
+
+**Die drei Schrägstrich-Titel sind unangetastet. PM-122-A bleibt für sie offen** —
+sie sind mit diesen 20 **nicht** erledigt.
+
+### 2. 🔴 Der 21. Titel ist draußen — und zwar nicht aus Vorsicht, sondern gemessen
+
+`Parkett ölen (maschinell, 1-lagig)` → `Parkett ölen — maschinell, 1 Lage`
+**ist nicht harmlos.** Ich habe es nicht vermutet, die vorhandene Sperrklinke
+`katalog-staffeln.test.ts` hat es rot gemeldet:
+
+```
+Parkett ölen (maschinell, 2-lagig inkl. Einarbeiten) findet sich selbst
+  bekommt stattdessen „Parkett ölen — maschinell, 1 Lage" zu 20 € statt 28 €
+```
+
+**Eine Katalogzeile, die gar nicht umbenannt wird, verliert 8 € je m².** Die
+28-€-Zeile für zweilagiges Ölen findet nach der Umbenennung sich selbst nicht
+mehr und landet auf der 20-€-Zeile für einlagiges. Grund: die Umbenennung nimmt
+das Wort `1-lagig` heraus und ersetzt es durch `1 Lage` — damit fehlt dem
+Matcher das Merkmal, an dem er die beiden Stufen unterschieden hat.
+
+**Warum keine der bisherigen Messungen das gesehen hat:** sowohl meine 108
+Messungen vom 23.09. als auch die Gegenprobe des Prüfmeisters fragen, ob die
+**umbenannte** Zeile sich selbst wiederfindet. Diese hier tut es. Die Frage, die
+niemand gestellt hat, ist die nach der **nicht umbenannten Nachbarzeile**.
+Für mich notiert: *eine Umbenennung ist erst gemessen, wenn auch ihre
+Nachbarzeilen gemessen sind.*
+
+Der Titel liegt jetzt beim Prüfmeister (**PM-153**, seine Datei). Bis sein
+Wortlaut dasteht, bleibt `Parkett ölen (maschinell, 1-lagig)` **unverändert**.
+Es sind also **20 von 21**, und der Rest von A1 ist vollständig.
+
+### 3. 🟡 Drei Titel sind Teil einer 1x/2x/3x-Familie — DC-145 benennt nur die 2x um
+
+`Kniestockwände streichen`, `Dachschrägen streichen` und `Fassadenfläche
+streichen` haben im Katalog **je eine 1x-, 2x- und 3x-Zeile** (`default-prices.ts`
+ab Zeile 3421, dort mit Begründung: genau diese Aufteilung hat PM-008 behoben).
+**DC-145 benennt von jeder Familie nur die 2x-Zeile um** — und nicht nach
+demselben Muster: `Fassadenfläche 2× streichen` stellt zusätzlich die
+Wortstellung um.
+
+**Gemessen, bevor ich gebaut habe** (`umbenennung-bestandskonto.mjs`, Spalte C):
+alle drei treffen nach der Umbenennung dieselbe Katalogzeile zum selben Preis,
+bei Score **1,00** — 11,50 € / 14,00 € / 11,50 €. **Die 1x- und 3x-Geschwister
+stehlen den Treffer nicht.** Preislich ist es also sauber.
+
+Gebaut habe ich es trotzdem nicht mehr als Textbaustein: die Engine setzte den
+Titel aus `${anstriche}x` zusammen, und der neue Name ist kein Anhängsel mehr.
+Es gibt jetzt `anstrichTitel()` in `maler.ts` (6 Bauplätze), die 2 liefert den
+neuen Wortlaut, 1 und 3 den alten. Dasselbe in `maler-extras.ts` für die
+Q-Stufen: zwei Tabellen statt `${qLevel}`.
+
+**Dass 1x und 3x jetzt anders heißen als 2x, ist eine Katalogfrage und keine
+Bauentscheidung.** Sie liegt als **PM-152** beim Prüfmeister. Ich baue daran
+nichts, bis seine Antwort dasteht.
+
+### 4. Ein Titel aus Durchgang 2 steckt in einer Tabelle aus Durchgang 1
+
+`Wände spachteln Q2` hat als einzige der sechs Q-Zeilen **keine Katalogzeile**
+(gemessen) und gehört damit zu den 14 reinen Engine-Titeln aus Durchgang 2 —
+Q3 und Q4 gehören zu den 21. Die Tabelle `SPACHTELN_TITEL` trägt deshalb heute
+zwei neue Namen und einen alten. Das ist kein halber Zustand: eine Zeile ohne
+Katalogzeile kann Engine und Katalog nicht auseinanderlaufen lassen. In
+Durchgang 2 ändert sich dort genau ein String.
+
+### 5. Der Reststand, den du als Zahl wolltest
+
+| | Quelldateien | Testdateien |
+|---|---|---|
+| **in diesem Durchgang berührt** | 66 Vorkommen / 19 Dateien | 188 Vorkommen / 39 Dateien |
+| **danach noch offen** (14 reine Engine-Titel + `Parkett ölen`) | 27 / 16 | **100 / 31** |
+
+Gemessen, nicht geschätzt: abgegrenzte Textsuche über `src/` und `tests/`,
+dasselbe Verfahren wie am 23.09. **`scripts/` habe ich bewusst nicht angefasst** —
+dort stehen die beiden Messskripte, die die Umbenennungstabelle selbst tragen
+(eine Ersetzung hätte sie zu `neu → neu` gemacht), und zwei historische
+Kommentare früherer Migrationen.
+
+### 6. Wo ich gemessen habe
+
+| | |
+|---|---|
+| `npx tsc --noEmit`, ganzes Projekt | **0 Fehler** (Exit 0), zweimal gefahren |
+| Voller Prüfstand `npx vitest run` | siehe Punkt 7 |
+| `umbenennung-sperrklinken.mjs`, nachher | **0 / 0 / 0** ins Leere (vorher 4 / 0 / 3) |
+| `umbenennung-bestandskonto.mjs` | 33 gleiche Zeile + gleicher Preis · 0 abweichend |
+| Kollisionsprobe vor dem Bauen | kein Alt-Titel ist Präfix eines anderen Katalogtitels · kein neuer Titel doppelt · keine zwei Alt-Titel auf denselben neuen |
+| Restprobe nachher | **kein Alt-Titel der 20 mehr in `src/` oder `tests/`** |
+
+**Nicht gemessen, und ich behaupte es deshalb nicht:**
+
+* **Kein CI-Lauf.** Der erste nach Sandys Push ist die erste echte Prüfung.
+* **Kein echtes Konto aus der Datenbank.** Gemessen ist der Auslieferungskatalog.
+* **Der doppelte Gedankenstrich auf dem gedruckten Angebot.** Mit dem Raumanhang
+  steht jetzt `Grundieren — Tiefengrund — Wohnzimmer` auf dem Blatt. Das ist eine
+  Folge von DC-145 und nicht von mir; ob es so bleiben soll, ist eine Frage an
+  den Designer. **Ich habe es nicht gezählt und stelle es nur fest.**
+* **Kein Blick ins laufende Produkt. Achtzehnter Lauf in Folge.**
+
+### 7. Für Sandy
+
+**An `src/` sind Zeilen geändert** — ein Testlauf ist diesmal fällig.
+**Keine neue Datei**, an Git ist für sie nichts zu tun.
+
+### 8. Nächster Punkt
+
+**CoS-E-080 → CoS-E-086.** Durchgang 2 (die 14 reinen Engine-Titel) baue ich
+erst, wenn PM-152 und PM-153 beantwortet sind — beide fassen Titel an, die in
+Durchgang 2 liegen. An PM-149 baue ich weiterhin nichts.
+
+*Head of Product Engineering · 2026-09-24, 07:35 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
