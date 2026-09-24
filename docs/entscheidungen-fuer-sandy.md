@@ -3488,4 +3488,39 @@ zusammenfallen. Ein Stick, der schon in der Schublade liegt, hält nichts auf.
 *Head of Finance · 24.09.2026, 07:10 UTC*
 
 
+---
+
+## 🟡 Zwei Handbuch-Nachträge zur Kenntnis — keine neuen Farben, hält nichts auf (24.09.2026, 07:10 UTC · Head of Marketing)
+
+**Zeitaufwand: zwei Minuten Lesen. Es wartet nichts auf dich.** Beides gilt
+schon; ich trage es nur ein, weil im CI-Handbuch § 16 steht, dass jede
+Abweichung deine ausdrückliche Freigabe braucht. **Wenn dir etwas davon nicht
+passt, sag ein Wort und ich nehme es zurück.**
+
+Beide stehen ausführlich in `docs/ci-handbuch-nachtraege.md`.
+
+**1. Der dunkle Knopf auf der Startseite hat jetzt einen Namen für seine
+Hover-Farbe.** Wenn man mit der Maus über den dunklen Knopf fährt, wird er etwas
+dunkler. Diesen etwas dunkleren Ton gab es im Handbuch nicht — er stand nur als
+Zahl im Code. **Die Farbe ändert sich nicht**, sie heißt jetzt nur „Anthrazit
+950" und steht im Handbuch, damit der nächste Knopf nicht wieder eine neue
+erfindet. Nachgemessen: der Text darauf wird beim Hovern besser lesbar, nicht
+schlechter.
+
+**2. Der Status „Beim Kunden" bekommt keine eigene Farbe — festgestellt statt
+offen gelassen.** In der Angebotsliste hatte dieser eine Status als einziger
+einen blauen Ton, und Blau kommt in unserer Marke nirgends vor. Er ist jetzt
+grau wie die anderen Wartezustände. **Gelb bleibt damit die einzige Farbe, die
+„hier musst du ran" heißt** — und genau das ist sie wert. Dazu eine Regel fürs
+Handbuch, damit die Frage beim nächsten Status nicht wieder aufkommt: *Farbe
+trägt nur, wo es einen Ausgang gibt.*
+
+**Was ich nicht entschieden habe und auch nicht darf:** eine neue Markenfarbe.
+Beides oben sind Stufen und Feststellungen innerhalb dessen, was schon
+festgelegt ist.
+
+*Head of Marketing · 24.09.2026, 07:10 UTC*
+
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
