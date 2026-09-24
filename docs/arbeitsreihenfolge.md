@@ -1,6 +1,6 @@
 # Arbeitsreihenfolge — wer macht was, in welcher Reihenfolge
 
-**Stand: 24.09.2026, 06:55 UTC · Chief of Staff**
+**Stand: 24.09.2026, 07:10 UTC · Chief of Staff**
 *(ersetzt die Fassung von 23.09., 13:55 UTC — diese Datei wird immer ersetzt, nie
 ergänzt. Wer mir etwas mitteilen will, schreibt es in seine eigene Heimat-Datei;
 was hier hineingeschrieben wird, ist beim nächsten Lauf weg.)*
@@ -10,16 +10,18 @@ was hier hineingeschrieben wird, ist beim nächsten Lauf weg.)*
 
 ## Lage in drei Zeilen
 
-**🟢 Die Produktion ist zum ersten Mal seit Tagen auf dem aktuellen Stand.**
-Sandy hat heute früh gepusht. `origin/main` = lokal = `02fe3d5`, **0 ungepusht**
-vor meinem Commit aus diesem Lauf. Vercel-Deployment `dpl_2ARdDCRi…` auf `02fe3d5`
-ist **READY**, production, 06:12 UTC. Selbst gemessen, 06:40–06:45.
+**🟢 Die Produktion ist auf dem aktuellen Stand — Sandy hat heute früh gepusht.**
+`origin/main` = `02fe3d5`, Vercel-Deployment `dpl_2ARdDCRi…` darauf **READY**,
+production, 06:12 UTC. Selbst gemessen, 06:40–06:45. **Danach sind in diesem Lauf
+zwei Commits dazugekommen: `2b95fdb` und `6e2899c` — 2 ungepusht.**
 
-**🔴 Engineerings CoS-E-100 Durchgang 1 liegt uncommittet im Baum — und ist rot.**
-70 Dateien, 06:30–06:31 UTC, ohne Eintrag in seiner Datei. Die neue
-`anstrichTitel()` setzt `— 2× Anstrich`; drei Zusicherungen in
-`maler-engine.test.ts` prüfen auf `'2x'` und fallen. **Selbst gemessen, 06:42:
-3 failed / 24 passed.** Ich habe davon nichts committet.
+**🟡 Engineerings CoS-E-100 Durchgang 1 liegt weiter uncommittet im Baum — die
+drei roten Zusicherungen hat er inzwischen nachgezogen.** 70 Dateien,
+06:30–06:31 UTC. Die neue `anstrichTitel()` setzt `— 2× Anstrich`; drei
+Zusicherungen in `maler-engine.test.ts` prüften auf `'2x'` und fielen (**selbst
+gemessen, 06:42: 3 failed / 24 passed**). Um 07:05 stehen sie auf `'2×'` bzw.
+`'2× Anstrich'` — **nachgezogen, aber noch nicht committet und noch ohne Eintrag
+in seiner Datei.** Ich habe davon nichts committet.
 
 **🟢 DC-150 des Designers ist fertig, gemessen und committet.** Die zwei
 erfundenen Töne aus DC-149 sind aus sieben Dateien raus, mit eigener Sperrklinke.
@@ -87,9 +89,13 @@ erfundenen Töne aus DC-149 sind aus sieben Dateien raus, mit eigener Sperrklink
 liegen lassen: sie sind rot, und es steht kein Eintrag von ihm dazu. Sie gehören
 ihm, nicht mir.
 
-**Committet habe ich in diesem Lauf:** DC-150 des Designers (sieben `.tsx`, die
-neue Sperrklinke, `design-check.md`) und die drei Doku-Dateien aus dem 14:55-Lauf
-von gestern, die noch dalagen.
+**Committet wurde in diesem Lauf:** `2b95fdb` = DC-150 des Designers (sieben
+`.tsx`, die neue Sperrklinke) und die Doku-Dateien — `6e2899c` = der
+Finance-Stand plus mein DC-150-Nachtrag (siehe die Korrektur oben, die Nachricht
+dieses Commits stimmt nicht).
+
+**Außerdem liegen im Baum:** Marketings neue `docs/ci-handbuch-nachtraege.md`
+(untracked) und weitere Finance-Änderungen. Beides gehört nicht mir.
 
 **Regel für alle beim Committen: nur die eigenen Dateien, `git add` mit Pfad,
 kein `git add -A`.**
@@ -101,12 +107,42 @@ Git-Prozess läuft. Wenn nicht:
 
 ---
 
+## 🔴 Zwei Vorfälle aus diesem Lauf, die jede Rolle angehen
+
+**1. Mehrere Rollen haben gleichzeitig committet — und `6e2899c` trägt deshalb
+eine Nachricht, die nicht zu seinem Inhalt passt.** Die Nachricht spricht von
+DC-150/DC-151/PM-152; die liegen in **`2b95fdb`**. Im Index lagen beim Commit
+zusätzlich Finance-Dateien (`chief-of-staff-finance-todos.md`,
+`entscheidungen-fuer-sandy.md`, `finance-001-…`, `scripts/jahresausleitung.mjs`)
+— **die sind der eigentliche Inhalt von `6e2899c`**, zusammen mit meinem
+DC-150-Nachtrag. Ich habe versucht, die Nachricht mit `--amend` zu berichtigen;
+das ist an Vorfall 2 gescheitert. **Diese Zeilen hier sind die Korrektur.**
+Der Inhalt ist vollständig und nichts ist verloren — nur die Beschriftung von
+`6e2899c` stimmt nicht.
+
+**2. `.git/index` stand um 06:51 auf 0 Byte.** Zwei Läufe haben gleichzeitig
+geschrieben; danach beantwortete jedes `git status` und jedes `git commit` nur
+noch `fatal: .git/index: index file smaller than expected`. **Mit
+`git read-tree HEAD` neu aufgebaut, 07:08 UTC — Commits, Objekte und
+Arbeitsbaum unberührt, nichts verloren.** Wenn dich dieselbe Meldung trifft:
+`cd .git && mv -n index alte-locks/index.kaputt.$(date +%s)` und dann
+`git read-tree HEAD`. **Nicht neu klonen, nicht `reset --hard`.**
+
+**Die Regel, die daraus folgt, für alle:** vor jedem `git commit` einmal
+`git diff --cached --name-only` und gegen die eigene Liste halten. Liegt etwas
+Fremdes drin, wieder raus mit `git restore --staged <pfad>` — committ es nicht
+mit.
+
+
+---
+
 ## Reihenfolge — wer als Nächstes was macht
 
-1. **Engineering: Platz 1 ist, deinen eigenen Stand grün und committet zu
-   bekommen.** Die drei Zusicherungen in `maler-engine.test.ts` nachziehen — oder
-   begründen, warum stattdessen der Titel falsch ist. **Eine der beiden Seiten
-   muss sich bewegen, bevor etwas davon committet wird.** Dann Durchgang 1
+1. **Engineering: Platz 1 ist, deinen eigenen Stand committet zu bekommen.**
+   Die drei Zusicherungen in `maler-engine.test.ts` hast du um 07:05 auf `2×`
+   nachgezogen — **lass die Datei einmal laufen und schreib die Zahl in die
+   Commit-Nachricht**, ich habe deinen Stand nach der Änderung nicht mehr
+   gemessen und behaupte deshalb nichts darüber. Dann Durchgang 1
    committen, mit den bestellten Zahlen (wie viele der 260 Testvorkommen berührt,
    wie viele offen) und dem Satz, dass die drei Schrägstrich-Titel unangetastet
    bleiben und PM-122-A für sie offen ist. **Erst danach Durchgang 2** (die 14
@@ -134,7 +170,10 @@ Git-Prozess läuft. Wenn nicht:
    (Hover-Ton für Anthrazit dunkler als 900, oder die ausdrückliche Feststellung,
    dass `#1a1a1a` als Ausnahme bleibt), danach **CoS-M-022** (eigene Farbrolle für
    „unterwegs / in Bearbeitung", oder die Feststellung, dass es neutral bleibt).
-   Deine Stripe-Frage steht auf Sandys Liste.
+   Deine Stripe-Frage steht auf Sandys Liste. **Deine neue Datei
+   `docs/ci-handbuch-nachtraege.md` liegt untracked im Baum** — ich habe sie
+   nicht committet, weil ich nicht beurteilen kann, ob sie fertig ist. Nimm sie
+   beim nächsten eigenen Commit mit.
 6. **Finance: von mir liegt nichts bei dir.** Offen bleibt allein deine eigene
    Schwelle: ab etwa vier Übernachtungen wird eine Kostenzeile fällig.
 7. **Platform: kein Auftrag.** Der Google-Font-Zähler bleibt bei **eins**, die
@@ -146,7 +185,7 @@ Git-Prozess läuft. Wenn nicht:
 
 | # | Was | Aufwand |
 |---|---|---|
-| 1 | ✅ **Erledigt: der Push.** Die neun Commits sind draußen, Vercel steht auf `02fe3d5`. Aus diesem Lauf liegt **ein** neuer Commit bereit | ein Befehl |
+| 1 | ✅ **Erledigt: der Push.** Die neun Commits sind draußen, Vercel steht auf `02fe3d5`. Aus diesem Lauf liegen **zwei** neue Commits bereit (`2b95fdb`, `6e2899c`) | ein Befehl |
 | 2 | 🔴 **Löschrecht für den Projektordner.** Unverändert offen. Nur in einer **normalen** Unterhaltung möglich — schreib mir dort „frag das Löschrecht an" | 5 Sekunden |
 | 3 | 📧 **Zustelltest `support@`.** Von einer **privaten** Adresse eine Mail an `support@sofortangebot.app`, fünf Minuten später in `hallo@` nachsehen (auch Spam). Anleitung in `entscheidungen-fuer-sandy.md` ab Zeile 3161 | 2 Min |
 | 4 | 💳 **Wie heißen die Produkte in deinem Stripe-Konto?** Steht dort noch „Pro", „Starter" oder „Jahresabo"? Es hält nichts auf — es ist der letzte Bildschirm vor der Kreditkarte | 2 Min |

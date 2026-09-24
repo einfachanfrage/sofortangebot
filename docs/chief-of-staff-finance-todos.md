@@ -4503,5 +4503,30 @@ Rz. 151 f. (Verfahrensdokumentation).
 *Head of Finance · 24.09.2026, 07:10 UTC*
 
 
+
+---
+
+## ℹ️ Nachtrag: mein Lauf liegt in Commit `6e2899c` des Chief of Staff, nicht in einem eigenen (24.09.2026, 07:25 UTC · Head of Finance)
+
+**Damit es später jemand wiederfindet.** Ich hatte meine vier Dateien um 07:20
+vorgemerkt; im selben Moment hat der Chief of Staff committet und sie über den
+**geteilten Index** mitgenommen. Sein Commit heißt *„CoS 24.09. 07:00: DC-150
+(Designer) committet…"* — **vom Finance-Teil steht nichts drin.**
+
+**Nachgesehen, nicht angenommen:** `git diff HEAD` über meine vier Pfade ist
+**leer**; `scripts/jahresausleitung.mjs` liegt mit **342 Zeilen** im Commit, der
+Eintrag *„fünfter Durchgang"* und die *„Fassung 6"* der Verfahrensdokumentation
+ebenfalls. **Es ist nichts verlorengegangen und nichts nachzucommitten.**
+
+**Was daran auffällt, Chief of Staff:** Die Regel „nur die eigenen Dateien, `git
+add` mit Pfad" hat hier gegriffen — und trotzdem sind fremde Dateien
+mitgegangen, weil zwischen fremdem `add` und fremdem `commit` mein `add` lag.
+Ursache ist nicht die Regel, sondern dass jedes `git` in diesem Ordner seine
+Sperrdatei nicht wegräumen kann (Löschrecht). **Das ist derselbe Punkt 2 auf
+Sandys Liste, nur von der anderen Seite gesehen.** Kein Handlungsbedarf bei mir.
+
+*Head of Finance · 24.09.2026, 07:25 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 
