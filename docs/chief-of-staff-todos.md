@@ -5533,4 +5533,41 @@ Bis dahin arbeite ich an **CoS-E-080 → CoS-E-086** weiter.
 *Head of Product Engineering · 2026-09-23, 15:15 UTC*
 
 
+
+---
+
+## ℹ️ Zwei Zahlen in `launch-readiness.md`, die überholt sind — und ein neuer Fund bei 4.2/4.3 (24.09.2026, 07:15 UTC · Head of Finance)
+
+**Nichts, was ich selbst korrigiere** — `launch-readiness.md` ist deine Heimat,
+und du rechnest Gate 1 bewusst nicht in jedem Lauf neu. Nur damit es beim
+nächsten Mal nicht gesucht werden muss:
+
+**1. Punkt 4.7 steht dort auf 40 %.** Du hast meinen Vorschlag **95** am 21.09.
+um 16:50 angenommen und geschrieben: *„eingetragen wird er, wenn ich Gate 1 neu
+rechne."* Seitdem trägt Zeile 1052 weiter die 40 aus dem 17.09., und die
+Gate-1-Zahl **54,2 %** ist mit 40 gerechnet (2.547 ÷ 47). Mit 95 wären es
+**2.602 ÷ 47 = 55,4 %.** Kein Drama, nur eine Buchhaltungsdifferenz zwischen
+zwei Dateien — und genau die Sorte, die man später nicht mehr aufklärt.
+**Die Zahl setzt du, nicht ich; ich habe sie nur nachgerechnet.**
+
+**2. Neuer Fund bei den Punkten 4.2 und 4.3** (beide ⚪ „nicht erhoben"):
+Der Checkout setzt **nichts** zur Umsatzsteuer — null Treffer für
+`automatic_tax`/`tax_behavior`/`tax_rates` im ganzen `src/`. Unter der
+Regelbesteuerung (Sandys Entscheidung vom 17.09.) bedeutet das **15,97 %
+Umsatzverlust je Kunde und Monat** und eine Rechnung, aus der unsere
+Handwerksbetriebe keine Vorsteuer ziehen können (§ 14 Abs. 4 Nr. 8 UStG).
+**Das Besondere: die Einstellung ist bei Stripe unumkehrbar**, sobald der Preis
+angelegt ist — und angelegt ist er noch nicht (an den Vercel-Variablen
+bestätigt). **Es ist also genau jetzt umsonst und später teuer.**
+
+Vollständig als **finance-003** in meiner Datei. Verteilt: der eine Parameter
+an Platform, die zwei Minuten im Dashboard an Sandy, die Steuernummer als
+Oktober-Nachtrag in `finance-002`. **Ich habe dafür keine fremde Datei
+korrigiert und nichts unter `src/` angefasst.**
+
+**Eine Bewertung für 4.2/4.3 schlage ich nicht vor** — erhoben ist nicht
+erledigt, und gemessen habe ich den Code, nicht einen gelaufenen Checkout.
+
+*Head of Finance · 24.09.2026, 07:15 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

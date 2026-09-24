@@ -4528,5 +4528,206 @@ Sandys Liste, nur von der anderen Seite gesehen.** Kein Handlungsbedarf bei mir.
 *Head of Finance · 24.09.2026, 07:25 UTC*
 
 
+
+---
+
+## 🔴 finance-003 — Der Umsatzsteuer-Schalter im Checkout ist nicht gesetzt, und er lässt sich nur EINMAL setzen. **Kosten des Fehlers: 4,63 € je Kunde und Monat** (24.09.2026, 07:15 UTC · Head of Finance)
+
+**In einem Satz:** Die Anweisung, die Sandy im Stripe-Dashboard befolgen wird,
+sagt *„Sofortangebot – Gründerpreis, 29,00 €, monatlich, EUR"* — und **kein
+Wort darüber, ob das netto oder brutto ist.** Stripe entscheidet das dann
+selbst, per Voreinstellung zu unseren Ungunsten, und **die Entscheidung ist
+danach unumkehrbar.**
+
+### 1. Warum dieser Punkt und nicht 4.7
+
+Alle sechs Punkte auf meiner Liste hängen an jemand anderem — Apple Developer am
+Fragebogen, Kleinbedarf am ersten Beleg, Übernachtungen an Marketing, die
+Sicherungskontrolle an Sandy (Oktober), die Archivkopie am Datenträger (Sandy),
+4.7 an der Zahl des Chief of Staff. Der Chief of Staff bestätigt es in der
+Arbeitsreihenfolge vom 24.09.: *„Finance: von mir liegt nichts bei dir."*
+An 4.7 fehlen nur noch die 5 Punkte für die Archivkopie, und ein Verfahren
+dafür steht seit heute früh — mehr kann ich ohne den Stick nicht tun.
+
+**Also habe ich dorthin gesehen, wo das Geld hereinkommt.** Gate-1-Punkt 4.2
+heißt wörtlich *„Checkout/Abo funktioniert, korrekte Preise, **MwSt korrekt
+behandelt**"*, Punkt 4.3 *„Rechnungen werden erzeugt und sind korrekt"*. Beide
+stehen in `launch-readiness.md` seit Wochen auf **⚪ offen — nicht erhoben**.
+Die MwSt auf unserem eigenen Umsatz ist mein Fach, nicht Platforms.
+
+### 2. Der Fund
+
+Am 06.09. hat Platform die Anweisung an Sandy geschrieben, die beiden Preise
+im Stripe-Dashboard anzulegen (`chief-of-staff-platform-todos.md`, Zeile 838 ff.):
+
+| Produkt | Preis | Abrechnung |
+|---|---|---|
+| Sofortangebot – Standard | 49,00 € | monatlich, EUR |
+| Sofortangebot – Gründerpreis | 29,00 € | monatlich, EUR |
+
+**Die Tabelle hat drei Spalten und braucht vier.** Es fehlt die Steuer. Und
+das ist kein Schönheitsfehler, sondern die teuerste Zeile des ganzen Produkts:
+
+* **Stripe legt einen Preis ohne Angabe als `tax_behavior: "unspecified"` an.**
+  Steht so als Vorgabewert in der Antwort der Stripe-API-Referenz.
+* **Der Checkout in `src/app/api/stripe/route.ts` setzt nirgends `automatic_tax`.**
+  Selbst gemessen: `grep -rn "automatic_tax\|tax_behavior\|tax_rates" src/` →
+  **null Treffer im ganzen Projekt.** Ohne diesen Schalter rechnet Stripe
+  überhaupt keine Steuer, und auf der Rechnung steht keine Steuerzeile.
+* **Wer stattdessen Stripe Tax einschaltet und die empfohlene Voreinstellung
+  „Automatisch" nimmt, bekommt für EUR `inclusive`** — Stripes eigene Doku:
+  exklusiv nur für USD und CAD, inklusiv für *alle anderen* Währungen.
+* **`tax_behavior` lässt sich nach dem Anlegen nicht mehr ändern.** Wörtlich:
+  *„Once specified as either `inclusive` or `exclusive`, it cannot be changed."*
+  Dasselbe gilt für `percentage`, `country` und `state` eines Steuersatzes.
+
+**Deshalb ist das kein Punkt für später.** Ein falsch angelegter Preis wird
+nicht korrigiert, er wird ersetzt — und jedes daran hängende Abo muss umgezogen
+werden. Solange die Preise **noch nicht existieren**, kostet die richtige
+Einstellung null Aufwand. Das ist genau jetzt.
+
+### 3. Was der Fehler kostet, in Zahlen
+
+Sandy hat am 17.09. **Regelbesteuerung** gewählt (CoS-F-009, Verzicht nach
+§ 19 Abs. 2 UStG). Damit ist der Abo-Umsatz umsatzsteuerpflichtig, 19 %.
+
+Zahlt der Betrieb 29,00 € **ohne** ausgewiesene Steuer, ist der Fehlbetrag
+nicht etwa null: Nach **§ 10 Abs. 1 UStG** ist Entgelt alles, was der Empfänger
+aufwendet, **abzüglich der darin enthaltenen Umsatzsteuer**. Die 29,00 € sind
+dann ein Bruttobetrag — und die Steuer darin schuldet Sandy trotzdem.
+
+| | richtig (`exclusive`) | falsch (`unspecified` / `inclusive`) |
+|---|---|---|
+| Gründerpreis — Betrieb zahlt | **34,51 €** | 29,00 € |
+| davon an das Finanzamt | 5,51 € | **4,63 €** |
+| **bei Sandy bleibt** | **29,00 €** | **24,37 €** |
+| Standard — Betrieb zahlt | **58,31 €** | 49,00 € |
+| **bei Sandy bleibt** | **49,00 €** | **41,18 €** |
+| Verlust je Kunde und Monat | — | **15,97 %** |
+
+**Hochgerechnet auf die 25 Gründerplätze: 115,75 € im Monat, 1.389 € im Jahr.**
+Zum Vergleich die Zahl aus CoS-F-002: die **Fixkosten liegen heute bei
+135,10 € im Monat.** Ein einziges nicht gesetztes Häkchen kostet also rund
+**86 % der monatlichen Fixkosten** — dauerhaft, unbemerkt, und erst beim
+Jahresabschluss sichtbar.
+
+**Der Deckungsbeitrag je Gründer-Kunde fällt von 28,19 € auf 23,56 €.**
+
+### 4. Der zweite Schaden trifft den Kunden, und er kommt zurück
+
+Ohne Steuerzeile fehlt der Rechnung die Pflichtangabe nach **§ 14 Abs. 4 Nr. 8
+UStG** (Steuersatz und Steuerbetrag). Unsere Kunden sind Handwerksbetriebe in
+der Regelbesteuerung — **sie können aus so einer Rechnung keine Vorsteuer
+ziehen.** Der erste Steuerberater, der das sieht, verlangt eine berichtigte
+Rechnung. Dann steht Sandy vor der Wahl, die 4,63 € selbst zu tragen oder
+nachzufordern, was auf der Seite nie stand.
+
+**Und eine zweite Pflichtangabe fällt genauso aus**, ohne dass jemand sie
+bestellt hat: **§ 14 Abs. 4 Nr. 2 UStG** verlangt die **Steuernummer oder
+USt-IdNr. des Ausstellers** auf jeder Rechnung. Stripe druckt, was im Konto
+hinterlegt ist — und dort ist heute nichts hinterlegt, weil es die Nummer noch
+nicht gibt. Sie kommt mit dem Fragebogen im Oktober. **Das ist ein
+Nachfolgepunkt für KW 41**, und ich habe ihn in `finance-002` eingetragen.
+
+Nicht betroffen: Rechnungsnummer, Datum, Leistungszeitraum, Entgelt, Name und
+Anschrift beider Seiten — die liefert Stripe von sich aus (§ 14 Abs. 4 Nr. 1,
+3–7 UStG).
+
+### 5. Der Weg, den ich empfehle — und warum nicht der von Stripe empfohlene
+
+Stripe empfiehlt **Stripe Tax**. Für uns ist das der falsche Weg:
+
+| | Stripe Tax | fester Steuersatz („Tax Rate") |
+|---|---|---|
+| Kosten | **0,5 % je Zahlung**, kein Freikontingent | **0 €** |
+| bei 25 Gründer-Betrieben | ≈ 4,31 €/Monat, 51,75 €/Jahr | 0 € |
+| Nutzen für uns | Steuersätze in 60+ Ländern | — |
+| unser Fall | **ein Land, ein Satz, 19 %** | passt genau |
+| Risiko | Voreinstellung für EUR ist `inclusive` → der Fehler aus Abschnitt 3 | keins |
+
+**Wir verkaufen an deutsche Handwerksbetriebe, in Euro, mit einem einzigen
+Steuersatz.** Dafür eine Automatik zu bezahlen, die 60 Länder beherrscht, ist
+dasselbe Muster wie beim E-Rechnungs-Viewer: der kleinste Weg kostet 0 € und
+ist der, den man in acht Jahren noch versteht. **Sollte später Ausland
+dazukommen, ist Stripe Tax ein Schalter, kein Umbau** — die Preise sind dann
+schon richtig angelegt, weil `exclusive` für beide Wege der richtige Wert ist.
+
+### 6. Was ich wem gegeben habe
+
+| Wohin | Was |
+|---|---|
+| `entscheidungen-fuer-sandy.md` | die **vollständige** Dashboard-Anweisung — sie ersetzt die dreispaltige Tabelle vom 06.09., inkl. Steuersatz und Steuernummer |
+| `chief-of-staff-platform-todos.md` | der eine fehlende Parameter im Checkout (`subscription_data.default_tax_rates`) und die Bitte, die alte Preistabelle nicht mehr so zu verwenden |
+| `finance-002-behoerdenliste-fuer-sandy.md` | Nachtrag: Steuernummer aus dem Fragebogen gehört anschließend in die Stripe-Rechnungseinstellungen |
+| `chief-of-staff-todos.md` | zwei Zahlen, die in `launch-readiness.md` überholt sind |
+
+**Ich habe keine Datei unter `src/` angefasst.** Der Checkout gehört Platform;
+die Regel „nur die eigenen Dateien" gilt auch, wenn man meint, es eilig zu haben.
+
+### 7. Was der Finanzplan davon merkt: nichts — noch nicht
+
+**`kostenuebersicht-finance.xlsx` ist in diesem Lauf weder geöffnet noch
+geändert worden.** Der Plan rechnet die Abo-Preise bereits als **Nettopreise**
+(`Plan-Annahmen`), also genau so, wie es bei richtiger Einstellung eintritt.
+**Der Plan ist richtig — die Wirklichkeit wäre es ohne diesen Eintrag nicht
+geworden.** Erst wenn der erste Preis falsch angelegt wäre, müsste ich alle
+drei Szenarien um 15,97 % auf der Umsatzseite kürzen. Das ist der Grund, warum
+dieser Punkt vor dem ersten Kunden gelöst gehört und nicht danach.
+
+### 8. Was bei mir offen bleibt
+
+| Punkt | Wartet auf | Wann |
+|---|---|---|
+| **Apple Developer 99 €/Jahr** | Sandys Fragebogen (USt-IdNr. → Vorsteuer oder Reverse Charge) | ⏸ ab 26.09. |
+| **270 € Kleinbedarf** | den ersten echten Beleg (inkl. Datenträger) | offen, kein Datum |
+| **Übernachtungen** | eine Zulieferung von Marketing ab ~4 Nächten | offen, kein Datum |
+| **Vierteljährliche Sicherungskontrolle** | Sandy (4 von 5 Punkten) | erstmals Oktober 2026 |
+| **Archivkopie / Jahresausleitung** | nur noch den Datenträger — Verfahren steht | Januar 2027 |
+| **Gate-1-Punkt 4.7** | die Zahl des Chief of Staff | Vorschlag **95/100** steht seit 21.09., 16:10 |
+| **finance-003 — Steuer im Checkout** | Sandys zwei Minuten im Stripe-Dashboard | **vor dem ersten zahlenden Betrieb, unumkehrbar** |
+
+**Geprüft, nicht behauptet:** `grep -rn "automatic_tax\|tax_behavior\|tax_id_collection\|tax_rates" src/`
+→ **null Treffer** · `src/app/api/stripe/route.ts` Zeile für Zeile gelesen, die
+Checkout-Session führt `mode`, `line_items`, `success_url`, `cancel_url`,
+`customer`/`customer_email`, `metadata`, `subscription_data.metadata`, `locale`
+— und nichts zur Steuer · die vier Stripe-Vorgaben einzeln in der Hersteller-Doku
+nachgelesen statt aus dem Gedächtnis behauptet (Vorgabewert `unspecified`,
+Unveränderbarkeit, `inclusive` als EUR-Voreinstellung, `subscription_data[default_tax_rates]`
+als der Parameter für wiederkehrende Zahlungen) · **0,5 % Stripe-Tax-Gebühr auf
+der Preisseite des Herstellers nachgesehen, kein Freikontingent** · die
+Bruttobeträge 34,51 € und 58,31 € gegen `bruttoText()` in `src/lib/pricing.ts`
+und die dazugehörige Zusicherung in `cos-038-a-preis-und-texte.test.ts`
+(Zeilen 83/84) gehalten — **die Seite verspricht dem Kunden bereits genau das
+Ergebnis, das nur `exclusive` liefert** · die Vercel-Umgebungsvariablen des
+Projekts `sofortangebot` selbst abgefragt: `STRIPE_PRICE_STANDARD` und
+`STRIPE_PRICE_FOUNDER` **existieren dort nicht**, es liegen die alten
+`STRIPE_PRICE_STARTER`/`STRIPE_PRICE_PRO` — also sind die Preise tatsächlich
+noch nicht angelegt, und die Einstellung ist noch frei · ENDE-Markierung aller
+berührten Dateien nach dem Schreiben nachgesehen.
+
+**Nicht geprüft, und ich behaupte es deshalb nicht:** wie die Produkte und
+Preise in Sandys Stripe-Konto heute wirklich aussehen — mein Zugang ist nicht
+freigeschaltet, und der Fund der falschen Variablennamen liegt bereits bei
+Marketing und Platform. **Ob das Finanzamt der Argumentation zu § 10 Abs. 1
+UStG in einem Einzelfall folgt**, ist eine Steuerberaterfrage; die Rechtslage
+selbst ist eindeutig. **Der erste echte Checkout ist nie gelaufen** — solange
+das Stripe-Konto keine Zahlungen annehmen kann (Punkt 4.6, 15 %), lässt sich
+das auch nicht messen.
+
+**Quellen:** [Stripe API — Create a price (`tax_behavior`, Vorgabewert und Unveränderbarkeit)](https://docs.stripe.com/api/prices/create) ·
+[Stripe — Specify product tax codes and tax behavior (EUR-Voreinstellung `inclusive`)](https://docs.stripe.com/tax/products-prices-tax-codes-tax-behavior) ·
+[Stripe — Automatically collect tax with the Checkout page (`automatic_tax[enabled]`)](https://docs.stripe.com/tax/checkout/page) ·
+[Stripe — Use manual Tax Rates (`subscription_data[default_tax_rates]`)](https://docs.stripe.com/payments/checkout/use-manual-tax-rates) ·
+[Stripe Tax — Preise (0,5 % je Zahlung)](https://stripe.com/de/tax/pricing) ·
+`src/app/api/stripe/route.ts` · `src/lib/pricing.ts` ·
+`src/lib/__tests__/cos-038-a-preis-und-texte.test.ts` ·
+`docs/chief-of-staff-platform-todos.md` (Zeile 838 ff.) ·
+`docs/launch-readiness.md` (Punkte 4.2, 4.3, 4.6) ·
+CoS-F-002 (Deckungsbeitrag, Fixkosten) · CoS-F-009 (Regelbesteuerung) ·
+§ 10 Abs. 1 UStG · § 14 Abs. 4 Nr. 2 und Nr. 8 UStG · § 19 Abs. 2 UStG.
+
+*Head of Finance · 24.09.2026, 07:15 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

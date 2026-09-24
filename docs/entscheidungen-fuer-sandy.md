@@ -3523,4 +3523,91 @@ festgelegt ist.
 
 
 
+
+---
+
+## 🔴 Zwei Minuten in Stripe, die man nur EINMAL richtig machen kann — bitte vor dem ersten zahlenden Betrieb (24.09.2026, 07:15 UTC · Head of Finance)
+
+**Es kostet dich zwei Minuten und es geht um rund 1.400 € im Jahr.**
+
+Du wirst irgendwann im Stripe-Dashboard die beiden Preise anlegen — Platform
+hat dich am 06.09. darum gebeten. **In der Anweisung dort fehlt eine Angabe**,
+und ohne sie trifft Stripe die Entscheidung selbst, zu deinen Ungunsten.
+**Danach lässt sie sich nicht mehr ändern** — das ist keine Vorsicht von mir,
+das steht so bei Stripe.
+
+### Worum es geht, in einem Satz
+
+Stripe muss wissen, ob **29 € der Preis vor oder nach der Mehrwertsteuer** ist.
+
+Auf deiner Seite steht „29 € zzgl. MwSt. — 34,51 € brutto". Das ist **vor**
+der Steuer. Sagst du es Stripe nicht, nimmt Stripe an, die 29 € seien schon
+inklusive — **dann zahlt der Betrieb 29 €, du führst 4,63 € davon ans
+Finanzamt ab, und bei dir bleiben 24,37 €.** Jeden Monat, bei jedem Kunden.
+
+| | so ist es richtig | so wäre es ohne die Angabe |
+|---|---|---|
+| Der Betrieb zahlt | **34,51 €** | 29,00 € |
+| Bei dir bleibt | **29,00 €** | **24,37 €** |
+
+Bei vollen 25 Gründerplätzen sind das **115,75 € im Monat**. Deine gesamten
+Fixkosten liegen bei 135,10 € im Monat.
+
+### Was du im Dashboard machst — drei Sachen
+
+**1. Die beiden Preise anlegen** (das ist Platforms Tabelle, ergänzt um die
+Spalte, die fehlte):
+
+| Produkt | Preis | Abrechnung | Steuerverhalten |
+|---|---|---|---|
+| Sofortangebot – Standard | 49,00 € | monatlich, EUR | **exklusiv** |
+| Sofortangebot – Gründerpreis | 29,00 € | monatlich, EUR | **exklusiv** |
+
+Das Feld heißt im Dashboard beim Anlegen des Preises **„Steuerverhalten"** bzw.
+„Tax behavior". Wähle **„Exklusiv"** — also *Steuer kommt oben drauf*.
+**Nicht „Inklusiv", nicht „Automatisch"**: „Automatisch" bedeutet bei Euro
+inklusiv, und das ist genau der Fehler oben.
+
+**2. Einen Steuersatz anlegen** (Menü *Produktkatalog → Steuersätze*, oder
+*Einstellungen → Steuersätze*):
+
+| Feld | Wert |
+|---|---|
+| Anzeigename | `MwSt.` |
+| Prozentsatz | `19` |
+| Inklusiv? | **nein** |
+| Land | Deutschland |
+
+**3. Die drei IDs an Platform geben** — die zwei Preis-IDs (`price_…`) **und**
+die ID des Steuersatzes (`txr_…`). Schreib sie einfach hier in die Unterhaltung,
+den Rest mache ich bzw. Platform.
+
+**Falls Stripe dich fragt, ob du „Stripe Tax" einschalten willst: nein.**
+Das kostet 0,5 % von jeder Zahlung und rechnet Steuersätze für 60 Länder aus.
+Wir haben ein Land und einen Satz. Der Weg oben kostet nichts.
+
+### Und eine Sache, die erst im Oktober geht
+
+Auf jeder Rechnung, die du ausstellst, muss deine **Steuernummer** stehen
+(§ 14 Abs. 4 Nr. 2 UStG). Die bekommst du erst nach dem Fragebogen. **Wenn sie
+da ist: einmal in Stripe unter *Einstellungen → Rechnungen* eintragen**, dann
+druckt Stripe sie von selbst auf jede Rechnung. Ich habe es in deiner
+Behördenliste (`finance-002`) als Nachtrag vermerkt, damit es nicht untergeht.
+
+### Warum ich dich damit behellige und nicht selbst mache
+
+Das Stripe-Konto ist deins, mein Zugang darf dort keine Produkte anlegen. Es
+ist einer der wenigen Punkte, die wirklich nur du klicken kannst — und einer
+der wenigen, die man **nicht nachträglich korrigieren** kann: ein einmal
+angelegter Preis mit falschem Steuerverhalten muss ersetzt werden, samt Umzug
+aller Abos, die daran hängen. Solange es die Preise noch nicht gibt, kostet
+das Richtige nichts.
+
+**Es hält heute nichts auf.** Es muss nur vor dem ersten zahlenden Betrieb
+stehen — und zusammen mit den Preis-IDs, auf die Platform ohnehin wartet, ist
+es derselbe eine Besuch im Dashboard.
+
+*Head of Finance · 24.09.2026, 07:15 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

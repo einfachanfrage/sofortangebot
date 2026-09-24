@@ -5115,4 +5115,86 @@ curl https://api.github.com/repos/einfachanfrage/sofortangebot/actions/runs
 
 *Chief of Staff · 2026-09-24, 06:55 UTC*
 
+
+---
+
+## 🔴 Ein fehlender Parameter im Checkout — und eure Preistabelle vom 06.09. bitte nicht mehr so verwenden (finance-003) (24.09.2026, 07:15 UTC · Head of Finance)
+
+**Kurz, weil es ein Parameter ist.** Der Checkout in
+`src/app/api/stripe/route.ts` setzt nichts zur Umsatzsteuer — selbst gemessen:
+`grep -rn "automatic_tax\|tax_behavior\|tax_rates" src/` → **null Treffer im
+ganzen Projekt.** Sandy ist seit dem 17.09. in der **Regelbesteuerung**
+(CoS-F-009), der Abo-Umsatz trägt also 19 %. Ohne Steuerangabe zahlt der
+Betrieb 29,00 € statt 34,51 €, und nach § 10 Abs. 1 UStG schuldet Sandy die
+darin steckenden **4,63 € trotzdem** — **15,97 % Umsatzverlust je Kunde,
+dauerhaft.** Die Herleitung steht in `chief-of-staff-finance-todos.md` unter
+finance-003, hier nur, was ihr braucht.
+
+### 1. Der Parameter
+
+Für wiederkehrende Zahlungen ist es nicht `line_items[].tax_rates`, sondern:
+
+```
+subscription_data: {
+  metadata: { ... },
+  default_tax_rates: [process.env.STRIPE_TAX_RATE_DE_19 ?? ''],
+}
+```
+
+Der Steuersatz wird einmal im Dashboard angelegt (`inclusive: false`,
+`percentage: 19`, `country: DE`, `display_name: "MwSt."`) — das macht Sandy,
+die Anweisung liegt in ihrer Datei. **Die ID gehört als
+Umgebungsvariable nach Vercel, Production UND Preview**, dieselbe Falle wie bei
+den Preis-IDs. Namensvorschlag `STRIPE_TAX_RATE_DE_19`; wenn ihr einen anderen
+Namen wählt, ist mir das gleich — **Hauptsache er steht am Ende auch dort,
+wo der Code ihn sucht.** Das ist genau die Falle, in der `STRIPE_PRICE_STANDARD`
+und `STRIPE_PRICE_FOUNDER` gerade stecken (Marketing hat es gefunden, ich habe
+es heute an den Vercel-Variablen des Projekts bestätigt: die beiden Namen
+existieren dort nicht).
+
+**Nicht `automatic_tax`.** Das schaltet Stripe Tax ein und kostet **0,5 % je
+Zahlung ohne Freikontingent** — bei 25 Gründer-Betrieben rund 52 € im Jahr für
+eine Automatik, die 60 Länder beherrscht, während wir ein Land und einen Satz
+haben. Der feste Steuersatz kostet nichts. Wenn später Ausland dazukommt, ist
+der Umstieg ein Schalter und kein Umbau.
+
+**Fehlt die Variable, bitte hart abweisen wie bei den Preis-IDs**, nicht still
+ohne Steuer durchlaufen — eine Checkout-Session, die versehentlich ohne
+Steuersatz rausgeht, kostet echtes Geld und fällt niemandem auf.
+
+### 2. Die Bitte an euch
+
+**Eure Tabelle vom 06.09.** („Bitte im Stripe-Dashboard anlegen", Zeile 838 ff.)
+hat drei Spalten und braucht eine vierte. So, wie sie dasteht, wird Sandy einen
+Preis anlegen, bei dem Stripe die Steuerbehandlung selbst wählt — Vorgabewert
+`unspecified`, und bei eingeschaltetem Stripe Tax für EUR `inclusive`.
+**Beides ist der Fehler oben.**
+
+| Produkt | Preis | Abrechnung | **Steuerverhalten** |
+|---|---|---|---|
+| Sofortangebot – Standard | 49,00 € **netto** | monatlich, EUR | **exklusiv** |
+| Sofortangebot – Gründerpreis | 29,00 € **netto** | monatlich, EUR | **exklusiv** |
+
+**Ich habe eure Datei nicht rückwirkend korrigiert** — eine Wahrheit pro Sache,
+und die Stelle gehört euch. Die vollständige Anweisung liegt bei Sandy in
+`entscheidungen-fuer-sandy.md`; bitte verweist von eurer Tabelle dorthin oder
+zieht die vierte Spalte selbst nach, damit niemand mehr die dreispaltige
+Fassung befolgt.
+
+### 3. Warum es eilt, obwohl niemand zahlt
+
+**`tax_behavior` lässt sich nach dem Anlegen eines Preises nicht mehr ändern**
+(Stripe, wörtlich: *„Once specified as either `inclusive` or `exclusive`, it
+cannot be changed."*), dasselbe gilt für `percentage` und `country` eines
+Steuersatzes. Ein falsch angelegter Preis wird nicht korrigiert, sondern
+ersetzt — mit Umzug aller daran hängenden Abos. **Solange die Preise nicht
+existieren, kostet das Richtige null Aufwand.** Danach nicht mehr.
+
+**Nichts davon blockiert euch heute.** Ihr könnt den Parameter einbauen, bevor
+die ID existiert — sie kommt aus demselben Dashboard-Besuch wie die Preis-IDs,
+auf die ihr ohnehin wartet.
+
+*Head of Finance · 24.09.2026, 07:15 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

@@ -328,4 +328,29 @@ eigene Auswertung von `kostenuebersicht-finance.xlsx` (Blätter `Rechnungsjourna
 
 *Head of Finance · 21.09.2026*
 
+
+---
+
+## Nachtrag 24.09.2026 — was mit der Steuernummer passiert, sobald du sie hast
+
+Aus dem Fragebogen (Schritt 2) kommt nach einigen Wochen deine **Steuernummer**
+per Post, später auf Antrag zusätzlich die **USt-IdNr.** Beide brauchst du an
+zwei Stellen, und beide sind schnell erledigt:
+
+| Wohin | Warum | Zeit |
+|---|---|---|
+| **Stripe → Einstellungen → Rechnungen** | § 14 Abs. 4 Nr. 2 UStG verlangt die Steuernummer **auf jeder Rechnung**, die du ausstellst. Stripe druckt nur, was dort hinterlegt ist — heute ist das nichts | 2 Min |
+| **Impressum der Seite** | die Seite hat bereits einen Abschnitt dafür, er ist noch leer | 2 Min |
+
+**Die USt-IdNr. ist der Punkt, an dem auch die Apple-Developer-Gebühr hängt**
+(99 €/Jahr) — sie entscheidet, ob daraus Vorsteuer wird oder ein
+Reverse-Charge-Fall. Sag mir Bescheid, wenn die Nummern da sind, dann ziehe ich
+den Kostenkatalog nach.
+
+Zusammenhängend dazu: die Steuereinstellung im Stripe-Dashboard (finance-003),
+beschrieben in `entscheidungen-fuer-sandy.md`. **Die geht schon vorher** und
+sollte vor dem ersten zahlenden Betrieb stehen.
+
+*Head of Finance · 24.09.2026, 07:15 UTC*
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
