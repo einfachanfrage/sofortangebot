@@ -4321,5 +4321,187 @@ gegen die Wirklichkeit, die es noch nicht gibt.
 
 
 
+
+---
+
+## ✅ Punkt 4.7, fünfter Durchgang — die Jahresausleitung ist kein Plan mehr, sondern ein Befehl. **Bewertung bleibt bei 95** (24.09.2026, 07:10 UTC · Head of Finance)
+
+**In einem Satz:** Die letzten 5 Punkte in 4.7 standen seit dem 17.09. mit dem
+Vermerk *„Januar 2027"* — und wie schon beim Viewer war die Annahme dahinter zur
+Hälfte falsch: **der Datenträger gehört in den Januar, das Verfahren nicht.**
+Es steht jetzt, und es ist über den echten Belegbestand gelaufen.
+
+### 1. Warum dieser Punkt und nicht ein anderer
+
+Alle sechs Punkte auf meiner Liste hängen an jemand anderem — Apple Developer am
+Fragebogen, Kleinbedarf am ersten Beleg, Übernachtungen an Marketing, die
+Sicherungskontrolle an Sandy (Oktober), 4.7 an deiner Zahl. Der Chief of Staff
+bestätigt es in der Arbeitsreihenfolge: *„Finance: von mir liegt nichts bei
+dir."* Am Finanzplan hat sich seit meinem Lauf um 13:10 nichts bewegt, also war
+auch `finance-002` nicht gegenzulesen.
+
+**Blieb der eine Punkt, bei dem „blockiert" eine Behauptung war und keine
+Messung.** *„Punkte für einen Plan gibt es nicht"* habe ich am 21.09. selbst
+geschrieben. Das gilt weiter — aber es ist kein Grund, den Plan bis Januar
+ungeprüft liegen zu lassen. **Ein Verfahren, das im Januar 2027 zum ersten Mal
+läuft, wird im Januar 2027 zum ersten Mal scheitern.**
+
+### 2. Was jetzt im Projekt liegt
+
+**`scripts/jahresausleitung.mjs`** — reines Node, keine Abhängigkeit, kein
+Paket, keine Installation, kein Internet.
+
+```
+node scripts/jahresausleitung.mjs 2026 --ziel E:\
+node scripts/jahresausleitung.mjs --pruefen <ordner>
+```
+
+Der erste Befehl legt einen **in sich geschlossenen** Ordner
+`Sofortangebot-Archiv-2026` an:
+
+| im Bündel | wozu |
+|---|---|
+| `belege/` | die Originaldateien, Byte für Byte, samt `storniert/` |
+| `eingangsbuch-2026.csv` | die Zeilen des Jahres mit Kopfzeile, UTF-8, semikolongetrennt |
+| `pruefsummen.sha256` | Standardformat — `sha256sum -c` genügt, kein eigenes Werkzeug nötig |
+| `MANIFEST.csv` | jede Datei mit SHA-256 **und** Byte-Zahl |
+| `verfahrensdokumentation.md` | GoBD verlangt, dass das Verfahren beim Bestand liegt, nicht nur im Projekt |
+| `hashliste.md` | die Prüfsummen zum Zeitpunkt der Ablage |
+| `e-rechnung-ansehen.mjs` | damit eine `.xml`-Rechnung 2034 noch lesbar ist, ohne dieses Projekt |
+| `LIESMICH.txt` | reiner Text: was das ist, bis wann es zu halten ist, wie man es prüft — **für den, der das Medium in acht Jahren in der Hand hält und nichts von uns weiß** |
+
+**Der zweite Befehl ist der, auf den es langfristig ankommt.** Eine Archivkopie,
+die man nicht nachprüfen kann, ist eine Behauptung. `--pruefen` stellt jede
+Datei gegen das mitgeführte Manifest und meldet auch den umgekehrten Fall: eine
+Datei, die **nachträglich hineingelegt** wurde und im Manifest fehlt.
+
+### 3. Drei Verweigerungen, die wichtiger sind als das Kopieren
+
+| Das Programm verweigert | Grund |
+|---|---|
+| ein Ziel innerhalb von `belege/` | dieselbe Regel wie beim Viewer: in die Ablage schreibt kein Werkzeug von uns |
+| die Ausleitung eines **laufenden** Jahres | eine Archivkopie von 2026 im September 2026 wäre unvollständig und sähe trotzdem fertig aus. Für den Test: `--probelauf`, und dann steht **„PROBELAUF, KEIN ARCHIV"** in der ersten Zeile des LIESMICH und im Ordnernamen |
+| das Überschreiben einer bestehenden Archivkopie | ein Archiv, das sich überschreiben lässt, ist kein Archiv |
+
+### 4. Gemessen, nicht behauptet — zwölf Fälle
+
+| # | Fall | Erwartet | Ergebnis |
+|---|---|---|---|
+| 1 | Probelauf über den **echten Bestand 2026** | 25 Belege, alles ankommen | ✅ 25 Belegdateien, 32 Dateien, 1.722.878 Bytes |
+| 2 | `--pruefen` direkt danach | sauber | ✅ 31 Dateien geprüft, alle unverändert |
+| 3 | 2026 **ohne** `--probelauf` | abweisen | ✅ Rückgabewert 2 |
+| 4 | Ziel `belege/eingangsrechnungen` | abweisen | ✅ Rückgabewert 2 |
+| 5 | zweiter Lauf auf dasselbe Ziel | nicht überschreiben | ✅ Rückgabewert 2 |
+| 6 | **ein Byte an eine Belegdatei im Bündel angehängt** | finden | ✅ *„VERAENDERT"*, beide Prüfsummen ausgegeben, Rückgabewert 1 |
+| 7 | fremde Datei ins Bündel gelegt | finden | ✅ *„NICHT IM MANIFEST"*, Rückgabewert 1 |
+| 8 | **`sha256sum -c pruefsummen.sha256` mit Bordmitteln** | ohne unser Werkzeug prüfbar | ✅ alle OK; bei Fall 6 unabhängig *„FAILED"* |
+| 9 | Jahr ohne Ordner (2025) | abweisen | ✅ Rückgabewert 2 |
+| 10 | **abgeschlossenes Jahr**, Testbestand, ohne `--probelauf` | echtes Archiv erzeugen | ✅ `Sofortangebot-Archiv-2024`, LIESMICH ohne Probelauf-Warnung, *„AUFBEWAHRUNG BIS ENDE 2032"* |
+| 11 | Belegdatei **ohne Eingangsbuch-Eintrag** (auch in `storniert/`) | nicht stillschweigend mitnehmen | ✅ namentlich gemeldet, Rückgabewert 1 — die Datei wandert trotzdem mit, sie fehlt nur im Buch |
+| 12 | **Betrachter aus dem Bündel heraus** auf Beleg 2026-018 | Bündel ist ohne Projekt brauchbar | ✅ 10 von 10 Prüfungen, 50,47 + 3,53 = 54,00 € — dieselben Zahlen wie am 21.09. |
+
+**Fall 8 ist der, der in acht Jahren zählt.** Ein Prüfverfahren, das nur mit
+unserem eigenen Skript funktioniert, ist wertlos, sobald das Skript weg ist.
+Deshalb liegen die Prüfsummen zusätzlich im Standardformat: Windows, Linux und
+macOS können sie mit Bordmitteln lesen.
+
+**Fall 11 war die Frage, die ich mir vorher nicht sicher beantworten konnte.**
+Eine Datei, die im Ordner liegt, aber nicht im Buch steht, darf weder
+verschwinden noch unbemerkt mitlaufen. Sie geht mit — und wird namentlich
+gemeldet.
+
+### 5. Ein Fehler, den erst Fall 10 gezeigt hat, und er war meiner
+
+Im ersten Durchlauf stand im LIESMICH **„7 Dateien insgesamt"**, während
+tatsächlich **9** im Ordner lagen. Ursache: das LIESMICH zählt sich selbst und
+die Prüfsummenliste nicht mit — die gibt es zu diesem Zeitpunkt noch nicht.
+Dasselbe galt für die Byte-Summe.
+
+**Das ist genau der Fehler, der acht Jahre später niemandem mehr zu erklären
+ist:** ein Deckblatt, das eine andere Zahl nennt als der Ordner, auf dem es
+liegt, macht das ganze Bündel angreifbar — und zwar wegen einer Zählweise, nicht
+wegen eines fehlenden Belegs.
+
+**Behoben, und zwar nicht durch Nachzählen:** Das LIESMICH nennt jetzt nur noch
+die **Belegdateien und deren Bytes** — Zahlen, die feststehen, bevor das Bündel
+fertig ist — und verweist für die vollständige Liste auf `MANIFEST.csv`. Die
+Abschlussmeldung rechnet erst, wenn alles geschrieben ist. **Gegengezählt:**
+`find … -type f | wc -l` → **32**, gemeldet **32**; Byte-Summe der Belege
+**1.642.991** im Bündel und **1.642.991** in der Quelle.
+
+**Ohne Fall 10 wäre das nicht aufgefallen** — im Probelauf steht die Warnung
+oben drüber und der Blick bleibt an ihr hängen.
+
+### 6. Was das an der Bewertung ändert: nichts, und das ist Absicht
+
+**4.7 bleibt bei 95.** Die fehlenden 5 Punkte sind die Archivkopie, und die gibt
+es erst, wenn sie auf einem Medium liegt, das sich nicht mehr ändert. Ein
+Verfahren ist kein Datenträger. **Die Zahl setzt ohnehin der Chief of Staff,
+nicht ich.**
+
+**Was sich geändert hat, ist das Risiko dahinter.** Am 21.09. stand hinter den
+5 Punkten ein Plan, den niemand erprobt hatte, mit Termin in einem Monat, in dem
+Jahresabschluss, Voranmeldung und Steuerberater-Erstgespräch zusammenfallen.
+Jetzt steht dort ein Befehl, der zwölfmal gelaufen ist. **Im Januar bleibt:
+Stick einstecken, einen Befehl, Ausgabe lesen, Stick abziehen.**
+
+### 7. Was jetzt bei Sandy liegt — und es kostet den Plan nichts
+
+**Ein USB-Stick oder eine kleine externe Platte, bis Januar 2027.** Steht in
+`entscheidungen-fuer-sandy.md`. Größe ist kein Thema: der gesamte Bestand 2026
+sind **1,7 GB**, jedes handelsübliche Medium genügt.
+
+**Der Finanzplan wird dafür nicht angefasst**, und das ist keine Nachlässigkeit:
+Ein Stick für 15–25 € fällt unter die **270 € „laufender Kleinbedarf"**, die als
+Eimer im Katalog stehen und mit 19 % Vorsteuer gerechnet sind. Genau dafür ist
+der Eimer da. **Eine Zeile bekommt er, wenn der Beleg da ist** — dieselbe Regel
+wie beim übrigen Kleinbedarf, kein Sonderweg.
+
+### 8. Verfahrensdokumentation Fassung 6
+
+| Stelle | was |
+|---|---|
+| Kopf | Fassung 5 → **6** |
+| Teil 3 | neue Zeile *„Jahresausleitung / Archivkopie"* neben Viewer und Datensicherung |
+| Teil 4, Punkt 1 | aus dem Absatz *„wird … gezogen"* ist der Befehl geworden, mit den drei Verweigerungen und der Rücklesekontrolle |
+| Lückenliste | Zeile *„Archivkopie"*: Zuständigkeit **Head of Finance → Sandy**, weil nur noch der Datenträger fehlt |
+| Änderungshistorie | Fassung 6 eingetragen |
+
+### 9. Was bei mir offen bleibt
+
+| Punkt | Wartet auf | Wann |
+|---|---|---|
+| **Apple Developer 99 €/Jahr** | Sandys Fragebogen (USt-IdNr. → Vorsteuer oder Reverse Charge) | ⏸ ab 26.09. |
+| **270 € Kleinbedarf** | den ersten echten Beleg — **jetzt inkl. Datenträger** | offen, kein Datum |
+| **Übernachtungen** | eine Zulieferung von Marketing ab ~4 Nächten | offen, kein Datum |
+| **Vierteljährliche Sicherungskontrolle** | Sandy (4 von 5 Punkten) | erstmals Oktober 2026 |
+| **Archivkopie / Jahresausleitung** | **nur noch den Datenträger** — Verfahren steht | Januar 2027 |
+| **Gate-1-Punkt 4.7** | die Zahl des Chief of Staff | Vorschlag **95/100** steht seit 21.09., 16:10 |
+
+**Geprüft, nicht behauptet:** die zwölf Fälle oben, jeder einzeln aufgerufen und
+der Rückgabewert mitgelesen · `find … -type f | wc -l` gegen die gemeldete
+Dateizahl und die Byte-Summen von Quelle und Bündel gegeneinander · SHA-256 von
+Beleg 2026-018 nach allen Läufen: `a0da28b6…26eb9e` — **identisch mit dem Stand
+vom 21.09.** · `node scripts/belege-pruefen.mjs` → *„25 Belegdateien
+unveraendert, keine unerfasste Datei."* · `node scripts/docs-sichern.mjs
+pruefen` → *„Alle 59 Doku-Dateien in Ordnung."* · `node --check` über das neue
+Skript · ENDE-Markierung beider berührter Doku-Dateien nach dem Schreiben
+nachgesehen. **Nicht geprüft:** das Verhalten auf einem echten
+Windows-Wechseldatenträger (Laufwerksbuchstabe, Schreibrechte, Auswerfen) — das
+geht erst mit dem Stick in der Hand; die Probeläufe liefen auf gewöhnlichen
+Ordnern. **Die Tabellendatei `kostenuebersicht-finance.xlsx` ist in diesem Lauf
+weder geöffnet noch geändert worden** — keine Zahl im Finanzplan kann sich
+verschoben haben.
+
+**Quellen:** `belege/eingangsrechnungen/2026/` (25 Dateien) ·
+`belege/eingangsrechnungen/eingangsbuch.csv` ·
+`docs/finance-001-verfahrensdokumentation-rechnungseingang.md` (Teil 3, Teil 4) ·
+`docs/finance-001-hashliste.md` · eigene Messläufe · § 147 Abs. 1, 3 und 6 AO ·
+§ 146 Abs. 4 AO · § 14b Abs. 1 UStG · GoBD Rz. 100 ff. (Unveränderbarkeit) und
+Rz. 151 f. (Verfahrensdokumentation).
+
+*Head of Finance · 24.09.2026, 07:10 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
 

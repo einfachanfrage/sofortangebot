@@ -1,6 +1,6 @@
 # Verfahrensdokumentation Rechnungseingang (GoBD)
 
-**Fassung 5 · 21.09.2026 · erstellt und fortgeschrieben vom Head of Finance**
+**Fassung 6 · 24.09.2026 · erstellt und fortgeschrieben vom Head of Finance**
 **Betrieb:** Sandra Holm, Einzelunternehmen (Gewerbeanmeldung geplant KW 41/2026)
 **Geltungsbereich:** Alle Rechnungen, die der Betrieb **empfaengt** — Papier,
 PDF, XRechnung, ZUGFeRD. Ausgangsrechnungen sind hier **nicht** geregelt; es
@@ -339,6 +339,7 @@ Rhythmus bedienbar, ohne dass hier etwas geaendert werden muss.
 | Ablageort | `C:\Users\runni\Documents\Claude Code\sofortangebot\belege\eingangsrechnungen\` |
 | Dateiformate | `.pdf` (auch PDF/A-3 mit eingebettetem XML), `.xml` (UBL/CII), `.jpg`/`.png` nur als Scan von Papier |
 | Viewer fuer strukturierte Rechnungen | **vorhanden seit 21.09.2026: `scripts/e-rechnung-ansehen.mjs`** (Node, keine Installation, keine Internetverbindung, keine laufenden Kosten). Liest XRechnung (UBL 2.1), CII/ZUGFeRD und holt den strukturierten Teil aus einem ZUGFeRD-PDF heraus; erzeugt eine HTML-Ansicht und rechnet die Rechnung nach. Gemessen an vier echten Dateien und sechs gebauten Fehlerfaellen, siehe `chief-of-staff-finance-todos.md`, Eintrag vom 21.09.2026. Ein **externer** Viewer (Quba, F-004, bei Sandy) bleibt als zweite Meinung sinnvoll, ist aber fuer den Zahlungsweg nicht mehr noetig. |
+| Jahresausleitung / Archivkopie | **vorhanden seit 24.09.2026: `scripts/jahresausleitung.mjs`** (Node, keine Installation, keine Internetverbindung). Erzeugt aus einem Belegjahr ein in sich geschlossenes Archivbuendel auf einem beliebigen Ziel und liest es zur Kontrolle zurueck; `--pruefen <ordner>` prueft ein bestehendes Buendel spaeter jederzeit gegen sein eigenes Manifest, auch ohne dieses Projekt (`sha256sum -c pruefsummen.sha256` tut es notfalls auch). Gemessen an zwoelf Faellen, davon einer ueber den vollstaendigen echten Belegbestand 2026, siehe `chief-of-staff-finance-todos.md`, Eintrag vom 24.09.2026. **Der Datentraeger fehlt, nicht das Verfahren.** |
 | Buchhaltungssoftware | **keine im Einsatz** |
 | Datensicherung | **eingerichtet seit 17.09.2026.** Taeglich 20:00 Uhr kopiert die Windows-Aufgabe `Sofortangebot Sicherung` (`scripts/sicherung-onedrive.ps1`) den gesamten Projektordner — einschliesslich `belege/` — nach `OneDrive\\Sofortangebot-Sicherung`, Konto `einfachanfrage@outlook.com`. **Es wird nichts geloescht.** Einzelheiten und die Kontrollpflicht: Teil 4. |
 | Versionsverwaltung | Die Belege liegen **bewusst ausserhalb von Git** (`.gitignore`). Git-Historie laesst sich umschreiben und ist deshalb kein Unveraenderbarkeitsnachweis; ausserdem gehoeren Lieferantenrechnungen nicht in ein Code-Repository. |
@@ -411,6 +412,26 @@ und diese Unterscheidung gehoert hierher, weil sie sonst verloren geht:
    des Jahres. Das ist der Teil, den eine Synchronisierung prinzipbedingt nicht
    leisten kann: sie haelt den *aktuellen* Stand, kein Archiv.
    Kosten: einmalig ein Datentraeger, kein Abo.
+
+   **Das Verfahren dazu steht seit 24.09.2026 und ist an den echten Belegen
+   durchgelaufen** (`scripts/jahresausleitung.mjs`, siehe Teil 3). Ein Befehl:
+
+   ```
+   node scripts/jahresausleitung.mjs 2026 --ziel E:\
+   ```
+
+   Er legt einen in sich geschlossenen Ordner `Sofortangebot-Archiv-2026` an —
+   die Originaldateien Byte fuer Byte, das Eingangsbuch des Jahres, die
+   Pruefsummen in zwei Formaten, diese Verfahrensdokumentation und den
+   Betrachter fuer strukturierte Rechnungen. **Nach dem Schreiben liest das
+   Programm jede Datei vom Datentraeger zurueck und vergleicht die
+   Pruefsumme** — nach derselben Regel wie unten: ein Erfolgsprotokoll ist
+   kein Nachweis. Solange das Jahr laeuft, verweigert es die Ausleitung und
+   verlangt `--probelauf`; eine bestehende Archivkopie ueberschreibt es nicht.
+
+   **Was im Januar 2027 noch zu tun bleibt, ist der Datentraeger selbst** —
+   den kann kein Programm einstecken. Das ist eine Aufgabe fuer Sandy, keine
+   fuer diese Dokumentation.
 2. **Bis dahin traegt die OneDrive-Kopie.** Sie ist besser als nichts und war
    der richtige erste Schritt.
 
@@ -445,7 +466,7 @@ sichtbar** ist. Die Erfolgsmeldung des Kopierwerkzeugs belegt das nicht.
 | `rechnung@sofortangebot.app` | — | ✅ **erledigt 17.09.** (Sandy, IONOS) |
 | Zustelltest mit echtem `.xml`-Anhang | — | ✅ **bestanden 17.09.2026.** Sandy hat aus `einfachanfrage@outlook.com` an `rechnung@` geschickt, die Mail ist in `hallo@` angekommen — mit allen drei Anhaengen (`zugferd-cii.xml`, `zugferd-rechnung.pdf`, `xrechnung-ubl.xml`). Beleg: Bildschirmfoto des Posteingangs |
 | Zweite Kopie der Ablage (Datensicherung) | — | ✅ **erledigt 17.09.2026.** OneDrive-Sicherung taeglich 20:00 Uhr, am Zielort geprueft. Teil 4 |
-| Archivkopie, die sich nicht mehr aendert (8-Jahres-Frist) | Head of Finance | **offen, Termin Januar 2027** — Jahresausleitung nach Abschluss 2026, Teil 4 |
+| Archivkopie, die sich nicht mehr aendert (8-Jahres-Frist) | Sandy (Datentraeger) | **offen, Termin Januar 2027.** Das **Verfahren** ist seit 24.09.2026 fertig und am echten Bestand durchgelaufen (`scripts/jahresausleitung.mjs`, Teil 3 und Teil 4). Was fehlt, ist allein eine externe Platte oder ein USB-Stick — rund 1,7 GB fuer 2026, jedes handelsuebliche Medium genuegt |
 | Vierteljaehrliche Kontrolle am Zielort | Sandy + Head of Finance | **eingeplant, erstmals Oktober 2026**, Teil 4 |
 | Buchhaltungsloesung / Steuerberater-Modell | Sandy | offen seit CoS-F-003 |
 
@@ -462,6 +483,7 @@ ohnehin im Plan steht.
 | 2 | 17.09.2026 | Hinweis zu Pruefpunkt 9 korrigiert (nur Supabase ist Reverse Charge); **Schritt 2a Fremdwaehrungsumrechnung neu** (§ 16 Abs. 6 UStG, amtliche BMF-Monatskurse) | Head of Finance |
 | 3 | 17.09.2026 | **Schritt 2b Kleinbetragsrechnungen neu** (§ 33 UStDV, 250-€-Grenze) — Korrektur nach Einwand von Sandy. Erster echter Durchgang mit 25 abgelegten Dateien. **Namensschema zurueckgenommen** (Schritt 1) — der Lieferantendateiname bleibt, die Ordnung macht das Eingangsbuch. **Kontrollbefehl `scripts/belege-pruefen.mjs`** neu (Schritt 3). **Datensicherung und Kontrolle am Zielort** in Teil 3 und 4 aufgenommen, mit vierteljaehrlichem Rhythmus und der Unterscheidung Sicherung/Archiv. **USt-Status auf Regelbesteuerung** umgestellt (Entscheidung F-006 = B, erklaert wird sie erst im Fragebogen) | Head of Finance |
 | 4 | 17.09.2026 | **Schritt 6 Umsatzsteuer-Voranmeldung neu**: Rhythmus ist nicht gesetzt. Die Pflicht zur monatlichen Abgabe in Neugruendungsfaellen ist bis einschliesslich 2026 ausgesetzt (§ 18 Abs. 2 Satz 6 UStG); Regelfall ist das Quartal, Grenzen 9.000 € und 2.000 €. Fuer 2027 offen und als Frage fuer das Steuerberater-Erstgespraech festgehalten, mit der Zahllast aus allen drei Planszenarien | Head of Finance |
+| 6 | 24.09.2026 | **Jahresausleitung ist kein Plan mehr, sondern ein Befehl:** `scripts/jahresausleitung.mjs` erzeugt das Archivbuendel eines Belegjahres, liest es am Zielort zurueck und prueft es spaeter gegen sein eigenes Manifest. Teil 3 (neue Zeile), Teil 4 (Punkt 1 ausgeschrieben) und die Lueckenliste nachgezogen — dort wechselt der Punkt vom Head of Finance zu Sandy, weil nur noch der Datentraeger fehlt | Head of Finance |
 | 5 | 21.09.2026 | **Die Regel „keine reine XML-Rechnung bezahlen" ist aufgehoben** und durch `scripts/e-rechnung-ansehen.mjs` ersetzt (Schritt 2): eigene Lese- und Rechenpruefung fuer XRechnung, CII und ZUGFeRD-PDF, mit den drei Grenzen, die dort benannt sind. Teil 3 und die Lueckenliste nachgezogen | Head of Finance |
 
 *Diese Dokumentation ist fortzuschreiben, sobald eine Buchhaltungsloesung

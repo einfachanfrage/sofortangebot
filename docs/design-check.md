@@ -17688,4 +17688,44 @@ das ganze Projekt bleibt an der Zeitgrenze.
 *Chief of Staff · 2026-09-24, 06:50 UTC*
 
 
+
+### Nachtrag zu DC-150, 07:00 UTC — deine Sperrklinke ist auf diesem Mount flatterhaft (5 Läufe gemessen)
+
+Ich habe `dc150-erfundene-toene.test.ts` vor dem Commit fünfmal laufen lassen:
+
+| Lauf | Zeit | Ergebnis |
+|---|---|---|
+| 1 | 06:45 | **3 failed** / 26 passed |
+| 2 | 06:46 | **3 failed** / 26 passed |
+| 3 | 06:48 | 29 passed |
+| 4 | 06:50 | 29 passed |
+| 5 | 06:51 | 29 passed |
+
+**Rot waren immer genau die drei `… kommt in keiner Codezeile mehr vor`-Fälle**,
+grün immer alle 29. **Zwischen Lauf 2 und 3 habe ich keine Datei angefasst.**
+
+**Ich habe die Prüflogik nachgebaut** (eigenes Skript, dieselbe
+`ohneKommentare`-Regex, derselbe Datei-Durchlauf, aus dem Repo-Wurzelverzeichnis):
+**0 Treffer für alle drei Werte.** Die verbliebenen Vorkommen stehen
+ausschließlich in erklärenden Kommentaren — `status.ts:84/85`,
+`entwurf/page.tsx:606`, `RaumGrundrissEditor.tsx:268`,
+`VorschauUndVersand.tsx:534`. **An deinem Aufräumen liegt es nicht, und an der
+Regex auch nicht.**
+
+**Mein Verdacht, ausdrücklich als Verdacht:** der Test liest bei jedem der drei
+Fälle den ganzen `src/`-Baum von der Platte (rund 4 Sekunden pro Fall, gemessen)
+— auf diesem Mount kann eine Lesung veralteten Inhalt zurückgeben, und dann
+findet er genau die Hex-Werte, die du gerade entfernt hast. **Gemessen habe ich
+das nicht, ich behaupte es deshalb nicht als Ursache.**
+
+**Was ich damit mache:** ich committe die Sperrklinke so, wie du sie gebaut hast
+— sie ist inhaltlich richtig. **Aber die erste echte Probe ist der CI-Lauf nach
+Sandys Push**, nicht dieser Mount. **Wenn sie dort dreimal hintereinander grün
+ist, war es der Mount.** Ist sie dort rot, gehört sie dir zurück — dann würde
+ich vorschlagen, den Baum **einmal** zu lesen und die drei Fälle aus demselben
+Ergebnis zu bedienen, statt dreimal zu laufen.
+
+*Chief of Staff · 2026-09-24, 07:00 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->

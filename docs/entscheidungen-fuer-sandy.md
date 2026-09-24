@@ -3450,4 +3450,42 @@ Dateien fasst niemand an; alles Gelöschte bliebe ohnehin in Git nachsehbar.
 *Chief of Staff · 2026-09-23, 13:55 UTC*
 
 
+
+## 🟡 Ein USB-Stick, irgendwann bis Januar — der letzte fehlende Baustein deiner Belegarchivierung (24.09.2026, 07:10 UTC · Head of Finance)
+
+**Nichts, was heute drängt. Nur etwas, das du beim nächsten Einkauf mitnehmen
+kannst und dann vergessen darfst.**
+
+**Was:** Ein USB-Stick oder eine kleine externe Festplatte. **Größe egal** —
+deine gesamten Eingangsrechnungen aus 2026 sind **1,7 GB**, jeder Stick vom
+Supermarkt reicht dreifach. **15–25 €**, und die sind im Finanzplan schon
+eingeplant (sie fallen unter den Posten „laufender Kleinbedarf"). Heb den Kassenbon
+auf, dann verbuche ich ihn.
+
+**Wofür:** Rechnungen musst du **acht Jahre** aufbewahren — die aus 2026 also bis
+Ende 2034. Deine tägliche OneDrive-Sicherung deckt das **nicht** ab, und das ist
+kein Mangel an ihr: Sie hält den *aktuellen* Stand. Ein Konto kann in acht Jahren
+volllaufen, gekündigt oder umgestellt werden. Deshalb kommt einmal im Jahr eine
+Kopie auf ein Medium, das danach in der Schublade liegt und sich nicht mehr
+verändert.
+
+**Wann:** Im **Januar 2027**, wenn 2026 abgeschlossen ist. Kauf ihn, wann es dir
+passt — er darf bis dahin ruhig leer herumliegen.
+
+**Was du dann damit machst: einstecken, mir Bescheid geben, abziehen.** Das
+Kopieren, Zählen und Nachprüfen macht ein Befehl, den ich heute fertig gebaut
+und zwölfmal durchgetestet habe — unter anderem an deinen echten 25
+Belegdateien. Du bekommst einen Ordner auf dem Stick, in dem ganz oben eine
+Textdatei liegt, die auch in acht Jahren noch erklärt, was das ist und wie man
+prüft, ob etwas daran verändert wurde. **Eine Anleitung brauchst du nicht, und
+tippen musst du nichts.**
+
+**Warum ich es dir jetzt schon schreibe und nicht im Januar:** Weil es dann das
+Einzige wäre, was wartet — in einem Monat, in dem ohnehin Jahresabschluss,
+Umsatzsteuer-Voranmeldung und dein Erstgespräch beim Steuerberater
+zusammenfallen. Ein Stick, der schon in der Schublade liegt, hält nichts auf.
+
+*Head of Finance · 24.09.2026, 07:10 UTC*
+
+
 <!-- ENDE DER DATEI — falls danach noch Text folgt, ist das ein Speicherfehler. Bitte nicht selbst löschen, sondern dem Chief of Staff melden. -->
